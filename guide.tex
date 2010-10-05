@@ -1,0 +1,75 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsthm,amssymb,amsmath}
+\usepackage{helvet,times,courier}
+\usepackage{listings}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=false,pagebackref=true]{hyperref}
+\usepackage{ifpdf}
+\ifpdf\else\usepackage{breakurl}\fi
+%\usepackage{comments}
+\usepackage{pict2e}
+\usepackage{tikz}
+\usetikzlibrary{arrows,chains,positioning,automata,decorations,shapes}
+\usepackage[color=1 0 0]{attachfile}
+\usepackage{fancyvrb}
+\usepackage{rail}
+\input{macro}
+\usepackage{makeidx}
+\makeindex
+
+\sloppy
+\author{%
+Martin Gebser \and 
+Roland Kaminski \and  
+	Benjamin Kaufmann \and 
+Max Ostrowski \and  
+Torsten Schaub \and  
+Sven Thiele
+  \thanks{\texttt{\{gebser,kaminski,kaufmann,ostrowsk,torsten,sthiele\}@cs.uni-potsdam.de}}}
+\title{%
+	\bf A User's Guide to\\
+	\gringo, \clasp, \clingo, and \iclingo\
+	\thanks{Tools \gringo, \clasp, \clingo, and \iclingo\ are available at~\cite{potassco}.} \\[0.0cm]
+	{\normalsize \textnormal{(version 3.x)}}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+{\hfill\large\it --- Preliminary Draft ---\hfill}
+
+\input{abstract}
+
+\newpage
+\tableofcontents
+\listoffigures
+\lstlistoflistings
+\newpage
+
+\input{introduction}
+\input{quickstart}
+\input{language}
+\input{examples}
+\input{options}
+\input{errors}
+\input{future}
+
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{plain}
+\bibliography{guide}
+
+\appendix
+\input{background}
+%\input{restrictions}
+\input{lparse}
+
+\printindex
+
+\end{document}

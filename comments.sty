@@ -1,0 +1,219 @@
+%%
+%% This is file `comments.sty',
+%%
+%% Copyright (C) 1991 -- 2001 by Torsten Schaub,
+%%                            all rights reserved.
+%% Please report errors to: Torsten Schaub
+%%                          torsten@cs.uni-potsdam.de
+\ProvidesPackage{comments}[2001/03/09 v0.7 The comments package]
+\RequirePackage[normalem]{ulem}
+\RequirePackage{ifthen}
+\RequirePackage{changepage}
+\RequirePackage{framed}
+
+\newenvironment{oldstuff} { \definecolor{shadecolor}{named}{Gray} \begin{shaded} \label{comment:\thecommentctr} \stepcounter{commentctr} } { \end{shaded} }
+\newenvironment{newstuff} { \definecolor{shadecolor}{named}{Lavender} \begin{shaded} \label{comment:\thecommentctr} \stepcounter{commentctr} } { \end{shaded} }
+
+\newif\ifreversecommentsidepar
+  \reversecommentsidepartrue
+\newif\ifcommentsideparswitch
+  \commentsideparswitchfalse
+\if@twoside \commentsideparswitchtrue \fi
+
+\newlength{\commentsideparvshift}
+%%%%  \setlength{\commentsideparvshift}{-2.08ex}% seems to work for all font sizes
+
+\newcommand{\commentsidepar}{\@dblarg{\@commentsidepar}}
+\long\def\@commentsidepar[#1]#2{\@bsphack\strut\vadjust{%
+  \checkoddpage
+  \ifcommentsideparswitch
+    \ifreversecommentsidepar
+      \ifoddpage
+        \oddpagefalse
+      \else
+        \oddpagetrue
+      \fi
+    \fi
+  \else
+    \oddpagetrue
+    \ifreversecommentsidepar
+      \oddpagefalse
+     \fi
+  \fi
+  \rlap{\kern-\parindent
+    \if@twocolumn
+      \if@firstcolumn%              put at left
+        \kern -\marginparsep \kern -\marginparwidth
+      \else%                        put at right
+        \kern \columnwidth \kern \marginparsep
+      \fi
+    \else
+      %\ifoddpage%                   put at right
+        \kern \textwidth \kern \marginparsep
+      %\else%                        put at left
+        %\kern -\marginparsep \kern -\marginparwidth
+      %\fi
+    \fi
+    \setbox0=\vtop to 0pt{%
+      \begin{minipage}[t]{\marginparwidth}%
+        \normalfont\normalsize
+        \ifoddpage #2\else #1\fi%
+      \end{minipage}%
+      \vss}%
+    \vtop to 0pt{\kern\commentsideparvshift%  default should be 0pt
+      \kern-\dp\strutbox
+      \kern-\ht0
+      \box0 \vss}}}%
+  \@esphack}
+\setlength{\commentsideparvshift}{0pt}
+
+%% -- declarations --------------------------------------------------
+\def\TODAY{\number\day/\ifcase\month\or 01\or 02\or 03\or 04\or 05\or
+    06\or 07\or 08\or 09\or 10\or 11\or 12\fi/\number\year}
+\def\timenow{%
+  \@tempcnta=\time \divide\@tempcnta by 60 \number\@tempcnta:\multiply
+  \@tempcnta by 60 \@tempcntb=\time \advance\@tempcntb by -\@tempcnta
+  \ifnum\@tempcntb <10 0\number\@tempcntb\else\number\@tempcntb\fi}
+\def\MFONT{\scriptsize\rm}
+\def\BFONT{\scriptsize\it}
+\def\VERSION{\jobname.tex \ \ \TODAY~at~\timenow\ \ \ page \thepage}
+\def\DRAFTMSG{\small\it --- Preliminary Draft --- \today\ --- }
+
+%\addtolength{\oddsidemargin}{-14mm}  % let's have a big right margin
+%\addtolength{\evensidemargin}{-14mm} % for \comments
+
+%\setlength{\marginparwidth}{29mm}               % Breite
+%\setlength{\marginparsep}{1mm}                  % Abstand vom Rand
+%\setlength{\marginparpush}{0mm}                 % space between 2 marginpars
+%\setlength{\fboxsep}{.1mm}
+
+%% -- counters --------------------------------------------------
+\newcounter{commentctr}
+
+%% -- ulem-based commands ---------------------------------------
+\newcommand{\CHD}[1]{\uwave{#1}\comment{CHANGED}}
+
+\newcommand{\DELETE}[2]{\sout{#1}\comment{DELETE{#2}}}
+\newcommand{\DEL}[1]{\DELETE{#1}{\ignorespaces}}
+\newcommand{\DELc}[2]{\DELETE{#1}{\par {#2}}}
+
+\newcommand{\INSERT}[2]{\uline{#1}\comment{INSERT{#2}}}
+\newcommand{\INS}[1]{\INSERT{#1}{\ignorespaces}}
+\newcommand{\INSc}[2]{\INSERT{#1}{\par {#2}}}
+
+\newcommand{\REPLACE}[3]{\sout{#1}\comment{REPLACE{#3}}\uline{#2}}
+\newcommand{\REP}[2]{\REPLACE{#1}{#2}{\ignorespaces}}
+\newcommand{\REPc}[3]{\REPLACE{#1}{#2}{\par {#3}}}
+
+\newcommand{\REPd}[2]{\REPLACE{}{#2}{D:\par {#1}}}
+
+%% -- commands --------------------------------------------------
+\newcommand{\howmanycoms}{%
+\begin{center}
+\frame{\Large\bf There are \thecommentctr\ comments to be addressed !!!}
+\message{*** THERE ARE *\thecommentctr* COMMENTS ***}
+\end{center}
+}
+
+\newcommand{\com}[1]%
+{%\message{Attention ... #1 ...}%
+  \mbox{}\\
+  \noindent
+  \phantomsection
+  \label{comment:\thecommentctr}
+  \framebox[\linewidth][c]{\stepcounter{commentctr}{\parbox[t]{\textwidth}{\centering \BFONT\thecommentctr: #1}}}
+  %\framebox[\linewidth][c]{\stepcounter{commentctr}{\BFONT\thecommentctr: \parbox[][][c]{\textwidth-4em}{#1}}}
+  \ignorespaces
+}
+% --------------------------------------------------
+\newcommand{\margincomment}[1]%
+{%
+  {%
+    \setlength{\fboxsep}{1pt}%
+    % decide whether to use sidepar/marginpar depending on \ifinner???
+    \commentsidepar{\raggedright\hspace{0pt}\parbox[t]{1.76\marginparwidth}{\MFONT{#1}}}%
+  }%
+  \ignorespaces
+}
+% --------------------------------------------------
+\newcommand{\comment}[1]%
+{%
+  \phantomsection
+  \label{comment:\thecommentctr}%
+  \stepcounter{commentctr}%
+  \margincomment{\raisebox{.1ex}{\framebox{\rm\thecommentctr}}\ #1}%
+  {\setlength{\fboxsep}{1pt}%
+    \raisebox{.3ex}{{\tiny\framebox{\rm\thecommentctr}}}%
+    }%
+%\setlength{\fboxsep}{3pt}%
+  \message{Attention ... COMMENT *\thecommentctr* ...}%
+  \ignorespaces}
+% --------------------------------------------------
+\newcommand{\new}[1]{#1\comment{NEW!}}
+% --------------------------------------------------
+\newcommand{\tbf}{\com{TO BE FILLED}}
+\newcommand{\tbfc}[1]{\margincomment{#1}\tbf}
+%
+\newcommand{\tbr}{\com{TO BE REFINED}}
+\newcommand{\tbrc}[1]{\margincomment{#1}\tbr}
+%
+\newcommand{\tbc}{\com{TO BE COMPLETED}}
+\newcommand{\tbcc}[1]{\margincomment{#1}\tbc}
+%
+\newcommand{\tbrw}{\com{TO BE REWRITTEN}}
+\newcommand{\tbrwc}[1]{\margincomment{#1}\tbrw}
+%
+\newcommand{\comc}[2]{\margincomment{#2}\com{#1}}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+\renewcommand{\@oddfoot}{\hbox to \textwidth{%
+$\bullet\bullet\bullet\quad$%
+\DRAFTMSG\/%
+$\quad\bullet\bullet\bullet$%
+\hfil%
+{\thepage:\small\#\thecommentctr} --- $\bigcirc_R\ \bigcirc_M$}%
+}
+\renewcommand{\@evenfoot}{\@oddfoot}
+\renewcommand{\@oddhead}{\null\hfil\scriptsize\rm\VERSION\ {\#\thecommentctr}}
+\renewcommand{\@evenhead}{\@oddhead}
+
+\newcommand{\stamp}{\date{%
+    \begin{tabular}{|ccc|}
+      \multicolumn{3}{c}{\it --- Preliminary Draft ---}
+      \\[2ex]\hline
+      \texttt{\jobname.tex} &---& \texttt{\today} at \texttt{\timenow{h}}
+      \\
+      \textit{Read} {\LARGE $\bigcirc$} && \textit{Modified} {\LARGE $\bigcirc$}
+      \\[1pt]\hline
+    \end{tabular}}}
+
+\newcommand{\forloop}[5][1]{%
+  \setcounter{#2}{#3}%
+  \ifthenelse{#4}{#5\addtocounter{#2}{#1}\forloop[#1]{#2}{\value{#2}}{#4}{#5}}{}%
+}
+
+\AtBeginDocument{%
+\stamp
+}
+
+\AtEndDocument{%
+\newpage
+{\vfill\noindent\large
+This article was processed using the comments style on \today.\\
+There are \thecommentctr\ comments to be processed:
+\hfill$\bigcirc_\mathit{Read}\ \bigcirc_\mathit{Modified}$\\
+\newcounter{ct}%
+\newcounter{lastct}%
+\setcounter{lastct}{\thecommentctr}%
+\addtocounter{lastct}{-1}
+\forloop{ct}{0}{\value{ct} < \thecommentctr}{%
+\pageref{comment:\thect}\ifthenelse{\value{ct} < \thelastct}{,}{ }
+}%
+}%
+\message{*** THERE ARE *\thecommentctr* COMMENTS ***}%
+\clearpage
+}
+
+

@@ -1,0 +1,182 @@
+\include{figures/hanoi}%
+\section{Quickstart}\label{sec:quickstart}
+In this section we demonstrate the expressive power 
+and the simple yet powerful modeling language of \gringo{}
+by looking at the simple Towers of Hanoi puzzle.
+It consists of three pegs and a set of discs of different sizes, 
+which can be put onto the pegs. 
+The goal is to move all pegs from the leftmost peg to the rightmost peg,
+where at each time only the topmost disc can be moved on top of another peg.
+Additionally, a disc may not be put on top of a smaller disc.
+We ignore that there is an efficient algorithm to solve this problem 
+and just specify how a solution, in terms of a sequence of moves, has to look.
+
+In ASP it is custom to provide a \emph{uniform}
+problem definition~\cite{martru99a,niemela99a,schlipf95a}.
+Following this methodology, we separate the encoding
+from an instance of the following problem:
+given an initial placement of the discs, a goal situation, and a number $n$,
+decide whether there is a sequence of moves of length $n$ 
+that satisfies the conditions given above.
+We will see that this decision problem can be elegantly 
+specified by reducing it to a declarative problem solving paradigm like ASP,
+where efficient off-the-shelf tools like \gringo\ and \clasp\
+are ready to solve the problem reasonably well.
+Such a reduction is now exemplified.
+
+\subsection{Problem Instance}
+
+\begin{figure}[tb]
+\centering
+\hanoiInstance
+\caption{Towers of Hanoi Initial Situation\label{fig:toh_inst}}
+\end{figure}
+
+We consider a Towers of Hanoi instance specified via facts over predicates
+\pred{peg}/$1$ and \pred{disk}/$1$ that correspond to the pegs and disks in the puzzle.
+Discs are enumerated by consecutive integers beginning with one,
+where a disc with a lower number is considered to be bigger than a disc with a higher number.
+The pegs can have arbitrary names. 
+Furthermore, the predicates \pred{init\_on}/$2$ and \pred{goal\_on}/$2$ describe the initial and goal situation, respectively.
+Their first argument is the number of a disc and the second argument is the peg 
+on which the disc is located in the initial or goal situation.
+Finally, the predicate \pred{moves}/$1$ specifies the number of moves within which the goal situation has to be reached.
+Note that the original puzzle had exactly three pegs and a fixed initial and goal situation.
+With ASP we can easily change this requirement and 
+the encoding represented in the following works with an arbitrary number of pegs and any initial or goal situation.
+Figure~\ref{fig:toh_inst} depicts a possible instance (the dashed discs mark the goal situation) 
+corresponding to the ASP program given below.
+
+\begin{lstlisting}
+peg(a;b;c).
+disk(1..4).
+init_on(1..4,a).
+goal_on(1..4,c).
+moves(15).
+\end{lstlisting}
+
+The ``\code{;}'' in the first line is some syntactic sugar (Section \ref{subsec:gringo:pool})
+that expands the statement into three facts
+\code{peg(a)}, \code{peg(b)}, and \code{peg(c)} representing the three pegs.
+Again, in the second line some syntactic sugar is used to 
+create the facts \code{disc(1)}, \code{disc(2)}, \code{disc(3)}, and \code{disc(4)}.
+Here the term \code{1..4}, an intervall (Section \ref{subsec:gringo:interval}), is successively replaced by \code{1}, \code{2}, \code{3}, and \code{4}.
+The initial and goal situation is specified in line three and four again using intervall.
+Finally, in the last line the number of moves to solve the problem is given.
+
+\subsection{Problem Encoding}
+
+We now proceed by encoding the Towers of Hanoi puzzle via non-ground rules (Section \ref{subsec:gringo:normal}), 
+i.e, rules with variables that are independent of particular instances.
+Typically, an encoding consists of a \emph{Generate}, a \emph{Define},
+and a \emph{Test} part~\cite{lifschitz02a}.
+We follow this paradigm and
+mark respective parts via comment lines beginning with \code{\%} in the encoding below.
+The variables \code{D}, \code{P}, \code{T}, and \code{M} are used
+to refer to disks, pegs, the \code{T}-th move in the sequence of moves, and the length of the sequence, respectively.
+
+\begin{lstlisting}
+% Generate
+1 { move(D,P,T) : disk(D) : peg(P) } 1 :- moves(M), T = 1..M.
+% Define
+move(D,T)   :- move(D,_,T).
+on(D,P,0)   :- init_on(D,P).
+on(D,P,T)   :- move(D,P,T).
+on(D,P,T+1) :- on(D,P,T), not move(D,T+1), not moves(T).
+blocked(D-1,P,T+1) :- on(D,P,T), disk(D), not moves(T).
+blocked(D-1,P,T)   :- blocked(D,P,T), disk(D).
+% Test
+:- move(D,P,T), blocked(D-1,P,T).
+:- move(D,T), on(D,P,T-1), blocked(D,P,T).
+:- goal_on(D,P), not on(D,P,M), moves(M). 
+:- not 1 { on(D,P,T) : peg(P) } 1, disk(D), moves(M), T = 1..M.
+#hide.
+#show move/3. 
+\end{lstlisting}%
+The Generate part consists of just one rule in Line 2.
+At each time point \code{T} at which a move is executed, we
+``guess'' exactly one move that puts an arbitrary disk to some arbitrary peg.
+The head of this rule is a so called cardinality constraint (Section \ref{subsec:gringo:aggregate}) that
+consists of a set that is expanded using the predicates behind the colons (Section \ref{subsec:gringo:condition}) and a lower and an upper bounds.
+The constraint is true if and only if the number of true literals within the set is between the upper and lower bound.
+Furthermore, the constraint is used in the head of a rule, 
+that is, it is not only a test but can derive (``guess'') new atoms, which in this case correspond to possible moves of discs.
+Note that at this point we have not constrained the moves.
+Up to now, any disc could be moved to any peg at each time point with out considering any problem constraints.
+
+Next follows the Define part, here we give rules that define new auxiliary predicates, 
+which as such do not touch the satisfiability of the problem but are used in the Test part later on.
+The rule in Line 4 projects out the target peg of a move, i.e., the predicate \code{move}/$2$ can be used 
+if we only need the disc affected by a move but not its target location.
+We use the predicate \code{on}/$3$ to capture the state of the Hanoi puzzle at each time point.
+Its first two argument give the location of a disc at the time point given by the third argument.
+The next rule in Line 5 infers the location of each disc in the initial state (time point 0).
+Then we model the state transition using the rules in Line 6 and 7.
+The first rule is quite straightforward and states that the moved disc changes its location.
+Note the usage of \code{not moves(T)} here.
+This literal prevents deriving an infinite number of rules, which would be all useless 
+because the state no longer changes after the last move.
+The second rule makes sure that all discs that are not moved stay where they are.
+Finally, we define the auxiliary predicate \code{blocked}/$3$, 
+which marks positions w.r.t. pegs that cannot be moved from.
+First in Line 8, the position below a disc on some peg is blocked.
+Second in Line 9, the position directly below a blocked position is blocked.
+Note that we mark position zero to be blocked, too.
+This is convenient later on to assert some redundant moves.
+
+Finally, there is the Test part building upon both Generate and Define part 
+to rule out wrong moves that do not agree with the problem description.
+It consists solely of integrity constraints, which fail whenever all their literals are true.
+The first integrity constraint in Line 11 asserts 
+that a disc that is blocked, i.e, with some disc on top, cannot be moved.
+Note the usage of \code{D-1} here, this way a disc cannot be put back to the same location again.
+The integrity constraint in Line 12 asserts that a disc can only be placed on top of a bigger disc.
+Line 13 asserts the goal situation.
+To make the encoding more efficient, we add a redundant constraint in Line 14,
+which asserts that each disc at all time points is located on exactly one peg.
+Although, this constraint is implied by the constraints above,
+adding this additional domain knowledge greatly improves the speed with which the problem can be solved.
+Finally, the last two statements control which predicates are printed, when a satisfying model
+for the instance is found.
+Here we first hide all predicates (Line 15) and then explicitly show only the \code{move}/$3$ predicate (Line 16).
+
+\subsection{Problem Solution}
+
+Now we are ready to solve the encoded puzzle. 
+To find an answer set, invoke one of the following commands 
+(\clingo{}, or \gringo{} and \clasp{} have to be installed somewhere under the systems path for the commands below to work):
+\begin{lstlisting}[numbers=none,escapechar=\%]
+clingo %\attach{examples/inst_toh.lp}{inst\char`\_toh.lp}% %\attach{examples/enc_toh.lp}{enc\char`\_toh.lp}%
+gringo %\attach{examples/inst_toh.lp}{inst\char`\_toh.lp}% %\attach{examples/enc_toh.lp}{enc\char`\_toh.lp}% | clasp
+\end{lstlisting}
+Note that (depending on your viewer) you can right or double-click on file names marked with a red font 
+to safe the associated file to disc.
+This is possible with all examples given in this document.
+
+The output of the solver (\clingo{} in this case) looks something like that:
+\begin{lstlisting}[numbers=none]
+Answer: 1
+move(4,b,1)  move(3,c,2)  move(4,c,3)  move(2,b,4)  \
+move(4,a,5)  move(3,b,6)  move(4,b,7)  move(1,c,8)  \
+move(4,c,9)  move(3,a,10) move(4,a,11) move(2,c,12) \
+move(4,b,13) move(3,c,14) move(4,c,15) 
+SATISFIABLE
+
+Models      : 1+    
+Time        : 0.010
+  Prepare   : 0.000
+  Prepro.   : 0.010
+  Solving   : 0.000
+\end{lstlisting}
+The first line indicates that an answer set follows in the line below (the \code{\textbackslash} marks a line wrap).
+Then the status follows, this might be either \code{SATISFIABLE}, \code{UNSATISFIABLE}, or \code{UNKNOW} 
+if the computation is interrupted.
+The \code{1+} right of \code{Models:} indicates that one answer set has been found and the \code{+} that 
+the whole search space has not yet been explored, so there might be further answer sets.
+Following that, there are some time measurements: 
+Beginning with total computation time, 
+which is split into 
+preparation time (grounding), 
+preprocessing time (\clasp{} has an internal preprocessor that tries to simplify the program), 
+and solving time (the time needed to find the answer excluding preparation and preprocessing time).
+More information about options and output can be found in Section~\ref{sec:options}.

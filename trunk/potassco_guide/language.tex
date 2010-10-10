@@ -114,7 +114,7 @@ A fact has an empty body and thus its associated head predicate is always true
 and appears in all answer sets.
 On the other hand, integrity constraints eliminate answer set candidates.
 They are merely tests that discard unwanted answer sets.
-That is, there are no answer sets that satisfy all literals an integrity constraint.
+That is, there are no answer sets that satisfy all literals in an integrity constraint.
 Elaborate examples on the usage of facts, rules, and integrity constraints
 are provided in Section~\ref{sec:examples}.
 
@@ -326,7 +326,7 @@ The next program demonstrates how terms can be assigned to variables:%
 %
 \lstinputlisting{examples/assign.lp}
 %
-Line~3 contains four assignments, where the right-hand sides directly or indirectly
+Line~4 contains four assignments, where the right-hand sides directly or indirectly
 depend on~\var{X} and~\var{Y}.
 These two variables are bound in Line~5 via atoms of predicate \pred{num}/$1$.
 Also observe the different usage and role of built-in comparison predicate~\code{==}.
@@ -956,7 +956,7 @@ Additionally, priorities can be associated with each literal.
 A (ground) optimize statement has the form: 
 \index{Statements!Optimize Statements!\#minimize}%
 \index{Statements!Optimize Statements!\#maximize}%
-\[\mathsf{opt}\,\code{[}\,L_1=w_1@p_1,\dots,L_n=w_n@p_n\,\code{\char`\}}\] 
+\[\mathsf{opt}\,\code{[}\,L_1=w_1@p_1,\dots,L_n=w_n@p_n\,\code{\char`\]}\] 
 \[\mathsf{opt}\,\code{\char`\{}\,L_1@p_1,\dots,L_n@p_n\,\code{\char`\}}\]
 where $\mathsf{opt}$ is either \code{\#maximize} or \code{\#minimize} , $L_i$ are literals 
 with associates (integer) weights $w_i$ and (integer) priorities $p_i$.

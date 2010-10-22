@@ -40,13 +40,14 @@
 
 % More formatting
 
-\lstset{numbers=left,numberblanklines=false,basicstyle=\ttfamily,xleftmargin=10pt}
-\addtolength{\oddsidemargin}{-0.25\marginparwidth}
+\lstset{numbers=left,numberblanklines=false,basicstyle=\ttfamily,xleftmargin=0pt}
+\addtolength{\oddsidemargin}{-0.5\marginparwidth}
 
 % look whether commentssidepar exists
 %\ifx\@commentsidepar\@empty
-\newcommand{\marginlabel}[1]{\marginpar{\hspace*{-1.75mm}%
-  \fbox{\parbox[t]{1.76\marginparwidth}{\footnotesize #1}}}}
+\newcommand{\marginlabel}[1]{\marginpar{\hspace*{-1.5mm}%\hspace*{-1.75mm}%
+  \fbox{\parbox[t]{%1.76
+  2.3\marginparwidth}{\footnotesize #1}}}}
 %\else
 %\newcommand{\marginlabel}[1]{\commentsidepar{\hspace*{-1.75mm}%
 %  \fbox{\parbox[t]{1.76\marginparwidth}{\footnotesize #1}}}}
@@ -67,3 +68,7 @@
 % this macro is kinda ugly but the only way I found to workaround warnings
 \def\attach{\textattachfile[color=1 0 0]}
 
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "guide"
+%%% End: 

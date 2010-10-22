@@ -1,7 +1,8 @@
-\documentclass[a4paper,10pt]{article}
+\documentclass[a4paper,11pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+%\usepackage{a4wide}
 \usepackage{amsthm,amssymb,amsmath}
 \usepackage{helvet,times,courier}
 \usepackage{listings}
@@ -15,61 +16,86 @@
 \usetikzlibrary{arrows,chains,positioning,automata,decorations,shapes}
 \usepackage[color=1 0 0]{attachfile}
 \usepackage{fancyvrb}
+\usepackage{fancyhdr}
 \usepackage{rail}
 \input{macro}
 \usepackage{makeidx}
 \makeindex
 
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}{}} 
+\renewcommand{\subsectionmark}[1]{\markright{\thesubsection\quad #1}{}} 
+
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{\textit{\nouppercase{\rightmark}}}
+
+
 \sloppy
 \author{%
 Martin Gebser \and 
 Roland Kaminski \and  
-	Benjamin Kaufmann \and 
+Benjamin Kaufmann \and 
 Max Ostrowski \and  
 Torsten Schaub \and  
-Sven Thiele
-  \thanks{\texttt{\{gebser,kaminski,kaufmann,ostrowsk,torsten,sthiele\}@cs.uni-potsdam.de}}}
+Sven Thiele}
+
+%  \thanks{\texttt{\{gebser,kaminski,kaufmann,ostrowsk,torsten,sthiele\}@cs.uni-potsdam.de}}}
 \title{%
-	\bf A User's Guide to\\
-	\gringo, \clasp, \clingo, and \iclingo\
-	\thanks{Tools \gringo, \clasp, \clingo, and \iclingo\ are available at~\cite{potassco}.} \\[0.0cm]
-	{\normalsize \textnormal{(version 3.x)}}
+	\textbf{\huge A User's Guide to}
+        \\
+	\gringo, \clasp, \clingo, \textbf{and} \iclingo\        
+        \thanks{This guide refers to Version~\textbf{3}.x
+                of \gringo, \clingo, and \iclingo\ as well as
+                Version~1.\textbf{3}.x of \clasp.
+                Please make sure that you have corresponding (or later) versions available.}
+        \\[4mm] 
+        \large\url{http://potassco.sourceforge.net/}      
+%Tools \gringo, \clasp, \clingo, and \iclingo\ are available at~\cite{potassco}.} \\[0.0cm]
+%	{\normalsize \textnormal{(version 3.x)}}
 }
 \date{\today}
 
 \begin{document}
-
+\pagestyle{plain}
 \maketitle
-
 {\hfill\large\it --- Preliminary Draft ---\hfill}
 
 \input{abstract}
-
 \newpage
+%{\small
 \tableofcontents
 \listoffigures
 \lstlistoflistings
+%}
 \newpage
-
+\pagestyle{fancy}
 \input{introduction}
+\newpage
 \input{quickstart}
+\newpage
 \input{language}
+\newpage
 \input{examples}
+\newpage
 \input{options}
+\newpage
 \input{errors}
+\newpage
 \input{future}
-
+\newpage
+\appendix
+%\input{restrictions}
+\input{lparse}
+\newpage
+\input{background}
 \newpage
 \phantomsection
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{plain}
 \bibliography{guide}
-
-\appendix
-\input{background}
-%\input{restrictions}
-\input{lparse}
-
+\newpage
+\phantomsection
+\addcontentsline{toc}{section}{Index}
 \printindex
-
 \end{document}

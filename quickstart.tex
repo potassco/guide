@@ -16,7 +16,7 @@ where only the topmost disk of a peg can be moved at a time.
 %
 %where at each time only the topmost disc can be moved on top of another peg.
 Furthermore, 
-a disk cannot be moved to a peg already containg some disk that is smaller.
+a disk cannot be moved to a peg already containing some disk that is smaller.
 Although there is an efficient algorithm to solve our simple Towers of Hanoi puzzle,
 we do not exploit it and below merely specify conditions for
 sequences of moves being solutions.
@@ -27,7 +27,7 @@ In ASP, it is custom to provide a \emph{uniform}
 problem definition~\cite{martru99a,niemela99a,schlipf95a}.
 Following this methodology, we separately provide an instance and
 an encoding (applying to every instance) of the following problem:
-given an initial placement of the discs, a goal situation, and a number~$n$,
+given an initial placement of the disks, a goal situation, and a number~$n$,
 decide whether there is a sequence of $n$~moves 
 that achieves the goal.
 We will see that this problem can elegantly be  
@@ -92,7 +92,7 @@ Here, it abbreviates distinct facts over four values:
 % Finally, in the last line the number of moves to solve the problem is given.
 In summary, the facts in Line~1--5 describe the 
 Towers of Hanoi puzzle in Figure~\ref{fig:toh_inst} along
-with the requirement that the goal ought to be achieved in~\const{15} moves.
+with the requirement that the goal ought to be achieved with~\const{15} moves.
 
 \subsection{Problem Encoding}
 
@@ -237,7 +237,7 @@ Note that we use \code{\pred{move}(\var{D},\var{T})} here because the
 target of an illegal move does not matter in this context.
 The fact that the goal situation, given in an instance,
 must be achieved at maximum time point~\code{M}
-is reprented by the integrity constraint in Line 13.
+is represented by the integrity constraint in Line 13.
 The final integrity constraint in Line~14
 asserts that, for every disk~\var{D} and time point~\var{T}, 
 there is exactly one peg~\var{P} such that
@@ -262,18 +262,25 @@ given that it is fully determined by atoms over \pred{move}/$3$.
 
 \subsection{Problem Solution}
 
-Now we are ready to solve the encoded puzzle. 
-To find an answer set, invoke one of the following commands 
-(\clingo{}, or \gringo{} and \clasp{} have to be installed somewhere under the systems path for the commands below to work):
+We are now ready to solve our Towers of Hanoi puzzle. 
+To compute an answer set representing a solution,
+invoke one of the following commands:%
+\marginlabel{\clingo\ or \gringo\ and \clasp\ ought to be located in some directory
+             in the system path. Also, 
+             \attach{examples/toh_ins.lp}{\code{toh\char`\_ins.lp}}
+             and
+             \attach{examples/toh_enc.lp}{\code{toh\char`\_enc.lp}}
+             (click file name to save)
+             should reside in the working directory.}%
 \begin{lstlisting}[numbers=none,escapechar=\%]
 clingo %\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}% %\attach{examples/toh_enc.lp}{toh\char`\_enc.lp}%
 gringo %\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}% %\attach{examples/toh_enc.lp}{toh\char`\_enc.lp}% | clasp
 \end{lstlisting}
-Note that (depending on your viewer) you can right or double-click on file names marked with a red font 
-to safe the associated file to disc.
-This is possible with all examples given in this document.
+% Note that (depending on your viewer) you can right or double-click on file names marked with a red font 
+% to safe the associated file to disc.
+% This is possible with all examples given in this document.
 
-The output of the solver (\clingo{} in this case) looks something like that:
+The output of the solver, \clingo\ in this case, should look somehow like this:
 \begin{lstlisting}[numbers=none]
 Answer: 1
 move(4,b,1)  move(3,c,2)  move(4,c,3)  move(2,b,4)  \
@@ -288,18 +295,73 @@ Time        : 0.010
   Prepro.   : 0.010
   Solving   : 0.000
 \end{lstlisting}
-The first line indicates that an answer set follows in the line below (the \code{\textbackslash} marks a line wrap).
-Then the status follows, this might be either \code{SATISFIABLE}, \code{UNSATISFIABLE}, or \code{UNKNOW} 
-if the computation is interrupted.
-The \code{1+} right of \code{Models:} indicates that one answer set has been found and the \code{+} that 
-the whole search space has not yet been explored, so there might be further answer sets.
-Following that, there are some time measurements: 
-Beginning with total computation time, 
-which is split into 
-preparation time (grounding), 
-preprocessing time (\clasp{} has an internal preprocessor that tries to simplify the program), 
-and solving time (the time needed to find the answer excluding preparation and preprocessing time).
-More information about options and output can be found in Section~\ref{sec:options}.
+The first line indicates that the (output) atoms of an answer set 
+follow in the line below, where ``\code{\char`\\}'' indicates that
+all atoms over \pred{move}/$3$ actually belong to a single line.
+Note that the order in which atoms are printed does not bear any meaning
+(and the same applies to the order in which answer sets are found).
+Here, we show the instances of \pred{move}/$3$ in the order of time points,
+so that we can easily read off the following solution from them:
+first move disk~\const{4} to peg~\const{b}, 
+second move disk~\const{3} to peg~\const{c}, 
+third move disk~\const{4} to peg~\const{c}, 
+and so on.
+Below this solution,
+we find the satisfiability status of the problem,
+which is \code{SATISFIABLE},
+as reported by the solver.\footnote{%
+Other possibilities include \code{UNSATISFIABLE} and \code{UNKNOWN}, the latter in case of an abort.}
+The ``\code{1+}'' in the line starting with ``\code{Models}''%
+\marginlabel{The given instance has
+             just one solution.
+             In fact, the ``\code{+}'' from ``\code{1+}''
+             disappears if you compute all solutions
+             by invoking:\\
+             \code{\mbox{~}clingo \attach{examples/toh_ins.lp}{toh\char`\_ins.lp} \textbackslash\\
+                   \mbox{~}\attach{examples/toh_enc.lp}{toh\char`\_enc.lp} 0}\\
+             or alternatively:\\
+             \code{\mbox{~}gringo \attach{examples/toh_ins.lp}{toh\char`\_ins.lp} \textbackslash\\
+                   \mbox{~}\attach{examples/toh_enc.lp}{toh\char`\_enc.lp} | clasp 0}
+}
+tells us that one answer set has been found.\footnote{%
+The ``\code{+}'' indicates that 
+the solver has not exhaustively explored the search space
+(but stopped upon finding an answer set),
+so that further answer sets may exist.}
+% indicates that one answer set has been found and the \code{+} that 
+% the whole search space has not yet been explored, so there might be further answer sets.
+The final four lines report statistics including
+total run-time (\code{Time}),
+time spent on grounding (\code{Prepare}),
+time spent on preprocessing~\cite{gekanesc08a} (\code{Prepro.}),
+and time spent on search (\code{Solving}).
+% Following that, there are some time measurements: 
+% Beginning with total computation time, 
+% which is split into 
+% preparation time (grounding), 
+% preprocessing time (\clasp{} has an internal preprocessor that tries to simplify the program), 
+% and solving time (the time needed to find the answer excluding preparation and preprocessing time).
+More information about available options, e.g.,
+to obtain extended statistics output,
+can be found in Section~\ref{sec:options}.
+
+\subsection{Summary}
+
+To conclude our quickstart, let us summarize some ``take-home messages.''
+For solving our Towers of Hanoi puzzle, we first provided facts representing an instance.
+Although we did not discuss the choice of predicates, an
+appropriate instance representation is already part of the modeling in ASP and
+not always as straightforward as here.
+% If you try to solve some problem and find it cumbersome to specify the appropriate rules,
+% it may be worthwhile to recheck the instance format and alter it to something more appropriate.
+Second, we provided an encoding of the problem applying to any instance.
+The encoding consisted of parts generating solution candidates,
+deriving their essential properties,
+testing that no solution condition is violated,
+and finally projecting the output to characteristic atoms.
+With the encoding at hand, we could use off-the-shelf ASP tools to solve our instance,
+and the encoding can be reused for any further
+instance that may arise in the future.
 
 %%% Local Variables: 
 %%% mode: latex

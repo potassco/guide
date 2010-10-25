@@ -5,7 +5,7 @@ grounder \gringo, combined grounder and solver \clingo,
 incremental grounder and solver \iclingo, and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-It is extended by \iclingo\ with a few directives described in Section~\ref{subsec:lang:iclingo}.
+It is extended by \iclingo\ with a few incremental directives described in Section~\ref{subsec:lang:iclingo}.
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs
 handled by \clasp.
 
@@ -14,16 +14,20 @@ handled by \clasp.
 
 The tool \gringo~\cite{gescth07a} is a grounder capable of translating
 logic programs provided by users into equivalent ground programs.
-The output of \gringo\ can be piped into solver \clasp~\cite{gekanesc07b},
+The output of \gringo\ can be piped into solver \clasp~\cite{gekanesc07a},
 which then computes answer sets.
 System \clingo\ internally couples \gringo\ and \clasp, thus,
 it takes care of both grounding and solving.
 In contrast to \gringo\ outputting ground programs, 
 \clingo\ returns answer sets.
 
-Usually logic programs are specified in one or more text files whose names are passed via the command line
+Usually, logic programs are specified in one or more (text) files whose names are
+% passed via the command line
+provided as arguments
 in an invocation of either \gringo\ or \clingo.
-We below provide a description of constructs belonging to the input language of \gringo\ and \clingo.
+% We below provide a description of 
+In what follows, we describe the 
+constructs belonging to the input language of \gringo\ and \clingo.
 
 
 \subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
@@ -36,52 +40,132 @@ We below provide a description of constructs belonging to the input language of 
 \index{Terms!\code{\#infimum}}
 
 \begin{figure}
+\vspace*{-19mm}
+\railnontermfont{\rmfamily\itshape}%
+\railalias{rusc}{\tt\char95}\railterm{rusc}
+\railalias{rlsc}{[A-Za-z0-9\tt\char95]}\railterm{rlsc}
 \begin{rail}
-	constant    : ('\_'*) '[a-z]' ('[A-Za-z0-9]'*);
-	variable    : ('\_'*) '[A-Z]' ('[A-Za-z0-9]'*);
-	simpleterm  : ('integer' | constant | variable | '\_' | '\#supremum' | '\#infimum');
-	function    : constant '(' simpleterm (',' simpleterm*) ')';
 	term        : simpleterm | function;
+	simpleterm  : (integer | constant | variable | rusc | '\#supremum' | '\#infimum');
+	constant    : (rusc*) '[a-z]' (rlsc*);
+	variable    : (rusc*) '[A-Z]' (rlsc*);
+	function    : constant '(' term (',' term*) ')';
 \end{rail}
-\caption{Terms\label{fig:terms}}
+\caption{Grammar for Terms.\label{fig:terms}}
 \end{figure}
 
-Every logic program is constructed from terms.
-An overview of \gringo{} terms is depicted in Figure \ref{fig:terms}.
-The most basic terms are integers, constants, and variables.
-Furthermore, there are some special variables and constants.
-An anonymous variable denoted by `\_' is simialar to a normal variable 
-but each occurrence is treated like a different variable 
-(intuitively a new unique variable name is substituted).
-Additionally, there are the two special constants `\#supremum' and `\#infimum'
-representing the largest and the smallest possible values, respectively,
-which behave essentially like constants.
-Finally, there are function symbols which are composed of other terms.
-A term that does not contain any (anonymous) variables is called a ground term.
-More complex terms involving arithmetics and other constructs
-are introduced later on.
+Every (non-propositional) logic program includes \emph{terms},
+mainly to specify the arguments of atoms (see below).
+The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
+The basic building blocks are simple terms:
+\emph{integers}, \emph{constants}, and \emph{variables}
+as well as the tokens ``\var{\char`\_},'' \const{\#supremum}, and \const{\#infimum}.
+An integer is represented by means of an arithmetic expression,
+further explained in Section~\ref{subsec:gringo:arith}.
+Constants and variables are distinguished by their first letters, 
+which are \emph{lowercase} or \emph{uppercase}, respectively,
+where leading occurrences of ``\code{\char`\_}'' are allowed
+(may be useful to circumvent name clashes).
+While a constant represents itself,
+a variable is a placeholder for \emph{all} variable-free terms
+in the language of a logic program.%
+\footnote{The set of all terms constructible from the available
+          constants and function symbols is called \emph{Herbrand universe}.}
+Unlike with a variable name whose recurrences within a rule refer to the same variable,
+the token ``\var{\char`\_}'' (not followed by any letter)
+stands for an \emph{anonymous variable} that does not recur anywhere. 
+(One can view this as if a new variable name is invented on each
+ occurrence of ``\var{\char`\_}.'')
+In addition, there are the special constants \const{\#supremum} and \const{\#infimum}
+representing $+\infty$ and $-\infty$, respectively;
+we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
+% the largest and the smallest possible values, respectively,
+% which behave essentially like constants.
+Finally, \emph{functions} are complex terms composed of a name (like a constant)
+and one or more terms as arguments. % ,
+% surrounded by parentheses and separated by comma.
+For instance, 
+\code{\const{at}(\const{peter},\const{time}(12),X)}
+is a function with three arguments:
+constant \const{peter}, another function \code{\const{time}(12)}
+with an integer argument, and variable~\var{X}.
+% symbols which are composed of other terms.
+% A term that does not contain any (anonymous) variables is called a ground term.
+% More complex terms involving arithmetics and other constructs
+% are introduced later on.
 
-\index{Statements!Rules}
-\index{Statements!Facts}
-\index{Statements!Integrity Constraints}
-Rules are defined as follows:\\
+Rules of the following forms are admitted in a 
+\emph{normal logic program} (with integrity constraints):\newline
 
 \begin{tabular}{rl@{}l}\label{eq:normal:rule}
-\textbf{Rule:} & $A_0$& $\code{:-}~L_1\code{,}\dots\code{,}L_n$\code{.}
+\textbf{Rule:} & $A_0$&~\code{:-}~$L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
 \\
 \textbf{Fact:} & $A_0$&\code{.}
 \\
-\textbf{Integrity Constraint:} & & $\code{:-}~L_1\code{,}\dots\code{,}L_n$\code{.}
+\textbf{Integrity Constraint:} & &~\code{:-}~$L_1\code{,}\dots\code{,}L_n$\code{.}
 \end{tabular}
+\index{Statements!Rules}%
+\index{Statements!Facts}%
+\index{Statements!Integrity Constraints}%
 \\
 
 \noindent
-The head~$A_0$ of a fact or a rule is an \emph{atom} of the same form
-as a function symbol or constant.
-Any $L_j$ is a \emph{literal} of the form $A$ or $\code{not}~A$
-for an atom~$A$ where the connective \code{not} corresponds to default negation\index{Literals!Default Negation}.
-The set of literals $\{L_1,\dots,L_n\}$ is called the body of the rule.
-Facts have an empty body.
+The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same 
+syntactic form as a constant or function.
+In the \emph{body} of a rule or an integrity constraint,
+any $L_j$ for $1\leq j\leq n$ is a \emph{literal} of the form $A$ or $\code{not}~A$,
+where $A$ is an atom and
+the connective \code{not} denotes default negation.
+\index{Literals!Default Negation}%
+% The set of literals $\{L_1,\dots,L_n\}$ is called the body of the rule.
+% Facts have an empty body.
+We say that a literal~$L$ is \emph{positive} if it is an atom,
+and \emph{negative} otherwise.
+While the head atom~$A_0$ of a fact must unconditionally be true,
+the intuitive reading of a rule corresponds to an implication:
+if all positive literals in the rule's body are true and all negative
+literals are satisfied, then~$A_0$ must be true.
+On the other hand, an integrity constraint is a rule of denial,
+meaning that the literals in its body must not jointly be satisfied.
+
+In ASP, the intended models of a logic program, i.e.,
+sets of variable-free atoms such that all rules
+(including facts and integrity constraints)
+of the program are satisfied when the atoms in the set are true, 
+are such that every true atom has an (acyclic) derivation from the program.
+Such models are called \emph{answer sets}.
+To get the idea, let us consider some small examples.
+
+\begin{example}
+Consider the following logic program:
+%
+\begin{lstlisting}[numbers=none]
+a :- b.
+b :- a.
+\end{lstlisting}
+%
+When \pred{a} and \pred{b} are false, the bodies of both rules are false either,
+so that the rules are satisfied.
+Furthermore, there is no (true) atom to be derived,
+which shows that the empty set is an answer set. 
+On the other hand, if only \pred{a} or~\pred{b} is true,
+the second or the first rule, respectively, is unsatisfied:
+the body holds, but not the head.
+Hence, an answer set cannot contain \pred{a} or~\pred{b} only.
+It remains to investigate the set including both \pred{a} and~\pred{b}.
+Although both rules are satisfied, % it is also clear that
+\pred{a} and~\pred{b} cannot be derived acyclicly:
+\pred{a} relies on~\pred{b}, and vice versa.
+That is, the set including both \pred{a} and~\pred{b} is not an answer set either.
+Hence, the empty set is the only answer set of the program.
+\eexample
+\end{example}
+
+Note that, in ASP,
+an atom can only be true if it has an (acyclic) derivation from a logic program.
+E.g., the log
+
+
 Throughout this section we further extend the predicates that can be used 
 in a rule including comparison predicates (Section \ref{subsec:gringo:comp}) and aggregates (Section \ref{subsec:gringo:aggregate}).
 Furthermore, \gringo{} expects rules to be safe, i.e., \index{Safe Program}
@@ -609,7 +693,7 @@ to keep the encoding more compact and readable.
 
 
 \subsubsection{Aggregates}\label{subsec:gringo:aggregate}
-\index{Aggregates}
+\index{Aggregates}\comment{MG: Illustrate \const{\#supremum} and \const{\#infimum}.}
 
 An aggregate is an operation on a multiset of weighted literals that evaluates to some value. 
 In combination with comparisons, we can extract a truth value from an aggregate's evaluation,
@@ -1576,4 +1660,8 @@ clasp [ number | options ] --dimacs < file
 \end{lstlisting}
 %
 Finally, \clasp\ may be used as a library, as done within \clingo\ and \iclingo.
-% 
+ 
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "guide"
+%%% End: 

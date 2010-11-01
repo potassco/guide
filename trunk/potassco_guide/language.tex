@@ -95,7 +95,7 @@ with an integer argument, and variable~\var{X}.
 % are introduced later on.
 
 Rules of the following forms are admitted in a 
-\emph{normal logic program} (with integrity constraints):\newline
+\emph{normal logic program} (with integrity constraints): % \newline
 
 \begin{tabular}{rl@{}l}\label{eq:normal:rule}
 \textbf{Rule:} & $A_0$&~\code{:-}~$L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
@@ -107,13 +107,13 @@ Rules of the following forms are admitted in a
 \index{Statements!Rules}%
 \index{Statements!Facts}%
 \index{Statements!Integrity Constraints}%
-\\
+\newline
 
 \noindent
 The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same 
 syntactic form as a constant or function.
 In the \emph{body} of a rule or an integrity constraint,
-any $L_j$ for $1\leq j\leq n$ is a \emph{literal} of the form $A$ or $\code{not}~A$,
+every $L_j$ for $1\leq j\leq n$ is a \emph{literal} of the form $A$ or $\code{not}~A$,
 where $A$ is an atom and
 the connective \code{not} denotes default negation.
 \index{Literals!Default Negation}%
@@ -136,7 +136,7 @@ are such that every true atom has an (acyclic) derivation from the program.
 Such models are called \emph{answer sets}.
 To get the idea, let us consider some small examples.
 
-\begin{example}
+\begin{example}\label{ex:as:one}
 Consider the following logic program:
 %
 \begin{lstlisting}[numbers=none]
@@ -156,15 +156,65 @@ It remains to investigate the set including both \pred{a} and~\pred{b}.
 Although both rules are satisfied, % it is also clear that
 \pred{a} and~\pred{b} cannot be derived acyclicly:
 \pred{a} relies on~\pred{b}, and vice versa.
-That is, the set including both \pred{a} and~\pred{b} is not an answer set either.
-Hence, the empty set is the only answer set of the program.
+That is, the set including both \pred{a} and~\pred{b} is not an answer set. % either.
+Hence, the empty set is the only answer set of the logic program.
 \eexample
 \end{example}
 
-Note that, in ASP,
-an atom can only be true if it has an (acyclic) derivation from a logic program.
-E.g., the log
+\begin{example}\label{ex:as:two}
+For a second example, consider the following logic program:
+%
+\begin{lstlisting}[numbers=none]
+a :- not b.
+b :- not a.
+\end{lstlisting}
+%
+Here, the empty set is not a model because both rules are unsatisfied,
+but the sets containing only either~\pred{a} or~\pred{b} are models.
+To see that each of them is an answer set,
+note that~\pred{a} is derived by the rule \code{\pred{a}\,:-\:not\:\pred{b}.}
+if \pred{b} is false;
+similarly,
+\pred{b} is derived by \code{\pred{b}\,:-\:not\:\pred{a}.}
+if \pred{a} is false.
+Note that the set including both~\pred{a} and~\pred{b} is not an answer set
+because neither atom can be derived if both are assumed to be true:
+the bodies of the rules
+\code{\pred{a}\,:-\:not\:\pred{b}.} and
+\code{\pred{b}\,:-\:not\:\pred{a}.} are false.
+Hence, we have that
+only either~\pred{a} or~\pred{b} constitute
+the two answer sets of the logic program.
+\eexample
+\end{example}
 
+\begin{example}\label{ex:as:three}
+To illustrate the use of facts and integrity constraints,
+let us augment the logic program in Example~\ref{ex:as:two}
+with the following:
+\begin{lstlisting}[numbers=none]
+c.
+:- c, not b.
+\end{lstlisting}
+Since \code{\pred{c}.} is a fact,
+atom \pred{c} must uncoditionally be true,
+so that it belongs to every model.
+In view of this,
+the integrity constraint 
+\code{:-\:c,\:not\:\pred{b}.}
+tells us that \pred{b} must be true as well
+in order to prevent its body from being satisfied.
+However, this kind of reasoning does not provide us with
+a derivation of \pred{b}.
+Rather, we still need to make sure that the body
+of the rule \code{\pred{b}\,:-\:not\:\pred{a}.} is satisfied,
+so that atom~\pred{a} must be false.
+Hence, the set containing \pred{b} and~\pred{c}
+is the only answer set of the logic program
+in Example~\ref{ex:as:two} augmented with \code{\pred{c}.}
+and \code{:-\:c,\:not\:\pred{b}.}
+\eexample
+\end{example}
 
 Throughout this section we further extend the predicates that can be used 
 in a rule including comparison predicates (Section \ref{subsec:gringo:comp}) and aggregates (Section \ref{subsec:gringo:aggregate}).

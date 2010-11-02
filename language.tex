@@ -148,7 +148,7 @@ When \pred{a} and \pred{b} are false, the bodies of both rules are false either,
 so that the rules are satisfied.
 Furthermore, there is no (true) atom to be derived,
 which shows that the empty set is an answer set. 
-On the other hand, if only \pred{a} or~\pred{b} is true,
+On the other hand, if only either \pred{a} or~\pred{b} is true,
 the second or the first rule, respectively, is unsatisfied:
 the body holds, but not the head.
 Hence, an answer set cannot contain \pred{a} or~\pred{b} only.
@@ -183,8 +183,8 @@ the bodies of the rules
 \code{\pred{a}\,:-\:not\:\pred{b}.} and
 \code{\pred{b}\,:-\:not\:\pred{a}.} are false.
 Hence, we have that
-only either~\pred{a} or~\pred{b} constitute
-the two answer sets of the logic program.
+either~\pred{a} or~\pred{b} belongs to
+an answer set of the logic program.
 \eexample
 \end{example}
 
@@ -197,8 +197,8 @@ c.
 :- c, not b.
 \end{lstlisting}
 Since \code{\pred{c}.} is a fact,
-atom \pred{c} must uncoditionally be true,
-so that it belongs to every model.
+atom \pred{c} must uncoditionally be true, i.e.,
+it belongs to every model.
 In view of this,
 the integrity constraint 
 \code{:-\:c,\:not\:\pred{b}.}
@@ -215,6 +215,78 @@ in Example~\ref{ex:as:two} augmented with \code{\pred{c}.}
 and \code{:-\:c,\:not\:\pred{b}.}
 \eexample
 \end{example}
+
+In the above examples, 
+we used propositional logic programs to exemplify the idea
+of an answer set: a model of a logic program such that all its true atoms are 
+(acyclicly) derivable.
+In practice, logic programs are typically non-propositional, i.e.,
+they include schematic rules with variables.
+The next example illustrates this.
+
+\begin{example}\label{ex:flies}
+Consider a child from south pole watching cartoons,
+where it sees a yellow bird that is not a penguin.
+The child knows that penguins can definitely not fly (due to small wingspread),
+but it is unsure about whether the yellow bird flies.
+This knowledge is generalized by
+the following schematic rules:
+%
+\lstinputlisting{examples/fly.lp} %[firstnumber=3]
+%
+The first rule expresses that it is generally possible that a bird flies,
+unless the contrary, subject of the second rule, is the case.
+The definite knowledge that penguins cannot fly
+is specified by the third rule.
+
+Later on, the child learns that the yellow bird
+is a chicken called ``tweety,''
+while its favorite penguin is called ``tux.''
+The knowledge about these two individuals is
+represented by the following facts:
+\lstinputlisting[numbers=none]{examples/bird.lp}
+
+When we instantiate the variable~\var{X} in the three schematic rules
+with \const{tweety} and \const{tux},
+we obtain the following ground rules:
+%
+\lstinputlisting[numbers=none,xrightmargin=-15pt,nolol]{examples/gfly.lp}
+%
+Further taking into account that \const{tweety} and \const{tux} are known to
+be birds, that \const{tux} is a penguin, while \const{tweety} is not, and that
+penguins can definitely not fly,
+we can simplify the previous ground rules to obtain the following ones:%
+\marginlabel{The reader can reproduce these ground rules
+             by invoking:\\
+             \code{\mbox{~}clingo -t \textbackslash\\
+                   \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/fly.lp}{fly.lp}}\\
+             or alternatively:\\
+             \code{\mbox{~}gringo -t \textbackslash\\
+                   \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/fly.lp}{fly.lp}}}
+%
+\lstinputlisting[numbers=none,nolol]{examples/sfly.lp}
+%
+Now it becomes apparent that \const{tweety}
+may fly or not, while \const{tux} surely does not fly.
+Thus, there are two answer sets for the three schematic rules above,
+instantiated with \const{tweety} and \const{tux}.%
+\marginlabel{To compute both answer sets, 
+             invoke:\\
+             \code{\mbox{~}clingo \attach{examples/bird.lp}{bird.lp} \textbackslash\\
+                   \mbox{~}\attach{examples/fly.lp}{fly.lp} 0}\\
+             or alternatively:\\
+             \code{\mbox{~}gringo \attach{examples/bird.lp}{bird.lp} \textbackslash\\
+                   \mbox{~}\attach{examples/fly.lp}{fly.lp} | clasp 0}}
+\eexample
+\end{example}
+
+Up to now, we have introduced terms, facts, (normal) rules, and integrity constraints.
+Before we proceed to describe handy extensions to this simple core language,
+keep in mind that the role of a rule (or fact) is always that an atom in the
+head can be derived to be true if the body is satisfied.
+Unlike this, an integrity constraint implements a test,
+but it cannot be used to derive any atom.
+
 
 Throughout this section we further extend the predicates that can be used 
 in a rule including comparison predicates (Section \ref{subsec:gringo:comp}) and aggregates (Section \ref{subsec:gringo:aggregate}).

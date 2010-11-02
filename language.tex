@@ -558,9 +558,10 @@ would require equation solving, which is however not performed by
 \index{Comparison Predicates!Greater or Equal, \code{>=}}
 
 Grounder \gringo\ and the grounding component of \clingo\ 
-feature a total among variable-free terms.
+feature a total order among variable-free terms.
 The following built-in predicates, which are evaluated during grounding, 
-enable term comparisons within the bodies of rules:
+enable term comparisons in the bodies of rules and on the right-hand sides of conditions
+(detailed in Section~\ref{subsec:gringo:condition}):
 \code{==} (equal),
 \code{!=} (not equal),
 \code{<} (less than),
@@ -627,58 +628,98 @@ the complementary comparison predicate ought to used
 
 
 \subsubsection{Assignments}\label{subsec:gringo:assign}
-\index{Literals!Assignments}
-\index{Literals!Assignments!Term Unification, \code{:=}}
-\index{Literals!Assignments!Variable Assignment, \code{=}}
+\index{Terms!Variables!Assignments}
+\index{Assignments}
+\index{Assignments!Variable Assignment, \code{=}}
+\index{Assignments!Variable Unification, \code{:=}}
 
-The built-in predicates~\code{:=} and ~\code{=} can be used in the body of a rule
-to unify a term on their right-hand side 
-to a (non-ground) term or variable on its left-hand side, respectively.
+Sometimes, it is desirable to define the value of a variable relative
+to a term, and to then reuse the variable as a shorthand.
+The built-in predicates~\code{=} and~\code{:=} admit unifying
+variables on their left-hand sides with terms on their right-hand sides
+in the bodies of rules and on the right-hand sides of conditions
+(detailed in Section~\ref{subsec:gringo:condition}).
 
 \begin{example}\label{ex:assign}
-The next program demonstrates how terms can be assigned to variables:%
+The usage of variable assignments is illustrated by the following logic program:%
 \marginlabel{%
-  The unique answer set of the program is obtained via call:\\
-  \code{\mbox{~}gringo -t \attach{examples/assign.lp}{assign.lp}}}%
+  The simplified ground program obtained from assignments
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/assign.lp}{assign.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo -t \attach{examples/assign.lp}{assign.lp}}}
 %
-\lstinputlisting{examples/assign.lp}
+\lstinputlisting[lastline=2,belowskip=0pt]{examples/assign.lp}%
+\lstinputlisting[firstline=3,aboveskip=0pt,numbers=none,nolol]{examples/assign.lp}
 %
-Line~4 contains four assignments, where the right-hand sides directly or indirectly
+The body of the rule in Line~2 contains four variable assignments,
+where the right-hand sides directly or indirectly
 depend on~\var{X} and~\var{Y}.
-These two variables are bound in Line~5 via atoms of predicate \pred{num}/$1$.
+The values of~\var{X} and~\var{Y} are obtained via atoms of the predicate \pred{num}/$1$.
 Also observe the different usage and role of built-in comparison predicate~\code{==}.
 \eexample
 \end{example}
 
 \begin{example}\label{ex:unify}
-The second program demonstrates the usage of \code{:=},
-which allows for terms on the left hand side:
+The usage of \code{:=},
+which allows for terms on its left-hand side,
+is illustrated by the following program:
 \marginlabel{%
-  The unique answer set of the program is obtained via call:\\
-  \code{\mbox{~}gringo -t \attach{examples/unify.lp}{unify.lp}}}%
+  The simplified ground program obtained from unifications
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/unify.lp}{unify.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo -t \attach{examples/unify.lp}{unify.lp}}}
 %
 \lstinputlisting{examples/unify.lp}
 %
-Here the term \code{f(a,X,X+1)} is unified with every function symbol provided by \code{sym}/$1$.
-Note the usage of \code{X+1} in the term.
-\gringo{} does not try to unify any term containing arithmetic 
-but in this example \code{X} occurs also directly as second argument of the argument
-and can thus be unified with.
-The term $X+1$ is merely a test that is deferred and checked later.
-For example, the fourth line is equivalent to:
-\begin{lstlisting}[firstnumber=6]
-unifyf(X) :- f(a,X,Y) := F, sym(F), Y == X + 1.
-\end{lstlisting}%
+Here, \code{\const{f}(\const{a},\var{X},\var{X}+\const{1})} or
+\code{(\const{a},\var{X},\var{X}+\const{1})}, respectively,
+is unified with instances of the predicate \code{sym}/$1$.
+To this end,
+arguments of \code{sym}/$1$ with matching arity
+are used to instantiate the variable~\var{X} occurring
+as the second argument in terms on the left-hand sides of~\code{:=}.
+With a value for~\var{X} at hand,
+we can further check whether the arithmetic evaluation of~\code{\var{X}+\const{1}},
+occurring as the third argument, coincides with the 
+corresponding value given on the right-hand side of~\code{:=}.
+%
+% Note the usage of \code{X+1} in the term.
+% \gringo{} does not try to unify any term containing arithmetic 
+% but in this example \code{X} occurs also directly as second argument of the argument
+% and can thus be unified with.
+% The term $X+1$ is merely a test that is deferred and checked later.
+% For example, the fourth line is equivalent to:
+% \begin{lstlisting}[firstnumber=6]
+% unifyf(X) :- f(a,X,Y) := F, sym(F), Y == X + 1.
+% \end{lstlisting}%
 \eexample
 \end{example}
 
 \begin{Note}
-that assignments to some extent can bind variables.
-Of course cyclic assignments cannot bind variables.
-For example the rule \code{p(X) :- X = Y, Y = X.} is rejected by \gringo{}.
-Either \code{X} or \code{Y} has to be provided by some positive predicate in this case.
-Additionally, unification is restricted to ground terms on the right hand side of the assignment, 
-that is, all variables on the right hand side have to be bound by some other predicate.
+A variable assignment (\code{=}) or unification (\code{:=})
+must not be preceded by \code{not}.
+Unlike with built-in comparison predicates,
+it is considered as
+a positive (body) literal in the sense of safeness (cf.\ Page~\pageref{pg:safe}),
+so that variables occurring on the left-hand side can be instantiated.
+However, this only works if assignments or unifications
+can be made acyclicly, i.e.,
+it must be possible to instantiate the right-hand side
+without knowing the values of variables on
+the left-hand side.
+E.g., the rule \code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\var{X}.}
+is not accepted by \gringo\ or the grounding component of \clingo\
+because values for~\var{X} rely on values for~\var{Y}, and vice versa.
+\index{Logic Programs!Safeness}%
+%
+% that assignments to some extent can bind variables.
+% Of course cyclic assignments cannot bind variables.
+% For example the rule  is rejected by \gringo{}.
+% Either \code{X} or \code{Y} has to be provided by some positive predicate in this case.
+% Additionally, unification is restricted to ground terms on the right hand side of the assignment, 
+% that is, all variables on the right hand side have to be bound by some other predicate.
 \end{Note}
 
 \subsubsection{Intervals}\label{subsec:gringo:interval}

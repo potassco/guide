@@ -351,48 +351,83 @@ as described in the following, are used.
 % are provided in Section~\ref{sec:examples}.
 
 \subsubsection{Classical Negation}\label{subsec:gringo:negation}
-\index{Literals!Classical Negation}
+\index{Logic Programs!Atoms!Classical Negation}
 
-In logic programs, connective \code{not} expresses default negation,
-that is, a literal $\code{not}~A$ is assumed to hold unless~$A$ is derived.
-In contrast, the classical (or strong) negation of some proposition
-holds if the complement of the proposition is derived~\cite{gellif91a}.
+% In logic programs, 
+The connective \code{not} expresses default negation,
+i.e., a literal $\code{not}~A$ is assumed to hold unless atom~$A$ is derived to be true.
+In contrast, the classical (or strong) negation of an atom~\cite{gellif91a} % proposition
+holds only if % the complement of the proposition 
+it can derived.
 Classical negation, indicated by symbol ``\code{-},'' is permitted in front of atoms.
-That is, if~$A$ is an atom, then~$\code{-}A$ is the complement of~$A$.
-Semantically, $\code{-}A$ is simply a new atom,
-with the additional condition that~$A$ and~$\code{-}A$ must not jointly hold.
-Observe that classical negation is merely a syntactic feature that can be
-implemented via integrity constraints whose effect is to eliminate
-any answer set candidate containing complementary atoms.
+That is, if $A$ is an atom, then $\code{-}A$ is 
+an atom representing the complement of~$A$.
+% Semantically, $\code{-}A$ is simply a new atom,
+The semantic relationship between $A$ and~$\code{-}A$
+is simply that they 
+% with the additional condition that~$A$ and~$\code{-}A$
+must not jointly hold.
+Hence,
+classical negation can be understood as a syntactic feature
+allowing us to impose an integrity \code{:-\;$A$,\:-$A$.}
+without explicitly writing it in a logic program.
+Depending on the logic program at hand,
+it may be possible that neither~$A$ nor~$\code{-}A$ is contained in an answer set,
+thus representing a state where the truth and the falsity of~$A$ are both uncertain.
+% Observe that 
+% that can be
+% implemented via integrity constraints whose effect is to eliminate
+% any answer set candidate containing complementary atoms.
 
 \begin{example}\label{ex:flies:neg}
-Consider a logic program comprising the following facts:
+Using classical negation,
+we can rewrite the schematic rules in Example~\ref{ex:flies}
+in the following way:
+% Consider a logic program comprising the following facts:
 %
-\lstinputlisting[nolol]{examples/bird.lp}
-\lstinputlisting[firstnumber=3]{examples/flycn.lp}
+% \lstinputlisting[nolol]{examples/bird.lp}
+\lstinputlisting{examples/flycn.lp} % [firstnumber=3]
 %
-Logically, classical negation is reflected by
-(implicit) integrity constraints as follows:%
-\marginlabel{By invoking\\
+Given the individuals \const{tweety} and \const{tux},
+classical negation is reflected by 
+the following (implicit) integrity constraints:%
+\marginlabel{By invoking:\\
+  \code{\mbox{~}clingo -t \textbackslash\\
+        \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/flycn.lp}{flycn.lp}}\\
+  or alternatively:\\
   \code{\mbox{~}gringo -t \textbackslash\\
-        \mbox{~}\attach{examples/bird.lp}{bird.lp}~\attach{examples/flycn.lp}{flycn.lp}}
-the reader can observe that \gringo\ indeed produces the integrity constraint
-in Line~7.}
+        \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/flycn.lp}{flycn.lp}}\\
+the reader can observe that % \gringo\ indeed produces 
+the integrity constraint in Line~4 is indeed part of the grounding.
+The second one in Line 5 is not printed;
+it becomes obsolete by a static analysis exhibiting that
+\const{tux} does surely not fly.}
 %
-\begin{lstlisting}[firstnumber=6]
-:- flies(tux),    -flies(tux).
+\begin{lstlisting}[firstnumber=4]
 :- flies(tweety), -flies(tweety).
+:- flies(tux),    -flies(tux).
 \end{lstlisting}
-The program has two answer sets.
-One contains \code{flies(tweety)} and the other contains \code{-flies(tweety)}.
-Let us now add a new fact to the program:
-\begin{lstlisting}[firstnumber=8]
+There are still two answer sets,
+containing \code{-\pred{flies}(\const{tux})} and 
+either \code{\pred{flies}(\const{tweety})} or \code{-\pred{flies}(\const{tweety})}.
+
+Now assume that we add the following fact to the program:
+\begin{lstlisting}[numbers=none]
 flies(tux).
 \end{lstlisting}
-There no longer is any answer set for our new program using classical negation.
-In fact, answer set candidates that contain both
-\code{\pred{flies}(\const{tux})} and
-\code{\pred{-flies}(\const{tux})} violate the integrity constraint in Line~6.
+Then,
+\code{\pred{flies}(\const{tux})} must unconditionally be true,
+and \code{-\pred{flies}(\const{tux})} is still derived by 
+an instance of the third schematic rule.
+% There no longer is any answer set for our new program using classical negation.
+% In fact, answer set candidates that contain both
+Since every answer set candidate containing
+both \code{\pred{flies}(\const{tux})} and \code{-\pred{flies}(\const{tux})}
+triggers
+% \code{\pred{flies}(\const{tux})} and
+% \code{\pred{-flies}(\const{tux})} violate 
+the (implicit) integrity constraint in Line~5,
+there no longer is any answer set.
 \eexample
 \end{example}
 

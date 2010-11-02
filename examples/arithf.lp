@@ -5,8 +5,8 @@ minus      (L  -   R ) :- left(L), right(R).
 uminus     (     - R ) :-          right(R).
 times      (L  *   R ) :- left(L), right(R).
 divide1    (L  /   R ) :- left(L), right(R).
-divide2    (R #div L ) :- left(L), right(R).
-divide2    (#div(R,L)) :- left(L), right(R).
+divide2    (L #div R ) :- left(L), right(R).
+divide3    (#div(L,R)) :- left(L), right(R).
 modulo1    (L  \   R ) :- left(L), right(R).
 modulo2    (L #mod R ) :- left(L), right(R).
 modulo3    (#mod(L,R)) :- left(L), right(R).

@@ -20,19 +20,6 @@
   \indexspace
 
   \item Literals, \hyperpage{14}
-    \subitem Arithmetic Functions, \hyperpage{17}
-      \subsubitem Absolute Value, \code{\#abs}, \hyperpage{17}
-      \subsubitem Addition, \code{+}, \hyperpage{17}
-      \subsubitem Bitwise AND, \code{\&}, \hyperpage{17}
-      \subsubitem Bitwise Complement, \code{\textasciitilde}, 
-		\hyperpage{17}
-      \subsubitem Bitwise OR, \code{?}, \hyperpage{17}
-      \subsubitem Bitwise XOR, \code{\^}, \hyperpage{17}
-      \subsubitem Division, \code{/}, \hyperpage{17}
-      \subsubitem Exponentation, \code{**}, \hyperpage{17}
-      \subsubitem Modulo, \code{\%}, \hyperpage{17}
-      \subsubitem Multiplication, \code{*}, \hyperpage{17}
-      \subsubitem Subtraction, \code{-}, \hyperpage{17}
     \subitem Assignments, \hyperpage{19}
       \subsubitem Term Unification, \code{:=}, \hyperpage{19}
       \subsubitem Variable Assignment, \code{=}, \hyperpage{19}
@@ -40,6 +27,7 @@
       \subsubitem Equality, \code{==}, \hyperpage{18}
       \subsubitem Greater or Equal\code{>=}, \hyperpage{18}
       \subsubitem Greater,\code{>}, \hyperpage{18}
+      \subsubitem Inequality, \code{!=}, \hyperpage{18}
       \subsubitem Less or Equal, \code{<=}, \hyperpage{18}
       \subsubitem Less, \code{<}, \hyperpage{18}
     \subitem Default Negation, \hyperpage{14}
@@ -84,8 +72,26 @@
   \item Terms, \hyperpage{12}
     \subitem \code{\#infimum}, \hyperpage{12}
     \subitem \code{\#supremum}, \hyperpage{12}
+    \subitem Arithmetic Functions, \hyperpage{17}
+      \subsubitem Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}, 
+		\hyperpage{17}
+      \subsubitem Addition, \code{+}, \hyperpage{17}
+      \subsubitem Bitwise AND, \code{\&}, \hyperpage{17}
+      \subsubitem Bitwise Complement, \code{\textasciitilde}, 
+		\hyperpage{17}
+      \subsubitem Bitwise OR, \code{?}, \hyperpage{17}
+      \subsubitem Bitwise XOR, \code{\^}, \hyperpage{17}
+      \subsubitem Division, \code{/}, \code{\#div}, \hyperpage{17}
+      \subsubitem Exponentiation, \code{**}, \code{\#pow}, 
+		\hyperpage{17}
+      \subsubitem Modulo, \code{\textbackslash}, \code{\#mod}, 
+		\hyperpage{17}
+      \subsubitem Multiplication, \code{*}, \hyperpage{17}
+      \subsubitem Subtraction, \code{-}, \hyperpage{17}
+      \subsubitem Unary Minus, \code{-}, \hyperpage{17}
     \subitem Constants, \hyperpage{12}
     \subitem Functions, \hyperpage{12}
+    \subitem Integers, \hyperpage{17}
     \subitem Intervals, \hyperpage{20}
     \subitem Lua Function Call, \hyperpage{34}
     \subitem Pooling, \hyperpage{23}

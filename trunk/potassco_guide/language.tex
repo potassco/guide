@@ -291,6 +291,7 @@ takes care of instantiating variables
 such that an equivalent propositional logic program is obtained.
 To this end,
 rules are required to be \emph{safe}, 
+\label{pg:safe}%
 \index{Logic Programs!Safeness}%
 i.e.,
 all variables in a rule must occur in some positive literal
@@ -472,28 +473,33 @@ instead of disjunction, unless the latter is required for complexity reasons.
 
 
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}
-\index{Literals!Arithmetic Functions}
-\index{Literals!Arithmetic Functions!Addition, \code{+}}
-\index{Literals!Arithmetic Functions!Subtraction, \code{-}}
-\index{Literals!Arithmetic Functions!Multiplication, \code{*}}
-\index{Literals!Arithmetic Functions!Division, \code{/}}
-\index{Literals!Arithmetic Functions!Modulo, \code{\%}}
-\index{Literals!Arithmetic Functions!Exponentation, \code{**}}
-\index{Literals!Arithmetic Functions!Absolute Value, \code{\#abs}}
-\index{Literals!Arithmetic Functions!Bitwise AND, \code{\&}}
-\index{Literals!Arithmetic Functions!Bitwise OR, \code{?}}
-\index{Literals!Arithmetic Functions!Bitwise XOR, \code{\^}}
-\index{Literals!Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
+\index{Terms!Integers}
+\index{Terms!Arithmetic Functions}
+\index{Terms!Arithmetic Functions!Addition, \code{+}}
+\index{Terms!Arithmetic Functions!Subtraction, \code{-}}
+\index{Terms!Arithmetic Functions!Unary Minus, \code{-}}
+\index{Terms!Arithmetic Functions!Multiplication, \code{*}}
+\index{Terms!Arithmetic Functions!Division, \code{/}, \code{\#div}}
+\index{Terms!Arithmetic Functions!Modulo, \code{\textbackslash}, \code{\#mod}}
+\index{Terms!Arithmetic Functions!Exponentiation, \code{**}, \code{\#pow}}
+\index{Terms!Arithmetic Functions!Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}}
+\index{Terms!Arithmetic Functions!Bitwise AND, \code{\&}}
+\index{Terms!Arithmetic Functions!Bitwise OR, \code{?}}
+\index{Terms!Arithmetic Functions!Bitwise XOR, \code{\^}}
+\index{Terms!Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
 
-\gringo\ and \clingo\ support a number of arithmetic functions that
+Besides integers (constant arithmetic functions),
+written as sequences of the digits \code{0}\dots\code{9}
+possibly preceded by ``\code{-},''
+\gringo\ and \clingo\ support a variety of arithmetic functions that
 are evaluated during grounding.
 The following symbols are used for these functions:
 \code{+} (addition),
 \code{-} (subtraction, unary minus),
 \code{*} (multiplication),
 \code{/} or \code{\#div} (integer division),
-\code{\textbackslash} or \code{\#mod} (modulo function),
-\code{**} or \code{\#pow} (exponentation),
+\code{\textbackslash} or \code{\#mod} (modulo),
+\code{**} or \code{\#pow} (exponentiation),
 \code{|$\cdot$|} or \code{\#abs} (absolute value),
 \code{\&} (bitwise AND),
 \code{?} (bitwise OR),
@@ -506,33 +512,43 @@ The usage of arithmetic functions is illustrated by the logic program:%
   The unique answer set of the program,
   obtained after evaluating all arithmetic functions,
   can be inspected by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/arithf.lp}{arithf.lp}}\\
+  or alternatively:\\
   \code{\mbox{~}gringo -t \attach{examples/arithf.lp}{arithf.lp}}}
 %
 \lstinputlisting{examples/arithf.lp}
 %
-Note that variables~\var{L} and~\var{R} are instantiated to~\const{7} and~\const{2},
+Note that the variables~\var{L} and~\var{R} are instantiated to~\const{7} and~\const{2},
 respectively, before arithmetic evaluations.
 Consecutive and non-separative (e.g., before ``\code{(}'')
-spaces can also be dropped,
-while spaces after tokens \code{\#div} and \code{\#mod} are mandatory.
-Furthermore, the argument of function \code{\#abs}, \code{\#div}, and \code{\#mod} must be enclosed in parentheses.
+spaces can optionally be dropped,
+while spaces after the tokens \code{\#div} and \code{\#mod} are mandatory
+if written in infix notation.
+In prefix notation, the arguments of \code{\#abs}, \code{\#div}, and \code{\#mod}
+must be enclosed in parentheses.
 The four bitwise functions apply to signed integers,
-using the two's complement of a negative integer.
+using two's complement arithmetic. % of a negative integer.
 \eexample
 \end{example}
 
 \begin{Note}
-that it is important that variables
-in the scope of an arithmetic function are not bound by a corresponding atom.
-For instance, the rule \code{p(X) :- p(X+1).} is not safe but \code{p(X-1) :- p(X).} is.
-Although, the latter might produce an infinite grounding 
-and \gringo{} not necessarily halts when given such an input.
+An occurrence of a variable in the scope of an arithmetic function
+does not count as a positive occurrence in the sense of safeness (cf.\ Page~\pageref{pg:safe}).
+E.g., the rule \code{\pred{p}(\var{X})\,:-\:\pred{p}(\var{X}+\const{1}).}
+is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\var{X}).} is.
+(Note that this rule still leads to an infinite grounding
+ if there is a fact like \code{\pred{p}(\const{42}).})
+% Although, the latter might produce an infinite grounding 
+% and \gringo{} not necessarily halts when given such an input.
+Indeed, inferring matching values for~\var{X} when given a value for \var{X}+\const{1}
+would require equation solving, which is however not performed by
+\gringo\ or the grounding component of \clingo.
 \end{Note}
 
 \subsubsection{Built-In Comparison Predicates}\label{subsec:gringo:comp}
 \index{Literals!Comparison Predicates}
 \index{Literals!Comparison Predicates!Equality, \code{==}}
-\index{Literals!Comparison Predicates!Inequality, \code{!=}}
+\index{Literals!Comparison Predicates!Inequality, \code{"!=}}
 \index{Literals!Comparison Predicates!Less, \code{<}}
 \index{Literals!Comparison Predicates!Less or Equal, \code{<=}}
 \index{Literals!Comparison Predicates!Greater,\code{>}}

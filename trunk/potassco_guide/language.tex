@@ -104,19 +104,23 @@ Rules of the following forms are admitted in a
 \\
 \textbf{Integrity Constraint:} & &~\code{:-}~$L_1\code{,}\dots\code{,}L_n$\code{.}
 \end{tabular}
-\index{Statements!Rules}%
-\index{Statements!Facts}%
-\index{Statements!Integrity Constraints}%
+\index{Logic Programs}
+\index{Logic Programs!Rules}%
+\index{Logic Programs!Facts}%
+\index{Logic Programs!Integrity Constraints}%
 \newline
 
 \noindent
 The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same 
 syntactic form as a constant or function.
+\index{Logic Programs!Atoms}%
 In the \emph{body} of a rule or an integrity constraint,
 every $L_j$ for $1\leq j\leq n$ is a \emph{literal} of the form $A$ or $\code{not}~A$,
 where $A$ is an atom and
 the connective \code{not} denotes default negation.
+\index{Literals}%
 \index{Literals!Default Negation}%
+\index{Logic Programs!Literals}%
 % The set of literals $\{L_1,\dots,L_n\}$ is called the body of the rule.
 % Facts have an empty body.
 We say that a literal~$L$ is \emph{positive} if it is an atom,
@@ -197,7 +201,7 @@ c.
 :- c, not b.
 \end{lstlisting}
 Since \code{\pred{c}.} is a fact,
-atom \pred{c} must uncoditionally be true, i.e.,
+atom \pred{c} must unconditionally be true, i.e.,
 it belongs to every model.
 In view of this,
 the integrity constraint 
@@ -280,49 +284,71 @@ instantiated with \const{tweety} and \const{tux}.%
 \eexample
 \end{example}
 
+The above example illustrated how variables are used to represent all instances of
+rules w.r.t.\ the language of a logic program.
+In fact, grounder \gringo\ or the grounding component of \clingo, respectively,
+takes care of instantiating variables
+such that an equivalent propositional logic program is obtained.
+To this end,
+rules are required to be \emph{safe}, 
+\index{Logic Programs!Safeness}%
+i.e.,
+all variables in a rule must occur in some positive literal
+(a literal not preceded by \code{not}) in the body of the rule.%
+\footnote{%
+The only exception to this are \emph{local} variables bound by conditions,
+as detailed in Section~\ref{subsec:gringo:condition}.} 
+For instance, the first two schematic rules in Example~\ref{ex:flies} 
+are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
+This tells \gringo\ or the grounding component of \clingo, respectively,
+that the values to be substituted for~\var{X} are limited to birds.
+
+%If a variable appears positively in some predicate, then we say that this predicate binds the variable.
+
 Up to now, we have introduced terms, facts, (normal) rules, and integrity constraints.
 Before we proceed to describe handy extensions to this simple core language,
-keep in mind that the role of a rule (or fact) is always that an atom in the
+keep in mind that the role of a rule (or fact) is that an atom in the
 head can be derived to be true if the body is satisfied.
 Unlike this, an integrity constraint implements a test,
 but it cannot be used to derive any atom.
+This universal meaning still applies when more sophisticated language constructs,
+as described in the following, are used.
 
+% Throughout this section we further extend the predicates that can be used 
+% in a rule including comparison predicates (Section \ref{subsec:gringo:comp}) and aggregates (Section \ref{subsec:gringo:aggregate}).
+% Furthermore, \gringo{} expects rules to be safe, i.e., \index{Safe Program}
+% all variables that appear in a rule have to appear in some positive literal (a literal not preceded by \code{not}) in the body.
+% If a variable appears positively in some predicate, then we say that this predicate binds the variable.
 
-Throughout this section we further extend the predicates that can be used 
-in a rule including comparison predicates (Section \ref{subsec:gringo:comp}) and aggregates (Section \ref{subsec:gringo:aggregate}).
-Furthermore, \gringo{} expects rules to be safe, i.e., \index{Safe Program}
-all variables that appear in a rule have to appear in some positive literal (a literal not preceded by \code{not}) in the body.
-If a variable appears positively in some predicate, then we say that this predicate binds the variable.
+% Intuitively, the head of a rule has to be true whenever all its body literals are true.
+% In ASP every atom needs some derivation, i.e., 
+% an atom cannot be true if there is no rule deriving it.
+% This implies that only atoms appearing in some head can appear in answer sets.
+% Furthermore, derivations%
+% \footnote{There are extensions like disjunctions 
+% that go beyond simple derivability and also require minimality w.r.t. a reduct. 
+% We do not cover the semantics of such constraints in this guide.}%
+% have to be acyclic,
+% a feature that is important to model reachability.
+% As a simple example, consider the program \code{a :- b. b :- a.}
+% The only answer set to this program is the empty set.
+% Adding either \code{a.} or \code{b.} to the program results in the answer set $\{a,b\}$.
+% Finally, note that default negation is ignored when checking for acyclic derivations 
+% (we do not need a reason for an atom being false).
+% Default negation can be used to express choices, e.g., the program \code{a :- not b. b :- not a.} 
+% has the two answer sets $\{a\}$ and $\{b\}$.
+% But in practice it is never needed to express choices this way.
+% For example in the introductory example in Section~\ref{sec:quickstart} we used a cardinality 
+% constraint, which provides a much more readable way to introduce choices.
+% %\com{This paragraph contains a lot of information. Could someone help me making it more readable?}
 
-Intuitively, the head of a rule has to be true whenever all its body literals are true.
-In ASP every atom needs some derivation, i.e., 
-an atom cannot be true if there is no rule deriving it.
-This implies that only atoms appearing in some head can appear in answer sets.
-Furthermore, derivations%
-\footnote{There are extensions like disjunctions 
-that go beyond simple derivability and also require minimality w.r.t. a reduct. 
-We do not cover the semantics of such constraints in this guide.}%
-have to be acyclic,
-a feature that is important to model reachability.
-As a simple example, consider the program \code{a :- b. b :- a.}
-The only answer set to this program is the empty set.
-Adding either \code{a.} or \code{b.} to the program results in the answer set $\{a,b\}$.
-Finally, note that default negation is ignored when checking for acyclic derivations 
-(we do not need a reason for an atom being false).
-Default negation can be used to express choices, e.g., the program \code{a :- not b. b :- not a.} 
-has the two answer sets $\{a\}$ and $\{b\}$.
-But in practice it is never needed to express choices this way.
-For example in the introductory example in Section~\ref{sec:quickstart} we used a cardinality 
-constraint, which provides a much more readable way to introduce choices.
-%\com{This paragraph contains a lot of information. Could someone help me making it more readable?}
-
-A fact has an empty body and thus its associated head predicate is always true 
-and appears in all answer sets.
-On the other hand, integrity constraints eliminate answer set candidates.
-They are merely tests that discard unwanted answer sets.
-That is, there are no answer sets that satisfy all literals in an integrity constraint.
-Elaborate examples on the usage of facts, rules, and integrity constraints
-are provided in Section~\ref{sec:examples}.
+% A fact has an empty body and thus its associated head predicate is always true 
+% and appears in all answer sets.
+% On the other hand, integrity constraints eliminate answer set candidates.
+% They are merely tests that discard unwanted answer sets.
+% That is, there are no answer sets that satisfy all literals in an integrity constraint.
+% Elaborate examples on the usage of facts, rules, and integrity constraints
+% are provided in Section~\ref{sec:examples}.
 
 \subsubsection{Classical Negation}\label{subsec:gringo:negation}
 \index{Literals!Classical Negation}

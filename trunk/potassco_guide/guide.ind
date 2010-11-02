@@ -37,7 +37,6 @@
     \subitem Assignments, \hyperpage{19}
       \subsubitem Term Unification, \code{:=}, \hyperpage{19}
       \subsubitem Variable Assignment, \code{=}, \hyperpage{19}
-    \subitem Classical Negation, \hyperpage{16}
     \subitem Comparison Predicates, \hyperpage{18}
       \subsubitem Equality, \code{==}, \hyperpage{18}
       \subsubitem Greater or Equal\code{>=}, \hyperpage{18}
@@ -47,6 +46,7 @@
     \subitem Default Negation, \hyperpage{14}
   \item Logic Programs, \hyperpage{14}
     \subitem Atoms, \hyperpage{14}
+      \subsubitem Classical Negation, \hyperpage{16}
     \subitem Facts, \hyperpage{14}
     \subitem Integrity Constraints, \hyperpage{14}
     \subitem Literals, \hyperpage{14}

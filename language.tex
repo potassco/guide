@@ -433,35 +433,42 @@ there no longer is any answer set.
 
 
 \subsubsection{Disjunction}\label{subsec:gringo:disjunction}
-\index{Aggregates!Disjunction}
-Disjunctive logic programs permit connective~``\code{|}'' between atoms in rule heads.
-A disjunction is true if at least one of its atoms is true.
-Additionally, logic programs have to satisfy a minimality criterion, 
-which we do not detail in this guide.
-The simple program \code{a | b.} has the two answer sets $\{a\}$ and $\{b\}$ but
-does not admit the answer set ${a,b}$ because it is no minimal model.
+\index{Logic Programs!Disjunction}
 
-In general, the use of disjunction however increases
+Disjunctive logic programs permit connective~``\code{|}'' between atoms in rule heads.
+A disjunctive head holds if at least one of its atoms is true.
+Answer sets of a disjunctive logic program satisfy a minimality criterion
+that we do not detail here
+(see~\cite{eitpol06a} for an implementation methodology in disjunctive ASP).
+We only mention that the simple disjunctive program \code{\pred{a}\:|\:\pred{b}.} has two answer sets,
+one containing~\pred{a} and another one containing~\pred{b},
+while both atoms do not jointly belong to an answer set.
+
+In general, the use of disjunction may % however
+increase
 computational complexity~\cite{eitgot95a}.
 This is why \clingo%
-\footnote{Run as a monolithic system performing both grounding and solving.}
+\footnote{Run as a monolithic system performing both grounding and \emph{solving}.}
 and solvers like 
 \assat~\cite{linzha04a},
-\clasp~\cite{gekanesc07b},
+\clasp~\cite{gekanesc07a},
 \nomorepp~\cite{angelinesc05c},
 \smodels~\cite{siniso02a}, and
 \smodelscc~\cite{warsch04a}
-do not work on disjunctive programs.
+do not % work on 
+handle disjunctive programs.
 Rather,
 \claspD~\cite{drgegrkakoossc08a},
 \cmodels~\cite{gilima06a,lierler05a}, or
 \gnt~\cite{janisesiyo06a}
-need to be used for solving a disjunctive program.%
-\footnote{System \dlv~\cite{dlv03a} also deals with disjunctive programs,
+is needed % to be used 
+for solving a disjunctive program.%
+\footnote{% System 
+  \dlv~\cite{dlv03a} also deals with disjunctive programs,
   but it uses a different syntax than presented here.}
-We thus suggest to use ``choice constructs'' (cf.\ Section~\ref{subsec:gringo:aggregate})
-instead of disjunction, unless the latter is required for complexity reasons
-(see~\cite{eitpol06a} for an implementation methodology in disjunctive ASP).
+We % thus 
+suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
+instead of disjunction, unless the latter is required for complexity reasons.
 
 
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}

@@ -9,6 +9,32 @@
     \subitem Minimum, \code{\#min}, \hyperpage{24}
     \subitem Odd Parity, \code{\#odd}, \hyperpage{24}
     \subitem Sum, \code{\#sum}, \hyperpage{24}
+  \item Arithmetic Functions, \hyperpage{17}
+    \subitem Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}, 
+		\hyperpage{17}
+    \subitem Addition, \code{+}, \hyperpage{17}
+    \subitem Bitwise AND, \code{\&}, \hyperpage{17}
+    \subitem Bitwise Complement, \code{\textasciitilde}, \hyperpage{17}
+    \subitem Bitwise OR, \code{?}, \hyperpage{17}
+    \subitem Bitwise XOR, \code{\^}, \hyperpage{17}
+    \subitem Division, \code{/}, \code{\#div}, \hyperpage{17}
+    \subitem Exponentiation, \code{**}, \code{\#pow}, \hyperpage{17}
+    \subitem Integers, \hyperpage{17}
+    \subitem Modulo, \code{\textbackslash}, \code{\#mod}, 
+		\hyperpage{17}
+    \subitem Multiplication, \code{*}, \hyperpage{17}
+    \subitem Subtraction, \code{-}, \hyperpage{17}
+    \subitem Unary Minus, \code{-}, \hyperpage{17}
+
+  \indexspace
+
+  \item Comparison Predicates, \hyperpage{18}
+    \subitem Equality, \code{==}, \hyperpage{18}
+    \subitem Greater or Equal, \code{>=}, \hyperpage{18}
+    \subitem Greater, \code{>}, \hyperpage{18}
+    \subitem Inequality, \code{!=}, \hyperpage{18}
+    \subitem Less or Equal, \code{<=}, \hyperpage{18}
+    \subitem Less, \code{<}, \hyperpage{18}
 
   \indexspace
 
@@ -19,18 +45,10 @@
 
   \indexspace
 
-  \item Literals, \hyperpage{14}
+  \item Literals
     \subitem Assignments, \hyperpage{19}
       \subsubitem Term Unification, \code{:=}, \hyperpage{19}
       \subsubitem Variable Assignment, \code{=}, \hyperpage{19}
-    \subitem Comparison Predicates, \hyperpage{18}
-      \subsubitem Equality, \code{==}, \hyperpage{18}
-      \subsubitem Greater or Equal\code{>=}, \hyperpage{18}
-      \subsubitem Greater,\code{>}, \hyperpage{18}
-      \subsubitem Inequality, \code{!=}, \hyperpage{18}
-      \subsubitem Less or Equal, \code{<=}, \hyperpage{18}
-      \subsubitem Less, \code{<}, \hyperpage{18}
-    \subitem Default Negation, \hyperpage{14}
   \item Logic Programs, \hyperpage{14}
     \subitem Atoms, \hyperpage{14}
       \subsubitem Classical Negation, \hyperpage{16}
@@ -38,8 +56,9 @@
     \subitem Facts, \hyperpage{14}
     \subitem Integrity Constraints, \hyperpage{14}
     \subitem Literals, \hyperpage{14}
+      \subsubitem Default Negation, \hyperpage{14}
     \subitem Rules, \hyperpage{14}
-    \subitem Safeness, \hyperpage{16}
+    \subitem Safeness, \hyperpage{16}, \hyperpage{18}
   \item Lua, \hyperpage{34}
     \subitem Assignment Metatable, \hyperpage{36}
     \subitem Function Call, \hyperpage{34}
@@ -73,22 +92,6 @@
     \subitem \code{\#infimum}, \hyperpage{12}
     \subitem \code{\#supremum}, \hyperpage{12}
     \subitem Arithmetic Functions, \hyperpage{17}
-      \subsubitem Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}, 
-		\hyperpage{17}
-      \subsubitem Addition, \code{+}, \hyperpage{17}
-      \subsubitem Bitwise AND, \code{\&}, \hyperpage{17}
-      \subsubitem Bitwise Complement, \code{\textasciitilde}, 
-		\hyperpage{17}
-      \subsubitem Bitwise OR, \code{?}, \hyperpage{17}
-      \subsubitem Bitwise XOR, \code{\^}, \hyperpage{17}
-      \subsubitem Division, \code{/}, \code{\#div}, \hyperpage{17}
-      \subsubitem Exponentiation, \code{**}, \code{\#pow}, 
-		\hyperpage{17}
-      \subsubitem Modulo, \code{\textbackslash}, \code{\#mod}, 
-		\hyperpage{17}
-      \subsubitem Multiplication, \code{*}, \hyperpage{17}
-      \subsubitem Subtraction, \code{-}, \hyperpage{17}
-      \subsubitem Unary Minus, \code{-}, \hyperpage{17}
     \subitem Constants, \hyperpage{12}
     \subitem Functions, \hyperpage{12}
     \subitem Integers, \hyperpage{17}

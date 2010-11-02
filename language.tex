@@ -118,9 +118,9 @@ In the \emph{body} of a rule or an integrity constraint,
 every $L_j$ for $1\leq j\leq n$ is a \emph{literal} of the form $A$ or $\code{not}~A$,
 where $A$ is an atom and
 the connective \code{not} denotes default negation.
-\index{Literals}%
-\index{Literals!Default Negation}%
+%\index{Literals}%
 \index{Logic Programs!Literals}%
+\index{Logic Programs!Literals!Default Negation}%
 % The set of literals $\{L_1,\dots,L_n\}$ is called the body of the rule.
 % Facts have an empty body.
 We say that a literal~$L$ is \emph{positive} if it is an atom,
@@ -475,18 +475,20 @@ instead of disjunction, unless the latter is required for complexity reasons.
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}
 \index{Terms!Integers}
 \index{Terms!Arithmetic Functions}
-\index{Terms!Arithmetic Functions!Addition, \code{+}}
-\index{Terms!Arithmetic Functions!Subtraction, \code{-}}
-\index{Terms!Arithmetic Functions!Unary Minus, \code{-}}
-\index{Terms!Arithmetic Functions!Multiplication, \code{*}}
-\index{Terms!Arithmetic Functions!Division, \code{/}, \code{\#div}}
-\index{Terms!Arithmetic Functions!Modulo, \code{\textbackslash}, \code{\#mod}}
-\index{Terms!Arithmetic Functions!Exponentiation, \code{**}, \code{\#pow}}
-\index{Terms!Arithmetic Functions!Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}}
-\index{Terms!Arithmetic Functions!Bitwise AND, \code{\&}}
-\index{Terms!Arithmetic Functions!Bitwise OR, \code{?}}
-\index{Terms!Arithmetic Functions!Bitwise XOR, \code{\^}}
-\index{Terms!Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
+\index{Arithmetic Functions}
+\index{Arithmetic Functions!Integers}
+\index{Arithmetic Functions!Addition, \code{+}}
+\index{Arithmetic Functions!Subtraction, \code{-}}
+\index{Arithmetic Functions!Unary Minus, \code{-}}
+\index{Arithmetic Functions!Multiplication, \code{*}}
+\index{Arithmetic Functions!Division, \code{/}, \code{\#div}}
+\index{Arithmetic Functions!Modulo, \code{\textbackslash}, \code{\#mod}}
+\index{Arithmetic Functions!Exponentiation, \code{**}, \code{\#pow}}
+\index{Arithmetic Functions!Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}}
+\index{Arithmetic Functions!Bitwise AND, \code{\&}}
+\index{Arithmetic Functions!Bitwise OR, \code{?}}
+\index{Arithmetic Functions!Bitwise XOR, \code{\^}}
+\index{Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
 
 Besides integers (constant arithmetic functions),
 written as sequences of the digits \code{0}\dots\code{9}
@@ -543,19 +545,22 @@ is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\
 Indeed, inferring matching values for~\var{X} when given a value for \var{X}+\const{1}
 would require equation solving, which is however not performed by
 \gringo\ or the grounding component of \clingo.
+\index{Logic Programs!Safeness}%
 \end{Note}
 
 \subsubsection{Built-In Comparison Predicates}\label{subsec:gringo:comp}
-\index{Literals!Comparison Predicates}
-\index{Literals!Comparison Predicates!Equality, \code{==}}
-\index{Literals!Comparison Predicates!Inequality, \code{"!=}}
-\index{Literals!Comparison Predicates!Less, \code{<}}
-\index{Literals!Comparison Predicates!Less or Equal, \code{<=}}
-\index{Literals!Comparison Predicates!Greater,\code{>}}
-\index{Literals!Comparison Predicates!Greater or Equal\code{>=}}
+\index{Comparison Predicates}
+\index{Comparison Predicates!Equality, \code{==}}
+\index{Comparison Predicates!Inequality, \code{"!=}}
+\index{Comparison Predicates!Less, \code{<}}
+\index{Comparison Predicates!Less or Equal, \code{<=}}
+\index{Comparison Predicates!Greater, \code{>}}
+\index{Comparison Predicates!Greater or Equal, \code{>=}}
 
-The following built-in predicates permit term comparisons
-within the bodies of rules:
+Grounder \gringo\ and the grounding component of \clingo\ 
+feature a total among variable-free terms.
+The following built-in predicates, which are evaluated during grounding, 
+enable term comparisons within the bodies of rules:
 \code{==} (equal),
 \code{!=} (not equal),
 \code{<} (less than),
@@ -564,38 +569,60 @@ within the bodies of rules:
 \code{>=} (greater than or equal).
 
 \begin{example}\label{ex:arith:pred}
-The usage of comparison predicates is illustrated by the logic program:%
+The application of comparison predicates to integers
+is illustrated by the following logic program:%
 \marginlabel{%
-  The unique answer set of the program is obtained via call:\\
+  The simplified ground program obtained by evaluating built-ins
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/arithc.lp}{arithc.lp}}
+  or alternatively:\\
   \code{\mbox{~}gringo -t \attach{examples/arithc.lp}{arithc.lp}}}
 %
 \lstinputlisting{examples/arithc.lp}
 %
 The last two lines hint at the fact that arithmetic functions are evaluated
-before comparison predicates, so that the latter actually compare integers.
+before comparison predicates, so that the latter actually compare the
+results of arithmetic evaluations.
+\eexample
+\end{example}
 
-All comparison predicates can also be used with arbitrary ground terms,
-as in the next program:%
+\begin{example}\label{ex:symb:pred}
+Comparison predicates can also be applied to constants and functions,
+as illustrated by the following program:%
 \marginlabel{%
-  As above, invoking:\\
-  \code{\mbox{~}gringo -t \attach{examples/symbc.lp}{symbc.lp}}
-  yields the unique answer set of the program in terms of facts.}
+  As above, by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/symbc.lp}{symbc.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo -t \attach{examples/symbc.lp}{symbc.lp}}\\
+  one can inspect the simplified ground program
+  obtained by evaluating built-ins.}
 %
 \lstinputlisting{examples/symbc.lp}
 %
-Integers are compared in the usual way and constants are ordered lexicographically.
-Function symbols are compared first using their arity.
-If the arity differs, then the name of the function symbol is compared lexicographically.
-If again the name differs, then arguments are compared component wise.
-Finally, integers are always smaller than constants and constants are always smaller than function symbols.
+Integers are compared in the usual way, constants are ordered lexicographically,
+and functions both structurally and lexicographically.
+% Function symbols are compared first using their arity.
+% If the arity differs, then the name of the function symbol is compared lexicographically.
+% If again the name differs, then arguments are compared component wise.
+Furthermore, all integers are smaller than constants,
+which in turn are smaller than functions.
 \eexample
 %\comment{add \#sup and \#inf?}
 \end{example}
 
 \begin{Note}
-that a built-in comparison predicate cannot bind variables, i.e.,
-when checking whether a rule is safe, 
+As with arithmetic functions,
+an occurrence of a variable in the scope of a built-in comparison predicate
+does not count as a positive occurrence in the sense of safeness (cf.\ Page~\pageref{pg:safe}),
+i.e.,
+% variables in  a built-in comparison predicate cannot bind variables, i.e.,
+% when checking whether a rule is safe, 
 comparison predicates are not considered to be positive.
+Also note that comparison predicates must not be preceded by \code{not}:
+rather than default negation,
+the complementary comparison predicate ought to used
+(e.g., \code{<} and \code{>=} complement one another).
+\index{Logic Programs!Safeness}%
 \end{Note}
 
 

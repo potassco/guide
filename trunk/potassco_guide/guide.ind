@@ -4,7 +4,6 @@
     \subitem Average, \code{\#avg}, \hyperpage{24}
     \subitem Conditions, \hyperpage{21}
     \subitem Count, \code{\#count}, \hyperpage{24}
-    \subitem Disjunction, \hyperpage{17}
     \subitem Even Parity, \code{\#even}, \hyperpage{24}
     \subitem Maximum, \code{\#max}, \hyperpage{24}
     \subitem Minimum, \code{\#min}, \hyperpage{24}
@@ -47,12 +46,13 @@
   \item Logic Programs, \hyperpage{14}
     \subitem Atoms, \hyperpage{14}
       \subsubitem Classical Negation, \hyperpage{16}
+    \subitem Disjunction, \hyperpage{17}
     \subitem Facts, \hyperpage{14}
     \subitem Integrity Constraints, \hyperpage{14}
     \subitem Literals, \hyperpage{14}
     \subitem Rules, \hyperpage{14}
     \subitem Safeness, \hyperpage{16}
-  \item Lua, \hyperpage{33}
+  \item Lua, \hyperpage{34}
     \subitem Assignment Metatable, \hyperpage{36}
     \subitem Function Call, \hyperpage{34}
     \subitem Term Insertion, \hyperpage{34}
@@ -69,7 +69,7 @@
     \subitem Domain Declarations, \code{\#domain}, \hyperpage{31}
     \subitem External Statements, \code{\#external}, \hyperpage{32}
     \subitem Hiding Predicates, \code{\#show}, \code{\#hide}, 
-		\hyperpage{30}
+		\hyperpage{31}
     \subitem Volatile Part, \code{\#volatile}, \hyperpage{38}
 
   \indexspace

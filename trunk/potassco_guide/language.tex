@@ -248,7 +248,7 @@ is a chicken called ``tweety,''
 while its favorite penguin is called ``tux.''
 The knowledge about these two individuals is
 represented by the following facts:
-\lstinputlisting[numbers=none]{examples/bird.lp}
+\lstinputlisting[firstnumber=4]{examples/bird.lp}
 
 When we instantiate the variable~\var{X} in the three schematic rules
 with \const{tweety} and \const{tux},
@@ -297,8 +297,8 @@ i.e.,
 all variables in a rule must occur in some positive literal
 (a literal not preceded by \code{not}) in the body of the rule.%
 \footnote{%
-The only exception to this are \emph{local} variables bound by conditions,
-as detailed in Section~\ref{subsec:gringo:condition}.} 
+The only exception to this are \emph{local} variables, % bound by conditions,
+detailed in Section~\ref{subsec:gringo:condition} and~\ref{subsec:gringo:aggregate}.} 
 For instance, the first two schematic rules in Example~\ref{ex:flies} 
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
 This tells \gringo\ or the grounding component of \clingo, respectively,

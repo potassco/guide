@@ -33,6 +33,7 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
 \index{Terms}
 \index{Terms!Constants}
+\index{Terms!Strings}
 \index{Terms!Variables}
 \index{Terms!Variables!Anonymous}
 \index{Terms!Functions}
@@ -58,8 +59,7 @@ Every (non-propositional) logic program includes \emph{terms},
 mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
 The basic building blocks are simple terms:
-\comment{add description of strings}
-\emph{integers}, \emph{constants}, and \emph{variables}
+\emph{integers}, \emph{constants}, \emph{strings}, and \emph{variables}
 as well as the tokens ``\var{\char`\_},'' \const{\#supremum}, and \const{\#infimum}.
 An integer is represented by means of an arithmetic expression,
 further explained in Section~\ref{subsec:gringo:arith}.
@@ -67,7 +67,12 @@ Constants and variables are distinguished by their first letters,
 which are \emph{lowercase} or \emph{uppercase}, respectively,
 where leading occurrences of ``\code{\char`\_}'' are allowed
 (may be useful to circumvent name clashes).
-While a constant represents itself,
+Furthermore, a string is an arbitrary sequence of characters
+enclosed in inverted comma (\code{"$\cdot$"}),
+where any occurrences of ``\code{\textbackslash},'' newline, and inverted comma
+must be masked via ``\code{\textbackslash\textbackslash},'' ``\code{\textbackslash n},''
+and ``\code{\textbackslash"}.''
+While a constant or string represents itself,
 a variable is a placeholder for \emph{all} variable-free terms
 in the language of a logic program.%
 \footnote{The set of all terms constructible from the available
@@ -820,6 +825,7 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 
 \subsubsection{Conditions}\label{subsec:gringo:condition}
 \index{Aggregates!Conditions}
+\index{Terms!Conditions}
 
 Conditions allow for instantiating variables to
 collections of terms within a single rule.
@@ -860,71 +866,102 @@ Recall our suggestion from Section~\ref{subsec:gringo:disjunction}
 to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 instead of disjunction, unless the latter is required for complexity reasons.
 This also means that conditions must 
-not be used in rule heads (outside of aggregates)
+not be used \emph{outside of aggregates} in rule heads
 if disjunction is unintended.}
 
 Composite conditions can also be constructed via~``\code{:},''
 as in the additional rules:
 %
-\lstinputlisting[firstnumber=7]{examples/twocond.lp}
+\lstinputlisting[firstnumber=7]{examples/conds.lp}
 %
-Observe that we may use the same atom, viz., \code{\pred{day}(\var{X})},
-both on the left-hand and on the right-hand side of~``\code{:}.''
-Furthermore, negative literals like \code{not \pred{weekend}(\var{X})}
-can occur on both sides of a condition.
-Note that literals on the right-hand side of a condition are connected conjunctively, that is,
+In Line 10,
+\code{\pred{day}(\var{X})} is used to qualify values~$t$ for variable~\var{X},
+while the negative literal \code{not\:\pred{weekend}(\var{X})}
+eliminates $t=\const{sun}$, and the built-in \code{\var{X}\,!=\:\const{sat}}
+discards $t=\const{sat}$.
+This leaves us with all workdays~$t$ satisfying the composite condition.
+In fact, the literals on the right-hand side of a condition are connected conjunctively, that is,
 all of them must hold for ground instances of an atom in front
 of the condition.
-Thus, the instantiated rule in Line~8 looks as follows:
+Thus, the instantiated rule in Line~10 looks as follows:%
+\marginlabel{%
+  The reader can observe the effect of conditions by invoking:\\
+             \code{\mbox{~}clingo -t \textbackslash\\
+                   \mbox{~}\attach{examples/cond.lp}{cond.lp} \attach{examples/conds.lp}{conds.lp}}\\
+             or alternatively:\\
+             \code{\mbox{~}gringo -t \textbackslash\\
+                   \mbox{~}\attach{examples/cond.lp}{cond.lp} \attach{examples/conds.lp}{conds.lp}}}
 %
-\begin{lstlisting}[firstnumber=8]
-weekdays :- day(mon), day(tue), day(wed), day(thu), day(fri).
+\begin{lstlisting}[numbers=none]
+workdays :- workday(mon), workday(tue), workday(wed),
+            workday(thu), workday(fri).
 \end{lstlisting}
 %
 The atoms in the body of this rule follow from facts, so that
-the rule can be simplified to a fact \code{\pred{weekdays}.}
-(as done by \gringo).
+the rule can be simplified to a fact \code{\pred{workdays}.}
+(as it is done by \clingo\ and \gringo).
 \eexample
 \end{example}
 
 \begin{Note}
-that there are three important issues about the correct usage of conditions:
+There are three important issues about the usage of conditions:
 \begin{enumerate}
-\item All predicates of atoms on the right-hand side of a condition
-must be either domain predicates,%\comment{refer to appendix?}
-i.e., predicates that can be completely evaluated during grounding,
-or built-in, which is due to the fact that conditions are evaluated during grounding.
-\item Any variable occurring within a condition is considered as \emph{local},
-that is, a condition cannot be used to bind variables outside the condition.
-In turn, variables outside conditions are \emph{global}, and each variable
-within an atom in front of a condition must occur on the right-hand side or
-be global.
-\item Global variables take priority over local ones, that is,
+\item 
+All predicates of atoms on the right-hand side of a condition
+must be either \emph{domain predicates}~\cite{lparseManual} %\comment{refer to appendix?}
+\index{Aggregates!Conditions!Domain Predicates}%
+\index{Terms!Conditions!Domain Predicates}%
+or built-ins (both used in Line~10 of Example~\ref{ex:cond}).
+Such predicates are completely evaluated during grounding.
+In a logic program, domain predicates can be recognized by observing
+that they are neither subject to negative recursion (through \code{not})
+nor to disjunction or ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
+in the head of any rule.
+The domain predicates defined in Example~\ref{ex:cond} are:
+\pred{person}/$1$, \pred{day}/$1$, \pred{weekend}/$1$, \pred{workday}/$1$, 
+and \pred{workdays}/$0$.
+%
+\item Any variable occurring within a condition is considered to be \emph{local},
+i.e., 
+an occurrence of the variable 
+% on the left- or right-hand side of a condition
+does not count as a positive occurrence outside the condition
+in the sense of safeness (cf.\ Page~\pageref{pg:safe}).
+In turn, variables occuring in atoms not subject to any
+condition are \emph{global}. 
+Each variable within an atom in front of a condition 
+\emph{outside of aggregates or in a rule head} 
+must be global or have a positive occurrence on the right-hand side of
+the condition.
+%
+\item 
+During grounding,
+global variables take precedence over local ones, i.e.,
 they are instantiated first.
-As a consequence, a local variable that also occurs globally is substituted by a term
-before the ground instances of a condition are determined.
+As a consequence, a local variable that occurs also globally is substituted by a term
+before a condition is evaluated further.
 Hence, the names of local variables must be chosen with care,
-making sure that they do not accidentally match the names of global variables.
+making sure that they do not \emph{accidentally} match the names of global variables.
 \end{enumerate}
 \end{Note}
 
 \subsubsection{Pooling}\label{subsec:gringo:pool}
-\index{Terms!Pooling}
+\index{Terms!Pooling, \code{;}, \code{;;}}
 
-Symbol~``\code{;}'' allows for pooling alternative terms to be used as
-argument within an atom, thus, specifying rules more compactly.
-An atom written in the form \code{\pred{p}($\dots$,X;Y,$\dots$)}
-abbreviates two options:
-\code{\pred{p}($\dots$,X,$\dots$)} and \code{\pred{p}($\dots$,Y,$\dots$)}.
-Pooled arguments in any term of a rule body 
-(or on the right-hand side of a condition) are expanded to a conjunction
+The tokens ``\code{;}'' and ``\code{;;}'' admit pooling alternative terms
+to be used as arguments of an atom. % for writing rules more compactly.
+Atoms written in the form \code{\pred{p}($\dots$,X;Y,$\dots$)}
+or \code{\pred{p}($\dots$,X;;Y,$\dots$)} abbreviate multiple options:
+\code{\pred{p}($\dots$,X,$\dots$),\linebreak[1]\:\pred{p}($\dots$,Y,$\dots$)} and
+\code{\pred{p}($\dots$,X),\linebreak[1]\:\pred{p}(Y,$\dots$)}, respectively.
+In the body of a rule (or on the right-hand side of a condition),
+pooled arguments are expanded to a conjunction
 of the options within the same body (or within the same condition),
-while they are expanded to multiple rules 
-(or multiple literals connected via~``\code{,}'')
-when occurring in the head (or in front of a condition).
+while they are expanded to multiple rules (or multiple literals connected via ``\code{,}'')
+when occurring in the head of a rule (or in front of a condition).
 
 \begin{example}\label{ex:pool}
-The following logic program makes use of pooling:
+The following logic program makes use of pooling via ``\code{;}'':
 %
 \lstinputlisting{examples/pool.lp}
 %
@@ -940,7 +977,9 @@ the instances for \pred{-mix}/$2$ jointly belong to the body.
 The (repeated) body also contains two instances each of \pred{sym}/$1$ and of \pred{num}/$1$.
 We thus get the rules:%
 \marginlabel{%
-  Simplified versions of these rules are produced via call:\\
+  Simplifications of these rules can be observed by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/pool.lp}{pool.lp}}\\
+  or alternatively:\\
   \code{\mbox{~}gringo -t \attach{examples/pool.lp}{pool.lp}}}
 %
 \begin{lstlisting}[numbers=none]

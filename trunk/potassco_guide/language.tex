@@ -58,6 +58,7 @@ Every (non-propositional) logic program includes \emph{terms},
 mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
 The basic building blocks are simple terms:
+\comment{add description of strings}
 \emph{integers}, \emph{constants}, and \emph{variables}
 as well as the tokens ``\var{\char`\_},'' \const{\#supremum}, and \const{\#infimum}.
 An integer is represented by means of an arithmetic expression,
@@ -845,16 +846,22 @@ meet :- available(jane), available(john).
 on(mon) | on(tue) | on(wed) | on(thu) | on(fri) :- meet.
 \end{lstlisting}
 %
-The conjunction in Line~5 is obtained by replacing~\var{X} in
+The conjunction in the body of the first ground rule is obtained by replacing~\var{X} in
 \code{\pred{available}(\var{X})} with all ground terms~$t$ such that
 \code{\pred{person}($t$)} holds, namely, $t=\const{jane}$ and $t=\const{john}$.
 Furthermore, the condition in the head of the rule in Line~6 turns into
 a disjunction over all ground instances of
-\code{\pred{on}(\var{X})}, where~\var{X} is substituted by terms~$t$
-such that
+\code{\pred{on}(\var{X})} such that~\var{X} is substituted by a term~$t$
+for which
 \code{\pred{day}($t$)} holds.
 That is, conditions in the body and in the head of a rule
-are expanded to different basic language constructs.
+are expanded to different basic language constructs.\footnote{%
+Recall our suggestion from Section~\ref{subsec:gringo:disjunction}
+to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
+instead of disjunction, unless the latter is required for complexity reasons.
+This also means that conditions must 
+not be used in rule heads (outside of aggregates)
+if disjunction is unintended.}
 
 Composite conditions can also be constructed via~``\code{:},''
 as in the additional rules:

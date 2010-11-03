@@ -46,7 +46,7 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \railalias{rlsc}{[A-Za-z0-9\tt\char95]}\railterm{rlsc}
 \begin{rail}
 	term        : simpleterm | function;
-	simpleterm  : (integer | constant | variable | rusc | '\#supremum' | '\#infimum');
+	simpleterm  : (integer | constant | string | variable | rusc | '\#supremum' | '\#infimum');
 	constant    : (rusc*) '[a-z]' (rlsc*);
 	variable    : (rusc*) '[A-Z]' (rlsc*);
 	function    : constant '(' term (',' term*) ')';
@@ -723,19 +723,20 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \end{Note}
 
 \subsubsection{Intervals}\label{subsec:gringo:interval}
-\index{Terms!Intervals}
+\index{Terms!Integers!Intervals}
+\index{Arithmetic Functions!Integers!Intervals}
 
 In Line~1 of Example~\ref{ex:assign},
-there are five facts~\code{\pred{num}($k$)}
+there are five facts of the form~\code{\pred{num}($k$).}
 over consecutive integers~$k$.
 For a more compact representation,
-\gringo\ and \clingo\ support integer intervals of the form $i$\code{..}$j$,
-where~$i$ and~$j$ are integers.
-Such an interval represents each integer~$k$ such that $i\leq k\leq j$,
-and intervals are expanded during grounding.
+\gringo\ and \clingo\ support integer intervals of the form $i$\code{..}$j$.
+% , where~$i$ and~$j$ are integers.
+Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
+is expanded during grounding.
 
 \begin{example}\label{ex:int}
-The next program makes use of integer intervals:
+The usage of integer intervals is illustrated by the following logic program:
 %
 \lstinputlisting{examples/int.lp}
 %
@@ -758,7 +759,7 @@ $(\code{\const{1}..\const{5}})\times
  (\code{\const{5}..\const{9}})\times
  (\code{\const{5}..\const{9}})\times
  (\code{\const{1}..\const{5}})$
-of intervals:
+of the four intervals in the rule:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
 top5num(1,5) :- num(5), top5(1), top(9).
@@ -789,21 +790,31 @@ top5num(5,9) :- num(9), top5(5), top(9).
 %
 Note that only the rules with
 \code{\pred{num}(\const{5})} and
-\code{\pred{top5}(\const{5})}
+\code{\pred{top5}(\const{5})}%
 \marginlabel{%
-  Again the unique answer set is obtained via call:\\
+  The simplified ground program obtained from intervals
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/int.lp}{int.lp}}\\
+  or alternatively:\\
   \code{\mbox{~}gringo -t \attach{examples/int.lp}{int.lp}}}
+% \marginlabel{%
+%   Again the unique answer set is obtained via call:\\
+%   \code{\mbox{~}gringo -t \attach{examples/int.lp}{int.lp}}}
 %
 in the body actually contribute to the unique answer set
-of the above program by deriving all atoms \code{\pred{top5num}($m$,$n$)}
+of the program by deriving all atoms 
+of the form \code{\pred{top5num}($m$,$n$)}
 for $\const{1}\leq m\leq\const{5}$ and $\const{5}\leq n\leq\const{9}$.
 \eexample
 \end{example}
 
 \begin{Note}
-that as with built-in arithmetic functions,
-an integer interval mentioning some variable (like~\var{X} in Line~4 of Example~\ref{ex:int})
-cannot be used to bind the variable.
+An occurrence of a variable in the specification of the bounds
+of an integer interval, like~\var{X} in Line~4 of Example~\ref{ex:int}, 
+does not count as a positive occurrence
+in the sense of safeness (cf.\ Page~\pageref{pg:safe}).
+Hence, such a variable must also have another positive occurrence elsewhere.
+\index{Logic Programs!Safeness}%
 \end{Note}
 
 \subsubsection{Conditions}\label{subsec:gringo:condition}
@@ -811,9 +822,9 @@ cannot be used to bind the variable.
 
 Conditions allow for instantiating variables to
 collections of terms within a single rule.
-This is particularly useful for encoding conjunctions or disjunctions over
+This is particularly useful for encoding conjunctions (or disjunctions) over
 arbitrarily many ground atoms as well as for the compact representation of aggregates
-(cf.\ Section~\ref{subsec:gringo:aggregate}).
+(detailed in Section~\ref{subsec:gringo:aggregate}).
 The symbol~``\code{:}'' is used to formulate conditions.
 
 \begin{example}\label{ex:cond}
@@ -823,21 +834,23 @@ The following program uses conditions in a rule body and in a rule head:
 %
 We are particularly interested in the rules in Line~5 and~6,
 instantiated as follows:%
-%
-\begin{lstlisting}[firstnumber=5]
+\marginlabel{%
+  The reader can reproduce these ground rules by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/cond.lp}{cond.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo -t \attach{examples/cond.lp}{cond.lp}}}
+% %[firstnumber=5]
+\begin{lstlisting}[numbers=none]
 meet :- available(jane), available(john).
 on(mon) | on(tue) | on(wed) | on(thu) | on(fri) :- meet.
 \end{lstlisting}
 %
 The conjunction in Line~5 is obtained by replacing~\var{X} in
-\marginlabel{%
-  The reader can reproduce these ground rules by invoking:\\
-  \code{\mbox{~}gringo -t \attach{examples/cond.lp}{cond.lp}}}
 \code{\pred{available}(\var{X})} with all ground terms~$t$ such that
 \code{\pred{person}($t$)} holds, namely, $t=\const{jane}$ and $t=\const{john}$.
 Furthermore, the condition in the head of the rule in Line~6 turns into
 a disjunction over all ground instances of
-\code{\pred{on}(\var{X})} where~\var{X} is substituted by some term~$t$
+\code{\pred{on}(\var{X})}, where~\var{X} is substituted by terms~$t$
 such that
 \code{\pred{day}($t$)} holds.
 That is, conditions in the body and in the head of a rule

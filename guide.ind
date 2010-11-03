@@ -20,6 +20,7 @@
     \subitem Division, \code{/}, \code{\#div}, \hyperpage{17}
     \subitem Exponentiation, \code{**}, \code{\#pow}, \hyperpage{17}
     \subitem Integers, \hyperpage{17}
+      \subsubitem Intervals, \hyperpage{20}
     \subitem Modulo, \code{\textbackslash}, \code{\#mod}, 
 		\hyperpage{17}
     \subitem Multiplication, \code{*}, \hyperpage{17}
@@ -94,7 +95,7 @@
     \subitem Constants, \hyperpage{12}
     \subitem Functions, \hyperpage{12}
     \subitem Integers, \hyperpage{17}
-    \subitem Intervals, \hyperpage{20}
+      \subsubitem Intervals, \hyperpage{20}
     \subitem Lua Function Call, \hyperpage{34}
     \subitem Pooling, \hyperpage{23}
     \subitem Variables, \hyperpage{12}

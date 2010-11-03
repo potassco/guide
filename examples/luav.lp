@@ -3,6 +3,8 @@ function f(x)
   if     Val.type(x) == Val.NUM  then 
     return Val.new(Val.FUNC, { "num", x })
   elseif Val.type(x) == Val.ID   then
+    return Val.new(Val.FUNC, { "id", Val.new(Val.ID, x:name()) })
+  elseif Val.type(x) == Val.STRING   then
     return Val.new(Val.FUNC, { "str", x })
   elseif Val.type(x) == Val.FUNC then
     local f = Val.new(Val.FUNC, x:name(), x:args())
@@ -19,11 +21,11 @@ function g(a,b)
 end
 
 function h(x)
-  return '"' .. tostring(x) .. '"'
+  return tostring(x)
 end
 #end_lua.
 
-p(1). p(a). p(#supremum).
+p(1). p(a). p(">\\\"\n<"). p(#supremum).
 p(f(d(x),1)). p(#infimum).
 
 type(X,Y)  :- (X,Y) := @f(Z), p(Z).

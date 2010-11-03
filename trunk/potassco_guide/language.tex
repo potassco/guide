@@ -1653,15 +1653,17 @@ In fact, this function exactly behaves like a range term.
 \index{Lua!Val Metatable}%
 \begin{tabular}{||l|l||}
  \hline 
- \code{Val.NUM}  & Type identifier for \gringo\ numbers.\\
+ \code{Val.NUM}    & Type identifier for \gringo\ numbers.\\
  \hline 
- \code{Val.ID}   & Type identifier for \gringo\ strings.\\
+ \code{Val.ID}     & Type identifier for \gringo\ constants.\\
  \hline 
- \code{Val.FUNC} & Type identifier for function symbols.\\
+ \code{Val.FUNC}   & Type identifier for function symbols.\\
  \hline 
- \code{Val.SUP}  & Type identifier for \gringo's \code{\#supremum}.\\
+ \code{Val.STRING} & Type identifier for \gringo\ strings.\\
  \hline 
- \code{Val.INF}  & Type identifier for \gringo's \code{\#infimum}.\\
+ \code{Val.SUP}    & Type identifier for \gringo's \code{\#supremum}.\\
+ \hline 
+ \code{Val.INF}    & Type identifier for \gringo's \code{\#infimum}.\\
  \hline 
  \code{Val.new(type[,value][,args])}  & Creates new ground terms (see Example \ref{ex:lua:values}).\\
  \hline 
@@ -1669,7 +1671,7 @@ In fact, this function exactly behaves like a range term.
  \hline 
  \code{Val.type(a)} & Returns the type of a term. \\
  \hline 
- \code{Val.name(f)} & Returns the name of function symbol \code{f}. \\
+ \code{Val.name(x)} & Returns the name of function symbol or constant \code{x} . \\
  \hline 
  \code{Val.args(f)} & Returns the arguments of function symbol \code{f} \\
  \hline

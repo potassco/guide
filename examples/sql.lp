@@ -13,7 +13,7 @@
       local row = {}
       row = cur:fetch(row, "n")
       if row == nil then break end
-      res[#res + 1] = Val.new(Val.FUNC, row)
+      res[#res + 1] = Val.new(Val.FUNC, {tonumber(row[1]), tonumber(row[2])} )
     end
     cur:close()
     return res

@@ -10,6 +10,7 @@
     \subitem Minimum, \code{\#min}, \hyperpage{25}
     \subitem Odd Parity, \code{\#odd}, \hyperpage{25}
     \subitem Sum, \code{\#sum}, \hyperpage{25}
+    \subitem Weights, \hyperpage{24}
   \item Arithmetic Functions, \hyperpage{17}
     \subitem Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}, 
 		\hyperpage{17}
@@ -52,7 +53,9 @@
 
   \item Logic Programs, \hyperpage{14}
     \subitem Atoms, \hyperpage{14}
+      \subsubitem Aggregates, \hyperpage{24}
       \subsubitem Classical Negation, \hyperpage{16}
+      \subsubitem Pooling, \code{;}, \code{;;}, \hyperpage{23}
     \subitem Disjunction, \hyperpage{17}
     \subitem Facts, \hyperpage{14}
     \subitem Integrity Constraints, \hyperpage{14}

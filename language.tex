@@ -515,7 +515,7 @@ The following symbols are used for these functions:
 \code{\textasciitilde} (bitwise complement).
 
 \begin{example}\label{ex:arith:fun}
-The usage of arithmetic functions is illustrated by the logic program:%
+The usage of arithmetic functions is illustrated by the program:%
 \marginlabel{%
   The unique answer set of the program,
   obtained after evaluating all arithmetic functions,
@@ -577,7 +577,7 @@ enable term comparisons in the bodies of rules and on the right-hand sides of co
 
 \begin{example}\label{ex:arith:pred}
 The application of comparison predicates to integers
-is illustrated by the following logic program:%
+is illustrated by the following program:%
 \marginlabel{%
   The simplified ground program obtained by evaluating built-ins
   can be inspected by invoking:\\
@@ -647,7 +647,7 @@ in the bodies of rules and on the right-hand sides of conditions
 (detailed in Section~\ref{subsec:gringo:condition}).
 
 \begin{example}\label{ex:assign}
-The usage of variable assignments is illustrated by the following logic program:%
+The usage of variable assignments is illustrated by the following program:%
 \marginlabel{%
   The simplified ground program obtained from assignments
   can be inspected by invoking:\\
@@ -742,7 +742,7 @@ Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
 
 \begin{example}\label{ex:int}
-The usage of integer intervals is illustrated by the following logic program:
+The usage of integer intervals is illustrated by the following program:
 %
 \lstinputlisting{examples/int.lp}
 %
@@ -947,6 +947,7 @@ making sure that they do not \emph{accidentally} match the names of global varia
 
 \subsubsection{Pooling}\label{subsec:gringo:pool}
 \index{Terms!Pooling, \code{;}, \code{;;}}
+\index{Logic Programs!Atoms!Pooling, \code{;}, \code{;;}}
 
 The tokens ``\code{;}'' and ``\code{;;}'' admit pooling alternative terms
 to be used as arguments of an atom. % for writing rules more compactly.
@@ -961,125 +962,243 @@ while they are expanded to multiple rules (or multiple literals connected via ``
 when occurring in the head of a rule (or in front of a condition).
 
 \begin{example}\label{ex:pool}
-The following logic program makes use of pooling via ``\code{;}'':
+The following program makes use of pooling via ``\code{;}'':
 %
-\lstinputlisting{examples/pool.lp}
+\lstinputlisting[xrightmargin=-5pt]{examples/pool.lp}
 %
-Let us consider instantiations of the rule in Line~3 obtained with substitution 
-$\{\var{A}\mapsto\const{a},\linebreak[1]\var{B}\mapsto\const{b},
-   \var{M}\mapsto\const{1},\var{N}\mapsto\const{2}\}$.
-Note that \pred{mix}/$2$ and \pred{-mix}/$2$ each admit four options,
-corresponding to the cross product of $\{\const{a},\const{b}\}$ substituted
-for~\var{A} and~\var{B}, respectively, together with $\{\const{1},\const{2}\}$
-substituted for~\var{M} and~\var{N}.
-While the instances obtained for \pred{mix}/$2$ give rise to four rules,
-the instances for \pred{-mix}/$2$ jointly belong to the body.
-The (repeated) body also contains two instances each of \pred{sym}/$1$ and of \pred{num}/$1$.
-We thus get the rules:%
+Let us consider the following ground instance of the rule in Line~3:
+\begin{lstlisting}[numbers=none]
+ mix(a;b,1;2) :- sym(a;b), num(1;2), not -mix(1;2,a;b).
+\end{lstlisting}
+The head atom \code{\pred{mix}(\const{a};\const{b},\const{1};\const{2})} 
+represents four options, obtained combinatorially
+by choosing either \const{a} or \const{b} as the first
+and either \const{1} or \const{2} as the second argument
+of an atom of the predicate \pred{mix}/$2$.
+All four options are represented by four rules,
+one for each of them.
+Unlike this,
+the pooled arguments in the body are expanded to a conjunction.
+Hence, the following expanded rules share the same body but represent
+all options for the head atom:%
+%
+% instantiations of the rule in Line~3 obtained with substitution 
+% $\{\var{A}\mapsto\const{a},\linebreak[1]\var{B}\mapsto\const{b},
+%    \var{M}\mapsto\const{1},\var{N}\mapsto\const{2}\}$.
+% Note that \pred{mix}/$2$ and \pred{-mix}/$2$ each admit four options,
+% corresponding to the cross product of $\{\const{a},\const{b}\}$ substituted
+% for~\var{A} and~\var{B}, respectively, together with $\{\const{1},\const{2}\}$
+% substituted for~\var{M} and~\var{N}.
+% While the instances obtained for \pred{mix}/$2$ give rise to four rules,
+% the instances for \pred{-mix}/$2$ jointly belong to the body.
+% The (repeated) body also contains two instances each of \pred{sym}/$1$ and of \pred{num}/$1$.
+% We thus get the rules:%
 \marginlabel{%
-  Simplifications of these rules can be observed by invoking:\\
+  The reader can reproduce the (simplified) rules by invoking:\\
   \code{\mbox{~}clingo -t \attach{examples/pool.lp}{pool.lp}}\\
   or alternatively:\\
   \code{\mbox{~}gringo -t \attach{examples/pool.lp}{pool.lp}}}
 %
 \begin{lstlisting}[numbers=none]
 mix(a,1) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-  not -mix(1,b), not -mix(2,a), not -mix(2,b).
+            not -mix(1,b), not -mix(2,a), not -mix(2,b).
 mix(a,2) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-  not -mix(1,b), not -mix(2,a), not -mix(2,b).
+            not -mix(1,b), not -mix(2,a), not -mix(2,b).
 mix(b,1) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-  not -mix(1,b), not -mix(2,a), not -mix(2,b).
+            not -mix(1,b), not -mix(2,a), not -mix(2,b).
 mix(b,2) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-  not -mix(1,b), not -mix(2,a), not -mix(2,b).
+            not -mix(1,b), not -mix(2,a), not -mix(2,b).
 \end{lstlisting}
 \eexample
 \end{example}
-%
-Additionally, there is the \code{;;} operator for pooling, 
-which can only be used to separate arguments of predicates.
-This operator does not work on single terms but
-simply lists arguments of predicates.
-The rules for expanding the predicates are the same as for the \code{;} operator.
+
+The pooling via ``\code{;}'' in the above example applied to individual 
+arguments of an atom.
+Alternatively,
+multiple options for lists of arguments can be abbreviated
+by using ``\code{;;}'' instead.
+% This operator does not work on single terms but
+% simply lists arguments of predicates.
+% The rules for expanding the predicates are the same as for the \code{;} operator.
 
 \begin{example}\label{ex:sep}
-The following example show the difference between the \code{;} and \code{;;} operator:
+The difference between ``\code{;}'' and ``\code{;;}''
+is illustrated by the program:%
 \marginlabel{%
-  Simplified versions of these rules are produced via call:\\
-  \code{\mbox{~}gringo -t \attach{examples/sep.lp}{sep.lp}}}
+  The simplified ground program obtained by expanding poolings
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo -t \attach{examples/pools.lp}{pools.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo -t \attach{examples/pools.lp}{pools.lp}}}
 %
-\lstinputlisting{examples/sep.lp}
+\lstinputlisting{examples/pools.lp}
 %
-The second line is expanded into the following:
-\begin{lstlisting}[firstnumber=2]
-p(X,Z) :- p(X,Y), p(Y,Z). 
-\end{lstlisting}%
-and the third line into:
-\begin{lstlisting}[firstnumber=3]
-p(X,Z) :- p(X,Y,Z), p(X,Y,Z).
-\end{lstlisting}%
-Clearly, the first variant is the desired expansion in this case 
-to calculate the transitive closure.
-Both operators have their usages in different scenarios 
-to keep the encoding more compact and readable.
+The expansions of the rules in Line~2 and~3 are as follows: % into the following:
+\begin{lstlisting}[numbers=none]
+q(X,Z) :- p(X,Y), p(Y,Z). 
+r(X,Z) :- p(X,Y,Z), p(X,Y,Z).
+\end{lstlisting}
+% \end{lstlisting}%
+% and the third line into:
+% \begin{lstlisting}[firstnumber=3]
+% p(X,Z) :- p(X,Y,Z), p(X,Y,Z).
+From the facts \code{\pred{p}(\const{1},\const{2}).} and \code{\pred{p}(\const{2},\const{3}).},
+the atom \code{\pred{q}(\const{1},\const{3})} is derived.
+On the other hand,
+no atom of the predicate~\pred{r}/$2$ is derived because
+of the ``wrong'' arity of \code{\pred{p}(\var{X},\var{Y},\var{Z})}.
+% Clearly, the first variant is the desired expansion in this case 
+% to calculate the transitive closure.
+% Both operators have their usages in different scenarios 
+% to keep the encoding more compact and readable.
 \eexample
 \end{example}
 
+Note that pooling via ``\code{;}'' or ``\code{;;}'' is syntactic sugar
+that can be used for writing encodings more compactly and thus easier to read.
+But please keep the difference between ``\code{;}'' and ``\code{;;}'' in mind
+to avoid nasty surprises.
+
 
 \subsubsection{Aggregates}\label{subsec:gringo:aggregate}
-\index{Aggregates}\comment{MG: Illustrate \const{\#supremum} and \const{\#infimum}.}
+\index{Logic Programs!Atoms!Aggregates}
+\index{Aggregates}
+\index{Aggregates!Weights}
 
-An aggregate is an operation on a multiset of weighted literals that evaluates to some value. 
+An aggregate is a function from a multiset of weights. % ed literals that evaluates to some value. 
 In combination with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
-We consider aggregate atoms of the form:
-\[l\,\mathsf{op}\,\code{[}\, L_1\code{=}w_1\code{,} \dots\code{,} L_n\code{=}w_n {\,]\,} u\]
+The general form of an \emph{aggregate atom} is as follows:
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$l\;\mathsf{op}$\:?[?\:$L_1$\,?=?\,$w_1$?,?\,\dots?,?\:$L_n$\,?=?\,$w_n$\:?]?\:$u$\,\textnormal{.}?
+\end{lstlisting}
+%
+Here, all $L_i$ are literals (as introduced in Section~\ref{subsec:gringo:normal})
+associated with weights~$w_i$, specified by means of arithmetic functions
+(cf.\ Section~\ref{subsec:gringo:arith}).
+Furthermore, $\mathsf{op}$ is the name of some function that is to be
+applied to the weights of literals that hold.
+Finally, $l$ and~$u$ are arithmetic functions that determine a lower and an upper bound
+for the result of applying $\mathsf{op}$.
+That is, an aggregate atom holds if the result of $\mathsf{op}$
+applied to the weights of literals that hold
+is in-between $l$ and~$u$ (both inclusive).
+% An aggregate has a lower bound $l$, an upper bound $u$, an operation $\mathsf{op}$, 
+% and a multiset of literal $L_i$ each assigned to a weight $w_i$.
+% An aggregate is true if operation $\mathsf{op}$ applied to the multiset of weights 
+% of true literals is between the bounds (inclusive).
 
-An aggregate has a lower bound $l$, an upper bound $u$, an operation $\mathsf{op}$, 
-and a multiset of literal $L_i$ each assigned to a weight $w_i$.
-An aggregate is true if operation $\mathsf{op}$ applied to the multiset of weights 
-of true literals is between the bounds (inclusive).
-Currently, \gringo\ supports the aggregates 
-\code{\#sum} (the sum of weights), \index{Aggregates!Sum, \code{\#sum}}
-\code{\#min} (the minimum weight), \index{Aggregates!Minimum, \code{\#min}}
-\code{\#max} (the maximum weight), and \index{Aggregates!Maximum, \code{\#max}}
-\code{\#avg} (the average of all weights \index{Aggregates!Average, \code{\#avg}}
-\footnote{The average aggregate over an empty set of weights is defined to be always true irrespective of any bounds.}%
+Currently, \gringo\ and \clingo\ support the aggregates 
+\code{\#sum}
+\index{Aggregates!Sum, \code{\#sum}}%
+(the sum of weights), 
+\code{\#min}
+\index{Aggregates!Minimum, \code{\#min}}%
+(the minimum weight), 
+\code{\#max}
+\index{Aggregates!Maximum, \code{\#max}}%
+(the maximum weight), and 
+\code{\#avg}
+\index{Aggregates!Average, \code{\#avg}}%
+(the average of weights%
+\footnote{
+Note that an aggregate atom using \code{\#avg}
+is defined to hold regardless of its bounds
+if none of its literals holds, i.e.,
+if the average is taken over the empty set of weights.}%
 ).
-Furthermore, there are three aggregates that are syntactically different.
-The first is the \code{\#count}\index{Aggregates!Count, \code{\#count}} aggregate:
-\[l\,\code{\#count}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}}\, u\]%
-which basically are \code{\#sum} aggregates with all weights set to one 
-and duplicate true literals counted only once.
-Finally, there are the two parity aggregates:
+Aggregate atoms, as described above, are obtained by writing
+either \code{\#sum}, \code{\#min}, \code{\#max}, or \code{\#avg} for $\mathsf{op}$.
+In addition to them,
+there are three more aggregates
+whose atoms obey a slightly different syntax:
+% that are syntactically different.
+% The first is the \code{\#count} aggregate:
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$l\;$?#count?\:?{?\:$L_1$?,?\,\dots?,?\:$L_n$\:?}?\:$u$\,\textnormal{,}?
+#even?\:?{?\:$L_1$?,?\,\dots?,?\:$L_n$\:?}?\textnormal{, and}?
+#odd?\:?{?\:$L_1$?,?\,\dots?,?\:$L_n$\:?}?\textnormal{.}?
+\end{lstlisting}
+% \[l\,\code{\#count}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}}\, u\]%
+\index{Aggregates!Count, \code{\#count}}%
 \index{Aggregates!Even Parity, \code{\#even}}%
 \index{Aggregates!Odd Parity, \code{\#odd}}%
-\begin{align*}
-&\code{\#even}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}} & &
-\code{\#odd}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}}
-\end{align*}%
-These aggregates are true if the number of different true literals is even or odd, respectively.
-
-As regards syntactic representation,
-weight~\const{1} is considered a default,
-so that $L_i\code{=}\const{1}$ can simply be written as $L_i$.
-For instance, the following (multi)sets of (weighted) literals are the same
-when combined with any kind of aggregate operation and bounds:
+%
+The \code{\#count} aggregate
+is similar to \code{\#sum} with all literals' weights being~\const{1}.
+However, as indicated by curly brackets,
+the literals of \code{\#count} are understood as a set,
+so that duplicates are not counted twice.
+For instance, note that the following aggregate atoms express the same:
 \begin{lstlisting}[numbers=none,escapechar=@]
-[a=1, not b=1, c=2]  @\textnormal{and}@
+1 #sum   [a=1, not b=1]     1@\textnormal{,}@ 
+1 #count {a,   not b}       1@\textnormal{, and}@ 
+1 #count {a,a, not b,not b} 1@\textnormal{.}@  
+\end{lstlisting}
+%
+% which basically are \code{\#sum} aggregates with all weights set to one 
+% and duplicate true literals counted only once.
+% Finally, there are the two parity aggregates:
+% \begin{align*}
+% &\code{\#even}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}} & &
+% \code{\#odd}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}}
+% \end{align*}%
+Likewise, the literals of parity aggregates \code{\#even} and \code{\#odd},
+whose atoms hold if the number of literals that hold is even or odd, respectively,
+are understood as a set.
+Also note that parity is not compared to any bounds.
+
+There are a number of shorthands that can be used in the
+syntactic representation of aggregates.
+With \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
+weights of literals can be omitted, in which case \code{1} is used by default
+($L_i$\,\code{=}\,\const{1} is equivalent to just $L_i$).
+% weight~\const{1} is considered a default,
+% so that $L_i\code{=}\const{1}$ can simply be written as $L_i$.
+For instance, the following (multi)sets of (weighted) literals are synonyms
+when combined with any (admissible) aggregate and bounds:
+\begin{lstlisting}[numbers=none,escapechar=@]
+[a=1, not b=1, c=2] @\textnormal{and}@
 [a,   not b,   c=2]@\textnormal{.}@
 \end{lstlisting}
 %
 Furthermore,
-keyword \const{\#sum} may be omitted, which in a sense makes \const{\#sum} the default
-aggregate operation.
-In fact, the following aggregate atoms are synonyms:
+either or both of the bounds~$l$ and~$u$,
+applicable to all aggregate atoms but parity,
+can be omitted, in which case they are taken to be
+(trivially) satisfied, regardless of an aggregate's evaluation.
+Finally, the aggregates  \code{\#sum} and \code{\#count} are used by
+default for multisets of (weighted) literals in square brackets
+and sets of literals in curly brackets, respectively.
+For instance, the following aggregate atoms,
+one including the keyword \code{\#sum} and
+the other omitting it, are synonyms:
 \begin{lstlisting}[numbers=none,escapechar=@]
-2 #sum [a, not b, c=2] 3  @\textnormal{and}@
+2 #sum [a, not b, c=2] 3 @\textnormal{and}@
 2      [a, not b, c=2] 3@\textnormal{.}@
 \end{lstlisting}
-By omitting keyword \const{\#sum}, we obtain the same notation as the one of 
-so-called ``weight constraints''~\cite{siniso02a,lparseManual}, which are actually aggregate atoms
-whose operation is addition.
+Likewise, we can optionally omit \code{\#count} in front of curly brackets:
+\begin{lstlisting}[numbers=none,escapechar=@]
+1 #count {a, not b} 1 @\textnormal{and}@ 
+1        {a, not b} 1@\textnormal{.}@  
+\end{lstlisting}
+By allowing the omission of \const{\#sum} and \const{\#count},
+so-called 
+``weight constraints'' and ``cardinality constraints''~\cite{siniso02a,lparseManual}
+can be written in their traditional notations (without keyword).
+
+% keyword \const{\#sum} may be omitted, which in a sense makes \const{\#sum} the default
+% aggregate operation.
+% In fact, the following aggregate atoms are synonyms:
+%
+% By omitting keyword \const{\#sum}, we obtain the same notation as the one of 
+% so-called ``weight constraints''~\cite{siniso02a,lparseManual}, which are actually aggregate atoms
+% whose operation is addition.
+\comment{MG: Illustrate \const{\#supremum} and \const{\#infimum}.
+             Also talk about assignments allowed with
+             \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}.}
 
 It is important to note that the (weighted) literals within an aggregate
 belong to a multiset.
@@ -1096,59 +1215,59 @@ has $\{\code{a}\}$ as its unique answer set, while there is no answer set for:
 2 #max [a,a].  2 #min [a,a].
 \end{lstlisting}
 
-If literals ought not to be repeated,
-we can use \const{\#count} instead of \const{\#sum}.
-Syntactically, \const{\#count} requires curly instead of square
-brackets, and there must not be any weights within a \const{\#count} aggregate.
-Regarding semantics,
-% \begin{equation*}%\label{eq:aggregate:atom}
-$(
-  l\,
-  \const{\#count} 
-  \,
-  \code{\char`\{}
-  \,
-  L_1\code{,}
-  \dots\code{,}
-  L_n
-  \,
-  \code{\char`\}}
-  \,
-  u
-)$ 
-%\end{equation*}
-reduces to
-$(
-  l\,
-  \const{sum}
-  \,
-  \code{[}
-  \,
-  L_1\code{=}\const{1}\code{,}
-  \dots\code{,}
-  L_m\code{=}\const{1}
-  \,
-  \code{]}
-  \,
-  u
-)$,
-where $\{L_1,\dots,L_m\}=\{L_i \mid 1\leq i\leq n\}$ is obtained by dropping
-repeated literals.
-Of course, the use of~$l$ and~$u$ is optional also with \const{\#count}.
-As an example, note that the next aggregate atoms express the same:
-\begin{lstlisting}[numbers=none,escapechar=@]
-1 #sum   [a=1, not b=1]     1  @\textnormal{and}@ 
-1 #count {a,a, not b,not b} 1@\textnormal{.}@  
-\end{lstlisting}
-Keyword \const{\#count} can be omitted (like \const{\#sum}),
-so that the following are synonyms:
-\begin{lstlisting}[numbers=none,escapechar=@]
-1 #count {a, not b} 1  @\textnormal{and}@ 
-1        {a, not b} 1@\textnormal{.}@  
-\end{lstlisting}
-The last notation is similar to the one of so-called
-``cardinality constraints''~\cite{siniso02a,lparseManual},
-which are aggregate atoms using counting as their operation.
+% If literals ought not to be repeated,
+% we can use \const{\#count} instead of \const{\#sum}.
+% Syntactically, \const{\#count} requires curly instead of square
+% brackets, and there must not be any weights within a \const{\#count} aggregate.
+% Regarding semantics,
+% % \begin{equation*}%\label{eq:aggregate:atom}
+% $(
+%   l\,
+%   \const{\#count} 
+%   \,
+%   \code{\char`\{}
+%   \,
+%   L_1\code{,}
+%   \dots\code{,}
+%   L_n
+%   \,
+%   \code{\char`\}}
+%   \,
+%   u
+% )$ 
+% %\end{equation*}
+% reduces to
+% $(
+%   l\,
+%   \const{sum}
+%   \,
+%   \code{[}
+%   \,
+%   L_1\code{=}\const{1}\code{,}
+%   \dots\code{,}
+%   L_m\code{=}\const{1}
+%   \,
+%   \code{]}
+%   \,
+%   u
+% )$,
+% where $\{L_1,\dots,L_m\}=\{L_i \mid 1\leq i\leq n\}$ is obtained by dropping
+% repeated literals.
+% Of course, the use of~$l$ and~$u$ is optional also with \const{\#count}.
+% As an example, note that the next aggregate atoms express the same:
+% \begin{lstlisting}[numbers=none,escapechar=@]
+% 1 #sum   [a=1, not b=1]     1  @\textnormal{and}@ 
+% 1 #count {a,a, not b,not b} 1@\textnormal{.}@  
+% \end{lstlisting}
+% Keyword \const{\#count} can be omitted (like \const{\#sum}),
+% so that the following are synonyms:
+% \begin{lstlisting}[numbers=none,escapechar=@]
+% 1 #count {a, not b} 1  @\textnormal{and}@ 
+% 1        {a, not b} 1@\textnormal{.}@  
+% \end{lstlisting}
+% The last notation is similar to the one of so-called
+% ``cardinality constraints''~\cite{siniso02a,lparseManual},
+% which are aggregate atoms using counting as their operation.
 
 After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.

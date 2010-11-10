@@ -911,6 +911,7 @@ All predicates of atoms on the right-hand side of a condition
 must be either \emph{domain predicates}~\cite{lparseManual} %\comment{refer to appendix?}
 \index{Aggregates!Conditions!Domain Predicates}%
 \index{Terms!Conditions!Domain Predicates}%
+\label{pg:domain}%
 or built-ins (both used in Line~10 of Example~\ref{ex:cond}).
 Such predicates are completely evaluated during grounding.
 In a logic program, domain predicates can be recognized by observing
@@ -1148,7 +1149,7 @@ For instance, note that the following aggregate atoms express the same:
 Likewise, the literals of parity aggregates \code{\#even} and \code{\#odd},
 whose atoms hold if the number of literals that hold is even or odd, respectively,
 are understood as a set.
-Also note that parity is not compared to any bounds.
+Also note that parities are not compared to any bounds.
 
 There are a number of shorthands that can be used in the
 syntactic representation of aggregates.
@@ -1196,24 +1197,106 @@ can be written in their traditional notations (without keyword).
 % By omitting keyword \const{\#sum}, we obtain the same notation as the one of 
 % so-called ``weight constraints''~\cite{siniso02a,lparseManual}, which are actually aggregate atoms
 % whose operation is addition.
-\comment{MG: Illustrate \const{\#supremum} and \const{\#infimum}.
-             Also talk about assignments allowed with
-             \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}.}
+% \comment{MG: Illustrate \const{\#supremum} and \const{\#infimum}.
+%              Also talk about assignments allowed with
+%              \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}.}
 
-It is important to note that the (weighted) literals within an aggregate
-belong to a multiset.
-In particular, if there are multiple occurrences
-$L\code{=}w_1,\dots,L\code{=}w_k$
-of a literal~$L$, in combination with \const{\#min} and \const{\#max},
-it is not the same like having $L\code{=}w_1+\dots+w_k$.
-To see this, note that the program consisting of the facts:
-\begin{lstlisting}[numbers=none]
-2 #max [a=2].  2 #min [a=2].
+For the aggregates \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
+all working on multisets of (weighted) literals in square brackets,
+it should be taken into account that they behave differently in case of
+multiple occurrences of the same literal (regardless of the associated weights).
+For instance, the following aggregate atoms are synonyms:
+\begin{lstlisting}[numbers=none,escapechar=@]
+2 #sum [a=2] 2 @\textnormal{and}@
+2 #sum [a,a] 2@\textnormal{.}@
 \end{lstlisting}
-has $\{\code{a}\}$ as its unique answer set, while there is no answer set for:
-\begin{lstlisting}[numbers=none]
-2 #max [a,a].  2 #min [a,a].
+In fact, we have that $2=1+1$,
+i.e., multiple weights for the same literal sum up.
+Unlike this, the following pairs of aggregate atoms are
+different from one another:
+\begin{lstlisting}[numbers=none,escapechar=@]
+2 #min [a=2] 2 @\textnormal{and}@
+2 #min [a,a] 2@\textnormal{,}@
+2 #max [a=2] 2 @\textnormal{and}@
+2 #max [a,a] 2@\textnormal{,}@
+2 #avg [a=2] 2 @\textnormal{and}@
+2 #avg [a,a] 2@\textnormal{.}@
 \end{lstlisting}
+While $\min\{2\}=\max\{2\}=\frac{2}{1}=2$,
+we have that 
+$\min\{1,1\}=\max\{1,1\}=\frac{1+1}{2}=1$.
+Hence, if atom~\pred{a} holds,
+the aggregate atoms where its weight is $2$ hold,
+but not the ones where the (default) weight $1$ is taken twice.
+That is, whether repetitions of a literal are cumulative or 
+subject to annihilation depends on the aggregate being used.
+
+Having discussed aggregate atoms,
+let us note that there is a second way to use aggregates:
+the values obtained by evaluating them can be assigned to variables.
+To this end, \gringo\ and \clingo\ allow for the aggregates
+\code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#count} to
+occur on the right-hand sides of assignment predicates~\code{=} and~\code{:=}.
+\index{Aggregates!Assignments}%
+\index{Assignments!Aggregates}%
+For instances, the following rules assign the obtained values to a variable:
+\begin{lstlisting}[numbers=none]
+sum(X) :- X = #sum [a=2,a=3].
+min(X) :- X = #min [a=2,a=3].
+max(X) :- X = #max [a=2,a=3].
+cnt(X) :- X = #count {a,a}.
+\end{lstlisting}
+Under the assumption that atom~\pred{a} holds,
+the atoms \code{\pred{sum}(\const{5})}, \code{\pred{min}(\const{2})},
+\code{\pred{max}(\const{3})}, and \code{\pred{cnt}(\const{1})} are
+derived by the above rules.
+If~\pred{a} does not hold, we derive 
+\code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#supremum})},
+\code{\pred{max}(\const{\#infimum})}, and \code{\pred{cnt}(\const{0})}.
+Here, the special constants \const{\#supremum} and \const{\#infimum}
+(introduced in Section~\ref{subsec:gringo:normal}),
+obtained by applying \code{\#min} and \code{\#max}, respectively,
+to the empty set of weights,
+indicate the neutral elements of the aggregates,
+$+\infty$ and $-\infty$, respectively.
+These constants can also be used as weights subject to 
+\code{\#min} and \code{\#max} (in order to exceed any integer bound):
+\begin{lstlisting}[numbers=none]
+bot :- #min [a=#infimum] -1000.
+top :- 1000 #max [a=#supremum].
+\end{lstlisting}
+Assuming that atom~\pred{a} holds,
+the atoms~\pred{bot} and~\pred{top} are derived by the above rules
+because $-\infty\leq-1000$ and $1000\leq+\infty$.
+
+Although it seems convenient to use assignments of aggregates' values,
+this feature should be used with care.
+If the (weighted) literals of an aggregate belong to domain predicates
+(see Page~\pageref{pg:domain}) or built-ins,
+\gringo\ or \clingo\ evaluates the aggregate during grounding, so obtaining
+a unique value to be assigned.
+\index{Aggregates!Assignments!Domain Predicates}%
+\index{Assignments!Aggregates!Domain Predicates}%
+Otherwise, if the literals do not belong to domain predicates,
+the value of an aggregate is not known during grounding,
+in which case \gringo\ or \clingo\ unwraps all possible outcomes of the
+aggregate's evaluation.
+The latter can lead to a space blow-up, which should be taken into account
+if space becomes a bottleneck.
+
+
+% In particular, if there are multiple occurrences
+% $L\code{=}w_1,\dots,L\code{=}w_k$
+% of a literal~$L$, in combination with \const{\#min} and \const{\#max},
+% it is not the same like having $L\code{=}w_1+\dots+w_k$.
+% To see this, note that the program consisting of the facts:
+% \begin{lstlisting}[numbers=none]
+% 2 #max [a=2].  2 #min [a=2].
+% \end{lstlisting}
+% has $\{\code{a}\}$ as its unique answer set, while there is no answer set for:
+% \begin{lstlisting}[numbers=none]
+% 2 #max [a,a].  2 #min [a,a].
+% \end{lstlisting}
 
 % If literals ought not to be repeated,
 % we can use \const{\#count} instead of \const{\#sum}.

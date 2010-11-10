@@ -1,6 +1,8 @@
 \begin{theindex}
 
   \item Aggregates, \hyperpage{24}
+    \subitem Assignments, \hyperpage{26}
+      \subsubitem Domain Predicates, \hyperpage{27}
     \subitem Average, \code{\#avg}, \hyperpage{25}
     \subitem Conditions, \hyperpage{22}
       \subsubitem Domain Predicates, \hyperpage{23}
@@ -29,6 +31,8 @@
     \subitem Subtraction, \code{-}, \hyperpage{17}
     \subitem Unary Minus, \code{-}, \hyperpage{17}
   \item Assignments, \hyperpage{19}
+    \subitem Aggregates, \hyperpage{26}
+      \subsubitem Domain Predicates, \hyperpage{27}
     \subitem Variable Assignment, \code{=}, \hyperpage{19}
     \subitem Variable Unification, \code{:=}, \hyperpage{19}
 
@@ -44,10 +48,10 @@
 
   \indexspace
 
-  \item Incremental Grounding, \hyperpage{38}
-    \subitem Base Part, \code{\#base}, \hyperpage{39}
-    \subitem Cumulative Part, \code{\#cumulative}, \hyperpage{39}
-    \subitem Volatile Part, \code{\#volatile}, \hyperpage{39}
+  \item Incremental Grounding, \hyperpage{39}
+    \subitem Base Part, \code{\#base}, \hyperpage{40}
+    \subitem Cumulative Part, \code{\#cumulative}, \hyperpage{40}
+    \subitem Volatile Part, \code{\#volatile}, \hyperpage{40}
 
   \indexspace
 
@@ -63,32 +67,32 @@
       \subsubitem Default Negation, \hyperpage{14}
     \subitem Rules, \hyperpage{14}
     \subitem Safeness, \hyperpage{16}, \hyperpage{18--21}
-  \item Lua, \hyperpage{34}
-    \subitem Assignment Metatable, \hyperpage{37}
-    \subitem Function Call, \hyperpage{35}
-    \subitem Term Insertion, \hyperpage{35}
-    \subitem Val Metatable, \hyperpage{35}
+  \item Lua, \hyperpage{35}
+    \subitem Assignment Metatable, \hyperpage{38}
+    \subitem Function Call, \hyperpage{36}
+    \subitem Term Insertion, \hyperpage{36}
+    \subitem Val Metatable, \hyperpage{36}
 
   \indexspace
 
-  \item Meta-Statements, \hyperpage{31}
-    \subitem Base Part, \code{\#base}, \hyperpage{39}
-    \subitem Comments, \hyperpage{31}
-    \subitem Compute Statements, \code{\#compute}, \hyperpage{32}
-    \subitem Constant Replacement, \code{\#const}, \hyperpage{31}
-    \subitem Cumulative Part, \code{\#cumulative}, \hyperpage{39}
-    \subitem Domain Declarations, \code{\#domain}, \hyperpage{32}
-    \subitem External Statements, \code{\#external}, \hyperpage{33}
+  \item Meta-Statements, \hyperpage{32}
+    \subitem Base Part, \code{\#base}, \hyperpage{40}
+    \subitem Comments, \hyperpage{32}
+    \subitem Compute Statements, \code{\#compute}, \hyperpage{33}
+    \subitem Constant Replacement, \code{\#const}, \hyperpage{32}
+    \subitem Cumulative Part, \code{\#cumulative}, \hyperpage{40}
+    \subitem Domain Declarations, \code{\#domain}, \hyperpage{33}
+    \subitem External Statements, \code{\#external}, \hyperpage{34}
     \subitem Hiding Predicates, \code{\#show}, \code{\#hide}, 
-		\hyperpage{31}
-    \subitem Volatile Part, \code{\#volatile}, \hyperpage{39}
+		\hyperpage{32}
+    \subitem Volatile Part, \code{\#volatile}, \hyperpage{40}
 
   \indexspace
 
   \item Statements
-    \subitem Optimize Statements, \hyperpage{29}
-      \subsubitem \#maximize, \hyperpage{29}
-      \subsubitem \#minimize, \hyperpage{29}
+    \subitem Optimize Statements, \hyperpage{30}
+      \subsubitem \#maximize, \hyperpage{30}
+      \subsubitem \#minimize, \hyperpage{30}
 
   \indexspace
 
@@ -102,7 +106,7 @@
     \subitem Functions, \hyperpage{12}
     \subitem Integers, \hyperpage{17}
       \subsubitem Intervals, \hyperpage{20}
-    \subitem Lua Function Call, \hyperpage{35}
+    \subitem Lua Function Call, \hyperpage{36}
     \subitem Pooling, \code{;}, \code{;;}, \hyperpage{23}
     \subitem Strings, \hyperpage{12}
     \subitem Variables, \hyperpage{12}

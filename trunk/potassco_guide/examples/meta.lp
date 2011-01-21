@@ -18,9 +18,9 @@ holds(min(L,WL,U))  :- L #min  [     holds(A) = W : wlist(WL,_,pos(A),W),
 holds(max(L,WL,U))  :- L #max  [     holds(A) = W : wlist(WL,_,pos(A),W),
                                  not holds(A) = W : wlist(WL,_,neg(A),W) ] U, body(max(L,WL,U)).
 holds(even(L,WL,U)) :-   #even [     holds(A) = W : wlist(WL,_,pos(A),W),
-                                 not holds(A) = W : wlist(WL,_,neg(A),W) ]  , body(even(L,WL,U)).
+                                 not holds(A) = W : wlist(WL,_,neg(A),W) ]  , body(even(WL)).
 holds(odd(L,WL,U))  :-   #odd  [     holds(A) = W : wlist(WL,_,pos(A),W),
-                                 not holds(A) = W : wlist(WL,_,neg(A),W) ]  , body(odd(L,WL,U)).
+                                 not holds(A) = W : wlist(WL,_,neg(A),W) ]  , body(odd(WL)).
 
 % derive heads
 head(A) :- rule(pos(A),pos(B)), holds(B).
@@ -36,9 +36,9 @@ L #min  [     holds(A) = W : wlist(WL,_,pos(A),W),
 L #max  [     holds(A) = W : wlist(WL,_,pos(A),W),
           not holds(A) = W : wlist(WL,_,neg(A),W) ] U :- head(max(L,WL,U)).
   #even [     holds(A) = W : wlist(WL,_,pos(A),W),
-          not holds(A) = W : wlist(WL,_,neg(A),W) ]   :- head(even(L,WL,U)).
+          not holds(A) = W : wlist(WL,_,neg(A),W) ]   :- head(even(WL)).
   #odd  [     holds(A) = W : wlist(WL,_,pos(A),W),
-          not holds(A) = W : wlist(WL,_,neg(A),W) ]   :- head(odd(L,WL,U)).
+          not holds(A) = W : wlist(WL,_,neg(A),W) ]   :- head(odd(WL)).
 
 #minimize [     holds(A) = W @ P : wlist(WL,_,pos(A),W) : minimize(P,WL),
             not holds(A) = W @ P : wlist(WL,_,neg(A),W) : minimize(P,WL) ].

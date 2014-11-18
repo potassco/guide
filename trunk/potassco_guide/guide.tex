@@ -37,6 +37,7 @@ Martin Gebser \and
 Roland Kaminski \and  
 Benjamin Kaufmann \and 
 Max Ostrowski \and  
+Javier Romero \and
 Torsten Schaub \and  
 Sven Thiele}
 
@@ -44,14 +45,12 @@ Sven Thiele}
 \title{%
 	\textbf{\huge A User's Guide to}
         \\
-	\gringo, \clasp, \clingo, \textbf{and} \iclingo\        
-        \thanks{This guide refers to Version~\textbf{3}.x
-                of \gringo, \clingo, and \iclingo\ as well as
-                Version~1.\textbf{3}.x of \clasp.
+	\gringo, \clasp, \textbf{and} \clingo%
+        \thanks{This guide refers to \gringo\ and \clingo\ series 4 as well as \clasp\ series 3.
                 Please make sure that you have corresponding (or later) versions available.}
         \\[4mm] 
-        \large\url{http://potassco.sourceforge.net/}      
-%Tools \gringo, \clasp, \clingo, and \iclingo\ are available at~\cite{potassco}.} \\[0.0cm]
+        \large\url{http://potassco.sourceforge.net}      
+%Tools \gringo, \clasp, and \clingo\ are available at~\cite{potassco}.} \\[0.0cm]
 %	{\normalsize \textnormal{(version 3.x)}}
 }
 \date{\today}
@@ -63,37 +62,30 @@ Sven Thiele}
 
 \input{abstract}
 \newpage
-%{\small
 \tableofcontents
 \listoffigures
 \lstlistoflistings
-%}
-\newpage
+
 \pagestyle{fancy}
-\input{introduction}
-\newpage
-\input{quickstart}
-\newpage
-\input{language}
-\newpage
-\input{examples}
-\newpage
-\input{options}
-\newpage
-\input{errors}
-\newpage
-\input{future}
+\include{introduction}
+\com{\color{red}\Huge\sf{REVISED UNTIL HERE}}
+\include{quickstart}
+\include{language}
+\include{examples}
+\include{options}
+\include{errors}
+\include{future}
 \newpage
 \appendix
-%\input{restrictions}
-\input{lparse}
-\newpage
-\input{background}
+%\include{restrictions}
+\include{lparse}
+\include{gringo3}
+% \include{background}
 \newpage
 \phantomsection
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{plain}
-\bibliography{guide}
+\bibliography{lit,akku,procs,misc}
 \newpage
 \phantomsection
 \addcontentsline{toc}{section}{Index}

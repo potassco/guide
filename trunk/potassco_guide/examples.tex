@@ -7,8 +7,8 @@ Blocks-World Planning (Section~\ref{subsec:ex:block}).
 While the first problem could likewise be solved within neighboring paradigms,
 the second one requires checking reachability,
 something that is rather hard to encode in either
-Boolean Satisfiability~\cite{bihemawa08a} or
-Constraint Programming~\cite{robewa06a}.
+Boolean Satisfiability~\cite{SATHandbook} or
+Constraint Programming~\cite{CPHandbook}.
 The third problem coming from the area of planning
 illustrates incremental solving with \iclingo.
  
@@ -198,8 +198,8 @@ in which case a ground program is called \emph{non-tight}~\cite{erdlif03a,fages9
 The ``correct'' treatment of (positive) recursion 
 is a particular feature of answer set semantics,
 which is hard to mimic in either
-Boolean Satisfiability~\cite{bihemawa08a} or
-Constraint Programming~\cite{robewa06a}.
+Boolean Satisfiability~\cite{SATHandbook} or
+Constraint Programming~\cite{CPHandbook}.
 In our present problem, this feature makes sure that all nodes are reached
 by a global cycle from node~\code{1}, thus, excluding isolated subcycles.
 In fact, the Test in Line~8 stipulates that every node in the given graph
@@ -478,7 +478,7 @@ stops its incremental computation after finding an answer set in step~\const{3}.
 The scheme of iterating steps until finding at least one answer set
 is the default behavior of~\iclingo,
 which can be customized via command line options
-(cf.\ Section~\ref{subsec:opt:iclingo}).
+(cf.\ Section~\ref{subsec:opt:clingo}).
 
 Finally, let us describe how solutions obtained via an incremental computation
 can be computed in the standard way, that is, in a single pass.

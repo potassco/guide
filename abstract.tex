@@ -1,14 +1,13 @@
 \begin{abstract}
 This document provides an introduction to the Answer Set Programming (ASP) tools
-\gringo, \clasp, \clingo, and \iclingo, developed at the University of Potsdam.
+\gringo, \clasp, and \clingo, developed at the University of Potsdam.
 The first tool, \gringo, is a \emph{grounder} capable of translating
 logic programs provided by users into equivalent propositional logic programs.
 The answer sets of such programs are computed by \clasp,
 which is a \emph{solver} processing the output of \gringo.
-The third tool, \clingo, integrates the functionalities of \gringo\ and \clasp,
-thus, acting as a \emph{monolithic} grounder and solver for user programs.
-Finally, \iclingo\ extends \clingo\ by an
-\emph{incremental} mode that incorporates both grounding and solving.
+The third tool, \clingo, combines the functionalities of \gringo\ and \clasp,
+and additionally integrates the scripting languages \lua\ and \python\ either
+through libraries or embedded code.
 This guide, for one, aims at enabling ASP novices
 to make use of the aforementioned tools.
 For another, it provides a reference of the tools' features

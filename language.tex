@@ -5,7 +5,7 @@ grounder \gringo, combined grounder and solver \clingo,
 incremental grounder and solver \iclingo, and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-It is extended by \iclingo\ with a few incremental directives described in Section~\ref{subsec:lang:iclingo}.
+It is extended by \iclingo\ with a few incremental directives described in Section~\ref{subsec:lang:clingo}.
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs
 handled by \clasp.
 
@@ -1773,7 +1773,7 @@ The meaning is that all literals contained in
 ``$\code{\char`\{}\dots\code{\char`\}}$'' must hold w.r.t.\ answer sets
 that are to be computed,
 while~$n$ specifies a number of answer sets to compute.
-As \clasp, \clingo, and \iclingo\ provide command line option
+As \clasp\ and \clingo\ provide command line option
 \code{--number} (cf.\ Section~\ref{subsec:opt:clasp})
 to specify how many answer sets are to be computed,
 they simply ignore~$n$.
@@ -2023,9 +2023,9 @@ to induce 100 percent random decisions.
 
 
 
-\subsection{Input Language of \iclingo}\label{subsec:lang:iclingo}
+\subsection{Input Language of \iclingo}\label{subsec:lang:clingo}
 \index{Incremental Grounding}%
-
+\tbrw
 System \iclingo~\cite{gekakaosscth08a} extends \clingo\ by an
 \emph{incremental} computation mode that incorporates both grounding and solving.
 Hence, its input language includes all constructs described
@@ -2073,7 +2073,7 @@ After a grounding step, \clasp\ is usually invoked via an internal interface
 (like with \clingo), and the incremental computation stops after a step
 in which at least one answer set has been found by \clasp.
 This default behavior can be readapted via command line 
-options (cf.\ Section~\ref{subsec:opt:iclingo}).
+options (cf.\ Section~\ref{subsec:opt:clingo}).
 For obtaining a well-defined incremental computation result,
 it is important that (ground) head atoms within static, cumulative, and volatile program parts
 are distinct from each other, and they must also be different from step to step

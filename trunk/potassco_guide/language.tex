@@ -153,7 +153,7 @@ a :- b.
 b :- a.
 \end{lstlisting}
 %
-When \pred{a} and \pred{b} are false, the bodies of both rules are false either,
+When \pred{a} and \pred{b} are false, the bodies of both rules are false as well,
 so that the rules are satisfied.
 Furthermore, there is no (true) atom to be derived,
 which shows that the empty set is an answer set. 
@@ -178,8 +178,8 @@ a :- not b.
 b :- not a.
 \end{lstlisting}
 %
-Here, the empty set is not a model because both rules are unsatisfied,
-but the sets containing only either~\pred{a} or~\pred{b} are models.
+Here, the empty set is not a model because both rules are unsatisfied.
+However, the sets containing only either~\pred{a} or~\pred{b} are models.
 To see that each of them is an answer set,
 note that~\pred{a} is derived by the rule \code{\pred{a}\,:-\:not\:\pred{b}.}
 if \pred{b} is false;
@@ -199,9 +199,10 @@ an answer set of the logic program.
 
 \begin{example}\label{ex:as:three}
 To illustrate the use of facts and integrity constraints,
-let us augment the logic program in Example~\ref{ex:as:two}
-with the following:
+let us augment the logic program in Example~\ref{ex:as:two}:
 \begin{lstlisting}[numbers=none]
+a :- not b.
+b :- not a.
 c.
 :- c, not b.
 \end{lstlisting}
@@ -220,8 +221,7 @@ of the rule \code{\pred{b}\,:-\:not\:\pred{a}.} is satisfied,
 so that atom~\pred{a} must be false.
 Hence, the set containing \pred{b} and~\pred{c}
 is the only answer set of the logic program
-in Example~\ref{ex:as:two} augmented with \code{\pred{c}.}
-and \code{:-\:c,\:not\:\pred{b}.}
+in Example~\ref{ex:as:three}.
 \eexample
 \end{example}
 
@@ -267,10 +267,10 @@ penguins can definitely not fly,
 we can simplify the previous ground rules to obtain the following ones:%
 \marginlabel{The reader can reproduce these ground rules
              by invoking:\\
-             \code{\mbox{~}clingo -t \textbackslash\\
+             \code{\mbox{~}clingo --text \textbackslash\\
                    \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/fly.lp}{fly.lp}}\\
              or alternatively:\\
-             \code{\mbox{~}gringo -t \textbackslash\\
+             \code{\mbox{~}gringo --text \textbackslash\\
                    \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/fly.lp}{fly.lp}}}
 %
 \lstinputlisting[numbers=none,nolol]{examples/sfly.lp}
@@ -291,7 +291,7 @@ instantiated with \const{tweety} and \const{tux}.%
 
 The above example illustrated how variables are used to represent all instances of
 rules w.r.t.\ the language of a logic program.
-In fact, grounder \gringo\ or the grounding component of \clingo, respectively,
+In fact, grounder \gringo\ (or the grounding component of \clingo)
 takes care of instantiating variables
 such that an equivalent propositional logic program is obtained.
 To this end,
@@ -306,7 +306,7 @@ The only exception to this are \emph{local} variables, % bound by conditions,
 detailed in Section~\ref{subsec:gringo:condition} and~\ref{subsec:gringo:aggregate}.} 
 For instance, the first two schematic rules in Example~\ref{ex:flies} 
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
-This tells \gringo\ or the grounding component of \clingo, respectively,
+This tells \gringo\ (or the grounding component of \clingo)
 that the values to be substituted for~\var{X} are limited to birds.
 
 %If a variable appears positively in some predicate, then we say that this predicate binds the variable.
@@ -379,7 +379,7 @@ allowing us to impose an integrity \code{:-\;$A$,\:-$A$.}
 without explicitly writing it in a logic program.
 Depending on the logic program at hand,
 it may be possible that neither~$A$ nor~$\code{-}A$ is contained in an answer set,
-thus representing a state where the truth and the falsity of~$A$ are both uncertain.
+thus representing a state where the truth and the falsity of~$A$ are both unknown.
 % Observe that 
 % that can be
 % implemented via integrity constraints whose effect is to eliminate
@@ -398,10 +398,10 @@ Given the individuals \const{tweety} and \const{tux},
 classical negation is reflected by 
 the following (implicit) integrity constraints:%
 \marginlabel{By invoking:\\
-  \code{\mbox{~}clingo -t \textbackslash\\
+  \code{\mbox{~}clingo --text \textbackslash\\
         \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/flycn.lp}{flycn.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \textbackslash\\
+  \code{\mbox{~}gringo --text \textbackslash\\
         \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/flycn.lp}{flycn.lp}}\\
 the reader can observe that % \gringo\ indeed produces 
 the integrity constraint in Line~4 is indeed part of the grounding.
@@ -440,8 +440,8 @@ there no longer is any answer set.
 
 \subsubsection{Disjunction}\label{subsec:gringo:disjunction}
 \index{Logic Programs!Disjunction}
-
-Disjunctive logic programs permit connective~``\code{|}'' between atoms in rule heads.
+\comment{T2R: check!}
+Disjunctive logic programs permit connective~``\code{;}'' (or ``\code{|}'') between atoms in rule heads.
 A disjunctive head holds if at least one of its atoms is true.
 Answer sets of a disjunctive logic program satisfy a minimality criterion
 that we do not detail here
@@ -526,9 +526,9 @@ The usage of arithmetic functions is illustrated by the program:%
   The unique answer set of the program,
   obtained after evaluating all arithmetic functions,
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/arithf.lp}{arithf.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/arithf.lp}{arithf.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/arithf.lp}{arithf.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/arithf.lp}{arithf.lp}}}
 %
 \lstinputlisting{examples/arithf.lp}
 %
@@ -556,7 +556,7 @@ is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\
 % and \gringo{} not necessarily halts when given such an input.
 Indeed, inferring matching values for~\var{X} when given a value for \var{X}+\const{1}
 would require equation solving, which is however not performed by
-\gringo\ or the grounding component of \clingo.
+\gringo\ (or the grounding component of \clingo).
 \index{Logic Programs!Safeness}%
 \end{Note}
 
@@ -587,9 +587,9 @@ is illustrated by the following program:%
 \marginlabel{%
   The simplified ground program obtained by evaluating built-ins
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/arithc.lp}{arithc.lp}}
+  \code{\mbox{~}clingo --text \attach{examples/arithc.lp}{arithc.lp}}
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/arithc.lp}{arithc.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/arithc.lp}{arithc.lp}}}
 %
 \lstinputlisting{examples/arithc.lp}
 %
@@ -604,9 +604,9 @@ Comparison predicates can also be applied to constants and functions,
 as illustrated by the following program:%
 \marginlabel{%
   As above, by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/symbc.lp}{symbc.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/symbc.lp}{symbc.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/symbc.lp}{symbc.lp}}\\
+  \code{\mbox{~}gringo --text \attach{examples/symbc.lp}{symbc.lp}}\\
   one can inspect the simplified ground program
   obtained by evaluating built-ins.}
 %
@@ -657,9 +657,9 @@ The usage of variable assignments is illustrated by the following program:%
 \marginlabel{%
   The simplified ground program obtained from assignments
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/assign.lp}{assign.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/assign.lp}{assign.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/assign.lp}{assign.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/assign.lp}{assign.lp}}}
 %
 \lstinputlisting[lastline=2,belowskip=0pt]{examples/assign.lp}%
 \lstinputlisting[firstline=3,aboveskip=0pt,numbers=none,nolol]{examples/assign.lp}
@@ -679,9 +679,9 @@ is illustrated by the following program:
 \marginlabel{%
   The simplified ground program obtained from unifications
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/unify.lp}{unify.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/unify.lp}{unify.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/unify.lp}{unify.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/unify.lp}{unify.lp}}}
 %
 \lstinputlisting{examples/unify.lp}
 %
@@ -722,7 +722,7 @@ it must be possible to instantiate the right-hand side
 without knowing the values of variables on
 the left-hand side.
 E.g., the rule \code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\var{X}.}
-is not accepted by \gringo\ or the grounding component of \clingo\
+is not accepted by \gringo\ (or the grounding component of \clingo)
 because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \index{Logic Programs!Safeness}%
 %
@@ -806,12 +806,12 @@ Note that only the rules with
 \marginlabel{%
   The simplified ground program obtained from intervals
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/int.lp}{int.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/int.lp}{int.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/int.lp}{int.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/int.lp}{int.lp}}}
 % \marginlabel{%
 %   Again the unique answer set is obtained via call:\\
-%   \code{\mbox{~}gringo -t \attach{examples/int.lp}{int.lp}}}
+%   \code{\mbox{~}gringo --text \attach{examples/int.lp}{int.lp}}}
 %
 in the body actually contribute to the unique answer set
 of the program by deriving all atoms 
@@ -849,9 +849,9 @@ We are particularly interested in the rules in Line~5 and~6,
 instantiated as follows:%
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/cond.lp}{cond.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/cond.lp}{cond.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/cond.lp}{cond.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/cond.lp}{cond.lp}}}
 % %[firstnumber=5]
 \begin{lstlisting}[numbers=none]
 meet :- available(jane), available(john).
@@ -892,10 +892,10 @@ of the condition.
 Thus, the instantiated rule in Line~10 looks as follows:%
 \marginlabel{%
   The reader can observe the effect of conditions by invoking:\\
-             \code{\mbox{~}clingo -t \textbackslash\\
+             \code{\mbox{~}clingo --text \textbackslash\\
                    \mbox{~}\attach{examples/cond.lp}{cond.lp} \attach{examples/conds.lp}{conds.lp}}\\
              or alternatively:\\
-             \code{\mbox{~}gringo -t \textbackslash\\
+             \code{\mbox{~}gringo --text \textbackslash\\
                    \mbox{~}\attach{examples/cond.lp}{cond.lp} \attach{examples/conds.lp}{conds.lp}}}
 %
 \begin{lstlisting}[numbers=none]
@@ -1002,9 +1002,9 @@ all options for the head atom:%
 % We thus get the rules:%
 \marginlabel{%
   The reader can reproduce the (simplified) rules by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/pool.lp}{pool.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/pool.lp}{pool.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/pool.lp}{pool.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/pool.lp}{pool.lp}}}
 %
 \begin{lstlisting}[numbers=none]
 mix(a,1) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
@@ -1034,9 +1034,9 @@ is illustrated by the program:%
 \marginlabel{%
   The simplified ground program obtained by expanding poolings
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo -t \attach{examples/pools.lp}{pools.lp}}\\
+  \code{\mbox{~}clingo --text \attach{examples/pools.lp}{pools.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo -t \attach{examples/pools.lp}{pools.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/pools.lp}{pools.lp}}}
 %
 \lstinputlisting{examples/pools.lp}
 %
@@ -1426,7 +1426,7 @@ Instantiating the above \const{\#count} aggregate
 yields the following ground rule:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
-  \code{\mbox{~}gringo -t \attach{examples/aggr.lp}{aggr.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}
 %
 \begin{lstlisting}[firstnumber=9,stepnumber=9]
 3 { enroll(1), enroll(2), enroll(3), enroll(4), 
@@ -1626,7 +1626,7 @@ to maximize the number of stars among hotels that are otherwise indistinguishabl
 The optimization statements in Line~6--8 are instantiated as follows:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
-  \code{\mbox{~}gringo -t \attach{examples/opt.lp}{opt.lp}}}
+  \code{\mbox{~}gringo --text \attach{examples/opt.lp}{opt.lp}}}
 %
 \begin{lstlisting}[firstnumber=6,breakindent=0pt,escapechar=&]
 #maximize [ hotel(1)=5@1, hotel(2)=4@1, &\\&            hotel(3)=3@1, hotel(4)=3@1, hotel(5)=2@1 ].
@@ -1886,7 +1886,7 @@ The first example shows basic Lua usage:
 \marginlabel{%
 To compute the unique answer set, invoke:\\
 \code{%
-\mbox{~}gringo -t \attach{examples/luaf.lp}{luaf.lp}}
+\mbox{~}gringo --text \attach{examples/luaf.lp}{luaf.lp}}
 }%
 In Line 3 we add a function that calculates the greatest common divisor of two numbers.
 This function is called in Line 20 and the result stored in predicate \code{gcd}/$3$.
@@ -1941,7 +1941,7 @@ The second example shows how to create ground terms from within Lua:
 \marginlabel{%
 To compute the unique answer set, invoke:\\
 \code{%
-\mbox{~}gringo -t \attach{examples/luav.lp}{luav.lp}}
+\mbox{~}gringo --text \attach{examples/luav.lp}{luav.lp}}
 }%
 Function \code{f} in Line 2 returns a tuple 
 whose first member is a string indicating the type of the argument 

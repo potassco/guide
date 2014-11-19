@@ -304,7 +304,7 @@ Ignore any optimize statements of a logic program during computation.
 \item[\code{--opt-heu}]~\\
 Consider optimize statements in heuristics.
 \item[\code{--supp-models}]~\\
-Compute supported models~\cite{apblwa88a} (rather than answer sets).
+Compute supported models~\cite{apblwa87a} (rather than answer sets).
 \item[\code{--trans-ext=all|choice|weight|dynamic|no}]~\\
 Compile extended rules~\cite{siniso02a} into normal rules of form (\ref{eq:normal:rule}).
 Arguments \code{choice} and \code{weight}
@@ -352,7 +352,7 @@ strategies of \clasp.
 %
 \begin{description}
 \item[\code{--lookahead=atom|body|hybrid|no}]~\\
-Apply failed-literal detection~\cite{freeman95}
+Apply failed-literal detection~\cite{freeman95a}
 to atoms (with argument \code{atom}),
 to rule bodies (with argument \code{body}), or
 to atoms and rule bodies like in \nomorepp~\cite{angelinesc05c} (with argument \code{hybrid}).
@@ -445,7 +445,7 @@ Strengthening is disabled via argument~\code{no}.
 \item[\code{--recursive-str}]~\\
 Recursively apply strengthening, as proposed in~\cite{soreen05a}.
 \item[\code{--loops=common|distinct|shared|no}]~\\
-Learn loop nogood~\cite{gekanesc07a} per atom in an unfounded set~\cite{gerosc91a}
+Learn loop nogood~\cite{gekanesc07a,gekasc09c} per atom in an unfounded set~\cite{gerosc91a}
 (with argument \code{common}),
 shrink unfounded set before learning another loop nogood
 (with argument \code{distinct}),

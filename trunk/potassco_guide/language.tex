@@ -1,20 +1,19 @@
 \section{Input Languages}\label{sec:language}
 
 This section provides an overview of the input languages of
-grounder \gringo, combined grounder and solver \clingo,
-incremental grounder and solver \iclingo, and of solver \clasp.
+grounder \gringo, combined grounder and solver \clingo, 
+and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-It is extended by \iclingo\ with a few incremental directives described in Section~\ref{subsec:lang:clingo}.
-Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs
-handled by \clasp.
-
+It is extended by \clingo\ with a few directives for multi-shot solving in Section~\ref{subsec:lang:clingo}.
+Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
 
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
 
 The tool \gringo~\cite{gescth07a} is a grounder capable of translating
-logic programs provided by users into equivalent ground programs.
-The output of \gringo\ can be piped into solver \clasp~\cite{gekanesc07a},
+user-defined logic programs (usually, containing variables) into 
+equivalent ground (that is, variable-free) programs.
+The output of \gringo\ can be piped into solver \clasp~\cite{gekanesc07a,gekasc09c},
 which then computes answer sets.
 System \clingo\ internally couples \gringo\ and \clasp, thus,
 it takes care of both grounding and solving.
@@ -28,7 +27,6 @@ in an invocation of either \gringo\ or \clingo.
 % We below provide a description of 
 In what follows, we describe the 
 constructs belonging to the input language of \gringo\ and \clingo.
-
 
 \subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
 \index{Terms}
@@ -55,6 +53,7 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \caption{Grammar for Terms.\label{fig:terms}}
 \end{figure}
 
+\comment{T: Roland please check and rewrite!}
 Every (non-propositional) logic program includes \emph{terms},
 mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
@@ -458,7 +457,7 @@ This is why \clingo%
 \footnote{Run as a monolithic system performing both grounding and \emph{solving}.}
 and solvers like 
 \assat~\cite{linzha04a},
-\clasp~\cite{gekanesc07a},
+\clasp~\cite{gekanesc07a,gekasc09c},
 \nomorepp~\cite{angelinesc05c},
 \smodels~\cite{siniso02a}, and
 \smodelscc~\cite{warsch04a}
@@ -1866,10 +1865,11 @@ The following listing shows schematic example output of \gringo\ when external s
 
 \subsubsection{Integrated Scripting Language}\label{subsec:lang:lua}
 \index{Lua}%
+\comment{T: Move or grounding only?}
 Utilizing the scripting language Lua\footnote{\url{http://www.lua.org}}, 
 \gringo's input language can be enriched by arbitrary arithmetical functions and implicit domains,
 answer sets can be intercepted and for example inserted into a database, or
-interactions between grounding and solving are possible when incrementally solving with \iclingo.
+interactions between grounding and solving are possible when incrementally solving with \clingo.
 We do not give an introduction to Lua here (there are numerous tutorials on the web), 
 but give some examples showing the capabilities of this integration.
 
@@ -1984,7 +1984,7 @@ The first function \code{query} in Line 9 selects everything from the table and
 returns it in form of a Lua table, which is then used in the logic program
 to provide new instantiations of~\code{p}/$2$ in Line 42.
 The second function \code{insert} is a helper function that expects a predicate name
-and then inspects \clingo's (or \iclingo's) possibly partial assignment and
+and then inspects \clingo's possibly partial assignment and
 inserts all true atoms into the database.
 It makes use of the \code{Assignment} meta-table.
 Next, note the three functions
@@ -2023,102 +2023,102 @@ to induce 100 percent random decisions.
 
 
 
-\subsection{Input Language of \iclingo}\label{subsec:lang:clingo}
+\subsection{Input Language of \clingo}\label{subsec:lang:clingo}
 \index{Incremental Grounding}%
 \tbrw
-System \iclingo~\cite{gekakaosscth08a} extends \clingo\ by an
-\emph{incremental} computation mode that incorporates both grounding and solving.
-Hence, its input language includes all constructs described
-in Section~\ref{subsec:lang:gringo}.
-In addition, \iclingo\ deals with statements of the following form:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-#base.
-#cumulative @\textit{constant}@.
-#volatile   @\textit{constant}@.
-\end{lstlisting}
-%
-\index{Incremental Grounding!Base Part, \code{\#base}}%
-\index{Meta-Statements!Base Part, \code{\#base}}%
-Via ``\code{\const{\#base}.},''
-the subsequent part of a logic program is declared as static, that is,
-it is processed only once at the beginning of an incremental computation.
-In contrast, ``\code{\const{\#cumulative} \textit{constant}.}''
-and ``\code{\const{\#volatile} \textit{constant}.}'' are used to declare
-a (symbolic) \code{\textit{constant}} as a placeholder for incremental step numbers.
-In the parts of a logic program below a \const{\#cumulative} statement,
-\code{\textit{constant}} is in each step replaced with the current step number,
-and the resulting rules, facts, and integrity constraints are accumulated
-over a whole incremental computation.
-While the replacement of \code{\textit{constant}} is similar,
-a logic program part below a \const{\#volatile} statement is local to steps,
-that is, all rules, facts, and integrity constraints computed in one step
-are dismissed before the next incremental step.
-Note that the type of a logic program part (static, cumulative, or volatile)
-is determined by the last
-\index{Incremental Grounding!Cumulative Part, \code{\#cumulative}}%
-\index{Meta-Statements!Cumulative Part, \code{\#cumulative}}%
-\index{Incremental Grounding!Volatile Part, \code{\#volatile}}%
-\index{Meta-Statements!Volatile Part, \code{\#volatile}}%
-\const{\#base}, \const{\#cumulative}, or \const{\#volatile} statement
-preceding it.
+% System \iclingo~\cite{gekakaosscth08a} extends \clingo\ by an
+% \emph{incremental} computation mode that incorporates both grounding and solving.
+% Hence, its input language includes all constructs described
+% in Section~\ref{subsec:lang:gringo}.
+% In addition, \iclingo\ deals with statements of the following form:
+% %
+% \begin{lstlisting}[numbers=none,escapechar=@]
+% #base.
+% #cumulative @\textit{constant}@.
+% #volatile   @\textit{constant}@.
+% \end{lstlisting}
+% %
+% \index{Incremental Grounding!Base Part, \code{\#base}}%
+% \index{Meta-Statements!Base Part, \code{\#base}}%
+% Via ``\code{\const{\#base}.},''
+% the subsequent part of a logic program is declared as static, that is,
+% it is processed only once at the beginning of an incremental computation.
+% In contrast, ``\code{\const{\#cumulative} \textit{constant}.}''
+% and ``\code{\const{\#volatile} \textit{constant}.}'' are used to declare
+% a (symbolic) \code{\textit{constant}} as a placeholder for incremental step numbers.
+% In the parts of a logic program below a \const{\#cumulative} statement,
+% \code{\textit{constant}} is in each step replaced with the current step number,
+% and the resulting rules, facts, and integrity constraints are accumulated
+% over a whole incremental computation.
+% While the replacement of \code{\textit{constant}} is similar,
+% a logic program part below a \const{\#volatile} statement is local to steps,
+% that is, all rules, facts, and integrity constraints computed in one step
+% are dismissed before the next incremental step.
+% Note that the type of a logic program part (static, cumulative, or volatile)
+% is determined by the last
+% \index{Incremental Grounding!Cumulative Part, \code{\#cumulative}}%
+% \index{Meta-Statements!Cumulative Part, \code{\#cumulative}}%
+% \index{Incremental Grounding!Volatile Part, \code{\#volatile}}%
+% \index{Meta-Statements!Volatile Part, \code{\#volatile}}%
+% \const{\#base}, \const{\#cumulative}, or \const{\#volatile} statement
+% preceding it.
 
-During an incremental computation, all static program parts are grounded first,
-while cumulative and volatile parts are grounded step-wise,
-replacing \code{\textit{constant}}s with successive step numbers starting from~\const{1}.
-Note that due to \gringo's grounding algorithm,
-rules are not grounded twice using the same substitution of global variables
-(the incremental constant is treated like a global constant here).
-After a grounding step, \clasp\ is usually invoked via an internal interface
-(like with \clingo), and the incremental computation stops after a step
-in which at least one answer set has been found by \clasp.
-This default behavior can be readapted via command line 
-options (cf.\ Section~\ref{subsec:opt:clingo}).
-For obtaining a well-defined incremental computation result,
-it is important that (ground) head atoms within static, cumulative, and volatile program parts
-are distinct from each other, and they must also be different from step to step
-(see~\cite{gekakaosscth08a} for details).
-In Section~\ref{subsec:ex:block},
-we provide a typical example in which these conditions naturally hold.
+% During an incremental computation, all static program parts are grounded first,
+% while cumulative and volatile parts are grounded step-wise,
+% replacing \code{\textit{constant}}s with successive step numbers starting from~\const{1}.
+% Note that due to \gringo's grounding algorithm,
+% rules are not grounded twice using the same substitution of global variables
+% (the incremental constant is treated like a global constant here).
+% After a grounding step, \clasp\ is usually invoked via an internal interface
+% (like with \clingo), and the incremental computation stops after a step
+% in which at least one answer set has been found by \clasp.
+% This default behavior can be readapted via command line 
+% options (cf.\ Section~\ref{subsec:opt:clingo}).
+% For obtaining a well-defined incremental computation result,
+% it is important that (ground) head atoms within static, cumulative, and volatile program parts
+% are distinct from each other, and they must also be different from step to step
+% (see~\cite{gekakaosscth08a} for details).
+% In Section~\ref{subsec:ex:block},
+% we provide a typical example in which these conditions naturally hold.
 
-\begin{example}
-For now, consider this simple Schur number example:
-\lstinputlisting{examples/inc.lp}
-\marginlabel{%
-  To calculate the Schur number, invoke:\\
-  \code{\mbox{~}iclingo \attach{examples/inc.lp}{inc.lp} \textbackslash\\
-  --istop=UNSAT
-  }\\
-  The solving stops when the largest number has been found.
-}%
-The Schur number~$n$ w.r.t. to a given number~$c$ is the largest integer 
-such that the interval~$[1..n]$ can be partitioned into $c$ sum-free sets.
-A set $S=\{c_1 ,\dots, c_k\}$ is sum-free if for each~$x_i$ and~$x_j$, 
-it holds that~$x_i + x_j \not \in S$.
+% \begin{example}
+% For now, consider this simple Schur number example:
+% \lstinputlisting{examples/inc.lp}
+% \marginlabel{%
+%   To calculate the Schur number, invoke:\\
+%   \code{\mbox{~}iclingo \attach{examples/inc.lp}{inc.lp} \textbackslash\\
+%   --istop=UNSAT
+%   }\\
+%   The solving stops when the largest number has been found.
+% }%
+% The Schur number~$n$ w.r.t. to a given number~$c$ is the largest integer 
+% such that the interval~$[1..n]$ can be partitioned into $c$ sum-free sets.
+% A set $S=\{c_1 ,\dots, c_k\}$ is sum-free if for each~$x_i$ and~$x_j$, 
+% it holds that~$x_i + x_j \not \in S$.
 
-In the base part in Line 2 we specify the number of partitions.
-Then, in the cumulative part in Line 4 each fresh integer $k$
-is assigned to exactly one partition.
-In Line 5 we check whether the guessed partition is sum-free.
-Note that we put this check in the cumulative part and incrementally extend it.
-The idea here is to keep as much constraints in the cumulative part
-because \clasp\ applies nogood learning and only information learnt from 
-the cumulative part can be kept among further solving steps;
-all information learnt from the volatile part has to be forgotten.
-Additionally, we use the comparison  \code{X <= Y}, 
-which helps to avoid grounding some redundant rules.
-Furthermore, note that there appears no incremental constant in this rule,
-\gringo's grounding algorithm makes sure that no ground instantiation of this rule 
-is grounded twice just the new slice for the next step is instantiated.
-Finally, we break symmetries in Line 6, i.e.,
-number one is always assigned to partition one, number two to partition two 
-if it is not in partition one, and so on. 
+% In the base part in Line 2 we specify the number of partitions.
+% Then, in the cumulative part in Line 4 each fresh integer $k$
+% is assigned to exactly one partition.
+% In Line 5 we check whether the guessed partition is sum-free.
+% Note that we put this check in the cumulative part and incrementally extend it.
+% The idea here is to keep as much constraints in the cumulative part
+% because \clasp\ applies nogood learning and only information learnt from 
+% the cumulative part can be kept among further solving steps;
+% all information learnt from the volatile part has to be forgotten.
+% Additionally, we use the comparison  \code{X <= Y}, 
+% which helps to avoid grounding some redundant rules.
+% Furthermore, note that there appears no incremental constant in this rule,
+% \gringo's grounding algorithm makes sure that no ground instantiation of this rule 
+% is grounded twice just the new slice for the next step is instantiated.
+% Finally, we break symmetries in Line 6, i.e.,
+% number one is always assigned to partition one, number two to partition two 
+% if it is not in partition one, and so on. 
 
-We use option \code{--istop=UNSAT} to solve as long as 
-\iclingo\ is able to find a solution, i.e., there is a 
-valid partitioning. Once this is no longer possible, the grounding/solving 
-process stops.\eexample
-\end{example}
+% We use option \code{--istop=UNSAT} to solve as long as 
+% \iclingo\ is able to find a solution, i.e., there is a 
+% valid partitioning. Once this is no longer possible, the grounding/solving 
+% process stops.\eexample
+% \end{example}
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 

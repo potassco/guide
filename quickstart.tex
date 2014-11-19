@@ -150,13 +150,13 @@ The head of the rule (left of~``\code{:-}'')
 is a so-called cardinality constraint (detailed in Section~\ref{subsec:gringo:aggregate}). 
 It
 consists of a set of literals,
-expanded using the predicates behind the colons
+expanded using the predicates behind the colon
 (detailed in Section~\ref{subsec:gringo:condition}),
 along with a lower and an upper bound.
 The cardinality constraint is satisfied if % and only if 
 the number of true elements
 is in-between the lower and the upper bound (both inclusive),
-which are~\const{1} in our case.
+which are both~\const{1} in our case.
 Since the cardinality constraint occurs as the head of a rule,
 it allows for deriving (``guessing'') atoms 
 over the predicate \pred{move}/$3$ to be true.
@@ -189,7 +189,7 @@ To this end,
 the rule in Line~5 
 identifies 
 the locations of disks at time point~\const{0}
-with the initial state, given in an instance.
+with the initial state (given in an instance).
 % infers the location of each disc in the initial state (time point 0).
 State transitions are modeled by the rules in Line~6 and~7.
 While the former specifies the direct effect of a move at time point~\var{T}, i.e.,
@@ -250,9 +250,9 @@ w.r.t.\ the moves in a solution,
 making such knowledge explicit via an integrity constraint
 turns out to improve the solving efficiency.
 
-Finally, the two meta-statements (detailed in Section~\ref{subsec:gringo:meta})
-of the Display part in Line~16 and~17
-indicate that only atoms over the predicate \pred{move}/$3$ ought to be printed,
+Finally, the meta-statements (detailed in Section~\ref{subsec:gringo:meta})
+of the Display part in Line~16
+indicates that only atoms over the predicate \pred{move}/$3$ ought to be printed,
 thus suppressing the predicates used to describe an instance as well as
 the auxiliary predicates \pred{move}/$2$, \pred{on}/$3$, and \pred{blocked}/$3$.
 This is for more convenient reading of a solution,
@@ -290,12 +290,18 @@ move(4,c,9)  move(3,a,10) move(4,a,11) move(2,c,12) \
 move(4,b,13) move(3,c,14) move(4,c,15) 
 SATISFIABLE
 
-Models      : 1+    
-Time        : 0.010
-  Prepare   : 0.000
-  Prepro.   : 0.010
-  Solving   : 0.000
+Models       : 1+    
+Calls        : 1
+Time         : 0.013s (Solving: 0.01s   \
+                       1st Model: 0.01s \
+                       Unsat: 0.00s)
+CPU Time     : 0.010s
 \end{lstlisting}
+% Models      : 1+    
+% Time        : 0.010
+%   Prepare   : 0.000
+%   Prepro.   : 0.010
+%   Solving   : 0.000
 The first line indicates that the (output) atoms of an answer set 
 follow in the line below, where ``\code{\char`\\}'' indicates that
 all atoms over \pred{move}/$3$ actually belong to a single line.
@@ -331,7 +337,7 @@ the solver has not exhaustively explored the search space
 so that further answer sets may exist.}
 % indicates that one answer set has been found and the \code{+} that 
 % the whole search space has not yet been explored, so there might be further answer sets.
-The final four lines report statistics including
+The final lines report statistics including
 total run-time (\code{Time}),
 time spent on grounding (\code{Prepare}),
 time spent on preprocessing~\cite{gekanesc08a} (\code{Prepro.}),

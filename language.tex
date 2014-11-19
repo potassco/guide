@@ -86,7 +86,7 @@ representing $+\infty$ and $-\infty$, respectively;
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 % the largest and the smallest possible values, respectively,
 % which behave essentially like constants.
-Finally, \emph{functions} are complex terms composed of a name (like a constant)
+Finally, (uninterpreted) \emph{functions} are complex terms composed of a name (like a constant)
 and one or more terms as arguments. % ,
 % surrounded by parentheses and separated by comma.
 For instance, 
@@ -476,6 +476,13 @@ We % thus
 suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 instead of disjunction, unless the latter is required for complexity reasons.
 
+\subsubsection{Double Default Negation}\label{subsec:gringo:double}
+\index{Logic Programs!Atoms!Default Negation}
+\index{Logic Programs!Atoms!Default Negation!Double}
+
+\tbf
+
+ $\code{not}~\code{not}~A$
 
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}
 \index{Terms!Integers}

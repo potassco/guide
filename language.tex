@@ -54,6 +54,7 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \end{figure}
 
 \comment{T: Roland please check and rewrite!}
+\comment{T2R: $X'$}
 Every (non-propositional) logic program includes \emph{terms},
 mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
@@ -100,8 +101,9 @@ with an integer argument, and variable~\var{X}.
 % are introduced later on.
 
 Rules of the following forms are admitted in a 
-\emph{normal logic program} (with integrity constraints): % \newline
-
+\emph{normal logic program} (with integrity constraints):
+\par
+\medskip
 \begin{tabular}{rl@{}l}\label{eq:normal:rule}
 \textbf{Rule:} & $A_0$&~\code{:-}~$L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
 \\
@@ -113,8 +115,8 @@ Rules of the following forms are admitted in a
 \index{Logic Programs!Rules}%
 \index{Logic Programs!Facts}%
 \index{Logic Programs!Integrity Constraints}%
-\newline
-
+\par
+\medskip
 \noindent
 The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same 
 syntactic form as a constant or function.
@@ -325,7 +327,7 @@ as described in the following, are used.
 % Furthermore, \gringo{} expects rules to be safe, i.e., \index{Safe Program}
 % all variables that appear in a rule have to appear in some positive literal (a literal not preceded by \code{not}) in the body.
 % If a variable appears positively in some predicate, then we say that this predicate binds the variable.
-
+%
 % Intuitively, the head of a rule has to be true whenever all its body literals are true.
 % In ASP every atom needs some derivation, i.e., 
 % an atom cannot be true if there is no rule deriving it.
@@ -347,7 +349,7 @@ as described in the following, are used.
 % For example in the introductory example in Section~\ref{sec:quickstart} we used a cardinality 
 % constraint, which provides a much more readable way to introduce choices.
 % %\com{This paragraph contains a lot of information. Could someone help me making it more readable?}
-
+%
 % A fact has an empty body and thus its associated head predicate is always true 
 % and appears in all answer sets.
 % On the other hand, integrity constraints eliminate answer set candidates.
@@ -437,50 +439,65 @@ there no longer is any answer set.
 \eexample
 \end{example}
 
-
 \subsubsection{Disjunction}\label{subsec:gringo:disjunction}
 \index{Logic Programs!Disjunction}
 \comment{T2R: check!}
-Disjunctive logic programs permit connective~``\code{;}'' (or ``\code{|}'') between atoms in rule heads.
+\comment{T: meta?}
+\tbrc{Expand\dots?}
+Disjunctive logic programs permit connective~``\code{;}'' (or ``\code{|}'') between atoms in rule heads.%
+\footnote{Note that disjunction in rule heads was not supported by \clasp\ versions before series~4.}
+\par
+\medskip
+\begin{tabular}{rl@{}l}\label{eq:normal:rule}
+\textbf{Rule:} & $A_0\text{\code{;}}\dots\text{\code{;}}A_m$&~\code{:-}~$L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
+\\
+\textbf{Fact:} & $A_0\text{\code{;}}\dots\text{\code{;}}A_m$&\code{.}
+\end{tabular}
+\index{Logic Programs}
+\index{Logic Programs!Rules!Disjunctive}%
+\index{Logic Programs!Facts!Disjunctive}%
+\par
+\medskip
+\noindent
 A disjunctive head holds if at least one of its atoms is true.
 Answer sets of a disjunctive logic program satisfy a minimality criterion
 that we do not detail here
-(see~\cite{eitpol06a} for an implementation methodology in disjunctive ASP).
+(see~\cite{eitpol06a,gekasc11b} for an implementation methodology in disjunctive ASP).
 We only mention that the simple disjunctive program \code{\pred{a}\:|\:\pred{b}.} has two answer sets,
 one containing~\pred{a} and another one containing~\pred{b},
 while both atoms do not jointly belong to an answer set.
+After adding the rules of Example~\ref{ex:as:one}, a single answer set containing both~\pred{a} and~\pred{b} is obtained.
+This illustrates that disjunction in ASP in neither strictly exclusive or inclusive but subject to minimization.
 
-In general, the use of disjunction may % however
-increase
+In general, the use of disjunction may increase
 computational complexity~\cite{eitgot95a}.
-This is why \clingo%
-\footnote{Run as a monolithic system performing both grounding and \emph{solving}.}
-and solvers like 
-\assat~\cite{linzha04a},
-\clasp~\cite{gekanesc07a,gekasc09c},
-\nomorepp~\cite{angelinesc05c},
-\smodels~\cite{siniso02a}, and
-\smodelscc~\cite{warsch04a}
-do not % work on 
-handle disjunctive programs.
-Rather,
-\claspD~\cite{drgegrkakoossc08a},
-\cmodels~\cite{gilima06a,lierler05a}, or
-\gnt~\cite{janisesiyo06a}
-is needed % to be used 
-for solving a disjunctive program.%
-\footnote{% System 
-  \dlv~\cite{dlv03a} also deals with disjunctive programs,
-  but it uses a different syntax than presented here.}
-We % thus 
-suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
+% This is why \clingo%
+% \footnote{Run as a monolithic system performing both grounding and \emph{solving}.}
+% and solvers like 
+% \assat~\cite{linzha04a},
+% \clasp~\cite{gekanesc07a,gekasc09c},
+% \nomorepp~\cite{angelinesc05c},
+% \smodels~\cite{siniso02a}, and
+% \smodelscc~\cite{warsch04a}
+% do not % work on 
+% handle disjunctive programs.
+% Rather,
+% \claspD~\cite{drgegrkakoossc08a},
+% \cmodels~\cite{gilima06a,lierler05a}, or
+% \gnt~\cite{janisesiyo06a}
+% is needed % to be used 
+% for solving a disjunctive program.%
+% \footnote{% System 
+%   \dlv~\cite{dlv03a} also deals with disjunctive programs,
+%   but it uses a different syntax than presented here.}
+We thus suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 instead of disjunction, unless the latter is required for complexity reasons.
 
 \subsubsection{Double Default Negation}\label{subsec:gringo:double}
 \index{Logic Programs!Atoms!Default Negation}
 \index{Logic Programs!Atoms!Default Negation!Double}
 
-\tbf
+\tbfc{T: How to approach it\dots?}
 
  $\code{not}~\code{not}~A$
 
@@ -502,6 +519,7 @@ instead of disjunction, unless the latter is required for complexity reasons.
 \index{Arithmetic Functions!Bitwise XOR, \code{\^}}
 \index{Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
 
+\com{Roland}
 Besides integers (constant arithmetic functions),
 written as sequences of the digits \code{0}\dots\code{9}
 possibly preceded by ``\code{-},''
@@ -556,7 +574,7 @@ is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\
 % and \gringo{} not necessarily halts when given such an input.
 Indeed, inferring matching values for~\var{X} when given a value for \var{X}+\const{1}
 would require equation solving, which is however not performed by
-\gringo\ (or the grounding component of \clingo).
+\gringo\ (nor the grounding component of \clingo).
 \index{Logic Programs!Safeness}%
 \end{Note}
 
@@ -569,6 +587,7 @@ would require equation solving, which is however not performed by
 \index{Comparison Predicates!Greater, \code{>}}
 \index{Comparison Predicates!Greater or Equal, \code{>=}}
 
+\com{Roland}
 Grounder \gringo\ and the grounding component of \clingo\ 
 feature a total order among variable-free terms.
 The following built-in predicates, which are evaluated during grounding, 
@@ -633,11 +652,10 @@ i.e.,
 comparison predicates are not considered to be positive.
 Also note that comparison predicates must not be preceded by \code{not}:
 rather than default negation,
-the complementary comparison predicate ought to used
+the complementary comparison predicate ought to be used
 (e.g., \code{<} and \code{>=} complement one another).
 \index{Logic Programs!Safeness}%
 \end{Note}
-
 
 \subsubsection{Assignments}\label{subsec:gringo:assign}
 \index{Terms!Variables!Assignments}
@@ -645,6 +663,7 @@ the complementary comparison predicate ought to used
 \index{Assignments!Variable Assignment, \code{=}}
 \index{Assignments!Variable Unification, \code{:=}}
 
+\com{Roland}
 Sometimes, it is desirable to define the value of a variable relative
 to a term, and to then reuse the variable as a shorthand.
 The built-in predicates~\code{=} and~\code{:=} admit unifying
@@ -738,6 +757,7 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \index{Terms!Integers!Intervals}
 \index{Arithmetic Functions!Integers!Intervals}
 
+\com{Roland}
 In Line~1 of Example~\ref{ex:assign},
 there are five facts of the form~\code{\pred{num}($k$).}
 over consecutive integers~$k$.
@@ -855,7 +875,7 @@ instantiated as follows:%
 % %[firstnumber=5]
 \begin{lstlisting}[numbers=none]
 meet :- available(jane), available(john).
-on(mon) | on(tue) | on(wed) | on(thu) | on(fri) :- meet.
+on(mon) ; on(tue) ; on(wed) ; on(thu) ; on(fri) :- meet.
 \end{lstlisting}
 %
 The conjunction in the body of the first ground rule is obtained by replacing~\var{X} in
@@ -886,7 +906,7 @@ while the negative literal \code{not\:\pred{weekend}(\var{X})}
 eliminates $t=\const{sun}$, and the built-in \code{\var{X}\,!=\:\const{sat}}
 discards $t=\const{sat}$.
 This leaves us with all workdays~$t$ satisfying the composite condition.
-In fact, the literals on the right-hand side of a condition are connected conjunctively, that is,
+In fact, the literals on the right-hand side of a condition are connected conjunctively via ``\code{,}'', that is,
 all of them must hold for ground instances of an atom in front
 of the condition.
 Thus, the instantiated rule in Line~10 looks as follows:%
@@ -910,10 +930,10 @@ the rule can be simplified to a fact \code{\pred{workdays}.}
 \end{example}
 
 \begin{Note}
-There are three important issues about the usage of conditions:
+There are \REP{three}{two} important issues about the usage of conditions:
 \begin{enumerate}
 \item 
-All predicates of atoms on the right-hand side of a condition
+\DELc{All predicates of atoms on the right-hand side of a condition
 must be either \emph{domain predicates}~\cite{lparseManual} %\comment{refer to appendix?}
 \index{Aggregates!Conditions!Domain Predicates}%
 \index{Terms!Conditions!Domain Predicates}%
@@ -926,7 +946,7 @@ nor to disjunction or ``choice constructs'' (detailed in Section~\ref{subsec:gri
 in the head of any rule.
 The domain predicates defined in Example~\ref{ex:cond} are:
 \pred{person}/$1$, \pred{day}/$1$, \pred{weekend}/$1$, \pred{workday}/$1$, 
-and \pred{workdays}/$0$.
+and \pred{workdays}/$0$.}{T2R: Anything to replace?}
 %
 \item Any variable occurring within a condition is considered to be \emph{local},
 i.e., 
@@ -951,7 +971,7 @@ Hence, the names of local variables must be chosen with care,
 making sure that they do not \emph{accidentally} match the names of global variables.
 \end{enumerate}
 \end{Note}
-
+\tbfc{T: ``,'' versus ``;'' in bodies}
 \subsubsection{Pooling}\label{subsec:gringo:pool}
 \index{Terms!Pooling, \code{;}, \code{;;}}
 \index{Logic Programs!Atoms!Pooling, \code{;}, \code{;;}}

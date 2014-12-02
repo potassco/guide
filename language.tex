@@ -1110,7 +1110,11 @@ to avoid nasty surprises.
 An aggregate is a function on a set of weights. % ed literals that evaluates to some value. 
 In combination with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
-The general form of an \emph{aggregate atom} is as follows:\comment{T: body aggregate}
+Aggregate atoms come in two variants depending whether they occur in a rule head or body.
+Internally, however, all aggregate atoms occuring in rule heads are transformed away,
+as detailed in~\cite{siniso02a,gekakasc12a}.
+
+The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
@@ -1124,12 +1128,22 @@ Hence, this first element is usually specified by means of arithmetic functions 
 Finally, 
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
-Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' can be omitted.
+Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' (or even both) can be omitted.
 %
 For instance, 
 if both $\prec_1$ and $\prec_2$ are ``\code{<=}'' and each term tuple represents a single weight,
 then an aggregate atom holds if the result of $\alpha$ applied to the weights of literals that hold
 is in-between $s_1$ and~$s_2$ (see the available shortcuts below).
+
+When aggregate atoms occur in rule heads, the actually derivable head atoms must be distinguished.
+This is done by prepending such literals to the literal tuples:
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$L_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
+\end{lstlisting}
+%
+Here, all $L_i$ are symbolic literals as introduced in Section~\ref{subsec:gringo:normal}, while all other entities are as described above.
+Simplifying shortcuts are given below.
 
 Currently, \gringo\ and \clingo\ support the aggregates 
 \code{\#count}

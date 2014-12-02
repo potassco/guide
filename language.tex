@@ -930,7 +930,7 @@ the rule can be simplified to a fact \code{\pred{workdays}.}
 \end{example}
 
 \begin{Note}
-There are \REP{three}{two} important issues about the usage of conditions:
+There are \REW{three} important issues about the usage of conditions:
 \begin{enumerate}
 \item 
 \DELc{All predicates of atoms on the right-hand side of a condition
@@ -969,6 +969,18 @@ As a consequence, a local variable that occurs also globally is substituted by a
 before a condition is evaluated further.
 Hence, the names of local variables must be chosen with care,
 making sure that they do not \emph{accidentally} match the names of global variables.
+%
+\item 
+Formally,
+an expression of the form
+$L$\code{:}$L_1$\code{,\dots,}$L_n$
+where $L,L_1,\dots,L_n$ are literals
+is called a conditional literal.
+\comment{T: More details?}
+Logically, $L$ and $L_1,\dots,L_n$ act as head and body,
+which gives the conditional literal the flavor of a nested implication
+(see~\cite{haliya14a} for details).
+\index{Logic Programs!Literals!Conditional}%
 \end{enumerate}
 \end{Note}
 
@@ -1095,90 +1107,79 @@ to avoid nasty surprises.
 \index{Aggregates}
 \index{Aggregates!Weights}
 
-An aggregate is a function from a multiset of weights. % ed literals that evaluates to some value. 
+An aggregate is a function on a set of weights. % ed literals that evaluates to some value. 
 In combination with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
-The general form of an \emph{aggregate atom} is as follows:
+The general form of an \emph{aggregate atom} is as follows:\comment{T: body aggregate}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
-?$l\;\mathsf{op}$\:?[?\:$L_1$\,?=?\,$w_1$?,?\,\dots?,?\:$L_n$\,?=?\,$w_n$\:?]?\:$u$\,\textnormal{.}?
+?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
 \end{lstlisting}
 %
-Here, all $L_i$ are literals (as introduced in Section~\ref{subsec:gringo:normal})
-associated with weights~$w_i$, specified by means of arithmetic functions
-(cf.\ Section~\ref{subsec:gringo:arith}).
-Furthermore, $\mathsf{op}$ is the name of some function that is to be
-applied to the weights of literals that hold.
-Finally, $l$ and~$u$ are arithmetic functions that determine a lower and an upper bound
-for the result of applying $\mathsf{op}$.
-That is, an aggregate atom holds if the result of $\mathsf{op}$
-applied to the weights of literals that hold
-is in-between $l$ and~$u$ (both inclusive).
-% An aggregate has a lower bound $l$, an upper bound $u$, an operation $\mathsf{op}$, 
-% and a multiset of literal $L_i$ each assigned to a weight $w_i$.
-% An aggregate is true if operation $\mathsf{op}$ applied to the multiset of weights 
-% of true literals is between the bounds (inclusive).
+Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are tuples of terms and literals, respectively
+(as introduced in Section~\ref{subsec:gringo:normal}). 
+$\alpha$ is the name of some function that is to be applied to the first elements of term tuples associated with literals that hold.
+Hence, this first element is usually specified by means of arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}).
+%
+Finally, 
+the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
+to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
+Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' can be omitted.
+%
+For instance, 
+if both $\prec_1$ and $\prec_2$ are ``\code{<=}'' and each term tuple represents a single weight,
+then an aggregate atom holds if the result of $\alpha$ applied to the weights of literals that hold
+is in-between $s_1$ and~$s_2$ (see the available shortcuts below).
 
 Currently, \gringo\ and \clingo\ support the aggregates 
+\code{\#count}
+\index{Aggregates!Count, \code{\#count}}%
+(the number of elements), 
 \code{\#sum}
 \index{Aggregates!Sum, \code{\#sum}}%
 (the sum of weights), 
+\code{\#sum+}
+\index{Aggregates!Sum plus, \code{\#sum+}}%
+(the sum of positive weights), 
 \code{\#min}
 \index{Aggregates!Minimum, \code{\#min}}%
-(the minimum weight), 
+(the minimum weight), and
 \code{\#max}
 \index{Aggregates!Maximum, \code{\#max}}%
-(the maximum weight), and 
-\code{\#avg}
-\index{Aggregates!Average, \code{\#avg}}%
-(the average of weights%
-\footnote{
-Note that an aggregate atom using \code{\#avg}
-is defined to hold regardless of its bounds
-if none of its literals holds, i.e.,
-if the average is taken over the empty set of weights.}%
-).
+(the maximum weight).
+%
 Aggregate atoms, as described above, are obtained by writing
-either \code{\#sum}, \code{\#min}, \code{\#max}, or \code{\#avg} for $\mathsf{op}$.
-In addition to them,
-there are three more aggregates
-whose atoms obey a slightly different syntax:
-% that are syntactically different.
-% The first is the \code{\#count} aggregate:
+either \code{\#count}, \code{\#sum}, , \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
 %
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$l\;$?#count?\:?{?\:$L_1$?,?\,\dots?,?\:$L_n$\:?}?\:$u$\,\textnormal{,}?
-#even?\:?{?\:$L_1$?,?\,\dots?,?\:$L_n$\:?}?\textnormal{, and}?
-#odd?\:?{?\:$L_1$?,?\,\dots?,?\:$L_n$\:?}?\textnormal{.}?
-\end{lstlisting}
-% \[l\,\code{\#count}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}}\, u\]%
-\index{Aggregates!Count, \code{\#count}}%
-\index{Aggregates!Even Parity, \code{\#even}}%
-\index{Aggregates!Odd Parity, \code{\#odd}}%
+The \code{\#count} aggregate is similar to \code{\#sum} with all literals' weights being~\const{1}.
+Hence, for convenience, the prefixed term can be dropped in \code{\#count} aggregates.
+
+As indicated by the curly brackets, the literals within aggregates are treated as a set.
+Hence, duplicates are not accounted for twice.
 %
-The \code{\#count} aggregate
-is similar to \code{\#sum} with all literals' weights being~\const{1}.
-However, as indicated by curly brackets,
-the literals of \code{\#count} are understood as a set,
-so that duplicates are not counted twice.
-For instance, note that the following aggregate atoms express the same:
+For instance, the following aggregate atoms express the same:
 \begin{lstlisting}[numbers=none,escapechar=@]
-1 #sum   [a=1, not b=1]     1@\textnormal{,}@ 
-1 #count {a,   not b}       1@\textnormal{, and}@ 
-1 #count {a,a, not b,not b} 1@\textnormal{.}@  
+#count {a;   not b}       = 1@\textnormal{ and}@ 
+#count {a;a; not b;not b} = 1@\textnormal{.}@  
 \end{lstlisting}
 %
-% which basically are \code{\#sum} aggregates with all weights set to one 
-% and duplicate true literals counted only once.
-% Finally, there are the two parity aggregates:
-% \begin{align*}
-% &\code{\#even}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}} & &
-% \code{\#odd}\,\code{\char`\{}\, L_1\code{,} \dots\code{,} L_n \,\code{\char`\}}
-% \end{align*}%
-Likewise, the literals of parity aggregates \code{\#even} and \code{\#odd},
-whose atoms hold if the number of literals that hold is even or odd, respectively,
-are understood as a set.
-Also note that parities are not compared to any bounds.
+Likewise, the literals of other aggregates are understood as a set.
+%
+As an example,
+consider the program
+\begin{lstlisting}[numbers=none]
+sum(S) :- S = #sum { C     : cost(_,_,C) }.
+mum(S) :- S = #sum { C,X,Y : cost(X,Y,C) }.
+\end{lstlisting}
+together with the edge costs in Section~\ref{subsec:tsp:instance}.
+Here, an atom \lstinline{cost(2,6,4)} means that the arc from node \lstinline{2} to \lstinline{6} has cost \lstinline{4}.
+We get an answer set containing \lstinline{sum(10)} and \lstinline{msum(37)}.
+Due to the set property, the first rule counts edges with the same cost only once,
+while the second accounts for each edge no matter whether they have the same cost or not.
+In other words, adding \lstinline{X,Y} to \lstinline{C} enforces a multi-set property;
+the same cost can be accounted for several times.
+
+\com{STOPED HERE}
 
 There are a number of shorthands that can be used in the
 syntactic representation of aggregates.

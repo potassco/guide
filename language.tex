@@ -1120,7 +1120,7 @@ The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
 \end{lstlisting}
 %
-Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are tuples of terms and literals, respectively
+Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
 (as introduced in Section~\ref{subsec:gringo:normal}). 
 $\alpha$ is the name of some function that is to be applied to the first elements of term tuples associated with literals that hold.
 Hence, this first element is usually specified by means of arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}).
@@ -1135,7 +1135,7 @@ if both $\prec_1$ and $\prec_2$ are ``\code{<=}'' and each term tuple represents
 then an aggregate atom holds if the result of $\alpha$ applied to the weights of literals that hold
 is in-between $s_1$ and~$s_2$ (see the available shortcuts below).
 
-When aggregate atoms occur in rule heads, the actually derivable head atoms must be distinguished.
+Whenever a rule head is a (single) aggregate atom, the actually derivable head atoms must be distinguished.
 This is done by prepending such literals to the literal tuples:
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
@@ -1143,7 +1143,14 @@ This is done by prepending such literals to the literal tuples:
 \end{lstlisting}
 %
 Here, all $L_i$ are symbolic literals as introduced in Section~\ref{subsec:gringo:normal}, while all other entities are as described above.
-Simplifying shortcuts are given below.
+The second colon in 
+\lstinline[escapechar=?]{?$\boldsymbol{t}_i$?:?$L_i$?:?$\boldsymbol{L_i}$?}
+is dropped whenever $\boldsymbol{L_i}$ is empty,
+yielding 
+\lstinline[escapechar=?]{?$\boldsymbol{t}_i$?:?$L_i$?}.
+
+Simplifying shortcuts providing some backward compatibility with previsou versions of \gringo\ are given below.
+Unlike with body aggregates, only singular head aggregates are supported.
 
 Currently, \gringo\ and \clingo\ support the aggregates 
 \code{\#count}
@@ -1168,35 +1175,83 @@ either \code{\#count}, \code{\#sum}, , \code{\#sum+}, \code{\#min}, or \code{\#m
 The \code{\#count} aggregate is similar to \code{\#sum} with all literals' weights being~\const{1}.
 Hence, for convenience, the prefixed term can be dropped in \code{\#count} aggregates.
 
-As indicated by the curly brackets, the literals within aggregates are treated as a set.
+As indicated by the curly brackets, the literals within aggregates are treated as members of a set.
 Hence, duplicates are not accounted for twice.
 %
 For instance, the following aggregate atoms express the same:
 \begin{lstlisting}[numbers=none,escapechar=@]
-#count {a;   not b}       = 1@\textnormal{ and}@ 
-#count {a;a; not b;not b} = 1@\textnormal{.}@  
+#count {42:a;      t:not b        } = 2@\textnormal{ and}@ 
+#count {42:a;42:a; t:not b;t:not b} = 2@\textnormal{.}@  
 \end{lstlisting}
+That is, if \lstinline{a} holds but not \lstinline{b} both evaluate to true.
 %
-Likewise, the literals of other aggregates are understood as a set.
+Likewise, the literals of other aggregates are understood as sets.
 %
 As an example,
-consider the program
-\begin{lstlisting}[numbers=none]
-sum(S) :- S = #sum { C     : cost(_,_,C) }.
-mum(S) :- S = #sum { C,X,Y : cost(X,Y,C) }.
+consider the next two summation aggregates:
+\begin{lstlisting}[numbers=none,escapechar=@]
+#sum { 3    :cost(1,2,3); 3    :cost(2,3,3) } = 3@\textnormal{ and}@ 
+#sum { 3,1,2:cost(1,2,3); 3,2,3:cost(2,3,3) } = 6@\textnormal{.}@
 \end{lstlisting}
-together with the edge costs in Section~\ref{subsec:tsp:instance}.
-Here, an atom \lstinline{cost(2,6,4)} means that the arc from node \lstinline{2} to \lstinline{6} has cost \lstinline{4}.
-We get an answer set containing \lstinline{sum(10)} and \lstinline{msum(37)}.
-Due to the set property, the first rule counts edges with the same cost only once,
-while the second accounts for each edge no matter whether they have the same cost or not.
-In other words, adding \lstinline{X,Y} to \lstinline{C} enforces a multi-set property;
-the same cost can be accounted for several times.
+As done in Section~\ref{subsec:tsp:instance},
+an atom like \lstinline{cost(1,2,3)} can be used to represent an arc from node \lstinline{1} to \lstinline{2} with cost \lstinline{3}.
+If both \lstinline{cost(1,2,3)} and \lstinline{cost(2,3,3)} hold,
+the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
+The set property makes the first aggregate count edges with the same cost only once,
+while the second one accounts for each edge no matter whether they have the same cost or not.
+To see this, observe that after evaluating the conditions in each aggregate, the first one reduces to
+\lstinline{#sum { 3 }}, while the second results in \lstinline{#sum { 3,1,2; 3,2,3 }}
+In other words, associating each cost with its respective arc enforces a multi-set property;
+in this way, the same cost can be accounted for several times.
+
+There are some shorthands that can be used in the syntactic representation of aggregates.
+%
+The expression
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$s_1$?{?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$L_n$?:?$\boldsymbol{L_n}$?}?$ s_2$?
+\end{lstlisting}
+%
+where all entities are defined as above 
+is a shortcut for
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$s_1$? <= #count {1:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;n:?$L_n$?:?$\boldsymbol{L_n}$?} <= ?$s_2$?
+\end{lstlisting}
+%
+if it appears in the head of a rule and
+it is a shortcut for
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$s_1$? <= #count {1:?$L_1$?,?$\boldsymbol{L_1}$?;?\,\dots\,?;n:?$L_n$?,?$\boldsymbol{L_n}$?} <= ?$s_2$?
+\end{lstlisting}
+%
+if it appears in the body of a rule.
+%
+Note that one (or both) of $s_1$ and $s_2$ can be omitted .
+%
+As an example,
+consider the rule
+\begin{lstlisting}[numbers=none]
+{ a ; b }.
+\end{lstlisting}
+In full detail, this is a shortcut for the rule
+\begin{lstlisting}[numbers=none]
+#count { 1:a ; 2:b }.
+\end{lstlisting}
+Unlike this,
+the integrity constraint
+\begin{lstlisting}[numbers=none]
+:- { a ; b }.
+\end{lstlisting}
+stands for
+\begin{lstlisting}[numbers=none]
+:- #count { 1:a ; 2:b }.
+\end{lstlisting}
+
 
 \com{STOPED HERE}
 
-There are a number of shorthands that can be used in the
-syntactic representation of aggregates.
 With \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
 weights of literals can be omitted, in which case \code{1} is used by default
 ($L_i$\,\code{=}\,\const{1} is equivalent to just $L_i$).

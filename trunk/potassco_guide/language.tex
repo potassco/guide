@@ -1183,7 +1183,7 @@ For instance, the following aggregate atoms express the same:
 #count {42:a;      t:not b        } = 2@\textnormal{ and}@ 
 #count {42:a;42:a; t:not b;t:not b} = 2@\textnormal{.}@  
 \end{lstlisting}
-That is, if \lstinline{a} holds but not \lstinline{b} both evaluate to true.
+That is, if \lstinline{a} holds but not \lstinline{b} both aggregate atoms evaluate to true.
 %
 Likewise, the literals of other aggregates are understood as sets.
 %
@@ -1219,7 +1219,7 @@ is a shortcut for
 ?$s_1$? <= #count {1:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;n:?$L_n$?:?$\boldsymbol{L_n}$?} <= ?$s_2$?
 \end{lstlisting}
 %
-if it appears in the head of a rule and
+if it appears in the head of a rule, and
 it is a shortcut for
 %
 \begin{lstlisting}[numbers=none,escapechar=?]

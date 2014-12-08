@@ -1117,7 +1117,7 @@ as detailed in~\cite{siniso02a,gekakasc12a}.
 The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
-?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
+?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L}_n$?}?$\prec_2 s_2$?
 \end{lstlisting}
 %
 Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
@@ -1200,7 +1200,7 @@ the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
 The set property makes the first aggregate count edges with the same cost only once,
 while the second one accounts for each edge no matter whether they have the same cost or not.
 To see this, observe that after evaluating the conditions in each aggregate, the first one reduces to
-\lstinline{#sum { 3 }}, while the second results in \lstinline{#sum { 3,1,2; 3,2,3 }}
+\lstinline{#sum \{ 3 \}}, while the second results in \lstinline{#sum \{ 3,1,2; 3,2,3 \}}
 In other words, associating each cost with its respective arc enforces a multi-set property;
 in this way, the same cost can be accounted for several times.
 
@@ -1522,14 +1522,16 @@ The first condition is that~\const{3} to~\const{6} courses should be enrolled:
 \lstinputlisting[nolol,firstline=11,lastline=11,firstnumber=9]{examples/aggr.lp}
 %
 Instantiating the above \const{\#count} aggregate
-\REP{yields}{amounts to} the following ground rule:%
+yields the following ground rule:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
   \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}
 %
 \begin{lstlisting}[firstnumber=9,stepnumber=9]
-3 { enroll(1), enroll(2), enroll(3), enroll(4), 
-    enroll(5), enroll(6), enroll(7), enroll(8) } 6.
+3 <= #count { 1 : enroll(1); 2 : enroll(2);
+              3 : enroll(3); 4 : enroll(4); 
+              5 : enroll(5); 6 : enroll(6);
+              7 : enroll(7); 8 : enroll(8) } <= 6.
 \end{lstlisting}
 %
 Observe that an instance of atom~\code{\const{enroll}(\var{C})} is included for each
@@ -1537,26 +1539,36 @@ instantiation of~\var{C} such that \code{\const{course}(\var{C},\var{S},\var{H})
 holds for some values of~\var{S} and~\var{H}.
 Duplicates resulting from distinct values for~\var{S} are removed, thus,
 obtaining the above set of ground atoms.
+\footnote{Also, note the difference to \lstinline{3 \{  enroll(C) : course(C,_,_) \} 6.} being always false.}
 
 The next constraints of the student regard the subject areas of enrolled courses:
 %
 \lstinputlisting[nolol,firstline=13,lastline=15,firstnumber=10]{examples/aggr.lp}
 %
-Each of the three integrity constraints above contains a \const{sum} aggregate,
-using default weight~\const{1} for literals.
-Recalling that \const\#{sum} aggregates operate on multisets,
-duplicates are not removed.
+Each of the three integrity constraints above contains a cardinality constraint.
+Recall that aggregates operate on sets and thus duplicates are removed;
+hence we use terms tuples to establish a multiset.
 Thus, the integrity constraint in Line~10 is instantiated as follows:
 %
+% \begin{lstlisting}[firstnumber=10,stepnumber=10]
+% :- [ enroll(1) = 1, enroll(1) = 1, 
+%      enroll(2) = 1, enroll(2) = 1,
+%      enroll(3) = 1, enroll(3) = 1,
+%      enroll(4) = 1, enroll(4) = 1, enroll(4) = 1,
+%      enroll(5) = 1, enroll(5) = 1,
+%      enroll(6) = 1, enroll(6) = 1,
+%      enroll(7) = 1, enroll(7) = 1, enroll(7) = 1,
+%      enroll(8) = 1, enroll(8) = 1 ] 10.
+% \end{lstlisting}
 \begin{lstlisting}[firstnumber=10,stepnumber=10]
-:- [ enroll(1) = 1, enroll(1) = 1, 
-     enroll(2) = 1, enroll(2) = 1,
-     enroll(3) = 1, enroll(3) = 1,
-     enroll(4) = 1, enroll(4) = 1, enroll(4) = 1,
-     enroll(5) = 1, enroll(5) = 1,
-     enroll(6) = 1, enroll(6) = 1,
-     enroll(7) = 1, enroll(7) = 1, enroll(7) = 1,
-     enroll(8) = 1, enroll(8) = 1 ] 10.
+:- 10 >= #count {1,1,5:enroll(1); 1,2,5:enroll(1); 
+                 2,1,4:enroll(2); 2,2,4:enroll(2); 
+                 3,1,6:enroll(3); 3,3,6:enroll(3); 
+                 4,1,3:enroll(4); 4,3,3:enroll(4); 4,4,3:enroll(4); 
+                 5,1,4:enroll(5); 5,4,4:enroll(5); 
+                 6,2,2:enroll(6); 6,3,2:enroll(6); 
+                 7,2,4:enroll(7); 7,3,4:enroll(7); 7,4,4:enroll(7); 
+                 8,3,5:enroll(8); 8,4,5:enroll(8) }. 
 \end{lstlisting}
 %
 Note that courses~\const{4} and~\const{7} count three times because
@@ -1575,9 +1587,9 @@ while Line~12 stipulates that the enrolled courses
 amount to less than six nominations of
 subject area~\const{3} (``technical informatics'') 
 or~\const{4} (``applied informatics'').
-Also note that, given the facts in Line~1--8,
+\DEL{Also note that, given the facts in Line~1--8,
 we could equivalently have used \const{count} rather than \const{sum} in Line~11,
-but not in Line~10 and~12.
+but not in Line~10 and~12.}
 
 The remaining constraints of the student deal with contact hours.
 To express them, we first introduce an auxiliary rule and a fact:
@@ -1588,6 +1600,7 @@ The rule in Line~13 projects instances of \pred{course}/$3$ to
 \pred{hours}/$2$, thereby, dropping courses' subject areas.
 This is used to not consider the same course multiple times within the following
 integrity constraints:
+\footnote{Alternatively, we could also use \lstinline{course(C,_,H).}}
 %
 \lstinputlisting[nolol,firstline=20,lastline=22,firstnumber=15]{examples/aggr.lp}
 %
@@ -1598,10 +1611,10 @@ In fact, by instantiating~\var{M} to~\const{20},
 we obtain the following ground instance of the integrity constraint in Line~15:
 %
 \begin{lstlisting}[firstnumber=15,stepnumber=15]
-:- not 18 [ enroll(1) = 5, enroll(2) = 4, 
-            enroll(3) = 6, enroll(4) = 3,
-            enroll(5) = 4, enroll(6) = 2,
-            enroll(7) = 4, enroll(8) = 5 ] 20.
+:- not 18 <= #sum { 5,1 : enroll(1); 4,2 : enroll(2);
+                    6,3 : enroll(3); 3,4 : enroll(4);
+                    4,5 : enroll(5); 2,6 : enroll(6);
+                    4,7 : enroll(7); 5,8 : enroll(8) } <= 20.
 \end{lstlisting}
 %
 The above integrity constraint states that the \const{\#sum} of contact hours per week
@@ -1622,11 +1635,10 @@ Finally, the following rules illustrate the use of aggregates within assignments
 %
 \lstinputlisting[nolol,firstline=24,lastline=25,firstnumber=18]{examples/aggr.lp}
 %
-Note that the above aggregates have already been used in Line~9 and~15, respectively,
-where keywords \const{\#count} and \const{\#sum} have been omitted for convenience.
-These keywords can be dropped here too, and we merely include them to show the
-more verbose notations of \const{\#count} and \const{\#sum} aggregates.
-However, the usage of aggregates in the last two lines is different from before,
+Note that similar aggregates have already been used in Line~9 and~15, respectively.
+In Line~9 the keyword \const{\#count} has been omitted for convenience.
+Moreover, Line~9 distinguishes eight terms, while Line~18 discerns only five.
+More importantly, the usage of aggregates in the last two lines is different from before,
 as they now serve to assign an integer to a variable~\var{N}.
 In this context, bounds are not permitted, and so none are provided in Line~18 and~19.
 The effect of these two lines is that the student can read off the number of
@@ -1644,12 +1656,11 @@ collection of~\const{5} courses to enroll satisfies all requirements:
 the courses~\const{1}, \const{2}, \const{4}, \const{5}, and~\const{7},
 amounting to~\const{20} contact hours per week.
 
-Although the above program does not reflect this possibility,
-it should be noted that (as has been mentioned in Section~\ref{subsec:gringo:condition})
-multiple literals may be connected via ``\code{:}'' in order to construct
+As mentioned in Section~\ref{subsec:gringo:condition},
+multiple literals may be connected via ``\code{,}'' in order to construct
 composite conditions within an aggregate.
-As before, the predicates of atoms on the right-hand side of such conditions
-must be either domain predicates or built-in.
+In \gringo\ and \clingo~4,
+the predicates of such literals must not be domain or built-in anymore.
 Furthermore, the usage of non-domain predicates within an aggregate
 on the right-hand side of an assignment (like \pred{enroll}/$1$ in Line~18 and~19 above)
 is not recommended in general because the space blow-up may be significant.
@@ -1671,23 +1682,23 @@ As an optimization statement does not admit a body, any (local) variable
 in it must also occur in an atom (over a domain or built-in predicate)
 on the right-hand side of a condition (cf.\ Section~\ref{subsec:gringo:condition})
 within the optimization statement.
-In multiset notation (square brackets),
-weights may be provided as with \const{\#sum} aggregates. %,
-In set notation (curly brackets),
-duplicates of literals are removed
-as with \const{count} aggregates.
+As with aggregates, duplicate terms are removed.
 Additionally, priorities can be associated with each literal.
 A (ground) optimize statement has the form: 
 \index{Statements!Optimize Statements!\#minimize}%
 \index{Statements!Optimize Statements!\#maximize}%
-\[\mathsf{opt}\,\code{[}\,L_1=w_1@p_1,\dots,L_n=w_n@p_n\,\code{\char`\]}\] 
-\[\mathsf{opt}\,\code{\char`\{}\,L_1@p_1,\dots,L_n@p_n\,\code{\char`\}}\]
-where $\mathsf{opt}$ is either \code{\#maximize} or \code{\#minimize} , $L_i$ are literals 
-with associates (integer) weights $w_i$ and (integer) priorities $p_i$.
+\[
+\mathsf{\mu}\,\code{\{}\,\boldsymbol{t}_1:\boldsymbol{L}_1@p_1,\dots,\boldsymbol{t}_n:\boldsymbol{L}_n@p_n\,\code{\}}
+\] 
+where $\mathsf{\mu}$ is either \code{\#maximize} or \code{\#minimize}, 
+$\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
+(as introduced in Section~\ref{subsec:gringo:normal}),
+and $p_i$ are optional (integer) priorities.\comment{T: @ with tuples??}
+The first element of each tuple $\boldsymbol{t}_i$ is supposed to be an (integer) weight $w_i$.
 
 The semantics of an optimization statement is intuitive:
 an answer set is \emph{optimal} if the sum of weights
-(using~\const{1} for unsupplied weights)
+% (using~\const{1} for unsupplied weights)
 of literals that hold is maximal or minimal, as required by the statement,
 among all answer sets of the given program.
 This definition is sufficient if a single optimization statement is specified

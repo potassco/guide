@@ -10,8 +10,8 @@ course(5,1,4).                               course(5,4,4).
 
 3 { enroll(C) : course(C,_,_) } 6.
 
-:- [ enroll(C) : course(C,_,_) ] 10.
-:- 2 [ not enroll(C) : course(C,2,_) ].
+:- #count { C,S,H : enroll(C), course(C,S,H) } 10.
+:- 2 #count { 1,C : not enroll(C), course(C,2,_) }.
 :- 6 [ enroll(C) : course(C,3,_), enroll(C) : course(C,4,_) ].
 
 hours(C,H) :- course(C,S,H).

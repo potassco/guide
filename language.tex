@@ -1248,23 +1248,28 @@ stands for
 \begin{lstlisting}[numbers=none]
 :- #count { 1:a ; 2:b }.
 \end{lstlisting}
+By allowing the omission of \const{\#sum} and \const{\#count},
+so-called 
+``weight constraints'' and ``cardinality constraints''~\cite{siniso02a,lparseManual}
+can almost be written in their traditional notations (without keyword, yet different separators).
 
 
-\com{STOPED HERE}
+\comc{Further shortcuts?}{T: Omit $\prec$\dots?}
 
+\DEL{
 With \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
 weights of literals can be omitted, in which case \code{1} is used by default
 ($L_i$\,\code{=}\,\const{1} is equivalent to just $L_i$).
 % weight~\const{1} is considered a default,
 % so that $L_i\code{=}\const{1}$ can simply be written as $L_i$.
 For instance, the following (multi)sets of (weighted) literals are synonyms
-when combined with any (admissible) aggregate and bounds:
+when combined with any (admissible) aggregate and bounds:}
 \begin{lstlisting}[numbers=none,escapechar=@]
 [a=1, not b=1, c=2] @\textnormal{and}@
 [a,   not b,   c=2]@\textnormal{.}@
 \end{lstlisting}
 %
-Furthermore,
+\DEL{Furthermore,
 either or both of the bounds~$l$ and~$u$,
 applicable to all aggregate atoms but parity,
 can be omitted, in which case they are taken to be
@@ -1274,20 +1279,20 @@ default for multisets of (weighted) literals in square brackets
 and sets of literals in curly brackets, respectively.
 For instance, the following aggregate atoms,
 one including the keyword \code{\#sum} and
-the other omitting it, are synonyms:
+the other omitting it, are synonyms:}
 \begin{lstlisting}[numbers=none,escapechar=@]
 2 #sum [a, not b, c=2] 3 @\textnormal{and}@
 2      [a, not b, c=2] 3@\textnormal{.}@
 \end{lstlisting}
-Likewise, we can optionally omit \code{\#count} in front of curly brackets:
+\DEL{Likewise, we can optionally omit \code{\#count} in front of curly brackets:}
 \begin{lstlisting}[numbers=none,escapechar=@]
 1 #count {a, not b} 1 @\textnormal{and}@ 
 1        {a, not b} 1@\textnormal{.}@  
 \end{lstlisting}
-By allowing the omission of \const{\#sum} and \const{\#count},
+\DEL{By allowing the omission of \const{\#sum} and \const{\#count},
 so-called 
 ``weight constraints'' and ``cardinality constraints''~\cite{siniso02a,lparseManual}
-can be written in their traditional notations (without keyword).
+can be written in their traditional notations (without keyword).}
 
 % keyword \const{\#sum} may be omitted, which in a sense makes \const{\#sum} the default
 % aggregate operation.
@@ -1300,19 +1305,19 @@ can be written in their traditional notations (without keyword).
 %              Also talk about assignments allowed with
 %              \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}.}
 
-For the aggregates \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
+\DEL{For the aggregates \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
 all working on multisets of (weighted) literals in square brackets,
 it should be taken into account that they behave differently in case of
 multiple occurrences of the same literal (regardless of the associated weights).
-For instance, the following aggregate atoms are synonyms:
+For instance, the following aggregate atoms are synonyms:}
 \begin{lstlisting}[numbers=none,escapechar=@]
 2 #sum [a=2] 2 @\textnormal{and}@
 2 #sum [a,a] 2@\textnormal{.}@
 \end{lstlisting}
-In fact, we have that $2=1+1$,
+\DEL{In fact, we have that $2=1+1$,
 i.e., multiple weights for the same literal sum up.
 Unlike this, the following pairs of aggregate atoms are
-different from one another:
+different from one another:}
 \begin{lstlisting}[numbers=none,escapechar=@]
 2 #min [a=2] 2 @\textnormal{and}@
 2 #min [a,a] 2@\textnormal{,}@
@@ -1321,14 +1326,14 @@ different from one another:
 2 #avg [a=2] 2 @\textnormal{and}@
 2 #avg [a,a] 2@\textnormal{.}@
 \end{lstlisting}
-While $\min\{2\}=\max\{2\}=\frac{2}{1}=2$,
+\DEL{While $\min\{2\}=\max\{2\}=\frac{2}{1}=2$,
 we have that 
 $\min\{1,1\}=\max\{1,1\}=\frac{1+1}{2}=1$.
 Hence, if atom~\pred{a} holds,
 the aggregate atoms where its weight is $2$ hold,
 but not the ones where the (default) weight $1$ is taken twice.
 That is, whether repetitions of a literal are cumulative or 
-subject to annihilation depends on the aggregate being used.
+subject to annihilation depends on the aggregate being used.}
 
 Having discussed aggregate atoms,
 let us note that there is a second way to use aggregates:
@@ -1340,16 +1345,17 @@ occur on the right-hand sides of assignment predicates~\code{=} and~\code{:=}.
 \index{Assignments!Aggregates}%
 For instances, the following rules assign the obtained values to a variable:
 \begin{lstlisting}[numbers=none]
-sum(X) :- X = #sum [a=2,a=3].
-min(X) :- X = #min [a=2,a=3].
-max(X) :- X = #max [a=2,a=3].
-cnt(X) :- X = #count {a,a}.
+sum(X) :- X = #sum   { 2:a; 3:a }.
+min(X) :- X = #min   { 2:a; 3:a }.
+max(X) :- X = #max   { 2:a; 3:a }.
+cnt(X) :- X = #count { 2:a; 3:a }.
 \end{lstlisting}
 Under the assumption that atom~\pred{a} holds,
 the atoms \code{\pred{sum}(\const{5})}, \code{\pred{min}(\const{2})},
-\code{\pred{max}(\const{3})}, and \code{\pred{cnt}(\const{1})} are
+\code{\pred{max}(\const{3})}, and \code{\pred{cnt}(\const{2})} are
 derived by the above rules.
 If~\pred{a} does not hold, we derive 
+\comment{T2R: Or \const{\#inf} and \const{\#sup}\dots?}
 \code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#supremum})},
 \code{\pred{max}(\const{\#infimum})}, and \code{\pred{cnt}(\const{0})}.
 Here, the special constants \const{\#supremum} and \const{\#infimum}
@@ -1360,9 +1366,10 @@ indicate the neutral elements of the aggregates,
 $+\infty$ and $-\infty$, respectively.
 These constants can also be used as weights subject to 
 \code{\#min} and \code{\#max} (in order to exceed any integer bound):
+\comment{T2R: Exlpain shortcut\dots?}
 \begin{lstlisting}[numbers=none]
-bot :- #min [a=#infimum] -1000.
-top :- 1000 #max [a=#supremum].
+bot :-      #min {  #infimum : a } -1000.
+top :- 1000 #max { #supremum : a }.
 \end{lstlisting}
 Assuming that atom~\pred{a} holds,
 the atoms~\pred{bot} and~\pred{top} are derived by the above rules
@@ -1382,7 +1389,6 @@ in which case \gringo\ or \clingo\ unwraps all possible outcomes of the
 aggregate's evaluation.
 The latter can lead to a space blow-up, which should be taken into account
 if space becomes a bottleneck.
-
 
 % In particular, if there are multiple occurrences
 % $L\code{=}w_1,\dots,L\code{=}w_k$
@@ -1451,7 +1457,7 @@ if space becomes a bottleneck.
 % ``cardinality constraints''~\cite{siniso02a,lparseManual},
 % which are aggregate atoms using counting as their operation.
 
-After considering the syntax and semantics of ground aggregate atoms,
+\REW{After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
 Regarding contained variables, an atom occurring in an aggregate behaves
 similar to an atom on the left-hand side of a condition
@@ -1485,7 +1491,7 @@ right-hand sides of assignments, but using this feature is only recommended
 for aggregates whose atoms belong to domain predicates because space blow-up
 can become a bottleneck otherwise.
 The following example, making exhaustive use of aggregates,
-nonetheless demonstrates this and other features.
+nonetheless demonstrates this and other features.}
 
 \begin{example}\label{ex:aggr}
 Consider a situation where an informatics student
@@ -1516,7 +1522,7 @@ The first condition is that~\const{3} to~\const{6} courses should be enrolled:
 \lstinputlisting[nolol,firstline=11,lastline=11,firstnumber=9]{examples/aggr.lp}
 %
 Instantiating the above \const{\#count} aggregate
-yields the following ground rule:%
+\REP{yields}{amounts to} the following ground rule:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
   \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}

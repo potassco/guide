@@ -1679,22 +1679,22 @@ To support this reasoning mode, \gringo\ and \clingo\ adopt the
 optimization statements of \lparse~\cite{lparseManual},
 indicated via keywords \const{\#maximize} and \const{\#minimize}.
 As an optimization statement does not admit a body, any (local) variable
-in it must also occur in an atom (over a domain or built-in predicate)
+in it must also occur in an atom \REW{(over a domain or built-in predicate)}
 on the right-hand side of a condition (cf.\ Section~\ref{subsec:gringo:condition})
 within the optimization statement.
-As with aggregates, duplicate terms are removed.
-Additionally, priorities can be associated with each literal.
+As with aggregates, duplicate terms are removed;
+additionally, priorities can be associated with each weighted literal.
 A (ground) optimize statement has the form: 
 \index{Statements!Optimize Statements!\#minimize}%
 \index{Statements!Optimize Statements!\#maximize}%
 \[
-\mathsf{\mu}\,\code{\{}\,\boldsymbol{t}_1:\boldsymbol{L}_1@p_1,\dots,\boldsymbol{t}_n:\boldsymbol{L}_n@p_n\,\code{\}}
+\mathsf{\mu}\,\code{\{}\,\boldsymbol{t}_1:\boldsymbol{L}_1,\dots,\boldsymbol{t}_n:\boldsymbol{L}_n\,\code{\}}
 \] 
 where $\mathsf{\mu}$ is either \code{\#maximize} or \code{\#minimize}, 
 $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
-(as introduced in Section~\ref{subsec:gringo:normal}),
-and $p_i$ are optional (integer) priorities.\comment{T: @ with tuples??}
-The first element of each tuple $\boldsymbol{t}_i$ is supposed to be an (integer) weight $w_i$.
+(as introduced in Section~\ref{subsec:gringo:normal}).
+The first element of each tuple $\boldsymbol{t}_i$ is supposed to be an (integer) weight $w_i$
+that may optionally be furnished with an (integer) priority $p_i$ by means of term $w_i@p_i$.
 
 The semantics of an optimization statement is intuitive:
 an answer set is \emph{optimal} if the sum of weights
@@ -1739,11 +1739,11 @@ The optimization statements in Line~6--8 are instantiated as follows:%
   \code{\mbox{~}gringo --text \attach{examples/opt.lp}{opt.lp}}}
 %
 \begin{lstlisting}[firstnumber=6,breakindent=0pt,escapechar=&]
-#maximize [ hotel(1)=5@1, hotel(2)=4@1, &\\&            hotel(3)=3@1, hotel(4)=3@1, hotel(5)=2@1 ].
-#minimize [ hotel(1)=34@2, hotel(2)=35@2, &\\&            hotel(3)=30@2, hotel(4)=25@2, hotel(5)=30@2 ].
-#minimize [ noisy=1@3 ].
+#maximize { 5@1,1:hotel(1), 4@1,2:hotel(2),&\\&            3@1,3:hotel(3), 3@1,4:hotel(4), 2@1,5:hotel(5) }.
+#minimize { 34@2,1:hotel(1), 35@2,2:hotel(2),&\\&            30@2,3:hotel(3), 25@2,4:hotel(4), 30@2,5:hotel(5) }.
+#minimize { 1@3:noisy }.
 \end{lstlisting}
-If we now use \clasp\ to compute an optimal answer set,%
+If we now use \clasp\ or \clingo\ to compute an optimal answer set,%
 \marginlabel{%
   To compute the unique optimal answer set, invoke:\\
   \code{\mbox{~}gringo \attach{examples/opt.lp}{opt.lp} | \textbackslash\\

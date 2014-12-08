@@ -3,6 +3,6 @@ star(1,5).   star(2,4).   star(3,3).  star(4,3).  star(5,2).
 cost(1,170). cost(2,140). cost(3,90). cost(4,75). cost(5,60).
 main_street(4).
 noisy :- hotel(X), main_street(X).
-#maximize { Y : hotel(X), star(X,Y) @ 1 }.
-#minimize { Y/Z : hotel(X), cost(X,Y), star(X,Z) @ 2 }.
-#minimize { noisy @ 3 }.
+#maximize { Y@1, X : hotel(X), star(X,Y) }.
+#minimize { Y/Z@2, X : hotel(X), cost(X,Y), star(X,Z) }.
+#minimize { 1@3 : noisy }.

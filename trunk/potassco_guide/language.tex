@@ -1786,21 +1786,18 @@ comment over multiple lines
 @\textit{logic program}@
 \end{lstlisting}
 
-\paragraph{Hiding Predicates.}
+\paragraph{Projecting Predicates.}
 \index{Meta-Statements!Hiding Predicates, \code{\#show}, \code{\#hide}}%
+\tbrc{T: Help, Roland :)}
 Sometimes, one may be interested only in a subset of the atoms belonging
 to an answer set.
 In order to suppress the atoms of ``irrelevant'' predicates from the output,
-the \code{\#hide} declarative can be used.
+the \code{\#show} declarative can be used.
 The meanings of the following statements are indicated via accompanying comments:
 %
 \begin{lstlisting}[numbers=none]
-#hide.     % Suppress all atoms in output
-#hide p/3. % Suppress all atoms of predicate p/3 in output
-#hide p(X,Y) : q(X). % Supress p/3 if the condition holds
+#show.     % Suppress all atoms in output
 \end{lstlisting}
-Note that for the conditionals on the right-hand side, 
-the same conditions as described in Section \ref{subsec:gringo:condition} apply.
 
 In order to selectively include the atoms of a certain predicate in the output,
 one may use the \code{\#show} declarative.
@@ -1808,11 +1805,15 @@ Here are some examples:
 %
 \begin{lstlisting}[numbers=none]
 #show p/3. % Include all atoms of predicate p/3 in output
-#show(X,Y) : q(X). % Include p/3 if the condition holds
+#show p(X,Y) : q(X). % Include p/2 if the condition holds
+#show X : p(X,X). % Include terms for which p/2 is reflexive 
 \end{lstlisting}
 %
-A typical usage of \code{\#hide} and \code{\#show} is to hide all predicates
-via ``\code{\#hide.}'' and to selectively re-add atoms of certain predicates
+Note that for the conditionals on the right-hand side, 
+the same conditions as described in Section \ref{subsec:gringo:condition} apply.
+%
+A popular usage of \code{\#show} is to hide all predicates
+via ``\code{\#show.}'' and to selectively re-add atoms of certain predicates
 \code{p/$n$} to the output via ``\code{\#show p/$n$.}''
 
 \paragraph{Constant Replacement.}
@@ -1839,78 +1840,9 @@ In the example above \code{x} would be replaced by \code{42}
 but when reversing the directives this would no longer be the case.
 \end{Note}
 
-\paragraph{Domain Declarations.}
-\index{Meta-Statements!Domain Declarations, \code{\#domain}}%
-Usually, variable names are local to a rule,
-where they must be bound via appropriate atoms.
-This locality can be undermined by using
-\code{\#domain} declarations 
-that globally associate variable names to atoms.
-An associated atom is then simply added to the body of a rule in which
-such a predefined variable name occurs in.
-The following is a made-up example:
-%
-\begin{lstlisting}[numbers=none]
-p(1,1). p(1,2).
-#domain p(X,Y).
-#domain p(Y,Z).
-q(Z,X) :- not p(Z,X).
-\end{lstlisting}
-%
-The above program is a priori not safe because
-variables~\var{X} and~\var{Z} are unbound in the last rule.
-However, as they belong to \code{\#domain} declarations,
-\gringo\ and \clingo\ expand the last rule to:
-%
-\begin{lstlisting}[numbers=none]
-q(Z,X) :- p(X,Y), p(Y,Z), not p(Z,X).
-\end{lstlisting}
-%
-Observe that the resulting program is safe.
+\comment{DELeted DOMAIN and COMPUTE statements}
 
-\begin{Note}
-that we suggest not to use domain statements because 
-in ASP it is common to use very short variable names and
-using domain statements likely results in name clashes
-and undesired behavior.
-\end{Note}
-
-\paragraph{Compute Statements.}
-\index{Meta-Statements!Compute Statements, \code{\#compute}}%
-These statements are artifacts supported for backward compatibility.
-Although we strongly recommend to avoid compute statements,
-we now describe their syntax.
-A compute statement is of the form
-``$\const{\#compute}~n \code{\char`\{}\dots\code{\char`\}}\code{.}$''
-(the non-negative integer $n$ is optional),
-where the ``$\code{\char`\{}\dots\code{\char`\}}$'' part
-is similar to a \const{\#count} aggregate.
-The meaning is that all literals contained in
-``$\code{\char`\{}\dots\code{\char`\}}$'' must hold w.r.t.\ answer sets
-that are to be computed,
-while~$n$ specifies a number of answer sets to compute.
-As \clasp\ and \clingo\ provide command line option
-\code{--number} (cf.\ Section~\ref{subsec:opt:clasp})
-to specify how many answer sets are to be computed,
-they simply ignore~$n$.
-Furthermore,
-the ``$\code{\char`\{}\dots\code{\char`\}}$'' part can equivalently
-be expressed in terms of integrity constraints,
-as indicated in the comments provided along with the following example:
-%
-\begin{lstlisting}[xrightmargin=-20pt,numbers=none]
-q(1;2).
-{ p(1..5) }.
-#compute 0 { p(X) : q(X) }.       % :- 1 { not p(X) : q(X) }.
-#compute   { not p(X) : X=4..5 }. % :- 1 { p(X) : X=4..5 }.
-\end{lstlisting}
-
-\begin{Note}
-that compute statement are not needed in general.
-The same behavior can be achieved by using integrity constraints.
-In fact, compute statements exist mainly for compatibility reasons with \lparse.
-We suggest to not use them.
-\end{Note}
+\com{STOPPED HERE}
 
 \paragraph{External Statements.}
 \index{Meta-Statements!External Statements, \code{\#external}}%

@@ -1,2 +1,2 @@
 % Optimize
-minimize [ cycle(X,Y) : cost(X,Y,C) = C ].
+#minimize { C,X,Y : cycle(X,Y), cost(X,Y,C) }.

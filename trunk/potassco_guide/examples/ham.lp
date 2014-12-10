@@ -7,5 +7,4 @@ reached(Y) :- cycle(X,Y), reached(X).
 % Test
 :- node(Y), not reached(Y).
 % Display
-#hide.
 #show cycle/2.

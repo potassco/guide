@@ -1,7 +1,7 @@
 \section{Command Line Options}\label{sec:options}
 
-In this section, we briefly describe the meanings of
-command line options supported by
+In this section, we briefly describe the meaning of
+some selected command line options supported by
 \gringo\ (Section~\ref{subsec:opt:gringo}),
 \clingo\ (Section~\ref{subsec:opt:clingo}), and
 \clasp\ (Section~\ref{subsec:opt:clasp}).
@@ -86,8 +86,8 @@ Enable lightweight mode for processing a ground input program.
 \item[\code{--ifixed=\textit{n}}]~\\
 Use \code{\textit{n}} as fix step number if the input program
 contains \const{\#cumulative} or \const{\#volatile} statements.
-(This option permits the handling of programs written for \iclingo\
- in a traditional single pass computation.)
+\REW{(This option permits the handling of programs written for \iclingo\
+ in a traditional single pass computation.)}
 \item[\code{--ibase}]~\\
 Process only the static part (that can be initiated by a \const{\#base} statement)
 of an input program.
@@ -144,66 +144,6 @@ Run \clingo\ as a plain solver (using embedded \clasp).
 %
 Finally, the default command line when invoking \clingo\
 consists of all \clasp\ defaults (cf.\ Section~\ref{subsec:opt:clasp}).
-
-
-\subsection{\iclingo\ Options}\label{subsec:opt:clingo}
-
-Incremental ASP system \iclingo\ extends \clingo\ by interleaving
-grounding and solving for problems including a mutable bound.
-An abstract invocation of \iclingo\ is as with \clingo:
-%
-\begin{lstlisting}[numbers=none]
-iclingo [ number | options | filenames ]
-\end{lstlisting}
-%
-The external behavior of \iclingo\ is similar to \clingo,
-described in the previous section, except for the fact that
-option \code{--ifixed} is ignored by \iclingo\ if not run as a grounder
-(via one of (long) options \code{--text}, \code{--lparse}, or \code{--reify}).
-However, option \code{--clingo} (see below) may be used to let \iclingo\
-work like \clingo.
-The additional options of \iclingo\ focus on customizing
-incremental computations:
-%
-\begin{description}
-\item[\code{--istats}]~\\
-Print statistic information for each incremental solving step.
-\item[\code{--imin=\textit{n}}]~\\
-Perform at least \code{\textit{n}} incremental solving steps before termination.
-(This may be used to force steps regardless of the termination condition
- set via \code{--istop}.)
-\item[\code{--imax=\textit{n}}]~\\
-Perform at most \code{\textit{n}} incremental solving steps before termination.
-(This may be used to limit steps regardless of the termination condition
- set via \code{--istop}.)
-\item[\code{--istop=SAT|UNSAT}]~\\
-Terminate after an incremental solving step 
-in which some (\code{SAT}) or no (\code{UNSAT})
-answer set has been found.
-\item[\code{--iquery=\textit{n}}]~\\
-Start with incremental solving at step number~\code{\textit{n}}.
-(This may be used to skip some solving steps,
- still accumulating static and cumulative rules for these steps.)
-\item[\code{--ilearnt=keep|forget}]~\\
-Maintain (\code{keep}) or delete (\code{forget}) learnt constraints
-in-between incremental solving steps.
-(This option configures the behavior of embedded \clasp.)
-\item[\code{--iheuristic=keep|forget}]~\\
-Maintain (\code{keep}) or delete (\code{forget}) heuristic information
-in-between incremental solving steps.
-(This option configures the behavior of embedded \clasp.)
-\item[\code{--clingo}]~\\
-Run \iclingo\ as a non-incremental ASP system (like \clingo).
-\end{description}
-%
-As with \clingo, the default command line when invoking \iclingo\
-consists of all \clasp\ defaults, explained in the next section,
-along with \code{--istop=SAT}, \code{--iquery=1}, \code{--ilearnt=keep}, and
-\code{--iheuristic=forget}.
-That is, incremental solving starts at step number~\code{1} and stops
-after a step in which some answer set has been found.
-In-between incremental solving steps, embedded \clasp\ maintains learnt constraints
-but deletes heuristic information.
 
 
 \subsection{\clasp\ Options}\label{subsec:opt:clasp}

@@ -3,15 +3,16 @@
 We exemplarily solve the following problems in ASP:
 $N$-Coloring (Section~\ref{subsec:ex:color}),
 Traveling Salesperson (Section~\ref{subsec:ex:tsp}), and
-Blocks-World Planning (Section~\ref{subsec:ex:block}).
+Blocks-World Planning (Section~\ref{subsec:ex:block}).%
+\footnote{The above examples are also discussed in~\cite{gekakasc12a};
+  you may also like the videos at~\cite{potassco}.}
 While the first problem could likewise be solved within neighboring paradigms,
 the second one requires checking reachability,
 something that is rather hard to encode in either
 Boolean Satisfiability~\cite{SATHandbook} or
 Constraint Programming~\cite{CPHandbook}.
 The third problem coming from the area of planning
-illustrates incremental solving with \iclingo.
- 
+illustrates incremental solving with \clingo.
 
 \subsection{\texorpdfstring{$N$}{N}-Coloring}\label{subsec:ex:color}
 
@@ -123,9 +124,8 @@ Note that we have omitted the six instances of \pred{node}/$1$ and the
 17 instances of \pred{edge}/$2$ in order to emphasize the actual solution,
 which is depicted in Figure~\ref{fig:color}.
 Such output projection can also be specified within a logic program file by
-using the declaratives \code{\#hide} and \code{\#show},
+using the directive \code{\#show},
 described in Section~\ref{subsec:gringo:meta}.
-
 
 \subsection{Traveling Salesperson}\label{subsec:ex:tsp}
 
@@ -272,6 +272,7 @@ cycle(4,1) cycle(5,6) cycle(6,3)
 Optimization: 11
 \end{lstlisting}
 %
+\comment{T2BK: check/revise options}
 Given that no answer is obtained after the second one,
 we know that~\code{11} is the optimum value,
 but there might be more optimal answer sets that have not been computed yet.
@@ -327,6 +328,7 @@ an ASP system must repeatedly be queried while varying the bound.
 With a traditional ASP system, processing
 the same planning problem with a different bound
 involves grounding and solving from scratch.
+\tbr
 In order to reduce such redundancies,
 the incremental ASP system \iclingo~\cite{gekakaosscth08a}
 can gradually increase a bound, % thereby,
@@ -355,21 +357,22 @@ A well-known Blocks-World instance is described by:%
 Note that the facts in Line~13--15 and~24--26 specify the initial
 and the goal state depicted in Line~9-11 and~19--22, respectively.
 We here use (uninterpreted) function \const{on}/$2$ to illustrate another
-important feature available in \gringo, \clingo, and~\iclingo, namely,
+important feature available in \gringo\ and~\clingo, namely,
 the possibility of instantiating variables to compound terms.
 
 
 \subsubsection{Problem Encoding}\label{subsec:block:encoding}
 
-Our Blocks-World Planning encoding for \iclingo\ makes use of declaratives
-\const{\#base}, \const{\#cumulative}, and \const{\#volatile},
-separating the encoding into a static, a cumulative, and a volatile (query) part.
+Our Blocks-World Planning encoding for \clingo\ makes use of \const{\#program} directives
+defining subprograms \const{base}, \const{cumulative(t)}, and \const{volatile(t)},
+separating the encoding into a static, a cumulative, and a volatile (query) part
+(similar to the approach taken by \iclingo~\cite{gekakaosscth08a}).
 Each of them can be further refined into Generate, Define, Test, and Display constituents, 
 as indicated in the comments below:
 %
 \lstinputlisting{examples/blocks.lp}
 %
-In the initial \const{\#base} part (Line~1--5),
+In the initial program \const{base} part (Line~1--5),
 we define blocks and constant \const{table}
 as instances of predicate \pred{location}/$1$.
 Moreover, we use instances of \pred{init}/$1$
@@ -378,7 +381,7 @@ defining the conditions before the first incremental step.
 Note that variable~\var{F} is instantiated to compound terms
 over function \const{on}/$2$.
 
-The \const{\#cumulative} statement in Line~7 declares constant~\code{t}
+The \const{cumulative} subprogram in Line~7 declares constant~\code{t}
 as a placeholder for step numbers in the cumulative encoding part below.
 Here, the Generate rule in Line~9 states that exactly one block~\var{X}
 must be moved to a location~\var{Y} (different from~\var{X}) at each step~\code{t}.
@@ -393,23 +396,23 @@ a move to the state at step~\code{t},
 while the rule in Line~16--17 states that a block~\var{X} stays on a location~\var{Z}
 if it is not moved to any other location~\var{Y}.
 
-The \const{\#volatile} statement in Line~19 declares the next part as a
-query depending on step number~\const{t}, but not accumulated over
-successive steps.
+The \const{volatile} subprogram in Line~19 relies on the external atom \code{query(t)} 
+for declaring the next part as a query depending on step number~\const{t}, 
+but not accumulated over successive steps.\comment{T: refine!}
 In fact, the integrity constraint in Line~21 tests whether goal conditions are
 satisfied at step~\const{t}.
 
-Our incremental encoding concludes with a second \const{\#base} part,
+Our incremental encoding concludes with a second \const{base} part,\comment{T:?}
 as specified in Line~23.
 Note that, for the meta-statements with Display functionality (Line~25--26),
 it is actually unimportant whether they belong to a static, cumulative, or
 volatile program part, as answer sets are projected
 (to instances of \pred{move}/$3$) in either case.
-However, by ending the encoding file with a \const{\#base} statement,
+\REW{However, by ending the encoding file with a \const{\#base} statement,
 we make sure that the contents of a concatenated instance file
-is included in the static program part.
-This is also the default of \iclingo\
-(as well as of \gringo\ and \clingo\ that can be used for non-incremental computations).%
+is included in the static program part.}
+\REW{This is also the default of \iclingo\
+(as well as of \gringo\ and \clingo\ that can be used for non-incremental computations).}%
 \marginlabel{%
   To observe the ground program dealt with internally \iclingo\
   at a step $n$, invoke:\\
@@ -423,7 +426,7 @@ This is also the default of \iclingo\
   \code{\attach{examples/world4.lp}{world4.lp}}.}
 
 Finally, let us stress important prerequisites for obtaining
-a well-defined incremental computation result from \iclingo.
+a well-defined incremental computation result from \clingo.
 First, the ground instances of head atoms of rules in the
 static, cumulative, and volatile program part must be pairwisely disjoint.
 Furthermore, ground instances of head atoms in the volatile part
@@ -447,12 +450,13 @@ putting rules into the right program parts.
 
 \subsubsection{Problem Solution}\label{subsec:block:solution}
 
-We can now use \iclingo\ to \emph{incrementally} compute the shortest
+\tbrw
+We can now use \clingo\ to \emph{incrementally} compute the shortest
 sequence of moves that brings us from the initial to the goal state
 depicted in the instance in Section~\ref{subsec:block:instance}:%
 \marginlabel{%
   To this end, invoke:\\
-  \code{\mbox{~}iclingo -n 0 \textbackslash\\
+  \code{\mbox{~}clingo -n 0 \textbackslash\\
         \mbox{~}\attach{examples/blocks.lp}{blocks.lp} \attach{examples/world0.lp}{world0.lp}}
   Furthermore you can try: \\
   \code{\attach{examples/world1.lp}{world1.lp}},  
@@ -468,15 +472,15 @@ move(b2,table,1) move(b1,b0,2) move(b2,b1,3)
 This unique answer set tells us that the given problem instance can
 be solved by moving block~\const{b2} to the~\const{table} in order to
 then put~\const{b1} on top of~\const{b0} and finally~\const{b2} on top of~\const{b1}.
-This solution is computed by \iclingo\ in three grounding and solving steps,
-where, starting from the \const{\#base} program, constant~\const{t}
+This solution is computed by \clingo\ in three grounding and solving steps,
+where, starting from the \const{base} program, constant~\const{t}
 is successively replaced with step numbers~\const{1}, \const{2}, and~\const{3}
-in the~\const{\#cumulative} and in the~\const{\#volatile} part.
-While the query postulated in the~\const{\#volatile} part cannot be
-fulfilled in steps~\const{1} and~\const{2}, \iclingo\ 
+in the~\const{cumulative} and in the~\const{volatile} part.
+While the query postulated in the~\const{volatile} part cannot be
+fulfilled in steps~\const{1} and~\const{2}, \clingo\ 
 stops its incremental computation after finding an answer set in step~\const{3}.
 The scheme of iterating steps until finding at least one answer set
-is the default behavior of~\iclingo,
+is the default behavior of~\clingo,
 which can be customized via command line options
 (cf.\ Section~\ref{subsec:opt:clingo}).
 
@@ -495,9 +499,9 @@ option ``\code{--ifixed=$n$}'' (cf.\ Section~\ref{subsec:opt:gringo}),
         \mbox{~}--ifixed=$n$ \textbackslash\\
         \mbox{~}\attach{examples/blocks.lp}{blocks.lp} \attach{examples/world0.lp}{world0.lp}}}
 enabling \gringo\ or \clingo\ to generate the ground program present
-inside \iclingo\ at step~$n$.
-Note that \const{\#volatile} parts are here only instantiated for the final step~$n$,
-while \const{\#cumulative} rules are added for all steps $\const{1},\dots,n$.
+inside \clingo\ at step~$n$.
+Note that \const{volatile} parts are here only instantiated for the final step~$n$,
+while \const{cumulative} rules are added for all steps $\const{1},\dots,n$.
 Option ``\code{--ifixed=$n$}'' can be useful for investigating the contents
 of a ground program dealt with at step~$n$ or for using an external solver
 (other than \clasp).

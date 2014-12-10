@@ -1884,10 +1884,10 @@ yielding the same rules as in the example above.
 \eexample
 \end{example}
 
-Furthermore, the \lparse\ output\cite{lparseManual} has been modified to include an additional table 
+Furthermore, the \smodels\ format~\cite{lparseManual} has been modified to include an additional table 
 that stores a list  of all external atoms. For compatibility, this table is only inserted if the 
 program actually contains external directives. It contains the respective atom indices terminated
-by a zero and is inserted directly after \lparse' compute statement.
+by a zero and is inserted directly after \smodels' compute statement.
 \begin{example}
 The following listing shows schematic example output of \gringo\ when external statements are used:
 \begin{lstlisting}[numbers=none]
@@ -2074,105 +2074,10 @@ to induce 100 percent random decisions.
 
 \subsection{Input Language of \clingo}\label{subsec:lang:clingo}
 \index{Incremental Grounding}%
-\tbrw
-% System \iclingo~\cite{gekakaosscth08a} extends \clingo\ by an
-% \emph{incremental} computation mode that incorporates both grounding and solving.
-% Hence, its input language includes all constructs described
-% in Section~\ref{subsec:lang:gringo}.
-% In addition, \iclingo\ deals with statements of the following form:
-% %
-% \begin{lstlisting}[numbers=none,escapechar=@]
-% #base.
-% #cumulative @\textit{constant}@.
-% #volatile   @\textit{constant}@.
-% \end{lstlisting}
-% %
-% \index{Incremental Grounding!Base Part, \code{\#base}}%
-% \index{Meta-Statements!Base Part, \code{\#base}}%
-% Via ``\code{\const{\#base}.},''
-% the subsequent part of a logic program is declared as static, that is,
-% it is processed only once at the beginning of an incremental computation.
-% In contrast, ``\code{\const{\#cumulative} \textit{constant}.}''
-% and ``\code{\const{\#volatile} \textit{constant}.}'' are used to declare
-% a (symbolic) \code{\textit{constant}} as a placeholder for incremental step numbers.
-% In the parts of a logic program below a \const{\#cumulative} statement,
-% \code{\textit{constant}} is in each step replaced with the current step number,
-% and the resulting rules, facts, and integrity constraints are accumulated
-% over a whole incremental computation.
-% While the replacement of \code{\textit{constant}} is similar,
-% a logic program part below a \const{\#volatile} statement is local to steps,
-% that is, all rules, facts, and integrity constraints computed in one step
-% are dismissed before the next incremental step.
-% Note that the type of a logic program part (static, cumulative, or volatile)
-% is determined by the last
-% \index{Incremental Grounding!Cumulative Part, \code{\#cumulative}}%
-% \index{Meta-Statements!Cumulative Part, \code{\#cumulative}}%
-% \index{Incremental Grounding!Volatile Part, \code{\#volatile}}%
-% \index{Meta-Statements!Volatile Part, \code{\#volatile}}%
-% \const{\#base}, \const{\#cumulative}, or \const{\#volatile} statement
-% preceding it.
-
-% During an incremental computation, all static program parts are grounded first,
-% while cumulative and volatile parts are grounded step-wise,
-% replacing \code{\textit{constant}}s with successive step numbers starting from~\const{1}.
-% Note that due to \gringo's grounding algorithm,
-% rules are not grounded twice using the same substitution of global variables
-% (the incremental constant is treated like a global constant here).
-% After a grounding step, \clasp\ is usually invoked via an internal interface
-% (like with \clingo), and the incremental computation stops after a step
-% in which at least one answer set has been found by \clasp.
-% This default behavior can be readapted via command line 
-% options (cf.\ Section~\ref{subsec:opt:clingo}).
-% For obtaining a well-defined incremental computation result,
-% it is important that (ground) head atoms within static, cumulative, and volatile program parts
-% are distinct from each other, and they must also be different from step to step
-% (see~\cite{gekakaosscth08a} for details).
-% In Section~\ref{subsec:ex:block},
-% we provide a typical example in which these conditions naturally hold.
-
-% \begin{example}
-% For now, consider this simple Schur number example:
-% \lstinputlisting{examples/inc.lp}
-% \marginlabel{%
-%   To calculate the Schur number, invoke:\\
-%   \code{\mbox{~}iclingo \attach{examples/inc.lp}{inc.lp} \textbackslash\\
-%   --istop=UNSAT
-%   }\\
-%   The solving stops when the largest number has been found.
-% }%
-% The Schur number~$n$ w.r.t. to a given number~$c$ is the largest integer 
-% such that the interval~$[1..n]$ can be partitioned into $c$ sum-free sets.
-% A set $S=\{c_1 ,\dots, c_k\}$ is sum-free if for each~$x_i$ and~$x_j$, 
-% it holds that~$x_i + x_j \not \in S$.
-
-% In the base part in Line 2 we specify the number of partitions.
-% Then, in the cumulative part in Line 4 each fresh integer $k$
-% is assigned to exactly one partition.
-% In Line 5 we check whether the guessed partition is sum-free.
-% Note that we put this check in the cumulative part and incrementally extend it.
-% The idea here is to keep as much constraints in the cumulative part
-% because \clasp\ applies nogood learning and only information learnt from 
-% the cumulative part can be kept among further solving steps;
-% all information learnt from the volatile part has to be forgotten.
-% Additionally, we use the comparison  \code{X <= Y}, 
-% which helps to avoid grounding some redundant rules.
-% Furthermore, note that there appears no incremental constant in this rule,
-% \gringo's grounding algorithm makes sure that no ground instantiation of this rule 
-% is grounded twice just the new slice for the next step is instantiated.
-% Finally, we break symmetries in Line 6, i.e.,
-% number one is always assigned to partition one, number two to partition two 
-% if it is not in partition one, and so on. 
-
-% We use option \code{--istop=UNSAT} to solve as long as 
-% \iclingo\ is able to find a solution, i.e., there is a 
-% valid partitioning. Once this is no longer possible, the grounding/solving 
-% process stops.\eexample
-% \end{example}
-
+\tbf
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
-Solver \clasp~\cite{gekanesc07b} works on logic programs in \lparse's
-output format~\cite{lparseManual}.
+Solver \clasp~\cite{gekanesc07b} works on logic programs in \smodels\ format~\cite{lparseManual}.
 This numerical format, which is not supposed to be human-readable,
 is output by \gringo\ and can be piped into \clasp.
 Such an invocation of \clasp\ looks as follows:
@@ -2187,7 +2092,7 @@ This maximum number can also be set via
 option \code{--number} or its abbreviation \code{-n}
 (cf.\ Section~\ref{subsec:opt:clasp}).
 By default, \clasp\ computes one answer set (if it exists).
-If a logic program in \lparse's output format has been stored in a \code{file},
+If a logic program in \smodels\ format has been stored in a \code{file},
 it can be redirected into \clasp\ as follows:%
 \footnote{%
   The same is achieved by using option \code{--file} or its short form \code{-f}
@@ -2207,45 +2112,7 @@ then \clasp\ can be invoked in the following way:
 clasp [ number | options ] --dimacs < file
 \end{lstlisting}
 %
-Finally, \clasp\ may be used as a library, as done within \clingo\ and \iclingo.
-
-Solver \clasp~\cite{gekanesc07b} works on logic programs in \lparse's
-output format~\cite{lparseManual}.
-This numerical format, which is not supposed to be human-readable,
-is output by \gringo\ and can be piped into \clasp.
-Such an invocation of \clasp\ looks as follows:
-%
-\begin{lstlisting}[numbers=none]
-gringo [ options | filenames ] | clasp [ number | options ]
-\end{lstlisting}
-%
-Note that \code{number} may be provided to specify a maximum number of answer sets
-to be computed, where~\code{0} makes \clasp\ compute all answer sets.
-This maximum number can also be set via
-option \code{--number} or its abbreviation \code{-n}
-(cf.\ Section~\ref{subsec:opt:clasp}).
-By default, \clasp\ computes one answer set (if it exists).
-If a logic program in \lparse's output format has been stored in a \code{file},
-it can be redirected into \clasp\ as follows:%
-\footnote{%
-  The same is achieved by using option \code{--file} or its short form \code{-f}
-  (cf.\ Section~\ref{subsec:opt:clasp}).}
-%
-\begin{lstlisting}[numbers=none]
-clasp [ number | options ] < file
-\end{lstlisting}
-%
-Via option \code{--dimacs},
-\clasp\ can also be instructed to compute models of a propositional formula
-in DIMACS/CNF format~\cite{dimacs}.
-If such a formula is contained in \code{file},
-then \clasp\ can be invoked in the following way:
-%
-\begin{lstlisting}[numbers=none]
-clasp [ number | options ] --dimacs < file
-\end{lstlisting}
-%
-Finally, \clasp\ may be used as a library, as done within \clingo\ and \iclingo.
+Finally, \clasp\ may be used as a library, as done within \clingo.
  
 %%% Local Variables: 
 %%% mode: latex

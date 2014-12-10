@@ -1144,10 +1144,10 @@ This is done by prepending such literals to the literal tuples:
 %
 Here, all $L_i$ are symbolic literals as introduced in Section~\ref{subsec:gringo:normal}, while all other entities are as described above.
 The second colon in 
-\lstinline[escapechar=?]{?$\boldsymbol{t}_i$?:?$L_i$?:?$\boldsymbol{L_i}$?}
+\lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$:$\boldsymbol{L_i}$}
 is dropped whenever $\boldsymbol{L_i}$ is empty,
 yielding 
-\lstinline[escapechar=?]{?$\boldsymbol{t}_i$?:?$L_i$?}.
+\lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
 
 Simplifying shortcuts providing some backward compatibility with previsou versions of \gringo\ are given below.
 Unlike with body aggregates, only singular head aggregates are supported.
@@ -1200,7 +1200,7 @@ the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
 The set property makes the first aggregate count edges with the same cost only once,
 while the second one accounts for each edge no matter whether they have the same cost or not.
 To see this, observe that after evaluating the conditions in each aggregate, the first one reduces to
-\lstinline{#sum \{ 3 \}}, while the second results in \lstinline{#sum \{ 3,1,2; 3,2,3 \}}
+\lstinline[mathescape]{#sum $\{$ 3 $\}$}, while the second results in \lstinline[mathescape]{#sum $\{$ 3,1,2; 3,2,3 $\}$}
 In other words, associating each cost with its respective arc enforces a multi-set property;
 in this way, the same cost can be accounted for several times.
 
@@ -1291,7 +1291,7 @@ the other omitting it, are synonyms:}
 \end{lstlisting}
 \DEL{By allowing the omission of \const{\#sum} and \const{\#count},
 so-called 
-``weight constraints'' and ``cardinality constraints''~\cite{siniso02a,lparseManual}
+``weight constraints'' and ``cardinality constraints''~%\cite{siniso02a,lparseManual}
 can be written in their traditional notations (without keyword).}
 
 % keyword \const{\#sum} may be omitted, which in a sense makes \const{\#sum} the default
@@ -1477,9 +1477,10 @@ intervals (cf.\ Section~\ref{subsec:gringo:interval}), and
 pooling (cf.\ Section~\ref{subsec:gringo:pool})
 can be incorporated as usual within aggregates,
 where intervals and pooling are expanded locally.%
-\footnote{%
-  Assignments (cf.\ Section~\ref{subsec:gringo:assign}) 
-  are permitted on the right-hand sides of conditions only.}
+% UNCOMMENTED WITHIN \REW <<<<<<
+% \footnote{%
+%   Assignments (cf.\ Section~\ref{subsec:gringo:assign}) 
+%   are permitted on the right-hand sides of conditions only.}
 That is, an interval gives rise to multiple literals connected via~``\code{,}''
 within the same aggregate.
 The same applies to pooling in front of a condition,

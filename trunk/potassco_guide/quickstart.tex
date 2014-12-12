@@ -108,7 +108,7 @@ the output to atoms (unambiguously) characterizing a solution,
 thus, suppressing auxiliary predicates.
 We follow this methodology and
 mark the respective parts via comment lines beginning with ``\code{\%}'' 
-in the following encoding:%
+in the following encoding\comment{RK: would it make sense to use an aggregate of form not \{ ... \} = 1 here}:%
 \marginlabel{You can also save the encoding % to disk
              by clicking this file name: \attach{examples/toh_enc.lp}{\code{toh\char`\_enc.lp}}.\\
              We below explain how to run the saved files in order to
@@ -213,7 +213,7 @@ provided that~\var{T} is not the maximum time point.
 % First in Line 8, the position below a disc on some peg is blocked.
 % Second 
 The rule in Line 9 further propagates the status of being blocked
-along bigger disks.
+along bigger disks.\comment{RK: along bigger disks sounds strange. Maybe: to all bigger disks on the same peg}
 % , the position directly below a blocked position is blocked.
 Note that we also mark \code{\var{D}-1~=~\const{0}}, not referring to any disk, as blocked,
 which is convenient for eliminating redundant moves
@@ -222,7 +222,7 @@ in the Test part described next.
 % Finally, there is the Test part building upon both Generate and Define part 
 % to rule out wrong moves that do not agree with the problem description.
 The Test part consists of the integrity constraints in Line~11--14,
-rules of denial that eliminate unintended solution candidates.
+rules of denial\comment{RK: maybe remove the of denial thing} that eliminate unintended solution candidates.
 The first integrity constraint in Line~11 asserts 
 that a disk~\var{D} must not be moved to a peg~\var{P}
 if \code{\var{D}-1} is blocked at time point~\var{T}.

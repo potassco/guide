@@ -5,7 +5,7 @@ grounder \gringo, combined grounder and solver \clingo,
 and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-It is extended by \clingo\ with a few directives for multi-shot solving in Section~\ref{subsec:lang:clingo}.
+It is extended for \clingo\ with a few directives for multi-shot solving in Section~\ref{subsec:lang:clingo}.\comment{RK: actually not true the language is the same}
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
 
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
@@ -35,17 +35,17 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \index{Terms!Variables}
 \index{Terms!Variables!Anonymous}
 \index{Terms!Functions}
-\index{Terms!\code{\#supremum}}
-\index{Terms!\code{\#infimum}}
+\index{Terms!\code{\#sup}}
+\index{Terms!\code{\#inf}}
 
 \begin{figure}
 \vspace*{-19mm}
 \railnontermfont{\rmfamily\itshape}%
 \railalias{rusc}{\tt\char95}\railterm{rusc}
-\railalias{rlsc}{[A-Za-z0-9\tt\char95]}\railterm{rlsc}
+\railalias{rlsc}{[A-Za-z0-9\tt\char95']}\railterm{rlsc}
 \begin{rail}
 	term        : simpleterm | function;
-	simpleterm  : (integer | constant | string | variable | rusc | '\#supremum' | '\#infimum');
+	simpleterm  : (integer | constant | string | variable | rusc | '\#sup' | '\#inf');
 	constant    : (rusc*) '[a-z]' (rlsc*);
 	variable    : (rusc*) '[A-Z]' (rlsc*);
 	function    : constant '(' term (',' term*) ')';
@@ -60,7 +60,7 @@ mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
 The basic building blocks are simple terms:
 \emph{integers}, \emph{constants}, \emph{strings}, and \emph{variables}
-as well as the tokens ``\var{\char`\_},'' \const{\#supremum}, and \const{\#infimum}.
+as well as the tokens ``\var{\char`\_},'' \const{\#sup}, and \const{\#inf}.
 An integer is represented by means of an arithmetic expression,
 further explained in Section~\ref{subsec:gringo:arith}.
 Constants and variables are distinguished by their first letters, 
@@ -82,7 +82,7 @@ the token ``\var{\char`\_}'' (not followed by any letter)
 stands for an \emph{anonymous variable} that does not recur anywhere. 
 (One can view this as if a new variable name is invented on each
  occurrence of ``\var{\char`\_}.'')
-In addition, there are the special constants \const{\#supremum} and \const{\#infimum}
+In addition, there are the special constants \const{\#sup} and \const{\#inf}
 representing $+\infty$ and $-\infty$, respectively;
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 % the largest and the smallest possible values, respectively,
@@ -100,7 +100,7 @@ with an integer argument, and variable~\var{X}.
 % More complex terms involving arithmetics and other constructs
 % are introduced later on.
 
-Rules of the following forms are admitted in a 
+Rules\comment{RK: what to use as a seperator of body elements?} of the following forms are admitted in a 
 \emph{normal logic program} (with integrity constraints):
 \par
 \medskip
@@ -136,7 +136,7 @@ While the head atom~$A_0$ of a fact must unconditionally be true,
 the intuitive reading of a rule corresponds to an implication:
 if all positive literals in the rule's body are true and all negative
 literals are satisfied, then~$A_0$ must be true.
-On the other hand, an integrity constraint is a rule of denial,
+On the other hand, an integrity constraint is a rule of denial\comment{RK: again},
 meaning that the literals in its body must not jointly be satisfied.
 
 In ASP, the intended models of a logic program, i.e.,
@@ -236,7 +236,7 @@ they include schematic rules with variables.
 The next example illustrates this.
 
 \begin{example}\label{ex:flies}
-Consider a child from south pole watching cartoons,
+Consider a child from the south pole watching cartoons,
 where it sees a yellow bird that is not a penguin.
 The child knows that penguins can definitely not fly (due to small wingspread),
 but it is unsure about whether the yellow bird flies.
@@ -377,7 +377,7 @@ is simply that they
 must not jointly hold.
 Hence,
 classical negation can be understood as a syntactic feature
-allowing us to impose an integrity \code{:-\;$A$,\:-$A$.}
+allowing us to impose an integrity constraint \code{:-\;$A$,\:-$A$.}
 without explicitly writing it in a logic program.
 Depending on the logic program at hand,
 it may be possible that neither~$A$ nor~$\code{-}A$ is contained in an answer set,
@@ -510,16 +510,17 @@ instead of disjunction, unless the latter is required for complexity reasons.
 \index{Arithmetic Functions!Subtraction, \code{-}}
 \index{Arithmetic Functions!Unary Minus, \code{-}}
 \index{Arithmetic Functions!Multiplication, \code{*}}
-\index{Arithmetic Functions!Division, \code{/}, \code{\#div}}
-\index{Arithmetic Functions!Modulo, \code{\textbackslash}, \code{\#mod}}
-\index{Arithmetic Functions!Exponentiation, \code{**}, \code{\#pow}}
-\index{Arithmetic Functions!Absolute Value, \mbox{\textbar$\cdot$\textbar}, \code{\#abs}}
+\index{Arithmetic Functions!Division, \code{/}}
+\index{Arithmetic Functions!Modulo, \code{\textbackslash}}
+\index{Arithmetic Functions!Exponentiation, \code{**}}
+\index{Arithmetic Functions!Absolute Value, \mbox{\textbar$\cdot$\textbar}}
 \index{Arithmetic Functions!Bitwise AND, \code{\&}}
 \index{Arithmetic Functions!Bitwise OR, \code{?}}
 \index{Arithmetic Functions!Bitwise XOR, \code{\^}}
 \index{Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
 
 \com{Roland}
+\com{Torsten}
 Besides integers (constant arithmetic functions),
 written as sequences of the digits \code{0}\dots\code{9}
 possibly preceded by ``\code{-},''
@@ -529,10 +530,10 @@ The following symbols are used for these functions:
 \code{+} (addition),
 \code{-} (subtraction, unary minus),
 \code{*} (multiplication),
-\code{/} or \code{\#div} (integer division),
-\code{\textbackslash} or \code{\#mod} (modulo),
-\code{**} or \code{\#pow} (exponentiation),
-\code{|$\cdot$|} or \code{\#abs} (absolute value),
+\code{/} (integer division),
+\code{\textbackslash} (modulo),
+\code{**} (exponentiation),
+\code{|$\cdot$|} (absolute value),
 \code{\&} (bitwise AND),
 \code{?} (bitwise OR),
 \code{\^} (bitwise exclusive OR), and
@@ -553,11 +554,7 @@ The usage of arithmetic functions is illustrated by the program:%
 Note that the variables~\var{L} and~\var{R} are instantiated to~\const{7} and~\const{2},
 respectively, before arithmetic evaluations.
 Consecutive and non-separative (e.g., before ``\code{(}'')
-spaces can optionally be dropped,
-while spaces after the tokens \code{\#div} and \code{\#mod} are mandatory
-if written in infix notation.
-In prefix notation, the arguments of \code{\#abs}, \code{\#div}, and \code{\#mod}
-must be enclosed in parentheses.
+spaces can optionally be dropped.
 The four bitwise functions apply to signed integers,
 using two's complement arithmetic. % of a negative integer.
 \eexample
@@ -565,7 +562,7 @@ using two's complement arithmetic. % of a negative integer.
 
 \begin{Note}
 An occurrence of a variable in the scope of an arithmetic function
-does not count as a positive occurrence in the sense of safeness (cf.\ Page~\pageref{pg:safe}).
+does not count as a positive occurrence in the sense of safeness\comment{RK: safeness vs. safety; X in X+1 is actually safe} (cf.\ Page~\pageref{pg:safe}).
 E.g., the rule \code{\pred{p}(\var{X})\,:-\:\pred{p}(\var{X}+\const{1}).}
 is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\var{X}).} is.
 (Note that this rule still leads to an infinite grounding
@@ -590,7 +587,7 @@ would require equation solving, which is however not performed by
 \com{Roland}
 Grounder \gringo\ and the grounding component of \clingo\ 
 feature a total order among variable-free terms.
-The following built-in predicates, which are evaluated during grounding, 
+The following built-in predicates\comment{RK: safeness? these can be used like literals now}, which are evaluated during grounding, 
 enable term comparisons in the bodies of rules and on the right-hand sides of conditions
 (detailed in Section~\ref{subsec:gringo:condition}):
 \code{==} (equal),
@@ -650,7 +647,7 @@ i.e.,
 % variables in  a built-in comparison predicate cannot bind variables, i.e.,
 % when checking whether a rule is safe, 
 comparison predicates are not considered to be positive.
-Also note that comparison predicates must not be preceded by \code{not}:
+Also note that comparison predicates must not be preceded by \code{not}:\comment{RK: this is possible in the latest gringo trunk}
 rather than default negation,
 the complementary comparison predicate ought to be used
 (e.g., \code{<} and \code{>=} complement one another).
@@ -664,6 +661,7 @@ the complementary comparison predicate ought to be used
 \index{Assignments!Variable Unification, \code{:=}}
 
 \com{Roland}
+\com{RK: asignment := is gone, lhs and rhs does not matter}
 Sometimes, it is desirable to define the value of a variable relative
 to a term, and to then reuse the variable as a shorthand.
 The built-in predicates~\code{=} and~\code{:=} admit unifying
@@ -687,7 +685,7 @@ The body of the rule in Line~2 contains four variable assignments,
 where the right-hand sides directly or indirectly
 depend on~\var{X} and~\var{Y}.
 The values of~\var{X} and~\var{Y} are obtained via atoms of the predicate \pred{num}/$1$.
-Also observe the different usage and role of built-in comparison predicate~\code{==}.
+Also observe the different usage and role of built-in comparison predicate~\code{==}.\comment{in principle == is completely unnessecary in view of =}
 \eexample
 \end{example}
 
@@ -758,6 +756,7 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \index{Arithmetic Functions!Integers!Intervals}
 
 \com{Roland}
+\com{I consider this in-flux, lets see with which semantics we end up with}
 In Line~1 of Example~\ref{ex:assign},
 there are five facts of the form~\code{\pred{num}($k$).}
 over consecutive integers~$k$.
@@ -852,6 +851,8 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 \subsubsection{Conditions}\label{subsec:gringo:condition}
 \index{Aggregates!Conditions}
 \index{Terms!Conditions}
+
+\com{RK: Here things get ugly because we have to explain the , versus ; thing, also there are less restrictions on conditionals now}
 
 Conditions allow for instantiating variables to
 collections of terms within a single rule.
@@ -1301,7 +1302,7 @@ can be written in their traditional notations (without keyword).}
 % By omitting keyword \const{\#sum}, we obtain the same notation as the one of 
 % so-called ``weight constraints''~\cite{siniso02a,lparseManual}, which are actually aggregate atoms
 % whose operation is addition.
-% \comment{MG: Illustrate \const{\#supremum} and \const{\#infimum}.
+% \comment{MG: Illustrate \const{\#sup} and \const{\#inf}.
 %              Also talk about assignments allowed with
 %              \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}.}
 
@@ -1356,9 +1357,9 @@ the atoms \code{\pred{sum}(\const{5})}, \code{\pred{min}(\const{2})},
 derived by the above rules.
 If~\pred{a} does not hold, we derive 
 \comment{T2R: Or \const{\#inf} and \const{\#sup}\dots?}
-\code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#supremum})},
-\code{\pred{max}(\const{\#infimum})}, and \code{\pred{cnt}(\const{0})}.
-Here, the special constants \const{\#supremum} and \const{\#infimum}
+\code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#sup})},
+\code{\pred{max}(\const{\#inf})}, and \code{\pred{cnt}(\const{0})}.
+Here, the special constants \const{\#sup} and \const{\#inf}
 (introduced in Section~\ref{subsec:gringo:normal}),
 obtained by applying \code{\#min} and \code{\#max}, respectively,
 to the empty set of weights,
@@ -1368,8 +1369,8 @@ These constants can also be used as weights subject to
 \code{\#min} and \code{\#max} (in order to exceed any integer bound):
 \comment{T2R: Exlpain shortcut\dots?}
 \begin{lstlisting}[numbers=none]
-bot :-      #min {  #infimum : a } -1000.
-top :- 1000 #max { #supremum : a }.
+bot :-      #min {  #inf : a } -1000.
+top :- 1000 #max { #sup : a }.
 \end{lstlisting}
 Assuming that atom~\pred{a} holds,
 the atoms~\pred{bot} and~\pred{top} are derived by the above rules
@@ -1959,9 +1960,9 @@ In fact, this function exactly behaves like a range term.
  \hline 
  \code{Val.STRING} & Type identifier for \gringo\ strings.\\
  \hline 
- \code{Val.SUP}    & Type identifier for \gringo's \code{\#supremum}.\\
+ \code{Val.SUP}    & Type identifier for \gringo's \code{\#sup}.\\
  \hline 
- \code{Val.INF}    & Type identifier for \gringo's \code{\#infimum}.\\
+ \code{Val.INF}    & Type identifier for \gringo's \code{\#inf}.\\
  \hline 
  \code{Val.new(type[,value][,args])}  & Creates new ground terms (see Example \ref{ex:lua:values}).\\
  \hline 
@@ -2084,7 +2085,7 @@ is output by \gringo\ and can be piped into \clasp.
 Such an invocation of \clasp\ looks as follows:
 %
 \begin{lstlisting}[numbers=none]
-gringo [ options | filenames ] | clasp [ number | options ]
+gringo [ options | files ] | clasp [ number | options ]
 \end{lstlisting}
 %
 Note that \code{number} may be provided to specify a maximum number of answer sets

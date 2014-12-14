@@ -855,7 +855,7 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 \com{RK: Here things get ugly because we have to explain the , versus ; thing, also there are less restrictions on conditionals now}
 
 Conditions allow for instantiating variables to
-collections of terms within a single rule.
+collections of terms\comment{RK: strange in the context of a conditional literal} within a single rule.
 This is particularly useful for encoding conjunctions (or disjunctions) over
 arbitrarily many ground atoms as well as for the compact representation of aggregates
 (detailed in Section~\ref{subsec:gringo:aggregate}).
@@ -978,6 +978,7 @@ $L$\code{:}$L_1$\code{,\dots,}$L_n$
 where $L,L_1,\dots,L_n$ are literals
 is called a conditional literal.
 \comment{T: More details?}
+\comment{R: I thought there ought to be no formal details in the guide; this remark does not fit in with the style of the rest of the document}
 Logically, $L$ and $L_1,\dots,L_n$ act as head and body,
 which gives the conditional literal the flavor of a nested implication
 (see~\cite{haliya14a} for details).
@@ -1108,12 +1109,12 @@ to avoid nasty surprises.
 \index{Aggregates}
 \index{Aggregates!Weights}
 
-An aggregate is a function on a set of weights. % ed literals that evaluates to some value. 
+An aggregate is a function on a set of weights\comment{RK: on a set of tuples determined by conditions; I think this difference is important when explaning aggregates}. % ed literals that evaluates to some value. 
 In combination with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
 Internally, however, all aggregate atoms occuring in rule heads are transformed away,
-as detailed in~\cite{siniso02a,gekakasc12a}.
+as detailed in~\cite{siniso02a,gekakasc12a}.\comment{R: I wonder whether this information is important for the guide (and its actually not true, head aggregates are only translated when lparse output is activated)}
 
 The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 %
@@ -1124,7 +1125,7 @@ The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
 (as introduced in Section~\ref{subsec:gringo:normal}). 
 $\alpha$ is the name of some function that is to be applied to the first elements of term tuples associated with literals that hold.
-Hence, this first element is usually specified by means of arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}).
+Hence, this first element is usually specified by means of arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}).\comment{RK: sounds confusing to me}
 %
 Finally, 
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
@@ -1136,8 +1137,8 @@ if both $\prec_1$ and $\prec_2$ are ``\code{<=}'' and each term tuple represents
 then an aggregate atom holds if the result of $\alpha$ applied to the weights of literals that hold
 is in-between $s_1$ and~$s_2$ (see the available shortcuts below).
 
-Whenever a rule head is a (single) aggregate atom, the actually derivable head atoms must be distinguished.
-This is done by prepending such literals to the literal tuples:
+Whenever a rule head is a (single) aggregate atom, the derivable head atoms must be distinguished.
+This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples:
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$L_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
@@ -1150,7 +1151,7 @@ is dropped whenever $\boldsymbol{L_i}$ is empty,
 yielding 
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
 
-Simplifying shortcuts providing some backward compatibility with previsou versions of \gringo\ are given below.
+Simplifying shortcuts providing some backward compatibility with previous versions of \gringo\ are given below.
 Unlike with body aggregates, only singular head aggregates are supported.
 
 Currently, \gringo\ and \clingo\ support the aggregates 
@@ -1236,7 +1237,7 @@ consider the rule
 \begin{lstlisting}[numbers=none]
 { a ; b }.
 \end{lstlisting}
-In full detail, this is a shortcut for the rule
+In full detail, this is a shortcut for the rule\comment{R: no}
 \begin{lstlisting}[numbers=none]
 #count { 1:a ; 2:b }.
 \end{lstlisting}
@@ -1252,7 +1253,7 @@ stands for
 By allowing the omission of \const{\#sum} and \const{\#count},
 so-called 
 ``weight constraints'' and ``cardinality constraints''~\cite{siniso02a,lparseManual}
-can almost be written in their traditional notations (without keyword, yet different separators).
+can almost be written in their traditional\comment{R: traditional notation deserves closer explanations right?} notations (without keyword, yet different separators).
 
 
 \comc{Further shortcuts?}{T: Omit $\prec$\dots?}
@@ -1661,7 +1662,7 @@ amounting to~\const{20} contact hours per week.
 As mentioned in Section~\ref{subsec:gringo:condition},
 multiple literals may be connected via ``\code{,}'' in order to construct
 composite conditions within an aggregate.
-In \gringo\ and \clingo~4,
+In \gringo\ and \clingo~4\comment{Isn't this betted done as a remark at the end of the section. Like Martin did elsewhere. I have the feeling that this just bloats things up in the text.},
 the predicates of such literals must not be domain or built-in anymore.
 Furthermore, the usage of non-domain predicates within an aggregate
 on the right-hand side of an assignment (like \pred{enroll}/$1$ in Line~18 and~19 above)

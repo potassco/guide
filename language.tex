@@ -1181,7 +1181,76 @@ Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' (or even both) can be omitted
 left out comparison predicates $\prec_1$ or $\prec_2$ default to ``\code{<=}'' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
 respectively.
 
-As a first example, consider 
+Currently, \gringo\ (and \clingo) support the aggregates 
+\code{\#count}
+\index{Aggregates!Count, \code{\#count}}%
+(the number of elements), 
+\code{\#sum}
+\index{Aggregates!Sum, \code{\#sum}}%
+(the sum of weights), 
+\code{\#sum+}
+\index{Aggregates!Sum plus, \code{\#sum+}}%
+(the sum of positive weights), 
+\code{\#min}
+\index{Aggregates!Minimum, \code{\#min}}%
+(the minimum weight), and
+\code{\#max}
+\index{Aggregates!Maximum, \code{\#max}}%
+(the maximum weight).
+%
+\INS{The weight refers to the first element of a term tuple.}
+%
+Aggregate atoms, as described above, are obtained by writing
+either \code{\#count}, \code{\#sum}, , \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
+%
+\REW{The \code{\#count} aggregate is similar to \code{\#sum} with all literals' weights being~\const{1}.
+Hence, for convenience, the prefixed term can be dropped in \code{\#count} aggregates.}
+
+As a first example, consider the simplest type of aggregate atoms, counting the number of distinct term tuples.
+\index{Aggregates!Count, \code{\#count}}%
+\begin{lstlisting}[numbers=none]
+#count { 42 : a; (1,2,3) : not b; succ(0) : c } = 2
+\end{lstlisting}
+For instance, if the atoms \lstinline{a}, \lstinline{b}, and \lstinline{c} are true, 
+the aggregate's set reduces to \lstinline[mathescape]{$\{$42,succ(0)$\}$},
+which satisfies the aggregate's comparison and thus the aggregate atom.
+
+As indicated by the curly brackets, the literals within aggregates are treated as members of a set.
+Hence, duplicates are not accounted for twice.
+%
+For instance, the following aggregate atoms express the same:
+\begin{lstlisting}[numbers=none,escapechar=@]
+#count {42:a;       t:not b         } = 2@\textnormal{ and}@ 
+#count {42:a; 42:a; t:not b; t:not b} = 2@\textnormal{.}@  
+\end{lstlisting}
+That is, if \lstinline{a} holds but not \lstinline{b}, both inner sets reduce to \lstinline[mathescape]{$\{$42,t$\}$};
+and so both aggregate atoms evaluate to true.
+%
+However, both are different from the aggregates
+\begin{lstlisting}[numbers=none,escapechar=@]
+#count {42:a;       t:not b; s:not b} = 2@\textnormal{ and}@
+#count {42:a; 42:a; t:not b; s:not b} = 2
+\end{lstlisting}
+which hold if both \lstinline{a} and \lstinline{b} are false.
+
+Likewise, the literals of other aggregates are understood as sets.
+%
+As an example,
+consider the next two summation aggregates:
+\begin{lstlisting}[numbers=none,escapechar=@]
+#sum { 3    :cost(1,2,3); 3    :cost(2,3,3) } = 3@\textnormal{ and}@ 
+#sum { 3,1,2:cost(1,2,3); 3,2,3:cost(2,3,3) } = 6@\textnormal{.}@
+\end{lstlisting}
+As done in Section~\ref{subsec:tsp:instance},
+an atom like \lstinline{cost(1,2,3)} can be used to represent an arc from node \lstinline{1} to \lstinline{2} with cost \lstinline{3}.
+If both \lstinline{cost(1,2,3)} and \lstinline{cost(2,3,3)} hold,
+the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
+The set property makes the first aggregate count edges with the same cost only once,
+while the second one accounts for each edge no matter whether they have the same cost or not.
+To see this, observe that after evaluating the conditions in each aggregate, the first one reduces to
+\lstinline[mathescape]{#sum $\{$ 3 $\}$}, while the second results in \lstinline[mathescape]{#sum $\{$ 3,1,2; 3,2,3 $\}$}
+In other words, associating each cost with its respective arc enforces a multi-set property;
+in this way, the same cost can be accounted for several times.
 
 \tbrw
 Whenever a rule head is a (single) aggregate atom, the derivable head atoms must be distinguished.
@@ -1208,57 +1277,6 @@ as detailed in~\cite{siniso02a,gekakasc12a}.
 \com{end of head}
 
 
-Currently, \gringo\ and \clingo\ support the aggregates 
-\code{\#count}
-\index{Aggregates!Count, \code{\#count}}%
-(the number of elements), 
-\code{\#sum}
-\index{Aggregates!Sum, \code{\#sum}}%
-(the sum of weights), 
-\code{\#sum+}
-\index{Aggregates!Sum plus, \code{\#sum+}}%
-(the sum of positive weights), 
-\code{\#min}
-\index{Aggregates!Minimum, \code{\#min}}%
-(the minimum weight), and
-\code{\#max}
-\index{Aggregates!Maximum, \code{\#max}}%
-(the maximum weight).
-%
-Aggregate atoms, as described above, are obtained by writing
-either \code{\#count}, \code{\#sum}, , \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
-%
-The \code{\#count} aggregate is similar to \code{\#sum} with all literals' weights being~\const{1}.
-Hence, for convenience, the prefixed term can be dropped in \code{\#count} aggregates.
-
-As indicated by the curly brackets, the literals within aggregates are treated as members of a set.
-Hence, duplicates are not accounted for twice.
-%
-For instance, the following aggregate atoms express the same:
-\begin{lstlisting}[numbers=none,escapechar=@]
-#count {42:a;      t:not b        } = 2@\textnormal{ and}@ 
-#count {42:a;42:a; t:not b;t:not b} = 2@\textnormal{.}@  
-\end{lstlisting}
-That is, if \lstinline{a} holds but not \lstinline{b} both aggregate atoms evaluate to true.
-%
-Likewise, the literals of other aggregates are understood as sets.
-%
-As an example,
-consider the next two summation aggregates:
-\begin{lstlisting}[numbers=none,escapechar=@]
-#sum { 3    :cost(1,2,3); 3    :cost(2,3,3) } = 3@\textnormal{ and}@ 
-#sum { 3,1,2:cost(1,2,3); 3,2,3:cost(2,3,3) } = 6@\textnormal{.}@
-\end{lstlisting}
-As done in Section~\ref{subsec:tsp:instance},
-an atom like \lstinline{cost(1,2,3)} can be used to represent an arc from node \lstinline{1} to \lstinline{2} with cost \lstinline{3}.
-If both \lstinline{cost(1,2,3)} and \lstinline{cost(2,3,3)} hold,
-the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
-The set property makes the first aggregate count edges with the same cost only once,
-while the second one accounts for each edge no matter whether they have the same cost or not.
-To see this, observe that after evaluating the conditions in each aggregate, the first one reduces to
-\lstinline[mathescape]{#sum $\{$ 3 $\}$}, while the second results in \lstinline[mathescape]{#sum $\{$ 3,1,2; 3,2,3 $\}$}
-In other words, associating each cost with its respective arc enforces a multi-set property;
-in this way, the same cost can be accounted for several times.
 
 There are some shorthands that can be used in the syntactic representation of aggregates.
 %

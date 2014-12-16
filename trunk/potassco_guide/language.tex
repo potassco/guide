@@ -5,7 +5,7 @@ grounder \gringo, combined grounder and solver \clingo,
 and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-It is extended for \clingo\ with a few directives for multi-shot solving in Section~\ref{subsec:lang:clingo}.\comment{RK: actually not true the language is the same}
+It is extended for \clingo\ with a few directives for multi-shot solving in Section~\ref{subsec:lang:clingo}.\comment{RK: actually not true the language is the same: but there are additional control capacities for multi-shot solving provided via the scripting API}
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
 
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
@@ -53,8 +53,6 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \caption{Grammar for Terms.\label{fig:terms}}
 \end{figure}
 
-\comment{T: Roland please check and rewrite!}
-\comment{T2R: $X'$}
 Every (non-propositional) logic program includes \emph{terms},
 mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
@@ -83,7 +81,7 @@ stands for an \emph{anonymous variable} that does not recur anywhere.
 (One can view this as if a new variable name is invented on each
  occurrence of ``\var{\char`\_}.'')
 In addition, there are the special constants \const{\#sup} and \const{\#inf}
-representing $+\infty$ and $-\infty$, respectively;
+representing the largest and smallest element among all variable-free terms, respectively;
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 % the largest and the smallest possible values, respectively,
 % which behave essentially like constants.
@@ -136,7 +134,7 @@ While the head atom~$A_0$ of a fact must unconditionally be true,
 the intuitive reading of a rule corresponds to an implication:
 if all positive literals in the rule's body are true and all negative
 literals are satisfied, then~$A_0$ must be true.
-On the other hand, an integrity constraint is a rule of denial\comment{RK: again},
+On the other hand, an integrity constraint is a rule that filters solution candidates,
 meaning that the literals in its body must not jointly be satisfied.
 
 In ASP, the intended models of a logic program, i.e.,

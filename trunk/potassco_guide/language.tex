@@ -489,15 +489,16 @@ computational complexity~\cite{eitgot95a}.
 We thus suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 instead of disjunction, unless the latter is required for complexity reasons.
 
-\subsubsection{Double Default Negation and Literals in the Head of Rules}\label{subsec:gringo:double}
+\subsubsection{Double Negation and Head Literals}\label{subsec:gringo:double}
 \index{Logic Programs!Atoms!Default Negation}
 \index{Logic Programs!Atoms!Default Negation!Double}
+\index{Logic Programs!Head Literals}
 
-\tbfc{T: How to approach it\dots?}
-
-The input language of \gringo\ also supports doubly negated literals, written $\code{not}~\code{not}~A$.\
-They are satisfied whenever there positive counter-parts are satisfied. 
-But unlike with positive literals, such literals are not subject to minimization.
+The input language of \gringo\ also supports doubly default negated literals,
+written $\code{not}~\code{not}~A$.
+They are satisfied whenever their positive counter-parts are satisfied. 
+But unlike with positive literals,
+such literals do not span positive cycles subject to minimization.
 
 \begin{example}\label{ex:as:dneg}
 Consider the logic program:
@@ -510,17 +511,44 @@ b :- not not a.
 This program has the same stable models as the program in Example \ref{ex:as:one} 
 as well as the additional stable model where both \pred{a} and \pred{b} are true
 because there is no positive cycle subject to minimization between~\pred{a} and~\pred{b}.
+\eexample
 \end{example}
 
-Sometimes it is useful to use double negation,
-for example 
+Then there are literals in the head of rules.
+These offer just another way to write integrity constraints,
+putting the emphasis on the head literal.
+In fact, the rule
+\(\code{not}~A_0\)~\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\)\code{.}
+is equivalent to 
+\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n,\code{not}~\code{not}~A_0\)\code{.}
+and with double negation in the head, rule
+\(\code{not}~\code{not}~A_0\)~\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\)\code{.}
+is equivalent to 
+\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n,\code{not}~A_0\)\code{.}
 
-flies(X)     :- not not flies(X), bird(X).
-not flies(X) :- penguin(X).
+\begin{example}\label{ex:as:flynn}
+Consider the logic program:
 
-the second rule can also be written using a doubl negation.
+\marginlabel{To compute both answer sets, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/bird.lp}{bird.lp} \textbackslash\\
+        \mbox{~}\attach{examples/flynn.lp}{flynn.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo~\attach{examples/bird.lp}{bird.lp} \textbackslash\\
+        \mbox{~}\attach{examples/flynn.lp}{flynn.lp} | clasp 0}
+}
+\lstinputlisting{examples/flynn.lp}
+The possibility that a bird flies is expressed with a double negation here in the first line.
+Solutions with flying penguins are filtered out in the second line.
+Like in Example~\ref{ex:flies} there are two answer sets
+but without an explicit atom to indicate that a bird does not fly.
+Hence, the answer set where tweety does not fly does not contain any atoms over predicate \pred{flies}/$1$.
+\eexample
+\end{example}
 
- $\code{not}~\code{not}~A$
+\begin{Note}
+  Note that negated head literals are also supported in disjunctions.
+  For more information see \cite{litatu99a}.
+\end{Note}
 
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}
 \index{Terms!Integers}

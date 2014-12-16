@@ -297,7 +297,7 @@ such that an equivalent propositional logic program is obtained.
 To this end,
 rules are required to be \emph{safe}, 
 \label{pg:safe}%
-\index{Logic Programs!Safeness}%
+\index{Logic Programs!Safety}%
 i.e.,
 all variables in a rule must occur in some positive literal
 (a literal not preceded by \code{not}) in the body of the rule.%
@@ -611,7 +611,7 @@ using two's complement arithmetic. % of a negative integer.
 
 \begin{Note}
 An occurrence of a variable in the scope of an arithmetic function
-does not count as a positive occurrence in the sense of safeness\comment{RK: safeness vs. safety; X in X+1 is actually safe} (cf.\ Page~\pageref{pg:safe}).
+does not count as a positive occurrence in the sense of safety\comment{RK: safety vs. safety; X in X+1 is actually safe} (cf.\ Page~\pageref{pg:safe}).
 E.g., the rule \code{\pred{p}(\var{X})\,:-\:\pred{p}(\var{X}+\const{1}).}
 is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\var{X}).} is.
 (Note that this rule still leads to an infinite grounding
@@ -621,7 +621,7 @@ is not considered as safe, but \code{\pred{p}(\var{X}-\const{1})\,:-\:\pred{p}(\
 Indeed, inferring matching values for~\var{X} when given a value for \var{X}+\const{1}
 would require equation solving, which is however not performed by
 \gringo\ (nor the grounding component of \clingo).
-\index{Logic Programs!Safeness}%
+\index{Logic Programs!Safety}%
 \end{Note}
 
 \subsubsection{Built-In Comparison Predicates}\label{subsec:gringo:comp}
@@ -636,7 +636,7 @@ would require equation solving, which is however not performed by
 \com{Roland}
 Grounder \gringo\ and the grounding component of \clingo\ 
 feature a total order among variable-free terms.
-The following built-in predicates\comment{RK: safeness? these can be used like literals now}, which are evaluated during grounding, 
+The following built-in predicates\comment{RK: safety? these can be used like literals now}, which are evaluated during grounding, 
 enable term comparisons in the bodies of rules and on the right-hand sides of conditions
 (detailed in Section~\ref{subsec:gringo:condition}):
 \code{==} (equal),
@@ -691,7 +691,7 @@ which in turn are smaller than functions.
 \begin{Note}
 As with arithmetic functions,
 an occurrence of a variable in the scope of a built-in comparison predicate
-does not count as a positive occurrence in the sense of safeness (cf.\ Page~\pageref{pg:safe}),
+does not count as a positive occurrence in the sense of safety (cf.\ Page~\pageref{pg:safe}),
 i.e.,
 % variables in  a built-in comparison predicate cannot bind variables, i.e.,
 % when checking whether a rule is safe, 
@@ -700,7 +700,7 @@ Also note that comparison predicates must not be preceded by \code{not}:\comment
 rather than default negation,
 the complementary comparison predicate ought to be used
 (e.g., \code{<} and \code{>=} complement one another).
-\index{Logic Programs!Safeness}%
+\index{Logic Programs!Safety}%
 \end{Note}
 
 \subsubsection{Assignments}\label{subsec:gringo:assign}
@@ -780,7 +780,7 @@ A variable assignment (\code{=}) or unification (\code{:=})
 must not be preceded by \code{not}.
 Unlike with built-in comparison predicates,
 it is considered as
-a positive (body) literal in the sense of safeness (cf.\ Page~\pageref{pg:safe}),
+a positive (body) literal in the sense of safety (cf.\ Page~\pageref{pg:safe}),
 so that variables occurring on the left-hand side can be instantiated.
 However, this only works if assignments or unifications
 can be made acyclicly, i.e.,
@@ -790,7 +790,7 @@ the left-hand side.
 E.g., the rule \code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\var{X}.}
 is not accepted by \gringo\ (or the grounding component of \clingo)
 because values for~\var{X} rely on values for~\var{Y}, and vice versa.
-\index{Logic Programs!Safeness}%
+\index{Logic Programs!Safety}%
 %
 % that assignments to some extent can bind variables.
 % Of course cyclic assignments cannot bind variables.
@@ -892,9 +892,9 @@ for $\const{1}\leq m\leq\const{5}$ and $\const{5}\leq n\leq\const{9}$.
 An occurrence of a variable in the specification of the bounds
 of an integer interval, like~\var{X} in Line~4 of Example~\ref{ex:int}, 
 does not count as a positive occurrence
-in the sense of safeness (cf.\ Page~\pageref{pg:safe}).
+in the sense of safety (cf.\ Page~\pageref{pg:safe}).
 Hence, such a variable must also have another positive occurrence elsewhere.
-\index{Logic Programs!Safeness}%
+\index{Logic Programs!Safety}%
 \end{Note}
 
 \subsubsection{Conditions}\label{subsec:gringo:condition}
@@ -1003,7 +1003,7 @@ i.e.,
 an occurrence of the variable 
 % on the left- or right-hand side of a condition
 does not count as a positive occurrence outside the condition
-in the sense of safeness (cf.\ Page~\pageref{pg:safe}).
+in the sense of safety (cf.\ Page~\pageref{pg:safe}).
 In turn, variables occuring in atoms not subject to any
 condition are \emph{global}. 
 Each variable within an atom in front of a condition 

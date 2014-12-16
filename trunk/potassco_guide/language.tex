@@ -623,6 +623,7 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.\comm
 \end{Note}
 
 \subsubsection{Built-In Comparison Predicates}\label{subsec:gringo:comp}
+\index{Comparison Literals}
 \index{Comparison Predicates}
 \index{Comparison Predicates!Inequality, \code{"!=}}
 \index{Comparison Predicates!Less, \code{<}}
@@ -632,17 +633,17 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.\comm
 
 Grounder \gringo\ and the grounding component of \clingo\ 
 feature a total order among variable-free terms.
-The following built-in predicates, which are evaluated during grounding, 
-enable term comparisons in the bodies of rules and on the right-hand sides of conditions
-(detailed in Section~\ref{subsec:gringo:condition}):
+The following built-in predicates to compare terms are
 \code{!=} (not equal),
 \code{<} (less than),
 \code{<=} (less than or equal),
-\code{>} (greater than),
+\code{>} (greater than), and
 \code{>=} (greater than or equal).
+\emph{Comparison literals} over the above \emph{comparison predicates} are used like predicate literals (cf.\ Section~\pageref{subsec:gringo:normal})
+but are evaluated during grounding.
 
 \begin{example}\label{ex:arith:pred}
-The application of comparison predicates to integers
+The application of comparison literals to integers
 is illustrated by the following program:%
 \marginlabel{%
   The simplified ground program obtained by evaluating built-ins
@@ -656,13 +657,13 @@ is illustrated by the following program:%
 \lstinputlisting{examples/arithc.lp}
 %
 The last two lines hint at the fact that arithmetic functions are evaluated
-before comparison predicates, so that the latter actually compare the
+before comparison literals, so that the latter actually compare the
 results of arithmetic evaluations.
 \eexample
 \end{example}
 
 \begin{example}\label{ex:symb:pred}
-Comparison predicates can also be applied to constants and functions,
+Comparison literals can also be applied to constants and functions,
 as illustrated by the following program:%
 \marginlabel{%
   As above, by invoking:\\
@@ -686,12 +687,12 @@ which in turn are smaller than functions.
 \end{example}
 
 \begin{Note}
-An occurrence of a variable in the scope of a built-in comparison predicate
+An occurrence of a variable in the scope of a built-in comparison literal
 does not count as a positive occurrence in the sense of safety (cf.\ Page~\pageref{pg:safe}),
 i.e.,
-comparison predicates are not considered to be positive.
-Note that comparison predicates can be preceded with \code{not} or \code{not}~\code{not}.
-In the first case, this is equivalent to using the complementary comparison predicate 
+comparison literals are not considered to be positive.
+Note that comparison literals can be preceded with \code{not} or \code{not}~\code{not}.
+In the first case, this is equivalent to using the complementary comparison literal 
 (e.g., \code{<} and \code{>=} complement one another).
 In the second case, the prefix has no effect on the meaning of the literal.
 \index{Logic Programs!Safety}%
@@ -775,8 +776,8 @@ corresponding value given on the right-hand side of~\code{=}.
 If a variable assignment is preceded by \code{not}, 
 no unification happens.
 Instead, the expression $\code{not}~t_1~\code{=}~t_n$ is equivalent to $t_1~\code{!=}~t_n$.
-Like with comparison predicates, the prefix \code{not~not} has no effect.
-Unlike with built-in comparison predicates,
+Like with comparison literals, the prefix \code{not~not} has no effect.
+Unlike with built-in comparison literals,
 an assignment is considered as
 a positive (body) literal in the sense of safety (cf.\ Page~\pageref{pg:safe}),
 so that variables occurring on one side can be instantiated.

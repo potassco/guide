@@ -1164,6 +1164,7 @@ thus, obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
 
 The form of an \emph{aggregate atom} occuring in a rule body is as follows:
+\index{Aggregates!Body}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L}_n$?}?$\prec_2 s_2$?
@@ -1231,7 +1232,8 @@ However, both are different from the aggregates
 #count {42:a;       t:not b; s:not b} = 2@\textnormal{ and}@
 #count {42:a; 42:a; t:not b; s:not b} = 2
 \end{lstlisting}
-which hold if both \lstinline{a} and \lstinline{b} are false.
+which hold if both \lstinline{a} and \lstinline{b} are false,
+yielding \lstinline[mathescape]{#count$\{$t,s$\}$ = 2}.
 
 Likewise, the literals of other aggregates are understood as sets.
 %
@@ -1245,16 +1247,19 @@ As done in Section~\ref{subsec:tsp:instance},
 an atom like \lstinline{cost(1,2,3)} can be used to represent an arc from node \lstinline{1} to \lstinline{2} with cost \lstinline{3}.
 If both \lstinline{cost(1,2,3)} and \lstinline{cost(2,3,3)} hold,
 the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
-The set property makes the first aggregate count edges with the same cost only once,
+Note that all term tuples, the singular one \lstinline{3} as well as the ternary ones, \lstinline{3,1,2} and \lstinline{3,2,3}, respectively,
+share the same weight, viz.~\lstinline{3}.
+However,
+the set property makes the first aggregate count edges with the same cost only once,
 while the second one accounts for each edge no matter whether they have the same cost or not.
 To see this, observe that after evaluating the conditions in each aggregate, the first one reduces to
-\lstinline[mathescape]{#sum $\{$ 3 $\}$}, while the second results in \lstinline[mathescape]{#sum $\{$ 3,1,2; 3,2,3 $\}$}
+\lstinline[mathescape]{#sum $\{$ 3 $\}$}, while the second results in \lstinline[mathescape]{#sum $\{$ 3,1,2; 3,2,3 $\}$}.
 In other words, associating each cost with its respective arc enforces a multi-set property;
 in this way, the same cost can be accounted for several times.
 
-\tbrw
 Whenever a rule head is a (single) aggregate atom, the derivable head atoms must be distinguished.
 This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples:
+\index{Aggregates!Head}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$L_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
@@ -1266,17 +1271,15 @@ The second colon in
 is dropped whenever $\boldsymbol{L_i}$ is empty,
 yielding 
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
-
-Simplifying shortcuts providing some backward compatibility with previous versions of \gringo\ are given below.
+%
 Unlike with body aggregates, only singular head aggregates are supported.
 
-Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint of the original aggregate.
-In fact, when producing \smodels\ format, all aggregate atoms occurring in rule heads are transformed away,
-as detailed in~\cite{siniso02a,gekakasc12a}.
-
-\com{end of head}
-
-
+\begin{Note}
+Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint expressed by the
+original head aggregate.
+In fact, when producing \smodels\ format, all aggregate atoms occurring in rule heads are transformed away.
+For details consult~\cite{siniso02a,gekakasc12a}.
+\end{Note}
 
 There are some shorthands that can be used in the syntactic representation of aggregates.
 %
@@ -1314,10 +1317,10 @@ In full detail, this is a shortcut for the rule\comment{R: no}
 #count { 1:a ; 2:b }.
 \end{lstlisting}
 
-By allowing the omission of \const{\#sum} and \const{\#count},
+By allowing the omission \DEL{of \const{\#sum} and} \const{\#count},
 so-called 
-``weight constraints'' and ``cardinality constraints''~\cite{siniso02a}
-can almost be written in their traditional notations (without keyword, yet different separators),
+\DEL{``weight constraints'' and} ``cardinality constraints''~\cite{siniso02a}
+can almost be written in their traditional notation\DEL{s} (without keyword, yet different separators),
 as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.
 
 

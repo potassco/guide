@@ -494,12 +494,13 @@ instead of disjunction, unless the latter is required for complexity reasons.
 \index{Logic Programs!Atoms!Default Negation!Double}
 \index{Logic Programs!Head Literals}
 
-The input language of \gringo\ also supports doubly default negated literals,
+The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
-They are satisfied whenever their positive counter-parts are satisfied. 
-But unlike with positive literals,
-such literals do not span positive cycles subject to minimization.
-
+They are satisfied whenever their positive counter-parts are but not vice versa. 
+Unlike (purely) positive literals,
+such literals do require a proof of $A$;
+in other words, they cannot span positive cycles subject to minimization.
+%
 \begin{example}\label{ex:as:dneg}
 Consider the logic program:
 
@@ -507,14 +508,16 @@ Consider the logic program:
 a :- not not b.
 b :- not not a.
 \end{lstlisting}
-
-This program has the same stable models as the program in Example \ref{ex:as:one} 
-as well as the additional stable model where both \pred{a} and \pred{b} are true
-because there is no positive cycle subject to minimization between~\pred{a} and~\pred{b}.
+%
+This program has the same stable models as the one in Example~\ref{ex:as:one} 
+as well as the additional stable model containing both \pred{a} and \pred{b}.
+This is because neither ``\code{not not a}'' nor ``\code{not not b}'' must be (finitely) derivable.
+In fact, in contrast to Example~\ref{ex:as:one}, 
+the above program induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
 \eexample
 \end{example}
 
-Then there are literals in the head of rules.
+Also, there are literals in the head of rules.
 These offer just another way to write integrity constraints,
 putting the emphasis on the head literal.
 In fact, the rule
@@ -541,7 +544,7 @@ The possibility that a bird flies is expressed with a double negation here in th
 Solutions with flying penguins are filtered out in the second line.
 Like in Example~\ref{ex:flies} there are two answer sets
 but without an explicit atom to indicate that a bird does not fly.
-Hence, the answer set where tweety does not fly contains no atoms over predicate \pred{flies}/$1$.
+Hence, the answer set where Tweety does not fly contains no atoms over predicate \pred{flies}/$1$.
 \eexample
 \end{example}
 

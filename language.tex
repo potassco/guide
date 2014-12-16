@@ -1109,12 +1109,10 @@ to avoid nasty surprises.
 \index{Aggregates}
 \index{Aggregates!Weights}
 
-An aggregate is a function on a set of weights\comment{RK: on a set of tuples determined by conditions; I think this difference is important when explaning aggregates}. % ed literals that evaluates to some value. 
-In combination with comparisons, we can extract a truth value from an aggregate's evaluation,
+An aggregate is a function on a set of tuples that are noprmally subject to conditions. 
+Together with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
-Internally, however, all aggregate atoms occuring in rule heads are transformed away,
-as detailed in~\cite{siniso02a,gekakasc12a}.\comment{R: I wonder whether this information is important for the guide (and its actually not true, head aggregates are only translated when lparse output is activated)}
 
 The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 %
@@ -1124,19 +1122,19 @@ The form of an \emph{aggregate atom} occuring in a rule body is as follows:
 %
 Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
 (as introduced in Section~\ref{subsec:gringo:normal}). 
-$\alpha$ is the name of some function that is to be applied to the first elements of term tuples associated with literals that hold.
-Hence, this first element is usually specified by means of arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}).\comment{RK: sounds confusing to me}
+$\alpha$ is the name of some function that is to be applied to the term tuples $\boldsymbol{t}_i$
+that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 %
 Finally, 
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
-Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' (or even both) can be omitted.
-%
-For instance, 
-if both $\prec_1$ and $\prec_2$ are ``\code{<=}'' and each term tuple represents a single weight,
-then an aggregate atom holds if the result of $\alpha$ applied to the weights of literals that hold
-is in-between $s_1$ and~$s_2$ (see the available shortcuts below).
+Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' (or even both) can be omitted;
+left out comparison predicates $\prec_1$ or $\prec_2$ default to ``\code{<=}'' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
+respectively.
 
+As a first example, consider 
+
+\tbrw
 Whenever a rule head is a (single) aggregate atom, the derivable head atoms must be distinguished.
 This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples:
 %
@@ -1153,6 +1151,13 @@ yielding
 
 Simplifying shortcuts providing some backward compatibility with previous versions of \gringo\ are given below.
 Unlike with body aggregates, only singular head aggregates are supported.
+
+Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint of the original aggregate.
+In fact, when producing \smodels\ format, all aggregate atoms occurring in rule heads are transformed away,
+as detailed in~\cite{siniso02a,gekakasc12a}.
+
+\com{end of head}
+
 
 Currently, \gringo\ and \clingo\ support the aggregates 
 \code{\#count}
@@ -1241,22 +1246,15 @@ In full detail, this is a shortcut for the rule\comment{R: no}
 \begin{lstlisting}[numbers=none]
 #count { 1:a ; 2:b }.
 \end{lstlisting}
-Unlike this,
-the integrity constraint
-\begin{lstlisting}[numbers=none]
-:- { a ; b }.
-\end{lstlisting}
-stands for
-\begin{lstlisting}[numbers=none]
-:- #count { 1:a ; 2:b }.
-\end{lstlisting}
+
 By allowing the omission of \const{\#sum} and \const{\#count},
 so-called 
-``weight constraints'' and ``cardinality constraints''~\cite{siniso02a,lparseManual}
-can almost be written in their traditional\comment{R: traditional notation deserves closer explanations right?} notations (without keyword, yet different separators).
+``weight constraints'' and ``cardinality constraints''~\cite{siniso02a}
+can almost be written in their traditional notations (without keyword, yet different separators),
+as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.
 
 
-\comc{Further shortcuts?}{T: Omit $\prec$\dots?}
+\com{Further shortcuts?}
 
 \DEL{
 With \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},

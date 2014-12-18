@@ -898,12 +898,11 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 
 \subsubsection{Conditions}\label{subsec:gringo:condition}
 \index{Aggregates!Conditions}
-\index{Terms!Conditions}
+\index{Logic Programs!Literals!Conditional}%
 
-\com{RK: Here things get ugly because we have to explain the , versus ; thing, also there are less restrictions on conditionals now}
+\com{RK: From now on I will pretend that gringo only outputs a semicolon to terminate a conditional literal}
 
-Conditions allow for instantiating variables to
-collections of terms\comment{RK: strange in the context of a conditional literal} within a single rule.
+Conditions allow for specifying collections of expressions within a single rule or aggregate.
 This is particularly useful for encoding conjunctions (or disjunctions) over
 arbitrarily many ground atoms as well as for the compact representation of aggregates
 (detailed in Section~\ref{subsec:gringo:aggregate}).
@@ -918,13 +917,13 @@ We are particularly interested in the rules in Line~5 and~6,
 instantiated as follows:%
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\
-  \code{\mbox{~}clingo --text \attach{examples/cond.lp}{cond.lp}}\\
+  \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/cond.lp}{cond.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo --text \attach{examples/cond.lp}{cond.lp}}}
+  \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/cond.lp}{cond.lp}}}
 % %[firstnumber=5]
 \begin{lstlisting}[numbers=none]
 meet :- available(jane), available(john).
-on(mon) ; on(tue) ; on(wed) ; on(thu) ; on(fri) :- meet.
+on(mon); on(tue); on(wed); on(thu); on(fri) :- meet.
 \end{lstlisting}
 %
 The conjunction in the body of the first ground rule is obtained by replacing~\var{X} in
@@ -943,98 +942,78 @@ instead of disjunction, unless the latter is required for complexity reasons.
 This also means that conditions must 
 not be used \emph{outside of aggregates} in rule heads
 if disjunction is unintended.}
+\eexample
+\end{example}
 
-Composite conditions can also be constructed via~``\code{:},''
-as in the additional rules:
+Composite conditions can also be constructed via~``\code{,}.''
+Note that ``\code{,}'' is used both to separate literals in rule bodies and conditions.
+To resolve this ambiguity, 
+a conditional literal has to be terminated with ``\code{;}'' if further body literals follow.
+
+\begin{example}\label{ex:sort}
+The following program uses a conditional literal with a composite condition in the middle of the rule. 
+Note the ``\code{;}'' after the conditional literal:
 %
-\lstinputlisting[firstnumber=7]{examples/conds.lp}
+\lstinputlisting{examples/sort.lp}
 %
-In Line 10,
-\code{\pred{day}(\var{X})} is used to qualify values~$t$ for variable~\var{X},
-while the negative literal \code{not\:\pred{weekend}(\var{X})}
-eliminates $t=\const{sun}$, and the built-in \code{\var{X}\,!=\:\const{sat}}
-discards $t=\const{sat}$.
-This leaves us with all workdays~$t$ satisfying the composite condition.
-In fact, the literals on the right-hand side of a condition are connected conjunctively via ``\code{,}'', that is,
-all of them must hold for ground instances of an atom in front
-of the condition.
-Thus, the instantiated rule in Line~10 looks as follows:%
+The conditional literal in the second rule evaluates to false
+whenever there is an element~\code{Y} between~\code{X} and~\code{Y}.
+Hence, all rules instantiations where~\code{X} and~\code{Y} are not direct successors are discarded
+because they have a false body:
 \marginlabel{%
-  The reader can observe the effect of conditions by invoking:\\
-             \code{\mbox{~}clingo --text \textbackslash\\
-                   \mbox{~}\attach{examples/cond.lp}{cond.lp} \attach{examples/conds.lp}{conds.lp}}\\
-             or alternatively:\\
-             \code{\mbox{~}gringo --text \textbackslash\\
-                   \mbox{~}\attach{examples/cond.lp}{cond.lp} \attach{examples/conds.lp}{conds.lp}}}
-%
+  The reader can reproduce these ground rules by invoking:\\
+  \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}}
 \begin{lstlisting}[numbers=none]
-workdays :- workday(mon), workday(tue), workday(wed),
-            workday(thu), workday(fri).
+set(1). set(2). set(3).
+next(1,2). next(2,3). next(3,4).
 \end{lstlisting}
-%
-The atoms in the body of this rule follow from facts, so that
-the rule can be simplified to a fact \code{\pred{workdays}.}
-(as it is done by \clingo\ and \gringo).
+We obtain an answer set where the elements of \code{set}/$1$ are ordered.
 \eexample
 \end{example}
 
 \begin{Note}
-There are \REW{three} important issues about the usage of conditions:
+There are three important issues about the usage of conditions:
 \begin{enumerate}
+%
 \item 
-\DELc{All predicates of atoms on the right-hand side of a condition
-must be either \emph{domain predicates}~\cite{lparseManual} %\comment{refer to appendix?}
+Any variable occurring within a condition 
+does not count as a positive occurrence outside the condition
+in the sense of safety (cf.\ Page~\pageref{pg:safe}).
+Variables occurring in atoms not subject to any condition are \emph{global}. 
+Each variable within an atom in front of a condition 
+must be global or have a positive occurrence on the right-hand side of
+the condition.
+%
+\item
+During grounding,
+global variables take precedence over non-global ones, i.e.,
+they are instantiated first.
+As a consequence, variables that occur globally are substituted by terms
+before a condition is evaluated further.
+Hence, the names of variables in conditions must be chosen with care,
+making sure that they do not \emph{accidentally} match the names of global variables.
+%
+\item 
+We suggest to use \emph{domain predicates}~\cite{lparseManual}
+or built-ins (both used in Line~10 of Example~\ref{ex:cond})
+in conditions.
 \index{Aggregates!Conditions!Domain Predicates}%
 \index{Terms!Conditions!Domain Predicates}%
 \label{pg:domain}%
-or built-ins (both used in Line~10 of Example~\ref{ex:cond}).
-Such predicates are completely evaluated during grounding.
+Literals over such predicates are completely evaluated during grounding.
 In a logic program, domain predicates can be recognized by observing
 that they are neither subject to negative recursion (through \code{not})
 nor to disjunction or ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 in the head of any rule.
 The domain predicates defined in Example~\ref{ex:cond} are:
-\pred{person}/$1$, \pred{day}/$1$, \pred{weekend}/$1$, \pred{workday}/$1$, 
-and \pred{workdays}/$0$.}{T2R: Anything to replace?}
-%
-\item Any variable occurring within a condition is considered to be \emph{local},
-i.e., 
-an occurrence of the variable 
-% on the left- or right-hand side of a condition
-does not count as a positive occurrence outside the condition
-in the sense of safety (cf.\ Page~\pageref{pg:safe}).
-In turn, variables occuring in atoms not subject to any
-condition are \emph{global}. 
-Each variable within an atom in front of a condition 
-\emph{outside of aggregates or in a rule head} 
-must be global or have a positive occurrence on the right-hand side of
-the condition.
-%
-\item 
-During grounding,
-global variables take precedence over local ones, i.e.,
-they are instantiated first.
-As a consequence, a local variable that occurs also globally is substituted by a term
-before a condition is evaluated further.
-Hence, the names of local variables must be chosen with care,
-making sure that they do not \emph{accidentally} match the names of global variables.
-%
-\item 
-Formally,
-an expression of the form
-$L$\code{:}$L_1$\code{,\dots,}$L_n$
-where $L,L_1,\dots,L_n$ are literals
-is called a conditional literal.
-\comment{T: More details?}
-\comment{R: I thought there ought to be no formal details in the guide; this remark does not fit in with the style of the rest of the document}
-Logically, $L$ and $L_1,\dots,L_n$ act as head and body,
-which gives the conditional literal the flavor of a nested implication
-(see~\cite{haliya14a} for details).
-\index{Logic Programs!Literals!Conditional}%
+\pred{person}/$1$ and \pred{day}/$1$.
+Literals with such conditions expand to arbitrary length disjunctions or conjunctions in the head or body of a rule, respectively.
+Otherwise, they give rise to nested implications.
+For further details see~\cite{haliya14a}.
 \end{enumerate}
 \end{Note}
-
-\tbfc{T: ``,'' versus ``;'' in bodies}
 
 \subsubsection{Pooling}\label{subsec:gringo:pool}
 \index{Terms!Pooling, \code{;}, \code{;;}}
@@ -1060,7 +1039,8 @@ The following program makes use of pooling via ``\code{;}'':
 %
 Let us consider the following ground instance of the rule in Line~3:
 \begin{lstlisting}[numbers=none]
- mix(a;b,1;2) :- sym(a;b), num(1;2), not -mix(1;2,a;b).
+ mix((a;b),(1;2)) :- sym(a;b), num(1;2),
+                     not -mix((1;2),(a;b)).
 \end{lstlisting}
 The head atom \code{\pred{mix}(\const{a};\const{b},\const{1};\const{2})} 
 represents four options, obtained combinatorially
@@ -1092,12 +1072,15 @@ all options for the head atom:%
   \code{\mbox{~}gringo --text \attach{examples/pool.lp}{pool.lp}}}
 %
 \begin{lstlisting}[numbers=none]
-mix(a,1) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-            not -mix(1,b), not -mix(2,a), not -mix(2,b).
-mix(a,2) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-            not -mix(1,b), not -mix(2,a), not -mix(2,b).
-mix(b,1) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-            not -mix(1,b), not -mix(2,a), not -mix(2,b).
+mix(a,1) :- sym(a),sym(b), num(1),num(2), 
+            not -mix(1,a), not -mix(1,b), 
+            not -mix(2,a), not -mix(2,b).
+mix(a,2) :- sym(a),sym(b), num(1),num(2), 
+            not -mix(1,a), not -mix(1,b), 
+            not -mix(2,a), not -mix(2,b).
+mix(b,1) :- sym(a),sym(b), num(1),num(2), 
+            not -mix(1,a), not -mix(1,b), 
+            not -mix(2,a), not -mix(2,b).
 mix(b,2) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
             not -mix(1,b), not -mix(2,a), not -mix(2,b).
 \end{lstlisting}
@@ -1157,12 +1140,12 @@ to avoid nasty surprises.
 \index{Aggregates}
 \index{Aggregates!Weights}
 
-An aggregate is a function on a set of tuples that are noprmally subject to conditions. 
+An aggregate is a function on a set of tuples that are normally subject to conditions. 
 Together with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
 
-The form of an \emph{aggregate atom} occuring in a rule body is as follows:
+The form of an \emph{aggregate atom} occurring in a rule body is as follows:
 \index{Aggregates!Body}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]

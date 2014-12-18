@@ -897,8 +897,9 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 \end{Note}
 
 \subsubsection{Conditions}\label{subsec:gringo:condition}
+\comment{RK: how do we structure the index?}
 \index{Aggregates!Conditions}
-\index{Logic Programs!Literals!Conditional}%
+\index{Logic Programs!Literals!Conditions}%
 
 \com{RK: From now on I will pretend that gringo only outputs a semicolon to terminate a conditional literal}
 
@@ -931,9 +932,8 @@ The conjunction in the body of the first ground rule is obtained by replacing~\v
 \code{\pred{person}($t$)} holds, namely, $t=\const{jane}$ and $t=\const{john}$.
 Furthermore, the condition in the head of the rule in Line~6 turns into
 a disjunction over all ground instances of
-\code{\pred{on}(\var{X})} such that~\var{X} is substituted by a term~$t$
-for which
-\code{\pred{day}($t$)} holds.
+\code{\pred{on}(\var{X})} where~\var{X} is substituted by all terms~$t$
+for which \code{\pred{day}($t$)} holds.
 That is, conditions in the body and in the head of a rule
 are expanded to different basic language constructs.\footnote{%
 Recall our suggestion from Section~\ref{subsec:gringo:disjunction}
@@ -948,23 +948,26 @@ if disjunction is unintended.}
 Composite conditions can also be constructed via~``\code{,}.''
 Note that ``\code{,}'' is used both to separate literals in rule bodies and conditions.
 To resolve this ambiguity, 
-a conditional literal has to be terminated with ``\code{;}'' if further body literals follow.
+a condition has to be terminated with ``\code{;}'' if further body literals follow.
 
 \begin{example}\label{ex:sort}
-The following program uses a conditional literal with a composite condition in the middle of the rule. 
-Note the ``\code{;}'' after the conditional literal:
+The following program uses a literal with a composite condition in the middle of the rule. 
+Note the ``\code{;}'' after the condition:
 %
 \lstinputlisting{examples/sort.lp}
 %
-The conditional literal in the second rule evaluates to false
+The literal with condition in the second rule evaluates to false
 whenever there is an element~\code{Y} between~\code{X} and~\code{Z}.
 Hence, all rule instantiations where~\code{X} and~\code{Z} are not direct successors are discarded
-because they have a false body:
+because they have a false body.
+If on the other hand, ~\code{X} and~\code{Z} succeed each other,
+the condition is false for all elements~\code{Z}.
+This means that the literal with conditon stands for an empty conjunction, which is true:%
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\
   \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}}
+  \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}}%
 \begin{lstlisting}[numbers=none]
 set(1). set(2). set(3). set(4).
 next(1,2). next(2,3). next(3,4).

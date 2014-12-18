@@ -957,8 +957,8 @@ Note the ``\code{;}'' after the conditional literal:
 \lstinputlisting{examples/sort.lp}
 %
 The conditional literal in the second rule evaluates to false
-whenever there is an element~\code{Y} between~\code{X} and~\code{Y}.
-Hence, all rules instantiations where~\code{X} and~\code{Y} are not direct successors are discarded
+whenever there is an element~\code{Y} between~\code{X} and~\code{Z}.
+Hence, all rule instantiations where~\code{X} and~\code{Z} are not direct successors are discarded
 because they have a false body:
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\
@@ -966,7 +966,7 @@ because they have a false body:
   or alternatively:\\
   \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}}
 \begin{lstlisting}[numbers=none]
-set(1). set(2). set(3).
+set(1). set(2). set(3). set(4).
 next(1,2). next(2,3). next(3,4).
 \end{lstlisting}
 We obtain an answer set where the elements of \code{set}/$1$ are ordered.

@@ -1000,7 +1000,7 @@ making sure that they do not \emph{accidentally} match the names of global varia
 %
 \item 
 We suggest to use \emph{domain predicates}~\cite{lparseManual}
-or built-ins (both used in Line~10 of Example~\ref{ex:cond})
+or built-ins (both used in lines~2 and~3  of Example~\ref{ex:sort})
 in conditions.
 \index{Aggregates!Conditions!Domain Predicates}%
 \index{Terms!Conditions!Domain Predicates}%
@@ -1010,8 +1010,8 @@ In a logic program, domain predicates can be recognized by observing
 that they are neither subject to negative recursion (through \code{not})
 nor to disjunction or ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 in the head of any rule.
-The domain predicates defined in Example~\ref{ex:cond} are:
-\pred{person}/$1$ and \pred{day}/$1$.
+The domain predicates defined in Example~\ref{ex:sort} are:
+\pred{set}/$1$ and \pred{next}/$1$.
 Literals with such conditions expand to arbitrary length disjunctions or conjunctions in the head or body of a rule, respectively.
 Otherwise, they give rise to nested implications.
 For further details see~\cite{haliya14a}.

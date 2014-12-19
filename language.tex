@@ -1200,7 +1200,7 @@ As a first example, consider the simplest type of aggregate atoms, counting the 
 \index{Aggregates!Count, \code{\#count}}%
 \begin{lstlisting}[numbers=none]
 #count { 42 : a; (1,2,3) : not b; succ(0) : c } = 2
-\end{lstlisting}
+\end{lstlisting}\comment{RK: using a tuple with parentheses there is confusing}
 For instance, if the atoms \lstinline{a}, \lstinline{b}, and \lstinline{c} are true, 
 the aggregate's set reduces to \lstinline[mathescape]{$\{$42,succ(0)$\}$},
 which satisfies the aggregate's comparison and thus the aggregate atom.
@@ -1270,6 +1270,7 @@ In fact, when producing \smodels\ format, all aggregate atoms occurring in rule 
 For details consult~\cite{siniso02a,gekakasc12a}.
 \end{Note}
 
+\comment{RK: the translation below only makes sense in the propositional case}
 There are some shorthands that can be used in the syntactic representation of aggregates.
 %
 The expression
@@ -1397,9 +1398,8 @@ subject to annihilation depends on the aggregate being used.}
 Having discussed aggregate atoms,
 let us note that there is a second way to use aggregates:
 the values obtained by evaluating them can be assigned to variables.
-To this end, \gringo\ and \clingo\ allow for the aggregates
-\code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#count} to
-occur on the right-hand sides of assignment predicates~\code{=} and~\code{:=}.
+To this end, \gringo\ and \clingo\ allow for using aggregates
+\code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#count} in assignments.
 \index{Aggregates!Assignments}%
 \index{Assignments!Aggregates}%
 For instances, the following rules assign the obtained values to a variable:
@@ -1417,6 +1417,7 @@ If~\pred{a} does not hold, we derive
 \comment{T2R: Or \const{\#inf} and \const{\#sup}\dots?}
 \code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#sup})},
 \code{\pred{max}(\const{\#inf})}, and \code{\pred{cnt}(\const{0})}.
+\com{R: this is not really to the point, min and max can be used not only with integers but with any kind of term}
 Here, the special constants \const{\#sup} and \const{\#inf}
 (introduced in Section~\ref{subsec:gringo:normal}),
 obtained by applying \code{\#min} and \code{\#max}, respectively,
@@ -1426,6 +1427,7 @@ $+\infty$ and $-\infty$, respectively.
 These constants can also be used as weights subject to 
 \code{\#min} and \code{\#max} (in order to exceed any integer bound):
 \comment{T2R: Exlpain shortcut\dots?}
+\comment{R2T: Which shortcut\dots?}
 \begin{lstlisting}[numbers=none]
 bot :-      #min {  #inf : a } -1000.
 top :- 1000 #max { #sup : a }.
@@ -1587,7 +1589,8 @@ yields the following ground rule:%
   The full ground program is obtained by invoking:\\
   \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}
 %
-\begin{lstlisting}[firstnumber=9,stepnumber=9]
+\comment{RK: what is outputted by gringo looks actually quite different}
+\begin{lstlisting}[numbers=none]
 3 <= #count { 1 : enroll(1); 2 : enroll(2);
               3 : enroll(3); 4 : enroll(4); 
               5 : enroll(5); 6 : enroll(6);
@@ -1599,7 +1602,7 @@ instantiation of~\var{C} such that \code{\const{course}(\var{C},\var{S},\var{H})
 holds for some values of~\var{S} and~\var{H}.
 Duplicates resulting from distinct values for~\var{S} are removed, thus,
 obtaining the above set of ground atoms.
-\footnote{Also, note the difference to \lstinline{3 \{  enroll(C) : course(C,_,_) \} 6.} being always false.}
+\footnote{Also, note the difference to \lstinline{3 \{  enroll(C) : course(C,_,_) \} 6.} being always false.}\comment{RK: does the footnote make any sense?}
 
 The next constraints of the student regard the subject areas of enrolled courses:
 %
@@ -1680,7 +1683,7 @@ we obtain the following ground instance of the integrity constraint in Line~15:
 The above integrity constraint states that the \const{\#sum} of contact hours per week
 must lie in-between~\const{18} and~\const{20}.
 Note that the \const{\#min} and \const{\#max} aggregates in Line~16 and~17, respectively,
-work on the same (multi)set of weighted literals as in Line~15.
+work on the same (multi)set \comment{RK: multiset?} of weighted literals as in Line~15.
 While the integrity constraint in Line~16 stipulates that any course to enroll
 must include more than~\const{2} contact hours,
 the one in Line~17 prohibits enrolling for courses of~\const{6} or more contact hours.
@@ -1720,9 +1723,9 @@ As mentioned in Section~\ref{subsec:gringo:condition},
 multiple literals may be connected via ``\code{,}'' in order to construct
 composite conditions within an aggregate.
 In \gringo\ and \clingo~4\comment{Isn't this betted done as a remark at the end of the section. Like Martin did elsewhere. I have the feeling that this just bloats things up in the text.},
-the predicates of such literals must not be domain or built-in anymore.
+the predicates of such literals must\comment{RK: need not, right?} not be domain or built-in anymore.
 Furthermore, the usage of non-domain predicates within an aggregate
-on the right-hand side of an assignment (like \pred{enroll}/$1$ in Line~18 and~19 above)
+together with an assignment (like \pred{enroll}/$1$ in Line~18 and~19 above)
 is not recommended in general because the space blow-up may be significant.
 \eexample
 \end{example}
@@ -1770,7 +1773,7 @@ is maximized or minimized, respectively.
 
 Note that for compatibility with \lparse, if multiple optimize statements are used, 
 default priorities are assigned.
-The $n$-th statement gets priority $n$, thus, the later statements have higher priorities.
+The $n$-th statement gets priority $n$, thus, the later statements have higher priorities.\comment{RK: not true anymore}
 We suggest that if you want to use more than one optimization statement,
 to always specify priorities to make the program more readable and order independent.
 
@@ -1779,7 +1782,7 @@ To illustrate optimization, we consider a hotel booking situation
 where we want to choose one among five available hotels.
 The hotels are identified via numbers assigned in descending order of stars.
 Of course, the more stars a hotel has, the more it costs per night.
-As an ancillary information, we know that hotel~\const{4} is located
+As ancillary information, we know that hotel~\const{4} is located
 on a main street, which is why we expect its rooms to be noisy.
 This knowledge is specified in Line~1--5 of the following program:
 %
@@ -1857,7 +1860,7 @@ The meanings of the following statements are indicated via accompanying comments
 %
 \begin{lstlisting}[numbers=none]
 #show.     % Suppress all atoms in output
-\end{lstlisting}
+\end{lstlisting}\comment{RK: I would suggest not to start with this one because it should be rarely necessary in practice.}
 
 In order to selectively include the atoms of a certain predicate in the output,
 one may use the \code{\#show} declarative.
@@ -1897,7 +1900,7 @@ Some exemplary constant declarations are:
 \begin{Note}
 that (for efficiency reasons) constant declarations are order dependent.
 In the example above \code{x} would be replaced by \code{42}
-but when reversing the directives this would no longer be the case.
+but when reversing the directives this would no longer be the case.\comment{RK: not true anymore}
 \end{Note}
 
 \comment{DELeted DOMAIN and COMPUTE statements}
@@ -1911,7 +1914,7 @@ that those atoms are not subject of simplification and consequently are not remo
 from the logic program. There are two kinds of external directives, 
 global and local external statements.
 
-Global external statements have the form \code{\#external predicate/arity.} where 
+Global external statements have the form \code{\#external predicate/arity.} \comment{RK: this form exists no longer}where 
 \code{predicate} refers to the name of a predicate and \code{arity} to the arity of the predicate.
 They mark complete predicates irrespective of any arguments as external.
 This means that nothing is known about the predicate and hence it cannot be used 
@@ -1949,7 +1952,7 @@ that stores a list  of all external atoms. For compatibility, this table is only
 program actually contains external directives. It contains the respective atom indices terminated
 by a zero and is inserted directly after \smodels' compute statement.
 \begin{example}
-The following listing shows schematic example output of \gringo\ when external statements are used:
+The following listing shows schematic example output of \gringo\ when external statements are used:\comment{RK: this output does not exist anymore, it's rule 91 now, more might come once we have the new intermediate format}
 \begin{lstlisting}[numbers=none]
   ...
   0

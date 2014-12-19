@@ -38,17 +38,20 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \index{Terms!\code{\#sup}}
 \index{Terms!\code{\#inf}}
 
+\com{tuples are missing}
+
 \begin{figure}
 \vspace*{-19mm}
 \railnontermfont{\rmfamily\itshape}%
 \railalias{rusc}{\tt\char95}\railterm{rusc}
 \railalias{rlsc}{[A-Za-z0-9\tt\char95']}\railterm{rlsc}
 \begin{rail}
-	term        : simpleterm | function;
+	term        : simpleterm | function | tuple;
 	simpleterm  : (integer | constant | string | variable | rusc | '\#sup' | '\#inf');
 	constant    : (rusc*) '[a-z]' (rlsc*);
 	variable    : (rusc*) '[A-Z]' (rlsc*);
 	function    : constant '(' term (',' term*) ')';
+	tuple       :          '(' term (',' term*) ')';
 \end{rail}
 \caption{Grammar for Terms.\label{fig:terms}}
 \end{figure}
@@ -85,7 +88,7 @@ representing the largest and smallest element among all variable-free terms, res
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 % the largest and the smallest possible values, respectively,
 % which behave essentially like constants.
-Finally, (uninterpreted) \emph{functions} are complex terms composed of a name (like a constant)
+Next, (uninterpreted) \emph{functions} are complex terms composed of a name (like a constant)
 and one or more terms as arguments. % ,
 % surrounded by parentheses and separated by comma.
 For instance, 
@@ -93,12 +96,13 @@ For instance,
 is a function with three arguments:
 constant \const{peter}, another function \code{\const{time}(12)}
 with an integer argument, and variable~\var{X}.
-% symbols which are composed of other terms.
-% A term that does not contain any (anonymous) variables is called a ground term.
-% More complex terms involving arithmetics and other constructs
-% are introduced later on.
+Finally, there are \emph{tuples}, which are similar to \emph{functions} but without a name.
+Note that there are no one-elementary tuples; a term of form \code{($t$)} is equivalent to \code{$t$}.
+Examples for tuples are:
+the empty tuple \code{()} and 
+the tuple \code{(\const{at},\const{peter},\const{time}(12),X)} with four elements.
 
-Rules\comment{RK: what to use as a seperator of body elements?} of the following forms are admitted in a 
+Rules of the following forms are admitted in a 
 \emph{normal logic program} (with integrity constraints):
 \par
 \medskip

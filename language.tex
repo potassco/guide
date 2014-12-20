@@ -557,6 +557,39 @@ Hence, the answer set where Tweety does not fly contains no atoms over predicate
   For more information see \cite{litatu99a}.
 \end{Note}
 
+\subsection{Boolean Literals}
+\index{Boolean Literals}\comment{Should we give the index a bit more structure?}
+%
+Sometimes it is usefull to have literals that evaluate to a constant truth value.
+\emph{Boolean literals} over the two \emph{Boolean atoms} \code{\#true} and \code{\#false} evaluate to either true or false,
+depending on the sign.
+
+\begin{example}
+
+Consider the following program:
+\marginlabel{%
+  The unique answer set of the program,
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo \attach{examples/bool.lp}{bool.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/bool.lp}{bool.lp} \textbackslash \\ \mbox{~}| clasp 0}\\
+  Note that this program simply produces an empty grounding:
+  \code{\mbox{~}gringo --text \\ \mbox{~}\attach{examples/bool.lp}{bool.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}clingo --text \\ \mbox{~}\attach{examples/bool.lp}{bool.lp}}
+  }
+%
+\lstinputlisting{examples/bool.lp}
+The first rule uses \code{\#true} in the head.
+Because this rule is a fact, it is trivially satisfied.
+Similarly, the rules in lines~2 and~3 have satisfied heads.
+The body of the last three integrity constraints is false.
+Hence, the constraints do not cause a conflict.
+Note that neither of the rules above derive any predicate atoms.
+Thus, we obtain the empty answer set for the program.
+\eexample
+\end{example}
+
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}
 \index{Terms!Integers}
 \index{Terms!Arithmetic Functions}

@@ -361,7 +361,7 @@ as described in the following, are used.
 % are provided in Section~\ref{sec:examples}.
 
 \subsubsection{Classical Negation}\label{subsec:gringo:negation}
-\index{Logic Programs!Atoms!Classical Negation}
+\index{Logic Programs!Literals!Classical Negation}
 
 % In logic programs, 
 The connective \code{not} expresses default negation,
@@ -494,9 +494,8 @@ We thus suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gr
 instead of disjunction, unless the latter is required for complexity reasons.
 
 \subsubsection{Double Negation and Head Literals}\label{subsec:gringo:double}
-\index{Logic Programs!Atoms!Default Negation}
-\index{Logic Programs!Atoms!Default Negation!Double}
-\index{Logic Programs!Head Literals}
+\index{Logic Programs!Literals!Double Default Negation}
+\index{Logic Programs!Literals!Head}
 
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
@@ -557,8 +556,9 @@ Hence, the answer set where Tweety does not fly contains no atoms over predicate
   For more information see \cite{litatu99a}.
 \end{Note}
 
-\subsection{Boolean Literals}
-\index{Boolean Literals}\comment{Should we give the index a bit more structure?}
+\subsubsection{Boolean Atoms}
+\index{Boolean Atoms}
+\index{Logic Programs!Atoms!Boolean}
 %
 Sometimes it is usefull to have literals that evaluate to a constant truth value.
 \emph{Boolean literals} over the two \emph{Boolean atoms} \code{\#true} and \code{\#false} evaluate to either true or false,
@@ -585,7 +585,7 @@ Because this rule is a fact, it is trivially satisfied.
 Similarly, the rules in lines~2 and~3 have satisfied heads.
 The body of the last three integrity constraints is false.
 Hence, the constraints do not cause a conflict.
-Note that neither of the rules above derive any predicate atoms.
+Note that neither of the rules above derive any atoms.
 Thus, we obtain the empty answer set for the program.
 \eexample
 \end{example}
@@ -1057,8 +1057,8 @@ For further details see~\cite{haliya14a}.
 \end{Note}
 
 \subsubsection{Pooling}\label{subsec:gringo:pool}
-\index{Terms!Pooling, \code{;}, \code{;;}}
-\index{Logic Programs!Atoms!Pooling, \code{;}, \code{;;}}
+\index{Terms!Pooling, \code{;}}
+\index{Logic Programs!Atoms!Pooling, \code{;}}
 
 \tbrwc{Roland}
 The tokens ``\code{;}'' and ``\code{;;}'' admit pooling alternative terms

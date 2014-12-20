@@ -904,22 +904,22 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 \comment{RK: how do we structure the index?}
 \index{Aggregates!Conditions}
 \index{Logic Programs!Literals!Conditions}%
-
-\com{RK: From now on I will pretend that gringo only outputs a semicolon to terminate a conditional literal}
-
+%
+\comment{RK: From now on I will pretend that gringo only outputs a semicolon to terminate a conditional literal}
+%
 Conditions allow for specifying collections of expressions within a single rule or aggregate.
 This is particularly useful for encoding conjunctions (or disjunctions) over
 arbitrarily many ground atoms as well as for the compact representation of aggregates
 (detailed in Section~\ref{subsec:gringo:aggregate}).
-The symbol~``\code{:}'' is used to formulate conditions.
+As in mathematical set notation,
+we use the symbol~``\code{:}'' to formulate conditions.
 
 \begin{example}\label{ex:cond}
-The following program uses conditions in a rule body and in a rule head:
+The following program uses in Line~5 and~6 conditions in a rule body and in a rule head, respectively:
 %
 \lstinputlisting{examples/cond.lp}
 %
-We are particularly interested in the rules in Line~5 and~6,
-instantiated as follows:%
+The rules in Line~5 and~6 are instantiated as follows:%
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\
   \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/cond.lp}{cond.lp}}\\
@@ -933,7 +933,7 @@ on(mon); on(tue); on(wed); on(thu); on(fri) :- meet.
 %
 The conjunction in the body of the first ground rule is obtained by replacing~\var{X} in
 \code{\pred{available}(\var{X})} with all ground terms~$t$ such that
-\code{\pred{person}($t$)} holds, namely, $t=\const{jane}$ and $t=\const{john}$.
+\code{\pred{person}($t$)} holds, namely, with $t=\const{jane}$ and $t=\const{john}$.
 Furthermore, the condition in the head of the rule in Line~6 turns into
 a disjunction over all ground instances of
 \code{\pred{on}(\var{X})} where~\var{X} is substituted by all terms~$t$
@@ -949,24 +949,25 @@ if disjunction is unintended.}
 \eexample
 \end{example}
 
-Composite conditions can also be constructed via~``\code{,}.''
-Note that ``\code{,}'' is used both to separate literals in rule bodies and conditions.
+Further following set notation,
+several conditions can be imposed by separating them through a comma, viz~``\code{,}''.
+Note that commas are used to separate both literals in rule bodies as well as conditions.
 To resolve this ambiguity, 
-a condition has to be terminated with ``\code{;}'' if further body literals follow.
+a condition is terminated with a semicolon ``\code{;}'' (rather than ``\code{,}''), if further body literals follow.
 
 \begin{example}\label{ex:sort}
-The following program uses a literal with a composite condition in the middle of the rule. 
-Note the ``\code{;}'' after the condition:
+The following program uses a literal with a composite condition in the middle of the rule body. 
+Note the semicolon ``\code{;}'' after the condition:
 %
 \lstinputlisting{examples/sort.lp}
 %
-The literal with condition in the second rule evaluates to false
+The conditional literal in the second rule evaluates to false
 whenever there is an element~\code{Y} between~\code{X} and~\code{Z}.
 Hence, all rule instantiations where~\code{X} and~\code{Z} are not direct successors are discarded
 because they have a false body.
-If on the other hand, ~\code{X} and~\code{Z} succeed each other,
+On the other hand, whenever~\code{X} and~\code{Z} succeed each other,
 the condition is false for all elements~\code{Z}.
-This means that the literal with conditon stands for an empty conjunction, which is true:%
+This means that the literal with condition stands for an empty conjunction, which is true:%
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\
   \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/sort.lp}{sort.lp}}\\
@@ -976,7 +977,7 @@ This means that the literal with conditon stands for an empty conjunction, which
 set(1). set(2). set(3). set(4).
 next(1,2). next(2,3). next(3,4).
 \end{lstlisting}
-We obtain an answer set where the elements of \code{set}/$1$ are ordered.
+We obtain an answer set where the elements of \code{set}/$1$ are ordered via \code{next}/$2$.
 \eexample
 \end{example}
 
@@ -988,17 +989,17 @@ There are three important issues about the usage of conditions:
 Any variable occurring within a condition 
 does not count as a positive occurrence outside the condition
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
-Variables occurring in atoms not subject to any condition are \emph{global}. 
+Variables occurring in atoms not subject to any condition are \emph{global}.\comment{T: Reference point, eg rule\dots?} 
 Each variable within an atom in front of a condition 
 must be global or have a positive occurrence on the right-hand side of
 the condition.
 %
 \item
 During grounding,
-global variables take precedence over non-global ones, i.e.,
-they are instantiated first.
+the instantiation of global variables take precedence over non-global ones,
+that is, the former are instantiated before the latter.
 As a consequence, variables that occur globally are substituted by terms
-before a condition is evaluated further.
+before a condition is further evaluated.
 Hence, the names of variables in conditions must be chosen with care,
 making sure that they do not \emph{accidentally} match the names of global variables.
 %

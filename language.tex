@@ -961,7 +961,7 @@ Note the semicolon ``\code{;}'' after the condition:
 %
 \lstinputlisting{examples/sort.lp}
 %
-The conditional literal in the second rule evaluates to false
+The conditional literal\comment{RK: we should introduce conditional literals} in the second rule evaluates to false
 whenever there is an element~\code{Y} between~\code{X} and~\code{Z}.
 Hence, all rule instantiations where~\code{X} and~\code{Z} are not direct successors are discarded
 because they have a false body.

@@ -556,13 +556,13 @@ Hence, the answer set where Tweety does not fly contains no atoms over predicate
   For more information see \cite{litatu99a}.
 \end{Note}
 
-\subsubsection{Boolean Atoms}
-\index{Boolean Atoms}
-\index{Logic Programs!Atoms!Boolean}
+\subsubsection{Boolean Constants}
+\index{Boolean Constants}
+\index{Logic Programs!Constants!Boolean}
 %
-Sometimes it is usefull to have literals that evaluate to a constant truth value.
-\emph{Boolean literals} over the two \emph{Boolean atoms} \code{\#true} and \code{\#false} evaluate to either true or false,
-depending on the sign.
+Sometimes it is useful to have literals possessing a constant truth value.
+{Boolean literals} over the two \emph{Boolean constants} \code{\#true} and \code{\#false} 
+are always true or false, respectively.
 
 \begin{example}
 
@@ -583,13 +583,13 @@ Consider the following program:
 The first rule uses \code{\#true} in the head.
 Because this rule is a fact, it is trivially satisfied.
 Similarly, the rules in lines~2 and~3 have satisfied heads.
-The body of the last three integrity constraints is false.
+The bodies of the last three integrity constraints are false.
 Hence, the constraints do not cause a conflict.
 Note that neither of the rules above derive any atoms.
 Thus, we obtain the empty answer set for the program.
 \eexample
 \end{example}
-
+See Example~\ref{ex:sort} below for an application of interest.
 \subsubsection{Built-In Arithmetic Functions}\label{subsec:gringo:arith}
 \index{Terms!Integers}
 \index{Terms!Arithmetic Functions}

@@ -558,14 +558,13 @@ Hence, the answer set where Tweety does not fly contains no atoms over predicate
 
 \subsubsection{Boolean Constants}
 \index{Boolean Constants}
-\index{Logic Programs!Constants!Boolean}
+\index{Logic Programs!Atoms!Boolean Constants}
 %
 Sometimes it is useful to have literals possessing a constant truth value.
 {Boolean literals} over the two \emph{Boolean constants} \code{\#true} and \code{\#false} 
 are always true or false, respectively.
 
 \begin{example}
-
 Consider the following program:
 \marginlabel{%
   The unique answer set of the program,
@@ -667,6 +666,7 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.\comm
 \index{Comparison Predicates!Less or Equal, \code{<=}}
 \index{Comparison Predicates!Greater, \code{>}}
 \index{Comparison Predicates!Greater or Equal, \code{>=}}
+\index{Logic Programs!Atoms!Comparison Predicates}
 
 Grounder \gringo\ and the grounding component of \clingo\ 
 feature a total order among variable-free terms.
@@ -739,6 +739,7 @@ In the second case, the prefix has no effect on the meaning of the literal.
 \index{Terms!Variables!Assignments}
 \index{Assignments}
 \index{Assignments!Variable Assignment, \code{=}}
+\index{Logic Programs!Atoms!Assignments}
 
 \com{R2T: is this understandable}
 Sometimes, it is desirable to define the value of a variable relative to a term, 
@@ -837,8 +838,7 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \end{Note}
 
 \subsubsection{Intervals}\label{subsec:gringo:interval}
-\index{Terms!Integers!Intervals}
-\index{Arithmetic Functions!Integers!Intervals}
+\index{Terms!Intervals}
 
 \com{Roland}
 \com{I consider this in-flux, lets see with which semantics we end up with}
@@ -1041,7 +1041,7 @@ We suggest to use \emph{domain predicates}~\cite{lparseManual}
 or built-ins (both used in lines~2 and~3  of Example~\ref{ex:sort})
 in conditions.
 \index{Aggregates!Conditions!Domain Predicates}%
-\index{Terms!Conditions!Domain Predicates}%
+\index{Logic Programs!Literals!Domain Predicates}%
 \label{pg:domain}%
 Literals over such predicates are completely evaluated during grounding.
 In a logic program, domain predicates can be recognized by observing

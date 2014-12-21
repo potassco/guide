@@ -25,7 +25,6 @@
     \subitem Division, \code{/}, \hyperpage{19}
     \subitem Exponentiation, \code{**}, \hyperpage{19}
     \subitem Integers, \hyperpage{19}
-      \subsubitem Intervals, \hyperpage{22}
     \subitem Modulo, \code{\textbackslash}, \hyperpage{19}
     \subitem Multiplication, \code{*}, \hyperpage{19}
     \subitem Subtraction, \code{-}, \hyperpage{19}
@@ -37,7 +36,7 @@
 
   \indexspace
 
-  \item Boolean Atoms, \hyperpage{19}
+  \item Boolean Constants, \hyperpage{19}
 
   \indexspace
 
@@ -58,7 +57,9 @@
   \item Logic Programs, \hyperpage{14}, \hyperpage{17}
     \subitem Atoms, \hyperpage{14}
       \subsubitem Aggregates, \hyperpage{27}
-      \subsubitem Boolean, \hyperpage{19}
+      \subsubitem Assignments, \hyperpage{21}
+      \subsubitem Boolean Constants, \hyperpage{19}
+      \subsubitem Comparison Predicates, \hyperpage{20}
       \subsubitem Pooling, \code{;}, \hyperpage{25}
     \subitem Disjunction, \hyperpage{17}
     \subitem Facts, \hyperpage{14}
@@ -68,6 +69,7 @@
       \subsubitem Classical Negation, \hyperpage{16}
       \subsubitem Conditions, \hyperpage{23}
       \subsubitem Default Negation, \hyperpage{14}
+      \subsubitem Domain Predicates, \hyperpage{25}
       \subsubitem Double Default Negation, \hyperpage{18}
       \subsubitem Head, \hyperpage{18}
     \subitem Rules, \hyperpage{14}
@@ -101,12 +103,10 @@
     \subitem \code{\#inf}, \hyperpage{12}
     \subitem \code{\#sup}, \hyperpage{12}
     \subitem Arithmetic Functions, \hyperpage{19}
-    \subitem Conditions
-      \subsubitem Domain Predicates, \hyperpage{25}
     \subitem Constants, \hyperpage{12}
     \subitem Functions, \hyperpage{12}
     \subitem Integers, \hyperpage{19}
-      \subsubitem Intervals, \hyperpage{22}
+    \subitem Intervals, \hyperpage{22}
     \subitem Lua Function Call, \hyperpage{39}
     \subitem Pooling, \code{;}, \hyperpage{25}
     \subitem Strings, \hyperpage{12}

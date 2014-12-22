@@ -213,7 +213,7 @@ provided that~\var{T} is not the maximum time point.
 % First in Line 8, the position below a disc on some peg is blocked.
 % Second 
 The rule in Line 9 further propagates the status of being blocked
-along bigger disks.\comment{RK: along bigger disks sounds strange. Maybe: to all bigger disks on the same peg}
+to all bigger disks on the same peg.
 % , the position directly below a blocked position is blocked.
 Note that we also mark \code{\var{D}-1~=~\const{0}}, not referring to any disk, as blocked,
 which is convenient for eliminating redundant moves
@@ -222,7 +222,7 @@ in the Test part described next.
 % Finally, there is the Test part building upon both Generate and Define part 
 % to rule out wrong moves that do not agree with the problem description.
 The Test part consists of the integrity constraints in Line~11--14,
-rules of denial\comment{RK: maybe remove the of denial thing} that eliminate unintended solution candidates.
+rules that eliminate unintended solution candidates.
 The first integrity constraint in Line~11 asserts 
 that a disk~\var{D} must not be moved to a peg~\var{P}
 if \code{\var{D}-1} is blocked at time point~\var{T}.
@@ -283,18 +283,19 @@ gringo %\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}% %\attach{examples/toh_e
 
 The output of the solver, \clingo\ in this case, should look somehow like this:
 \begin{lstlisting}[numbers=none]
+clingo version 4.4.0
+Reading from toh_ins.lp ...
+Solving...
 Answer: 1
-move(4,b,1)  move(3,c,2)  move(4,c,3)  move(2,b,4)  \
-move(4,a,5)  move(3,b,6)  move(4,b,7)  move(1,c,8)  \
-move(4,c,9)  move(3,a,10) move(4,a,11) move(2,c,12) \
-move(4,b,13) move(3,c,14) move(4,c,15) 
+move(4,b,1) move(3,c,2) move(4,c,3) move(2,b,4) \
+move(4,a,5) move(3,b,6) move(4,b,7) move(1,c,8) \
+move(4,c,9) move(3,a,10) move(4,a,11) move(2,c,12) \
+move(4,b,13) move(3,c,14) move(4,c,15)
 SATISFIABLE
 
 Models       : 1+    
 Calls        : 1
-Time         : 0.013s (Solving: 0.01s   \
-                       1st Model: 0.01s \
-                       Unsat: 0.00s)
+Time         : 0.017s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
 CPU Time     : 0.010s
 \end{lstlisting}
 % Models      : 1+    
@@ -302,17 +303,26 @@ CPU Time     : 0.010s
 %   Prepare   : 0.000
 %   Prepro.   : 0.010
 %   Solving   : 0.000
-The first line indicates that the (output) atoms of an answer set 
-follow in the line below, where ``\code{\char`\\}'' indicates that
-all atoms over \pred{move}/$3$ actually belong to a single line.
-Note that the order in which atoms are printed does not bear any meaning
-(and the same applies to the order in which answer sets are found).
-Here, we show the instances of \pred{move}/$3$ in the order of time points,
+The first line shows the \clingo\ version.
+The following two lines indicate \clingo's state.
+\clingo\ should print immediately that it is reading.
+Once this is done, it prints \code{Solving...} to the command line.
+The Towers of Hanoi instance above is so easy to solve 
+that you will not make a difference.
+But for larger problems it is typically possible to see a delay.
+Lines starting with \code{Answer: }
+indicate that the (output) atoms of an answer set follow in the line below.
+In this example you can see 
+the instances of \pred{move}/$3$ in the order of time points,
 so that we can easily read off the following solution from them:
 first move disk~\const{4} to peg~\const{b}, 
 second move disk~\const{3} to peg~\const{c}, 
 third move disk~\const{4} to peg~\const{c}, 
 and so on.
+We use ``\code{\char`\\}'' to indicate that
+all atoms over \pred{move}/$3$ actually belong to a single line.
+Note that the order in which atoms are printed does not bear any meaning
+(and the same applies to the order in which answer sets are found).
 Below this solution,
 we find the satisfiability status of the problem,
 which is \code{SATISFIABLE},
@@ -339,9 +349,13 @@ so that further answer sets may exist.}
 % the whole search space has not yet been explored, so there might be further answer sets.
 The final lines report statistics including
 total run-time (\code{Time}),
-time spent on grounding (\code{Prepare}),
-time spent on preprocessing~\cite{gekanesc08a} (\code{Prepro.}),
-and time spent on search (\code{Solving}).\comment{R2T: Prepare, Prepro. does not exist anymore}
+time spent for solving (\code{Solving}),
+time until the first model was found (\code{1st Model}), and
+time used to prove unsatisfiability%
+\footnote{
+No unsatisfiability proof is done here, hence, this time is zero here.
+But for example, when enumerating all models, this is the time spent between finding the last model and termination.
+} (\code{Unsat}).
 % Following that, there are some time measurements: 
 % Beginning with total computation time, 
 % which is split into 

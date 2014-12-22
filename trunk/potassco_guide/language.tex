@@ -38,8 +38,6 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \index{Terms!\code{\#sup}}
 \index{Terms!\code{\#inf}}
 
-\com{tuples are missing}
-
 \begin{figure}
 \vspace*{-19mm}
 \railnontermfont{\rmfamily\itshape}%
@@ -845,8 +843,6 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \subsubsection{Intervals}\label{subsec:gringo:interval}
 \index{Terms!Intervals}
 
-\com{Roland}
-\com{I consider this in-flux, lets see with which semantics we end up with}
 In Line~1 of Example~\ref{ex:assign},
 there are five facts of the form~\code{\pred{num}($k$).}
 over consecutive integers~$k$.
@@ -855,6 +851,31 @@ For a more compact representation,
 % , where~$i$ and~$j$ are integers.
 Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
+An interval is expanded differently depending on where it occurs.
+In the head of a rule, an interval is expanded conjunctively
+and in the body of a rule disjunctively.
+
+\com{R: I want to replace the obstruse example below with something simpler}
+\begin{example}\label{ex:intsimple}
+Consider the following program:
+\begin{lstlisting}[numbers=none]
+grid(1..3,1..3).
+\end{lstlisting}
+Since the intervals in this rule all occur in the rule head,
+the intervals expand conjunctively,
+resulting in the following set of facts:
+\begin{lstlisting}[numbers=none]
+grid(1,1).  grid(1,2).  grid(1,3).
+grid(2,1).  grid(2,2).  grid(2,3).
+grid(3,1).  grid(3,2).  grid(3,3).
+\end{lstlisting}
+
+
+\begin{lstlisting}[numbers=none]
+grid(X,Y) :- X=1..3, Y=1..3.
+\end{lstlisting}
+\eexample
+\end{example}
 
 \begin{example}\label{ex:int}
 The usage of integer intervals is illustrated by the following program:
@@ -1027,7 +1048,7 @@ There are three important issues about the usage of conditions:
 Any variable occurring within a condition 
 does not count as a positive occurrence outside the condition
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
-Variables occurring in atoms not subject to any condition are \emph{global}.\comment{T: Reference point, eg rule\dots?} 
+Variables occurring in atoms not subject to any condition are \emph{global}.\comment{T: Reference point, eg rule\dots? R: Should not be necessary, because uniquely determined by ``not subject to a condition''.} 
 Each variable within an atom in front of a condition 
 must be global or have a positive occurrence on the right-hand side of
 the condition.
@@ -1186,6 +1207,7 @@ to avoid nasty surprises.
 \index{Aggregates}
 \index{Aggregates!Weights}
 
+\com{R: I think we need a less scary example to open this section to not put the reader off.}
 An aggregate is a function on a set of tuples that are normally subject to conditions. 
 Together with comparisons, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
@@ -1226,22 +1248,19 @@ Currently, \gringo\ (and \clingo) support the aggregates
 \code{\#max}
 \index{Aggregates!Maximum, \code{\#max}}%
 (the maximum weight).
-%
-\INS{The weight refers to the first element of a term tuple.}
-%
+The weight refers to the first element of a term tuple.
 Aggregate atoms, as described above, are obtained by writing
-either \code{\#count}, \code{\#sum}, , \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
+either \code{\#count}, \code{\#sum}, \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
 %
-\REW{The \code{\#count} aggregate is similar to \code{\#sum} with all literals' weights being~\const{1}.
-Hence, for convenience, the prefixed term can be dropped in \code{\#count} aggregates.}
+Note that unlike the other aggregates, the \code{\#count} aggregate does not require a weight.
 
 As a first example, consider the simplest type of aggregate atoms, counting the number of distinct term tuples.
 \index{Aggregates!Count, \code{\#count}}%
 \begin{lstlisting}[numbers=none]
-#count { 42 : a; (1,2,3) : not b; succ(0) : c } = 2
-\end{lstlisting}\comment{RK: using a tuple with parentheses there is confusing}
+#count { 42 : a; 1,2,3 : not b; succ(0) : c } = 2
+\end{lstlisting}
 For instance, if the atoms \lstinline{a}, \lstinline{b}, and \lstinline{c} are true, 
-the aggregate's set reduces to \lstinline[mathescape]{$\{$42,succ(0)$\}$},
+the aggregate's set reduces to \lstinline[mathescape]{$\{$42;succ(0)$\}$},
 which satisfies the aggregate's comparison and thus the aggregate atom.
 
 As indicated by the curly brackets, the literals within aggregates are treated as members of a set.
@@ -1252,7 +1271,7 @@ For instance, the following aggregate atoms express the same:
 #count {42:a;       t:not b         } = 2@\textnormal{ and}@ 
 #count {42:a; 42:a; t:not b; t:not b} = 2@\textnormal{.}@  
 \end{lstlisting}
-That is, if \lstinline{a} holds but not \lstinline{b}, both inner sets reduce to \lstinline[mathescape]{$\{$42,t$\}$};
+That is, if \lstinline{a} holds but not \lstinline{b}, both inner sets reduce to \lstinline[mathescape]{$\{$42;t$\}$};
 and so both aggregate atoms evaluate to true.
 %
 However, both are different from the aggregates
@@ -1261,7 +1280,7 @@ However, both are different from the aggregates
 #count {42:a; 42:a; t:not b; s:not b} = 2
 \end{lstlisting}
 which hold if both \lstinline{a} and \lstinline{b} are false,
-yielding \lstinline[mathescape]{#count$\{$t,s$\}$ = 2}.
+yielding \lstinline[mathescape]{#count$\{$t;s$\}$ = 2}.
 
 Likewise, the literals of other aggregates are understood as sets.
 %
@@ -1302,13 +1321,6 @@ yielding
 %
 Unlike with body aggregates, only singular head aggregates are supported.
 
-\begin{Note}
-Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint expressed by the
-original head aggregate.
-In fact, when producing \smodels\ format, all aggregate atoms occurring in rule heads are transformed away.
-For details consult~\cite{siniso02a,gekakasc12a}.
-\end{Note}
-
 \comment{RK: the translation below only makes sense in the propositional case}
 There are some shorthands that can be used in the syntactic representation of aggregates.
 %
@@ -1319,7 +1331,7 @@ The expression
 \end{lstlisting}
 %
 where all entities are defined as above 
-is a shortcut for
+is a shortcut for\comment{RK: this is not correct because \code{1~\#count~\{1:a;~2:a\}~1} is not a shortcut for \code{1~\{a;~a\}~1}}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1$? <= #count {1:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;n:?$L_n$?:?$\boldsymbol{L_n}$?} <= ?$s_2$?
@@ -1341,98 +1353,17 @@ consider the rule
 \begin{lstlisting}[numbers=none]
 { a ; b }.
 \end{lstlisting}
-In full detail, this is a shortcut for the rule\comment{R: no}
+In full detail, this is a shortcut for the rule
 \begin{lstlisting}[numbers=none]
 #count { 1:a ; 2:b }.
 \end{lstlisting}
 
-By allowing the omission \DEL{of \const{\#sum} and} \const{\#count},
-so-called 
-\DEL{``weight constraints'' and} ``cardinality constraints''~\cite{siniso02a}
-can almost be written in their traditional notation\DEL{s} (without keyword, yet different separators),
+By allowing the omission \const{\#count},
+so-called ``cardinality constraints''~\cite{siniso02a}
+can almost be written in their traditional notation (without keyword, yet different separators),
 as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.
 
-
-\com{Further shortcuts?}
-
-\DEL{
-With \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
-weights of literals can be omitted, in which case \code{1} is used by default
-($L_i$\,\code{=}\,\const{1} is equivalent to just $L_i$).
-% weight~\const{1} is considered a default,
-% so that $L_i\code{=}\const{1}$ can simply be written as $L_i$.
-For instance, the following (multi)sets of (weighted) literals are synonyms
-when combined with any (admissible) aggregate and bounds:}
-\begin{lstlisting}[numbers=none,escapechar=@]
-[a=1, not b=1, c=2] @\textnormal{and}@
-[a,   not b,   c=2]@\textnormal{.}@
-\end{lstlisting}
-%
-\DEL{Furthermore,
-either or both of the bounds~$l$ and~$u$,
-applicable to all aggregate atoms but parity,
-can be omitted, in which case they are taken to be
-(trivially) satisfied, regardless of an aggregate's evaluation.
-Finally, the aggregates  \code{\#sum} and \code{\#count} are used by
-default for multisets of (weighted) literals in square brackets
-and sets of literals in curly brackets, respectively.
-For instance, the following aggregate atoms,
-one including the keyword \code{\#sum} and
-the other omitting it, are synonyms:}
-\begin{lstlisting}[numbers=none,escapechar=@]
-2 #sum [a, not b, c=2] 3 @\textnormal{and}@
-2      [a, not b, c=2] 3@\textnormal{.}@
-\end{lstlisting}
-\DEL{Likewise, we can optionally omit \code{\#count} in front of curly brackets:}
-\begin{lstlisting}[numbers=none,escapechar=@]
-1 #count {a, not b} 1 @\textnormal{and}@ 
-1        {a, not b} 1@\textnormal{.}@  
-\end{lstlisting}
-\DEL{By allowing the omission of \const{\#sum} and \const{\#count},
-so-called 
-``weight constraints'' and ``cardinality constraints''~%\cite{siniso02a,lparseManual}
-can be written in their traditional notations (without keyword).}
-
-% keyword \const{\#sum} may be omitted, which in a sense makes \const{\#sum} the default
-% aggregate operation.
-% In fact, the following aggregate atoms are synonyms:
-%
-% By omitting keyword \const{\#sum}, we obtain the same notation as the one of 
-% so-called ``weight constraints''~\cite{siniso02a,lparseManual}, which are actually aggregate atoms
-% whose operation is addition.
-% \comment{MG: Illustrate \const{\#sup} and \const{\#inf}.
-%              Also talk about assignments allowed with
-%              \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}.}
-
-\DEL{For the aggregates \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#avg},
-all working on multisets of (weighted) literals in square brackets,
-it should be taken into account that they behave differently in case of
-multiple occurrences of the same literal (regardless of the associated weights).
-For instance, the following aggregate atoms are synonyms:}
-\begin{lstlisting}[numbers=none,escapechar=@]
-2 #sum [a=2] 2 @\textnormal{and}@
-2 #sum [a,a] 2@\textnormal{.}@
-\end{lstlisting}
-\DEL{In fact, we have that $2=1+1$,
-i.e., multiple weights for the same literal sum up.
-Unlike this, the following pairs of aggregate atoms are
-different from one another:}
-\begin{lstlisting}[numbers=none,escapechar=@]
-2 #min [a=2] 2 @\textnormal{and}@
-2 #min [a,a] 2@\textnormal{,}@
-2 #max [a=2] 2 @\textnormal{and}@
-2 #max [a,a] 2@\textnormal{,}@
-2 #avg [a=2] 2 @\textnormal{and}@
-2 #avg [a,a] 2@\textnormal{.}@
-\end{lstlisting}
-\DEL{While $\min\{2\}=\max\{2\}=\frac{2}{1}=2$,
-we have that 
-$\min\{1,1\}=\max\{1,1\}=\frac{1+1}{2}=1$.
-Hence, if atom~\pred{a} holds,
-the aggregate atoms where its weight is $2$ hold,
-but not the ones where the (default) weight $1$ is taken twice.
-That is, whether repetitions of a literal are cumulative or 
-subject to annihilation depends on the aggregate being used.}
+\com{T: Further shortcuts?}
 
 Having discussed aggregate atoms,
 let us note that there is a second way to use aggregates:
@@ -1453,31 +1384,27 @@ the atoms \code{\pred{sum}(\const{5})}, \code{\pred{min}(\const{2})},
 \code{\pred{max}(\const{3})}, and \code{\pred{cnt}(\const{2})} are
 derived by the above rules.
 If~\pred{a} does not hold, we derive 
-\comment{T2R: Or \const{\#inf} and \const{\#sup}\dots?}
 \code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#sup})},
 \code{\pred{max}(\const{\#inf})}, and \code{\pred{cnt}(\const{0})}.
-\com{R: this is not really to the point, min and max can be used not only with integers but with any kind of term}
+%
 Here, the special constants \const{\#sup} and \const{\#inf}
 (introduced in Section~\ref{subsec:gringo:normal}),
-obtained by applying \code{\#min} and \code{\#max}, respectively,
-to the empty set of weights,
-indicate the neutral elements of the aggregates,
-$+\infty$ and $-\infty$, respectively.
+obtained by applying \code{\#min} and \code{\#max} to the empty set of weights, respectively,
+indicate the neutral elements of the aggregates.
+%
 These constants can also be used as weights subject to 
-\code{\#min} and \code{\#max} (in order to exceed any integer bound):
-\comment{T2R: Exlpain shortcut\dots?}
-\comment{R2T: Which shortcut\dots?}
+\code{\#min} and \code{\#max} (in order to exceed any other ground term):
 \begin{lstlisting}[numbers=none]
 bot :-      #min {  #inf : a } -1000.
 top :- 1000 #max { #sup : a }.
 \end{lstlisting}
 Assuming that atom~\pred{a} holds,
 the atoms~\pred{bot} and~\pred{top} are derived by the above rules
-because $-\infty\leq-1000$ and $1000\leq+\infty$.
+because both \code{\#inf <= -1000} and \code{1000 <= \#sup} hold.
 
 Although it seems convenient to use assignments of aggregates' values,
 this feature should be used with care.
-If the (weighted) literals of an aggregate belong to domain predicates
+If the literals of an aggregate belong to domain predicates
 (see Page~\pageref{pg:domain}) or built-ins,
 \gringo\ or \clingo\ evaluates the aggregate during grounding, so obtaining
 a unique value to be assigned.
@@ -1576,15 +1503,11 @@ built-in arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}),
 intervals (cf.\ Section~\ref{subsec:gringo:interval}), and 
 pooling (cf.\ Section~\ref{subsec:gringo:pool})
 can be incorporated as usual within aggregates,
-where intervals and pooling are expanded locally.%
-% UNCOMMENTED WITHIN \REW <<<<<<
-% \footnote{%
-%   Assignments (cf.\ Section~\ref{subsec:gringo:assign}) 
-%   are permitted on the right-hand sides of conditions only.}
-That is, an interval gives rise to multiple literals connected via~``\code{,}''
+where intervals and pooling are expanded locally.
+That is, an interval gives rise to multiple aggregate elements connected via~``\code{;}''
 within the same aggregate.
 The same applies to pooling in front of a condition,
-while it turns into a composite condition chained by~``\code{:}'' on the right-hand side.
+while it turns into a composite condition chained by~``\code{,}'' on the right-hand side.
 Finally, note that aggregates 
 \code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}
 without bounds are also permitted on the
@@ -1689,9 +1612,6 @@ while Line~12 stipulates that the enrolled courses
 amount to less than six nominations of
 subject area~\const{3} (``technical informatics'') 
 or~\const{4} (``applied informatics'').
-\DEL{Also note that, given the facts in Line~1--8,
-we could equivalently have used \const{count} rather than \const{sum} in Line~11,
-but not in Line~10 and~12.}
 
 The remaining constraints of the student deal with contact hours.
 To express them, we first introduce an auxiliary rule and a fact:
@@ -1761,13 +1681,25 @@ amounting to~\const{20} contact hours per week.
 As mentioned in Section~\ref{subsec:gringo:condition},
 multiple literals may be connected via ``\code{,}'' in order to construct
 composite conditions within an aggregate.
-In \gringo\ and \clingo~4\comment{Isn't this betted done as a remark at the end of the section. Like Martin did elsewhere. I have the feeling that this just bloats things up in the text.},
-the predicates of such literals must\comment{RK: need not, right?} not be domain or built-in anymore.
 Furthermore, the usage of non-domain predicates within an aggregate
 together with an assignment (like \pred{enroll}/$1$ in Line~18 and~19 above)
 is not recommended in general because the space blow-up may be significant.
 \eexample
 \end{example}
+
+\begin{Note}
+\begin{enumerate}
+\item 
+  Users familiar to gringo-3 might remember that conditions in aggregates 
+  had to be either literals over domain predicates or built-ins.
+  This restriction does not exist anymore in \gringo\ and \clingo~4.
+\item 
+  Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint expressed by the
+  original head aggregate.
+  In fact, when producing \smodels\ format, all aggregate atoms occurring in rule heads are transformed away.
+  For details consult~\cite{siniso02a,gekakasc12a}.
+\end{enumerate}
+\end{Note}
 
 %\com{Should we mention stratifed aggregates that do not necessarily need conditions?}
 

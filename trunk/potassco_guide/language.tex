@@ -45,13 +45,17 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \railnontermfont{\rmfamily\itshape}%
 \railalias{rusc}{\tt\char95}\railterm{rusc}
 \railalias{rlsc}{[A-Za-z0-9\tt\char95']}\railterm{rlsc}
+\railalias{any}{[\^{}\symbol{92}"$\dlsh$]}\railterm{any}
+\railalias{bs}{\symbol{92}}\railterm{bs}
+\railalias{esc}{[\symbol{92}"n]}\railterm{esc}
 \begin{rail}
-	term        : simpleterm | function | tuple;
-	simpleterm  : (integer | constant | string | variable | rusc | '\#sup' | '\#inf');
-	constant    : (rusc*) '[a-z]' (rlsc*);
-	variable    : (rusc*) '[A-Z]' (rlsc*);
-	function    : constant '(' term (',' term*) ')';
-	tuple       :          '(' term (',' term*) ')';
+  term        : simpleterm | function | tuple;
+  simpleterm  : (integer | constant | string | variable | rusc | '\#sup' | '\#inf');
+  constant    : (rusc*) '[a-z]' (rlsc*);
+  string      : '"' ((any | (bs esc))*) '"';
+  variable    : (rusc*) '[A-Z]' (rlsc*);
+  function    : constant '(' term (',' term*) ')';
+  tuple       :          '(' term (',' term*) ')';
 \end{rail}
 \caption{Grammar for Terms.\label{fig:terms}}
 \end{figure}

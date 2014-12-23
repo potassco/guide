@@ -976,7 +976,7 @@ Note the semicolon ``\code{;}'' after the condition:
 %
 \lstinputlisting{examples/sort.lp}
 %
-The conditional literal\comment{RK: we should introduce conditional literals} in the second rule evaluates to false
+The conditional literal in the second rule evaluates to false
 whenever there is an element~\code{Y} between~\code{X} and~\code{Z}.
 Hence, all rule instantiations where~\code{X} and~\code{Z} are not direct successors are discarded
 because they have a false body.
@@ -1532,7 +1532,7 @@ wants to enroll for a number of courses at the beginning of a new term.
 In the university calendar, eight courses are found eligible,
 and they are represented by the following facts:
 %
-\lstinputlisting[xrightmargin=-20pt,lastline=8]{examples/aggr.lp}
+\lstinputlisting[xrightmargin=-20pt,lastline=8,basicstyle=\ttfamily\small]{examples/aggr.lp}
 %
 In an instance of \const{course}/$3$,
 the first argument is a number identifying one of the eight courses,
@@ -1577,7 +1577,7 @@ obtaining the above set of ground atoms.
 
 The next constraints of the student regard the subject areas of enrolled courses:
 %
-\lstinputlisting[nolol,firstline=13,lastline=15,firstnumber=10]{examples/aggr.lp}
+\lstinputlisting[nolol,firstline=13,lastline=16,firstnumber=10]{examples/aggr.lp}
 %
 Each of the three integrity constraints above contains a cardinality constraint.
 Recall that aggregates operate on sets and thus duplicates are removed;
@@ -1595,14 +1595,14 @@ Thus, the integrity constraint in Line~10 is instantiated as follows:
 %      enroll(8) = 1, enroll(8) = 1 ] 10.
 % \end{lstlisting}
 \begin{lstlisting}[firstnumber=10,stepnumber=10]
-:- 10 >= #count {1,1,5:enroll(1); 1,2,5:enroll(1); 
-                 2,1,4:enroll(2); 2,2,4:enroll(2); 
-                 3,1,6:enroll(3); 3,3,6:enroll(3); 
-                 4,1,3:enroll(4); 4,3,3:enroll(4); 4,4,3:enroll(4); 
-                 5,1,4:enroll(5); 5,4,4:enroll(5); 
-                 6,2,2:enroll(6); 6,3,2:enroll(6); 
-                 7,2,4:enroll(7); 7,3,4:enroll(7); 7,4,4:enroll(7); 
-                 8,3,5:enroll(8); 8,4,5:enroll(8) }. 
+:- 10 >= #count { 1,1,5:enroll(1); 1,2,5:enroll(1); 
+                  2,1,4:enroll(2); 2,2,4:enroll(2); 
+                  3,1,6:enroll(3); 3,3,6:enroll(3); 
+ 4,1,3:enroll(4); 4,3,3:enroll(4); 4,4,3:enroll(4); 
+                  5,1,4:enroll(5); 5,4,4:enroll(5); 
+                  6,2,2:enroll(6); 6,3,2:enroll(6); 
+ 7,2,4:enroll(7); 7,3,4:enroll(7); 7,4,4:enroll(7); 
+                  8,3,5:enroll(8); 8,4,5:enroll(8) }. 
 \end{lstlisting}
 %
 Note that courses~\const{4} and~\const{7} count three times because
@@ -1625,7 +1625,7 @@ or~\const{4} (``applied informatics'').
 The remaining constraints of the student deal with contact hours.
 To express them, we first introduce an auxiliary rule and a fact:
 %
-\lstinputlisting[nolol,firstline=17,lastline=18,firstnumber=13]{examples/aggr.lp}
+\lstinputlisting[nolol,firstline=18,lastline=19,firstnumber=13]{examples/aggr.lp}
 %
 The rule in Line~13 projects instances of \pred{course}/$3$ to
 \pred{hours}/$2$, thereby, dropping courses' subject areas.
@@ -1633,7 +1633,7 @@ This is used to not consider the same course multiple times within the following
 integrity constraints:
 \footnote{Alternatively, we could also use \lstinline{course(C,_,H).}}
 %
-\lstinputlisting[nolol,firstline=20,lastline=22,firstnumber=15]{examples/aggr.lp}
+\lstinputlisting[nolol,firstline=21,lastline=23,firstnumber=15]{examples/aggr.lp}
 %
 As Line~15 shows,
 we may use default negation via ``\code{not}'' in front of aggregate atoms,
@@ -1664,7 +1664,7 @@ Of course, the last two requirements could also be formulated as follows:
 
 Finally, the following rules illustrate the use of aggregates within assignments:
 %
-\lstinputlisting[nolol,firstline=24,lastline=25,firstnumber=18]{examples/aggr.lp}
+\lstinputlisting[nolol,firstline=25,lastline=26,firstnumber=18]{examples/aggr.lp}
 %
 Note that similar aggregates have already been used in Line~9 and~15, respectively.
 In Line~9 the keyword \const{\#count} has been omitted for convenience.

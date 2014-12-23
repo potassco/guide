@@ -898,6 +898,53 @@ here in \lstinline{size(S)}.
 \index{Logic Programs!Safety}%
 \end{note}
 
+\subsubsection{Pooling}\label{subsec:gringo:pool}
+\index{Terms!Pooling, \code{;}}
+\index{Logic Programs!Atoms!Pooling, \code{;}}
+
+The token ``\code{;}'' admits pooling alternative terms
+to be used as arguments of an atom, function, or tuple. % for writing rules more compactly.
+Argument lists written in the form \code{($\dots$,X;Y,$\dots$)} abbreviate multiple options:
+\code{($\dots$,X),\linebreak[1]\:(Y,$\dots$)}.
+Pools are expanded just like intervals, i.e.,
+conjunctively in the head and disjunctively in the body of a rule.
+In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
+\footnote{%
+This example uses the fact that there are no one-elementary tuples.
+For example, the tuple \code{(1;2,3)} expands into \code{(1)}, \code{(2,3)}.
+Hence, \code{(1)} is note a tuple here but equal to integer \code{1}.}
+
+\begin{example}\label{ex:pool}
+The following program makes use of pooling. 
+It is similar to Example~\ref{ex:int}
+but with the difference that unlike intervals pools have a fixed size:
+%
+\marginlabel{%
+  The simplified ground program obtained from pools
+  can be inspected by invoking:\\
+  \code{\mbox{~}clingo --text \attach{examples/pool.lp}{pool.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo --text \attach{examples/pool.lp}{pool.lp}}}
+\lstinputlisting[xrightmargin=-5pt]{examples/pool.lp}
+%
+Because the pools in this rule all occur in the head,
+the pools expand conjunctively.
+Furthermore, the two pools expand into the cross product \code{(1..3)$\times$(1..3)},
+resulting in the following set of facts:
+\begin{lstlisting}[numbers=none]
+grid(1,1).  grid(1,2).  grid(1,3).
+grid(2,1).  grid(2,2).  grid(2,3).
+grid(3,1).  grid(3,2).  grid(3,3).
+\end{lstlisting}
+Like intervals, pools can also be used in the body of a rule where they expand disjunctively:
+\begin{lstlisting}
+grid(X,Y) :- X=(1;2;3), Y=(1;2;3).
+\end{lstlisting}
+This rule expands into the same set of facts as before.
+As in Example~\ref{ex:int}, additional constraints involving~\code{X} and~\code{Y} can be added.
+\eexample
+\end{example}
+
 \subsubsection{Conditions and Conditional Literals}\label{subsec:gringo:condition}
 \comment{RK: how do we structure the index? T: As you wish :)}
 \index{Aggregates!Conditions}
@@ -1038,126 +1085,6 @@ Otherwise, they give rise to nested implications.
 For further details see~\cite{haliya14a}.
 \end{enumerate}
 \end{note}
-
-\subsubsection{Pooling}\label{subsec:gringo:pool}
-\index{Terms!Pooling, \code{;}}
-\index{Logic Programs!Atoms!Pooling, \code{;}}
-
-\tbrwc{Roland}
-The tokens ``\code{;}'' and ``\code{;;}'' admit pooling alternative terms
-to be used as arguments of an atom. % for writing rules more compactly.
-Atoms written in the form \code{\pred{p}($\dots$,X;Y,$\dots$)}
-or \code{\pred{p}($\dots$,X;;Y,$\dots$)} abbreviate multiple options:
-\code{\pred{p}($\dots$,X,$\dots$),\linebreak[1]\:\pred{p}($\dots$,Y,$\dots$)} and
-\code{\pred{p}($\dots$,X),\linebreak[1]\:\pred{p}(Y,$\dots$)}, respectively.
-In the body of a rule (or on the right-hand side of a condition),
-pooled arguments are expanded to a conjunction
-of the options within the same body (or within the same condition),
-while they are expanded to multiple rules (or multiple literals connected via ``\code{,}'')
-when occurring in the head of a rule (or in front of a condition).
-
-\begin{example}\label{ex:pool}
-The following program makes use of pooling via ``\code{;}'':
-%
-\lstinputlisting[xrightmargin=-5pt]{examples/pool.lp}
-%
-Let us consider the following ground instance of the rule in Line~3:
-\begin{lstlisting}[numbers=none]
- mix((a;b),(1;2)) :- sym(a;b), num(1;2),
-                     not -mix((1;2),(a;b)).
-\end{lstlisting}
-The head atom \code{\pred{mix}(\const{a};\const{b},\const{1};\const{2})} 
-represents four options, obtained combinatorially
-by choosing either \const{a} or \const{b} as the first
-and either \const{1} or \const{2} as the second argument
-of an atom of the predicate \pred{mix}/$2$.
-All four options are represented by four rules,
-one for each of them.
-Unlike this,
-the pooled arguments in the body are expanded to a conjunction.
-Hence, the following expanded rules share the same body but represent
-all options for the head atom:%
-%
-% instantiations of the rule in Line~3 obtained with substitution 
-% $\{\var{A}\mapsto\const{a},\linebreak[1]\var{B}\mapsto\const{b},
-%    \var{M}\mapsto\const{1},\var{N}\mapsto\const{2}\}$.
-% Note that \pred{mix}/$2$ and \pred{-mix}/$2$ each admit four options,
-% corresponding to the cross product of $\{\const{a},\const{b}\}$ substituted
-% for~\var{A} and~\var{B}, respectively, together with $\{\const{1},\const{2}\}$
-% substituted for~\var{M} and~\var{N}.
-% While the instances obtained for \pred{mix}/$2$ give rise to four rules,
-% the instances for \pred{-mix}/$2$ jointly belong to the body.
-% The (repeated) body also contains two instances each of \pred{sym}/$1$ and of \pred{num}/$1$.
-% We thus get the rules:%
-\marginlabel{%
-  The reader can reproduce the (simplified) rules by invoking:\\
-  \code{\mbox{~}clingo --text \attach{examples/pool.lp}{pool.lp}}\\
-  or alternatively:\\
-  \code{\mbox{~}gringo --text \attach{examples/pool.lp}{pool.lp}}}
-%
-\begin{lstlisting}[numbers=none]
-mix(a,1) :- sym(a),sym(b), num(1),num(2), 
-            not -mix(1,a), not -mix(1,b), 
-            not -mix(2,a), not -mix(2,b).
-mix(a,2) :- sym(a),sym(b), num(1),num(2), 
-            not -mix(1,a), not -mix(1,b), 
-            not -mix(2,a), not -mix(2,b).
-mix(b,1) :- sym(a),sym(b), num(1),num(2), 
-            not -mix(1,a), not -mix(1,b), 
-            not -mix(2,a), not -mix(2,b).
-mix(b,2) :- sym(a),sym(b), num(1),num(2), not -mix(1,a),
-            not -mix(1,b), not -mix(2,a), not -mix(2,b).
-\end{lstlisting}
-\eexample
-\end{example}
-
-The pooling via ``\code{;}'' in the above example applied to individual 
-arguments of an atom.
-Alternatively,
-multiple options for lists of arguments can be abbreviated
-by using ``\code{;;}'' instead.
-% This operator does not work on single terms but
-% simply lists arguments of predicates.
-% The rules for expanding the predicates are the same as for the \code{;} operator.
-
-\begin{example}\label{ex:sep}
-The difference between ``\code{;}'' and ``\code{;;}''
-is illustrated by the program:%
-\marginlabel{%
-  The simplified ground program obtained by expanding poolings
-  can be inspected by invoking:\\
-  \code{\mbox{~}clingo --text \attach{examples/pools.lp}{pools.lp}}\\
-  or alternatively:\\
-  \code{\mbox{~}gringo --text \attach{examples/pools.lp}{pools.lp}}}
-%
-\lstinputlisting{examples/pools.lp}
-%
-The expansions of the rules in Line~2 and~3 are as follows: % into the following:
-\begin{lstlisting}[numbers=none]
-q(X,Z) :- p(X,Y), p(Y,Z). 
-r(X,Z) :- p(X,Y,Z), p(X,Y,Z).
-\end{lstlisting}
-% \end{lstlisting}%
-% and the third line into:
-% \begin{lstlisting}[firstnumber=3]
-% p(X,Z) :- p(X,Y,Z), p(X,Y,Z).
-From the facts \code{\pred{p}(\const{1},\const{2}).} and \code{\pred{p}(\const{2},\const{3}).},
-the atom \code{\pred{q}(\const{1},\const{3})} is derived.
-On the other hand,
-no atom of the predicate~\pred{r}/$2$ is derived because
-of the ``wrong'' arity of \code{\pred{p}(\var{X},\var{Y},\var{Z})}.
-% Clearly, the first variant is the desired expansion in this case 
-% to calculate the transitive closure.
-% Both operators have their usages in different scenarios 
-% to keep the encoding more compact and readable.
-\eexample
-\end{example}
-
-Note that pooling via ``\code{;}'' or ``\code{;;}'' is syntactic sugar
-that can be used for writing encodings more compactly and thus easier to read.
-But please keep the difference between ``\code{;}'' and ``\code{;;}'' in mind
-to avoid nasty surprises.
-
 
 \subsubsection{Aggregates}\label{subsec:gringo:aggregate}
 \index{Logic Programs!Atoms!Aggregates}

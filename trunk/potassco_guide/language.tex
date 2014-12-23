@@ -5,7 +5,8 @@ grounder \gringo, combined grounder and solver \clingo,
 and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-It is extended for \clingo\ with a few directives for multi-shot solving in Section~\ref{subsec:lang:clingo}.\comment{RK: actually not true the language is the same: but there are additional control capacities for multi-shot solving provided via the scripting API}
+The control capacities of \clingo\ needed for multi-shot solving are detailed in Section~\ref{subsec:lang:clingo}.
+This includes a few directives and their interplay with a scripting API.
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
 
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
@@ -445,7 +446,7 @@ there no longer is any answer set.
 
 \subsubsection{Disjunction}\label{subsec:gringo:disjunction}
 \index{Logic Programs!Disjunction}
-\tbrc{Expand\dots? R: I would suggest not to. We could add a section about disjunctive modeling later on though?}
+\comment{R: We could add a section about disjunctive modeling later on though?}
 Disjunctive logic programs permit connective~``\code{;}'' between atoms in rule heads.%
 \footnote{Note that disjunction in rule heads was not supported by \clasp\ versions before series~4.}
 \par
@@ -654,10 +655,11 @@ An occurrence of a variable in the scope of an arithmetic function
 only counts as positive in the sense of safety for simple arithmetic terms (cf.\ Page~\pageref{pg:safe}).
 Such simple arithmetic terms are terms with exactly one variable occurrence
 composed of the arithmetic functions \code{+}, \code{-} and \code{*}, and integers.
-If multiplication is used, then the constant part must not evaluate to $0$ for the variable occurrence to be considered positive. 
+Moreover,,
+if multiplication is used, then the constant part must not evaluate to $0$ for the variable occurrence to be considered positive. 
 E.g., the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\const{2}*(\var{X}+\const{1})).}
 is considered safe, but
-the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.\comment{R2T: Is it possible to understand this?}
+the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
 \index{Logic Programs!Safety}%
 \end{note}
 
@@ -744,13 +746,13 @@ In the second case, the prefix has no effect on the meaning of the literal.
 \index{Assignments!Variable Assignment, \code{=}}
 \index{Logic Programs!Atoms!Assignments}
 
-\com{R2T: is this understandable}
 Sometimes, it is desirable to define the value of a variable relative to a term, 
 and to then reuse the variable as a shorthand.
-The built-in predicate~\code{=} admits unifying
-(where simple arithmetic terms are solved; see Section~\ref{subsec:gringo:arith})
-variables on one side with terms on its other side
-in the bodies of rules and on the right-hand sides of conditions
+The built-in predicate~''\code{=}'' admits unifying
+(while solving simple arithmetic terms; see Section~\ref{subsec:gringo:arith})
+variables on one side with terms on its other side,
+whenever the resulting assignment atom occurs
+in the bodies of rules or on the right-hand sides of conditions
 (detailed in Section~\ref{subsec:gringo:condition}).
 
 \begin{example}\label{ex:assign}
@@ -770,8 +772,8 @@ which directly or indirectly depend on~\var{X} and~\var{Y}.
 The values of~\var{X} and~\var{Y} are obtained via atoms of the predicate \pred{num}/$1$.
 The first assignment depends on~\var{X} to provide shortcut~\var{XX}.
 Similarly, the second assignment depends on~\var{Y} to provide shortcut~\var{YY}.
-The third assignment provides variable \var{Y'} because it occurs in a simple arithmetic,
-wich is solved during unification.
+The third assignment provides variable \var{Y'} because it occurs in a simple arithmetic expression,
+winch is solved during unification.
 The last assignment provides no variables and,
 hence, is just a test,
 checking if its left-hand side equals its right-hand side.
@@ -817,7 +819,7 @@ corresponding value given on the right-hand side of~\code{=}.
 If a variable assignment is preceded by \code{not}, 
 no unification happens.
 Instead, the expression $\code{not}~t_1~\code{=}~t_n$ is equivalent to $t_1~\code{!=}~t_n$.
-Like with comparison literals, the prefix \code{not~not} has no effect.
+Like with comparison literals, the prefix ``\code{not~not}'' has no effect.
 Unlike with built-in comparison literals,
 an assignment is considered as
 a positive (body) literal in the sense of safety (cf.\ Page~\pageref{pg:safe}),
@@ -895,19 +897,37 @@ Hence, such a variable must also have another positive occurrence elsewhere.
 \index{Logic Programs!Safety}%
 \end{note}
 
-\subsubsection{Conditions}\label{subsec:gringo:condition}
-\comment{RK: how do we structure the index?}
+\subsubsection{Conditions and Conditional Literals}\label{subsec:gringo:condition}
+\comment{RK: how do we structure the index? T: As you wish :)}
 \index{Aggregates!Conditions}
 \index{Logic Programs!Literals!Conditions}%
 %
-\comment{RK: From now on I will pretend that gringo only outputs a semicolon to terminate a conditional literal}
-%
-Conditions allow for specifying collections of expressions within a single rule or aggregate.
+A \emph{conditional literal} is of form $L:\boldsymbol{L}$,
+where $L$ is a literal and $\boldsymbol{L}$ is a tuple of literals, called \textit{conditions}.
+As in mathematical set notation,
+we use the symbol~``\code{:}'' to formulate conditions.
+Whenever $\boldsymbol{L}$ is empty, we get a regular literal and denote it as usual by $L$.
+
+\begin{example}
+The rule
+\begin{lstlisting}[numbers=none]
+a :- b:c.
+\end{lstlisting}
+yields \code{a} whenever either \code{c} is false (and thus no matter whether \code{b} holds or not) or both \code{b} and \code{c} are true.
+\end{example}
+
+\begin{note}
+Logically, $L$ and $\boldsymbol{L}$ act as head and body,
+which gives the conditional literal $L:\boldsymbol{L}$ the flavor of a nested implication
+(see~\cite{haliya14a} for details).
+\eexample{}
+\end{note}
+
+Together with variables,
+conditions allow for specifying collections of expressions within a single rule or aggregate.
 This is particularly useful for encoding conjunctions (or disjunctions) over
 arbitrarily many ground atoms as well as for the compact representation of aggregates
 (detailed in Section~\ref{subsec:gringo:aggregate}).
-As in mathematical set notation,
-we use the symbol~``\code{:}'' to formulate conditions.
 
 \begin{example}\label{ex:cond}
 The following program uses in Line~5 and~6 conditions in a rule body and in a rule head, respectively:
@@ -984,7 +1004,7 @@ There are three important issues about the usage of conditions:
 Any variable occurring within a condition 
 does not count as a positive occurrence outside the condition
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
-Variables occurring in atoms not subject to any condition are \emph{global}.\comment{T: Reference point, eg rule\dots? R: Should not be necessary, because uniquely determined by ``not subject to a condition''.} 
+Variables occurring in atoms not subject to any condition are \emph{global}. 
 Each variable within an atom in front of a condition 
 must be global or have a positive occurrence on the right-hand side of
 the condition.

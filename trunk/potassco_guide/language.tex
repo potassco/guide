@@ -1260,6 +1260,8 @@ The rule
 { a ; b }.
 \end{lstlisting}
 is expanded by \gringo\ to
+\comment{RK: the example uses not terms but term tuples I would suggest to use $\boldsymbol{t_i}$ above}
+\comment{RK: in the next gringo release I will remove the first one from the rewriting}
 \begin{lstlisting}[numbers=none]
 #count{ 1,0,a : a; 1,0,b : b }.
 \end{lstlisting}  
@@ -1284,7 +1286,7 @@ To see this, observe that the rule
 \begin{lstlisting}[numbers=none]
 {a; not a;not not a}.
 \end{lstlisting}
-is expanded by \gringo\ to\comment{T2R: Was machen wir mit dem \#true?}
+is expanded by \gringo\ to\comment{T2R: Was machen wir mit dem \#true? RK: um deine Frage nicht zu beantworten: gringo shifted alles was kein Atom ist in die Condition}
 \begin{lstlisting}[numbers=none]
 #count{ 1,0,a : a; 
         1,1,a : #true : not a; 
@@ -1298,6 +1300,7 @@ By allowing the omission \const{\#count},
 so-called ``cardinality constraints''~\cite{siniso02a}
 can almost be written in their traditional notation (without keyword, yet different separators),
 as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.  
+\comment{RK: we have to do this for all remarks then ...}
 \eexample
 \end{note}
 

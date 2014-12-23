@@ -853,111 +853,42 @@ Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
 An interval is expanded differently depending on where it occurs.
 In the head of a rule, an interval is expanded conjunctively
-and in the body of a rule disjunctively.
-
-\com{R: I want to replace the obstruse example below with something simpler}
-\begin{example}\label{ex:intsimple}
-Consider the following program:
-\begin{lstlisting}[numbers=none]
-grid(1..3,1..3).
-\end{lstlisting}
-Since the intervals in this rule all occur in the rule head,
-the intervals expand conjunctively,
-resulting in the following set of facts:
-\begin{lstlisting}[numbers=none]
-grid(1,1).  grid(1,2).  grid(1,3).
-grid(2,1).  grid(2,2).  grid(2,3).
-grid(3,1).  grid(3,2).  grid(3,3).
-\end{lstlisting}
-
-Similarly, intervals can be used in the body.
-Typically, this is done in assignments, which expand disjunctively:
-\begin{lstlisting}[numbers=none]
-grid(X,Y) :- X=1..3, Y=1..3.
-\end{lstlisting}
-\eexample
-\end{example}
-The grounding of this rule results in the same set of facts as the previous rule.
-
-
-
+and in the body of a rule, disjunctively.
+So we could have simply used the fact \code{num(1..5).} to represent the five facts.
 
 \begin{example}\label{ex:int}
-The usage of integer intervals is illustrated by the following program:
-%
-\lstinputlisting{examples/int.lp}
-%
-The facts in Line~1 and~2 are expanded as follows:
-%
-\begin{lstlisting}[numbers=none]
-num(1).    num(2).   num(3).   num(4).   num(5).
-top5(5).  top5(6).  top5(7).  top5(8).  top5(9).
-\end{lstlisting}
-%
-By instantiating~\var{X} to~\const{9},
-the rule in Line~4 becomes:
-%
-\begin{lstlisting}[numbers=none]
-top5num(1..5,5..9) :- num(5..9), top5(1..5), top(9).
-\end{lstlisting}
-%
-It is expanded to the cross product
-$(\code{\const{1}..\const{5}})\times
- (\code{\const{5}..\const{9}})\times
- (\code{\const{5}..\const{9}})\times
- (\code{\const{1}..\const{5}})$
-of the four intervals in the rule:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-top5num(1,5) :- num(5), top5(1), top(9).
-top5num(2,5) :- num(5), top5(1), top(9).
-        @\rlap{\vdots}@
-top5num(5,5) :- num(5), top5(1), top(9).
-top5num(1,6) :- num(5), top5(1), top(9).
-top5num(2,6) :- num(5), top5(1), top(9).
-        @\rlap{\vdots}@  @\rlap{\vdots}@
-top5num(5,9) :- num(5), top5(1), top(9).
-top5num(1,5) :- num(6), top5(1), top(9).
-top5num(2,5) :- num(6), top5(1), top(9).
-        @\rlap{\vdots}@  @\rlap{\vdots}@          @\rlap{\vdots}@
-top5num(5,9) :- num(9), top5(1), top(9).
-top5num(1,5) :- num(5), top5(2), top(9).
-top5num(2,5) :- num(5), top5(2), top(9).
-        @\rlap{\vdots}@  @\rlap{\vdots}@          @\rlap{\vdots}@         @\rlap{\vdots}@
-top5num(5,9) :- num(9), top5(4), top(9).
-top5num(1,5) :- num(5), top5(5), top(9).
-top5num(2,5) :- num(5), top5(5), top(9).
-        @\rlap{\vdots}@  @\rlap{\vdots}@
-top5num(5,9) :- num(5), top5(5), top(9).
-top5num(1,5) :- num(6), top5(5), top(9).
-top5num(2,5) :- num(6), top5(5), top(9).
-        @\rlap{\vdots}@  @\rlap{\vdots}@          @\rlap{\vdots}@
-top5num(5,9) :- num(9), top5(5), top(9).
-\end{lstlisting}
-%
-Note that only the rules with
-\code{\pred{num}(\const{5})} and
-\code{\pred{top5}(\const{5})}%
+Consider the following program:
 \marginlabel{%
   The simplified ground program obtained from intervals
   can be inspected by invoking:\\
   \code{\mbox{~}clingo --text \attach{examples/int.lp}{int.lp}}\\
   or alternatively:\\
   \code{\mbox{~}gringo --text \attach{examples/int.lp}{int.lp}}}
-% \marginlabel{%
-%   Again the unique answer set is obtained via call:\\
-%   \code{\mbox{~}gringo --text \attach{examples/int.lp}{int.lp}}}
-%
-in the body actually contribute to the unique answer set
-of the program by deriving all atoms 
-of the form \code{\pred{top5num}($m$,$n$)}
-for $\const{1}\leq m\leq\const{5}$ and $\const{5}\leq n\leq\const{9}$.
+\lstinputlisting{examples/int.lp}
+Because the intervals in the second rule all occur in the rule head,
+the intervals expand conjunctively.
+Furthermore, the two intervals expand into the cross product \code{(1..3)$\times$(1..3)},
+resulting in the following set of facts:
+\begin{lstlisting}[numbers=none]
+grid(1,1).  grid(1,2).  grid(1,3).
+grid(2,1).  grid(2,2).  grid(2,3).
+grid(3,1).  grid(3,2).  grid(3,3).
+\end{lstlisting}
+Similarly, intervals can be used in a rule body.
+Typically, this is done in assignments, which expand disjunctively:
+\begin{lstlisting}[firstnumber=2]
+grid(X,Y) :- X=1..S, Y=1..S, size(S).
+\end{lstlisting}
+This rule expands into the same set of facts as before.
+But intervals in assignments have the advantage that additional constraints can be added.
+For example, one could add the comparison literals \code{X-Y!=0} and \code{X+Y-1!=S}
+to the rule body to exclude the diagonals of the grid.
 \eexample
 \end{example}
 
 \begin{note}
 An occurrence of a variable in the specification of the bounds
-of an integer interval, like~\var{X} in Line~4 of Example~\ref{ex:int}, 
+of an integer interval, like~\var{S} in Line~2 of Example~\ref{ex:int}, 
 does not count as a positive occurrence
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
 Hence, such a variable must also have another positive occurrence elsewhere.

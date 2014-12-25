@@ -1423,38 +1423,22 @@ if space becomes a bottleneck.
 % ``cardinality constraints''~\cite{siniso02a,lparseManual},
 % which are aggregate atoms using counting as their operation.
 
-\REW{After considering the syntax and semantics of ground aggregate atoms,
+\com{R2T: please check. I am particularly unhappy with the $s_1$ and $s_2$ but we do not have a name for these...}
+After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
-Regarding contained variables, an atom occurring in an aggregate behaves
-similar to an atom on the left-hand\comment{R: right-hand} side of a condition
-(cf.\ Section~\ref{subsec:gringo:condition}).
-That is, any variable occurring within an aggregate is a priori local,
-and it must be bound via a variable of the same name that is global
-or that occurs on the right-hand side of a condition
-(with the atom containing the variable in front).
-As with local variables of conditions, global variables take priority
-during grounding, so that the names of local variables must be chosen
-with care to avoid accidental clashes.
-Beyond conditions (which are more or less the natural construct to use
-for instantiating variables within an aggregate),
-classical negation (cf.\ Section~\ref{subsec:gringo:negation}),
-built-in arithmetic functions (cf.\ Section~\ref{subsec:gringo:arith}),
-intervals (cf.\ Section~\ref{subsec:gringo:interval}), and 
-pooling (cf.\ Section~\ref{subsec:gringo:pool})
-can be incorporated as usual within aggregates,
-where intervals and pooling are expanded locally.
-That is, an interval gives rise to multiple aggregate elements connected via~``\code{;}''
-within the same aggregate.
-The same applies to pooling in front of a condition,
-while it turns into a composite condition chained by~``\code{,}'' on the right-hand side.
-Finally, note that aggregates 
-\code{\#sum}, \code{\#count}, \code{\#min}, and \code{\#max}
-without bounds are also permitted on the
-right-hand sides of assignments, but using this feature is only recommended
-for aggregates whose atoms belong to domain predicates because space blow-up
-can become a bottleneck otherwise.
+Regarding contained variables,
+only variable occurences in the terms $s_1$ and $s_2$ give rise to global variables.
+Hence, any variable in an aggregate element must be bound by 
+either a positive global occurrence or
+a variable that occurs positively in its condition $\boldsymbol{L_i}$.
+Variable names in aggregate elements have to be chosen carefully to not accidentally clash with global variables.
+Furthermore, pools and intervals in aggregate elements give rise to multiple aggregate elements;
+very similar to rules.
+Finally, note that aggregates can also be used in assignments,
+but using this feature is only recommended for aggregates whose atoms belong to domain predicates
+because space blow-up quickly becomes a bottleneck with such assignments.
 The following example, making exhaustive use of aggregates,
-nonetheless demonstrates this and other features.}
+nonetheless demonstrates this and other features.
 
 \begin{example}\label{ex:aggr}
 Consider a situation where an informatics student

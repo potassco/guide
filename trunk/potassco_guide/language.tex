@@ -1867,14 +1867,28 @@ The following listing shows schematic example output of \gringo\ when external s
 
 \subsubsection{Integrated Scripting Language}\label{subsec:lang:lua}
 \index{Lua}%
-\comment{T: Move or grounding only?}
-Utilizing the scripting language Lua\footnote{\url{http://www.lua.org}}, 
-\gringo's input language can be enriched by arbitrary arithmetical functions and implicit domains,
-answer sets can be intercepted and for example inserted into a database, or
-interactions between grounding and solving are possible when incrementally solving with \clingo.
-We do not give an introduction to Lua here (there are numerous tutorials on the web), 
+\index{Python}%
+\comment{RK: improve index}
+\comment{T: Move or grounding only? R: grounding-only fits nicely here!}
+Utilizing the scripting languages Lua or Python\footnote{\url{http://lua.org} and \url{http://python.org}},
+\gringo's input language can be enriched by arbitrary functions.
+We focus on functions that are evaluated during during grounding here.
+In Section~\ref{yet-to-come}\comment{TODO},
+we show how to take complete control of the grounding and solving process using the scipting API.
+We do not give an introduction to Lua or Python here (there are numerous tutorials on the web), 
 but give some examples showing the capabilities of this integration.
+In the following, we show code snippets for both scripting languages.
+Note that our precompiled binaries ship with Lua support and can be used to run the Lua examples.
+To enable Python support, \gringo\ and \clingo\ have to be compiled from source (cf. Section~\ref{sec:install}).
 
+\com{RK: split the examples,
+Outline:
+simple arithmetic functions (gcd example is nice),
+term inspection/construction (give table of available functions, possible examples: packing/unpacking of tuples, string concatenation, mention reference doc of module here),
+inbuilt comparison function (for min/max function),
+stress deterministic behavior of functions (uid example),
+returning multiple values (range example, mention fetch instance from database),
+errors in functions (eg. calling gcd with non-numeric arguments)}
 \begin{example}
 The first example shows basic Lua usage:
 \lstinputlisting{examples/luaf.lp}

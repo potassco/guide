@@ -1865,52 +1865,92 @@ The following listing shows schematic example output of \gringo\ when external s
 \eexample
 \end{example}
 
-\subsubsection{Integrated Scripting Language}\label{subsec:lang:lua}
+\subsubsection{External Functions}\label{subsec:lang:extfun}
+\index{Terms!External Functions}%
+\index{External Functions}%
 \index{Lua}%
 \index{Python}%
-\comment{RK: improve index}
 \comment{T: Move or grounding only? R: grounding-only fits nicely here!}
 Utilizing the scripting languages Lua or Python\footnote{\url{http://lua.org} and \url{http://python.org}},
 \gringo's input language can be enriched by arbitrary functions.
 We focus on functions that are evaluated during during grounding here.
 In Section~\ref{yet-to-come}\comment{TODO},
-we show how to take complete control of the grounding and solving process using the scipting API.
+we show how to take complete control of the grounding and solving process using the scripting API.
 We do not give an introduction to Lua or Python here (there are numerous tutorials on the web), 
 but give some examples showing the capabilities of this integration.
 In the following, we show code snippets for both scripting languages.
 Note that our precompiled binaries ship with Lua support and can be used to run the Lua examples.
 To enable Python support, \gringo\ and \clingo\ have to be compiled from source (cf. Section~\ref{sec:install}).
-
-\com{RK: split the examples,
-Outline:
-simple arithmetic functions (gcd example is nice),
-term inspection/construction (give table of available functions, possible examples: packing/unpacking of tuples, string concatenation, mention reference doc of module here),
-inbuilt comparison function (for min/max function),
-stress deterministic behavior of functions (uid example),
-returning multiple values (range example, mention fetch instance from database),
-errors in functions (eg. calling gcd with non-numeric arguments)}
 \begin{example}
-The first example shows basic Lua usage:
-\lstinputlisting{examples/luaf.lp}
+The first example shows how to add a simple arithmetic function:
+\\[-8pt] % is there a better way to do this?
+\begin{minipage}[t]{0.51\textwidth}
+\lstinputlisting[language={[5.1]Lua}]{examples/gcd-lua.lp}
+\end{minipage}
+\begin{minipage}[t]{0.51\textwidth}
+\lstinputlisting[language=python]{examples/gcd-py.lp}
+\end{minipage}\\
+In Line~3 we add a function that calculates the greatest common divisor of two numbers.
+Integers from a logic program are directly mapped to their Lua and Python equivalents
+and can be returned from the function.
+The \code{gcd} function can then be used in a logic program:
+\lstinputlisting{examples/gcd.lp}
+%
 \marginlabel{%
 To compute the unique answer set, invoke:\\
 \code{%
-\mbox{~}gringo --text \attach{examples/luaf.lp}{luaf.lp}}
-}%
-In Line 3 we add a function that calculates the greatest common divisor of two numbers.
-This function is called in Line 20 and the result stored in predicate \code{gcd}/$3$.
-Note that Lua function calls look like function symbols but are preceded by ``\code{@}''. 
-\index{Terms!Lua Function Call}%
-\index{Lua!Function Call}%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/gcd-lua.lp}{gcd-lua.lp} \attach{examples/gcd.lp}{gcd.lp}}\\
+or:\\
+\code{%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/gcd-lua.lp}{gcd-py.lp} \attach{examples/gcd.lp}{gcd.lp}}
+}
+%
+This function is called in Line~3 and the result stored in predicate \code{gcd}/$3$.
+Note that external function calls look like function symbols but are preceded by ``\code{@}''. 
+\index{External Functions!Calling}%
 Regarding binding of variables, the same restrictions as with arithmetic in Section \ref{subsec:gringo:arith} apply.
+\end{example}
 
-In Line 9 we add a function that emulates a range term.
-It returns a table containing all numbers in the interval $[\code{a},\code{b}]$.
-\index{Lua!Term Insertion}%
-The values in this table are then successively inserted for the call \code{\@rng(X,Y)}.
-In fact, this function exactly behaves like a range term.
+\begin{example}
+This example shows how to return multiple values from a function:
+\\[-8pt] % is there a better way to do this?
+\begin{minipage}[t]{0.53\textwidth}
+\lstinputlisting[language={[5.1]Lua}]{examples/rng-lua.lp}
+\end{minipage}
+\begin{minipage}[t]{0.49\textwidth}
+\lstinputlisting[language=python]{examples/rng-py.lp}
+\end{minipage}\\
+In Line~3 we add a function that emulates an interval.
+Instead of just returning one number,
+this functions returns a table of numbers in Lua and a list of numbers in Python, respectively.
+The \code{rng} function can then be used in a logic program:
+\lstinputlisting{examples/rng.lp}
+%
+\marginlabel{%
+To compute the unique answer set, invoke:\\
+\code{%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/rng-lua.lp}{rng-lua.lp} \attach{examples/rng.lp}{rng.lp}}\\
+or:\\
+\code{%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/rng-lua.lp}{rng-py.lp} \attach{examples/rng.lp}{rng.lp}}
+}
+%
+This function is called in Line~3 and the result stored in predicate \code{rng}/$3$.
+The values in the table or list returned from a call to \code{\@rng(X,Y)} are then successively inserted.
+In fact, this function behaves exactly like the interval~\code{X..Y}.
+\index{External Functions!Term Insertion}
+
+An interesting use case for returning multiple values is to pull whole 
+instances from external sources, like for example a database or some text file not in fact format.
 \eexample
 \end{example}
+
+\com{RK: split the examples,
+Outline:
+term inspection/construction (give table of available functions, possible examples: packing/unpacking of tuples, string concatenation, mention reference doc of module here),
+inbuilt comparison function (for min/max function),
+stress deterministic behavior of functions (uid example),
+errors in functions (eg. calling gcd with non-numeric arguments)}
 
 \begin{table}[ht]
 \centering
@@ -1943,7 +1983,6 @@ In fact, this function exactly behaves like a range term.
 \caption{The Val meta-table.\label{tab:val}}
 \end{table}
 
-
 \begin{example}\label{ex:lua:values}
 The second example shows how to create ground terms from within Lua:
 \lstinputlisting{examples/luav.lp}
@@ -1965,79 +2004,6 @@ Finally, note that \gringo\ integers and strings are directly mapped
 to the respective Lua types.
 \eexample
 \end{example}
-
-\begin{table}[ht]
-\index{Lua!Assignment Metatable}%
-\centering
-\begin{tabular}{||l|p{6cm}||}
- \hline 
- \code{Assignment.begin(n,a)} & Starts iteration over an atom with name~\code{n} with arity~\code{a}. \\
- \hline 
- \code{Assignment.next()}     & Advances to the next atom in the assignment and returns false if there is none. \\
- \hline 
- \code{Assignment.args()}     & The arguments of the current atom. \\
- \hline 
- \code{Assignment.isTrue()}   & The current atom is true. \\
- \hline 
- \code{Assignment.isFalse()}  & The current atom is false. \\
- \hline 
- \code{Assignment.isUndef()}  & The current atom is undefined. \\
- \hline 
- \code{Assignment.level()}    & The decision level on which the current atom has been assigned. \\
- \hline
-\end{tabular}
-\caption{The Assignment meta-table.\label{tab:assignment}}
-\end{table}
-
-\begin{example}
-The next example show some advanced usage also accessing \clasp's truth assignment:
-\lstinputlisting{examples/sql.lp}
-This example creates a database connection using SQLite\footnote{\url{http://www.sqlite.org/}}.
-The database connection is created Lines 3-4 using LuaSQL\footnote{\url{http://www.keplerproject.org/luasql/}}.
-Initially, a new table \code{test} is created if it does not already exists (Lines 5-7).
-There are two functions to access this table.
-The first function \code{query} in Line 9 selects everything from the table and 
-returns it in form of a Lua table, which is then used in the logic program
-to provide new instantiations of~\code{p}/$2$ in Line 42.
-The second function \code{insert} is a helper function that expects a predicate name
-and then inspects \clingo's possibly partial assignment and
-inserts all true atoms into the database.
-It makes use of the \code{Assignment} meta-table.
-Next, note the three functions
-\code{onBeginStep},
-\code{onModel}, and
-\code{onEndStep} 
-in Line 35-37.
-The first function is called directly before solving but after preprocessing.
-At this point grounded facts are accessible via the \code{Assignment} meta-table (Table \ref{tab:assignment}),
-we call \code{insert} to insert all ground instantiation of \code{p}/$2$ into the \code{test} table.
-The same is done in the \code{onModel} function whenever a model is found.
-At this point \clingo's assignment is total and 
-we insert all instantiation of \code{q}/2 into the database that are contained in the answer set.
-Finally, in function \code{onEndStep} we print the number of tuples inserted during grounding and after solving.
-
-\marginlabel{%
-Try to invoke this program multiple times using:\\
-\code{%
-\mbox{~}clingo \attach{examples/sql.lp}{sql.lp}}
-}
-Note that the values from the answer set are inserted into the database.
-In fact the output of the program changes when it is consecutively called.
-Even more non-determinism can be added by using the option \code{--rand-freq=1.0}
-to induce 100 percent random decisions.
-%\com{Admittedly, this example is somewhat spacy. Better ideas?}
-\eexample
-\end{example}
-
-\begin{note}
-	that the binary packages provided via \url{http://potassco.sourceforge.net} ship with built-in Lua and SQLite3 support.
-	To enable further databases interfaces,	\gringo\ has to be compiled from source. 
-	It can then be configured to use the Lua scripting language provided by the system. 
-	Many distributions ship with Lua packages providing access to MySQL, SQLite, PosgreSQL or Oracle databases.
-	If you need help, contact us using our mailing list \url{mailto://potassco-announce@lists.sourceforge.net}.
-\end{note}
-
-
 
 \subsection{Input Language of \clingo}\label{subsec:lang:clingo}
 \index{Incremental Grounding}%

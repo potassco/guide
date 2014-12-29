@@ -1952,6 +1952,16 @@ inbuilt comparison function (for min/max function),
 stress deterministic behavior of functions (uid example),
 errors in functions (eg. calling gcd with non-numeric arguments)}
 
+\begin{itemize}
+  \item Numbers - mapped to lua numbers, to python integers
+  \item Strings - mapped to lua and python strings
+  \item Id      - mapped to Id objects that have a name() method to obtain its name
+  \item Tuple (lua only) - tuples are mapped to python tuples, in lua there is no such thing as a tuple so there is a Tuple object having method args() to obtain a table of arguments of the tuple
+  \item Fun      - mapped to Fun objects having method args() and name()
+  \item Sup, Inf - mapped to Sup and Id constants (is or == can be used)
+  \item 
+\end{itemize}
+
 \begin{table}[ht]
 \centering
 \index{Lua!Val Metatable}%

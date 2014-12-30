@@ -1116,7 +1116,9 @@ that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 Finally, 
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
-Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$' (or even both) can be omitted;
+Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$'%
+\comment{RK: Martin always used double quotes for this stuff (and he put punctuation in the quotes)}
+(or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to ``\code{<=}'' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
 respectively.
 
@@ -1947,73 +1949,121 @@ instances from external sources, like for example a database or some text file n
 
 \com{RK: split the examples,
 Outline:
-term inspection/construction (give table of available functions, possible examples: packing/unpacking of tuples, string concatenation, mention reference doc of module here),
-inbuilt comparison function (for min/max function),
 stress deterministic behavior of functions (uid example),
 errors in functions (eg. calling gcd with non-numeric arguments)}
 
-\begin{itemize}
-  \item Numbers - mapped to lua numbers, to python integers
-  \item Strings - mapped to lua and python strings
-  \item Id      - mapped to Id objects that have a name() method to obtain its name
-  \item Tuple (lua only) - tuples are mapped to python tuples, in lua there is no such thing as a tuple so there is a Tuple object having method args() to obtain a table of arguments of the tuple
-  \item Fun      - mapped to Fun objects having method args() and name()
-  \item Sup, Inf - mapped to Sup and Id constants (is or == can be used)
-  \item 
-\end{itemize}
+As we have seen in the previous example,
+numbers are mapped to their Lua and Python equivalents.
+The same holds for quoted strings.
+To capture constants and functions,
+there are the \code{Id} and \code{Fun} classes, respectively, in both Python and Lua.%
+\footnote{Strictly speaking there are no classes in Lua, the Userdata data type together with a metatable is used to emulate classes.}
+Both objects have a \code{name()} method to access the string representation of the constant and the name of the function, respectively.
+A \code{Fun} object has an additional function \code{args()} returning the table of arguments and list of arguments in Lua and Python, respectively.
+In Python tuples are mapped to Python's tuple data structure.
+And because there are no dedicated tuples in Lua, tuple terms are mapped to \code{Fun} objects
+that have an empty name in Lua.
+Finally, the terms \code{\#sup} and \code{\#inf} are mapped to the constants \code{Sup} and \code{Inf}.
 
-\begin{table}[ht]
-\centering
-\index{Lua!Val Metatable}%
-\begin{tabular}{||l|l||}
- \hline 
- \code{Val.NUM}    & Type identifier for \gringo\ numbers.\\
- \hline 
- \code{Val.ID}     & Type identifier for \gringo\ constants.\\
- \hline 
- \code{Val.FUNC}   & Type identifier for function symbols.\\
- \hline 
- \code{Val.STRING} & Type identifier for \gringo\ strings.\\
- \hline 
- \code{Val.SUP}    & Type identifier for \gringo's \code{\#sup}.\\
- \hline 
- \code{Val.INF}    & Type identifier for \gringo's \code{\#inf}.\\
- \hline 
- \code{Val.new(type[,value][,args])}  & Creates new ground terms (see Example \ref{ex:lua:values}).\\
- \hline 
- \code{Val.cmp(a,b)}  & Compares two ground \gringo\ terms. \\
- \hline 
- \code{Val.type(a)} & Returns the type of a term. \\
- \hline 
- \code{Val.name(x)} & Returns the name of function symbol or constant \code{x} . \\
- \hline 
- \code{Val.args(f)} & Returns the arguments of function symbol \code{f} \\
- \hline
-\end{tabular}
-\caption{The Val meta-table.\label{tab:val}}
-\end{table}
+To construct terms from within the scripting language,
+the \code{Id} and \code{Fun} classes have a constructor to create objects (in Lua it is a global function).
+To create an object representing a constant, 
+there is the \code{Id(name)} constructor,
+which  simply takes the string representation of the constant as argument.
+Similarly for functions,
+there is the \code{Fun(name,args)} constructor,
+taking a string representation of the name of the function
+together with a sequence or table of terms representing the arguments of the function
+as arguments.
+Furthermore, there is the global function \code{Tuple(args)} in Lua,
+which is a shortcut for \code{Fun("",args)},
+to create an object representing a tuple.
+The remaining terms,
+which have equivalents in the scripting languages,
+use the standard constructors or literals available in Lua and Python.
 
-\begin{example}\label{ex:lua:values}
-The second example shows how to create ground terms from within Lua:
-\lstinputlisting{examples/luav.lp}
+\begin{example}
+This example shows how to inspect and create terms:
+\\[-8pt] % is there a better way to do this?
+\begin{minipage}[t]{0.57\textwidth}
+\lstinputlisting[language={[5.1]Lua}]{examples/term-lua.lp}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+\lstinputlisting[language=python]{examples/term-py.lp}
+\end{minipage}\\
+In Line~5 we add function~\code{g},
+which takes a constant and a tuple as arguments,
+and returns a function with the name of the constant and the tuple as arguments.
+Note the different handling of tuples in Lua and Python.
+Whereas in Lua tuples are represented using \code{Fun} objects,
+in Python the tuple can directly be passed to the \code{Fun} constructor.
+\lstinputlisting{examples/term.lp}
+%
 \marginlabel{%
 To compute the unique answer set, invoke:\\
 \code{%
-\mbox{~}gringo --text \attach{examples/luav.lp}{luav.lp}}
-}%
-Function \code{f} in Line 2 returns a tuple 
-whose first member is a string indicating the type of the argument 
-and the second reconstructs the value passed to function \code{f}.
-Note that in Line 4, 6, 9, 11 and 13 the function \code{Val.new} is called.
-Its first argument indicates that a function symbol is to be created and 
-the second argument passes the arguments of the function symbol.
-We do not give a name for the function symbol,
-thus a tuple is created (this is equivalent to passing the empty string as name).
-Similarly, \gringo's other in-built ground terms are created.
-Finally, note that \gringo\ integers and strings are directly mapped 
-to the respective Lua types.
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/term-lua.lp}{term-lua.lp} \attach{examples/term.lp}{term.lp}}\\
+or:\\
+\code{%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/term-lua.lp}{term-py.lp} \attach{examples/term.lp}{term.lp}}
+}
+%
+The function is called in Line~3 and the result stored in predicate \code{g}/$3$.
+Using this scheme, 
+new terms can be created during grounding
+that cannot be constructed by means of plain ASP.
+Another interesting application might be string concatenation.
 \eexample
 \end{example}
+
+The last function of interest here is the \code{cmp(a,b)} function,
+which compares two terms \code{a} and \code{b} 
+as \gringo's built-in comparison predicates (cf. Section \ref{subsec:gringo:comp}) would do.
+It returns a negative integer if \code{a < b}, zero if \code{a = b}, and a positive integer if \code{a > b}.
+A complete reference for the Python scripting API is available at: \url{http://potassco.sourceforge.net/gringo.html}
+
+\begin{example}
+This example shows how to implement the \code{max} function:
+\\[-8pt] % is there a better way to do this?
+\begin{minipage}[t]{0.57\textwidth}
+\lstinputlisting[language={[5.1]Lua}]{examples/cmp-lua.lp}
+\end{minipage}
+\begin{minipage}[t]{0.45\textwidth}
+\lstinputlisting[language=python]{examples/cmp-py.lp}
+\end{minipage}\\
+In Line~5 we add function~\code{max},
+which takes two terms as arguments
+and returns the maximum of both.
+We are using the \code{cmp} here to compare terms. 
+We cannot use the \code{>} relation here
+because it cannot compare objects of different types,
+e.g., integers and strings.
+\lstinputlisting{examples/cmp.lp}
+%
+\marginlabel{%
+To compute the unique answer set, invoke:\\
+\code{%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/cmp-lua.lp}{cmp-lua.lp} \attach{examples/cmp.lp}{cmp.lp}}\\
+or:\\
+\code{%
+\mbox{~}gringo --text\newline\mbox{~}\attach{examples/cmp-lua.lp}{cmp-py.lp} \attach{examples/cmp.lp}{cmp.lp}}
+}
+%
+The function is called in Line~3 and the result stored in predicate \code{max}/$3$.
+Note that the maximum of constant \code{a} and integer \code{3} is \code{a}.
+\eexample
+\end{example}
+
+\begin{note}~
+\begin{enumerate}
+\item The grounder assumes that all external functions are deterministic.
+That is, if a functions is called during grounding multiple times with the same arguments,
+then it should always return the same values.
+Adding non-deterministic functions can lead to undesired results.
+\item If an error occurs during the evaluation of an external function,
+then a warning is printed and the current substitution is thrown away.
+\end{enumerate}
+\end{note}
 
 \subsection{Input Language of \clingo}\label{subsec:lang:clingo}
 \index{Incremental Grounding}%

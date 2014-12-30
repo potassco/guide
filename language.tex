@@ -1883,7 +1883,7 @@ but give some examples showing the capabilities of this integration.
 In the following, we show code snippets for both scripting languages.
 Note that our precompiled binaries ship with Lua support and can be used to run the Lua examples.
 To enable Python support, \gringo\ and \clingo\ have to be compiled from source (cf. Section~\ref{sec:install}).
-\begin{example}
+\begin{example}\label{ex:gcd}
 The first example shows how to add a simple arithmetic function:
 \\[-8pt] % is there a better way to do this?
 \begin{minipage}[t]{0.51\textwidth}
@@ -1946,11 +1946,6 @@ An interesting use case for returning multiple values is to pull whole
 instances from external sources, like for example a database or some text file not in fact format.
 \eexample
 \end{example}
-
-\com{RK: split the examples,
-Outline:
-stress deterministic behavior of functions (uid example),
-errors in functions (eg. calling gcd with non-numeric arguments)}
 
 As we have seen in the previous example,
 numbers are mapped to their Lua and Python equivalents.
@@ -2062,6 +2057,7 @@ then it should always return the same values.
 Adding non-deterministic functions can lead to undesired results.
 \item If an error occurs during the evaluation of an external function,
 then a warning is printed and the current substitution is thrown away.
+For example, when calling the~\code{gcd} function in Example~\ref{ex:gcd} with non-integer arguments.
 \end{enumerate}
 \end{note}
 

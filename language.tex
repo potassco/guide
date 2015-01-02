@@ -1745,35 +1745,76 @@ comment over multiple lines
 @\textit{logic program}@
 \end{lstlisting}
 
-\paragraph{Projecting Predicates.}
-\index{Meta-Statements!Hiding Predicates, \code{\#show}, \code{\#hide}}%
-\tbrc{T: Help, Roland :)}
+\paragraph{Show Statements.}
+\index{Meta-Statements!Show Statements, \code{\#show}}%
 Sometimes, one may be interested only in a subset of the atoms belonging
 to an answer set.
-In order to suppress the atoms of ``irrelevant'' predicates from the output,
+In order to suppress the atoms of ``irrelevant'' predicates from the output
+or even to show arbitrary terms,
 the \code{\#show} declarative can be used.
-The meanings of the following statements are indicated via accompanying comments:
+There are three different statements:
 %
-\begin{lstlisting}[numbers=none]
-#show.     % Suppress all atoms in output
-\end{lstlisting}\comment{RK: I would suggest not to start with this one because it should be rarely necessary in practice.}
+\par
+\medskip
+\begin{tabular}{rl}
+\textbf{Show atoms:}   & $\code{\#show}~p\code{/}n\code{.}$
+\\
+\textbf{Show terms:}   & $\code{\#show}~t_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
+\\
+\textbf{Show nothing:} & \code{\#show.}
+\end{tabular}
+\par
+\medskip
+\noindent
+%
+The first~\code{\#show} statement is the most commonly used form.
+Whenever there is at least one statement of this form, all atoms are hidden,
+except those over predicates~$p/n$ given by the respective~\code{\#show} statements.
+The second form can be used to show arbitrary terms.
+The term~$t_0$ is part of the output if the literals in the condition after the~\code{:} hold.
+Unlike the previous form,
+this statement does not automatically hide all atoms.
+To hide all atoms in this case and only show selected terms,
+the last statement (mnemonic: show nothing) can be added to suppress all atoms in the output.
 
-In order to selectively include the atoms of a certain predicate in the output,
-one may use the \code{\#show} declarative.
-Here are some examples:
+\begin{example}
+This example depicts the standard use case to selectively show atoms:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/showa.lp}{showa.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/showa.lp}{showa.lp} \textbackslash \\\mbox{~}| clasp 0}\\
+}
+\lstinputlisting{examples/showa.lp}
+Only atoms over $a/0$ and $q/1$ appear in the output here.
+\eexample
+\end{example}
+
+\begin{example}
+This example depicts how to show terms:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/showt.lp}{showt.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/showt.lp}{showt.lp} \textbackslash \\\mbox{~}| clasp 0}\\
+}
 %
-\begin{lstlisting}[numbers=none]
-#show p/3. % Include all atoms of predicate p/3 in output
-#show p(X,Y) : q(X). % Include p/2 if the condition holds
-#show X : p(X,X). % Include terms for which p/2 is reflexive 
-\end{lstlisting}
+\lstinputlisting{examples/showt.lp}
 %
-Note that for the conditionals on the right-hand side, 
-the same conditions as described in Section \ref{subsec:gringo:condition} apply.
-%
-A popular usage of \code{\#show} is to hide all predicates
-via ``\code{\#show.}'' and to selectively re-add atoms of certain predicates
-\code{p/$n$} to the output via ``\code{\#show p/$n$.}''
+When running this example,
+the same output as in the previous example is produced.
+This feature is especially handy when applying meta-programming techniques (c.f. Section~\ref{section-yet-to-come})\comment{RK: todo add ref}
+where the signatures of the reified atoms are unknown and the \code{holds($\cdot$)} atoms would just clutter the output.
+\eexample
+\end{example}
+
+\begin{note}
+The second form of \code{\#show} statements to show terms may contain variables.
+Regarding safety, it behaves similarly to a rule,
+where the term $t_0$ takes the role of the head
+and the condition after the colon the role of the body.
+\index{Logic Programs!Safety}
+\end{note}
 
 \paragraph{Constant Replacement.}
 \index{Meta-Statements!Constant Replacement, \code{\#const}}%

@@ -1816,8 +1816,8 @@ and the condition after the colon the role of the body.
 \index{Logic Programs!Safety}
 \end{note}
 
-\paragraph{Constant Replacement.}
-\index{Meta-Statements!Constant Replacement, \code{\#const}}%
+\paragraph{Const Statements.}
+\index{Meta-Statements!Const Statements, \code{\#const}}%
 Constants appearing in a logic program may actually be placeholders for
 concrete values to be provided by a user.
 An example of this is given in Section~\ref{subsec:ex:color}.
@@ -1826,19 +1826,25 @@ one may define a default value to be inserted for a constant.
 Such a default value can still be overridden via command line option
 \code{--const} (cf.\ Section~\ref{subsec:opt:gringo}).
 Syntactically, \code{\#const} must be followed by an assignment having
-a (symbolic) constant on the left-hand side and a term on the right-hand side.
-Some exemplary constant declarations are:
-%
-\begin{lstlisting}[numbers=none]
-#const x = 42.
-#const y = f(x,h).
-\end{lstlisting}
+a (symbolic) constant on the left-hand side and a term without variables, pools, intervals on the right-hand side.
 
-\begin{note}
-that (for efficiency reasons) constant declarations are order dependent.
-In the example above \code{x} would be replaced by \code{42}
-but when reversing the directives this would no longer be the case.\comment{RK: not true anymore}
-\end{note}
+\begin{example}
+This example is about using the grounder as a simple calculator:
+%
+\lstinputlisting{examples/const.lp}
+%
+Try running this example using the following calls:
+\begin{lstlisting}[numbers=none,escapeinside={\$}{\$}]
+ gringo --text $\attach{examples/const.lp}{const.lp}$
+ gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6   -c h=6
+ gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6+6 -c y=6
+ gringo --text $\attach{examples/const.lp}{const.lp}$ -c x="6+6*6"
+\end{lstlisting}
+Note that to prevent the shell from expanding the \code{*} in the last call 
+or from interpreting parentheses in functions,
+quotes have to be added.
+\eexample
+\end{example}
 
 \paragraph{External Statements.}
 \index{Meta-Statements!External Statements, \code{\#external}}%

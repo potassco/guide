@@ -655,7 +655,7 @@ An occurrence of a variable in the scope of an arithmetic function
 only counts as positive in the sense of safety for simple arithmetic terms (cf.\ Page~\pageref{pg:safe}).
 Such simple arithmetic terms are terms with exactly one variable occurrence
 composed of the arithmetic functions \code{+}, \code{-} and \code{*}, and integers.
-Moreover,,
+Moreover,
 if multiplication is used, then the constant part must not evaluate to $0$ for the variable occurrence to be considered positive. 
 E.g., the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\const{2}*(\var{X}+\const{1})).}
 is considered safe, but

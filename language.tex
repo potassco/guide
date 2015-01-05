@@ -5,8 +5,6 @@ grounder \gringo, combined grounder and solver \clingo,
 and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
-The control capacities of \clingo\ needed for multi-shot solving are detailed in Section~\ref{subsec:lang:clingo}.
-This includes a few directives and their interplay with a scripting API.
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
 
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
@@ -446,7 +444,6 @@ there no longer is any answer set.
 
 \subsubsection{Disjunction}\label{subsec:gringo:disjunction}
 \index{Logic Programs!Disjunction}
-\comment{R: We could add a section about disjunctive modeling later on though?}
 Disjunctive logic programs permit connective~``\code{;}'' between atoms in rule heads.%
 \footnote{Note that disjunction in rule heads was not supported by \clasp\ versions before series~4.}
 \par
@@ -945,7 +942,6 @@ As in Example~\ref{ex:int}, additional constraints involving~\code{X} and~\code{
 \end{example}
 
 \subsubsection{Conditions and Conditional Literals}\label{subsec:gringo:condition}
-\comment{RK: how do we structure the index? T: As you wish :) RK: better discuss this live some time :)}
 \index{Aggregates!Conditions}
 \index{Logic Programs!Literals!Conditions}%
 %
@@ -1117,7 +1113,6 @@ Finally,
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
 Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$'%
-\comment{RK: Martin always used double quotes for this stuff (and he put punctuation in the quotes)}
 (or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to ``\code{<=}'' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
 respectively.
@@ -1227,7 +1222,6 @@ yielding
 %
 Unlike with body aggregates, only singular head aggregates are supported.
 
-\comment{RK: the translation below only makes sense in the propositional case}
 There are some shorthands that can be used in the syntactic representation of aggregates.
 %
 The expression
@@ -1286,15 +1280,15 @@ and the third reproduces the atom as a term in order to make the whole term tupl
 
 To see this, observe that the rule
 \begin{lstlisting}[numbers=none]
-{a; not a;not not a}.
+:- {a; not b; not not c} > 0.
 \end{lstlisting}
-is expanded by \gringo\ to\comment{T2R: Was machen wir mit dem \#true? RK: um deine Frage nicht zu beantworten: gringo shifted alles was kein Atom ist in die Condition}
+is expanded by \gringo\ to
 \begin{lstlisting}[numbers=none]
-#count{ 1,0,a : a; 
-        1,1,a : #true : not a; 
-        1,2,a : #true : not not a }.
+:- #count{ 0,a : a; 
+           1,b : not b; 
+           2,c : not not c } > 0.
 \end{lstlisting}
-\eexample
+There you have it! \eexample
 \end{example}
 
 \begin{note}
@@ -1302,7 +1296,6 @@ By allowing the omission of \const{\#count},
 so-called ``cardinality constraints''~\cite{siniso02a}
 can almost be written in their traditional notation (without keyword, yet different separators),
 as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.  
-\comment{RK: we have to do this for all remarks then ...}
 \eexample
 \end{note}
 
@@ -1476,12 +1469,15 @@ yields the following ground rule:%
   The full ground program is obtained by invoking:\\
   \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}
 %
-\comment{RK: what is outputted by gringo looks actually quite different}
 \begin{lstlisting}[numbers=none]
-3 <= #count { 1 : enroll(1); 2 : enroll(2);
-              3 : enroll(3); 4 : enroll(4); 
-              5 : enroll(5); 6 : enroll(6);
-              7 : enroll(7); 8 : enroll(8) } <= 6.
+3 <= #count { 0,enroll(1) : enroll(1); 
+              0,enroll(2) : enroll(2);
+              0,enroll(3) : enroll(3); 
+              0,enroll(4) : enroll(4); 
+              0,enroll(5) : enroll(5); 
+              0,enroll(6) : enroll(6);
+              0,enroll(7) : enroll(7); 
+              0,enroll(8) : enroll(8) } <= 6.
 \end{lstlisting}
 %
 Observe that an instance of atom~\code{\const{enroll}(\var{C})} is included for each
@@ -1489,7 +1485,6 @@ instantiation of~\var{C} such that \code{\const{course}(\var{C},\var{S},\var{H})
 holds for some values of~\var{S} and~\var{H}.
 Duplicates resulting from distinct values for~\var{S} are removed, thus,
 obtaining the above set of ground atoms.
-\footnote{Also, note the difference to \lstinline{3 \{  enroll(C) : course(C,_,_) \} 6.} being always false.}\comment{RK: does the footnote make any sense?}
 
 The next constraints of the student regard the subject areas of enrolled courses:
 %
@@ -1499,6 +1494,7 @@ Each of the three integrity constraints above contains a cardinality constraint.
 Recall that aggregates operate on sets and thus duplicates are removed;
 hence we use terms tuples to establish a multiset.
 Thus, the integrity constraint in Line~10 is instantiated as follows:
+\footnote{Note that \gringo's shortcut expansion of \lstinline{:- \{ course(C,S,H) : enroll(C) \} 10.} is equivalent to the rule in Line~10.}
 %
 % \begin{lstlisting}[firstnumber=10,stepnumber=10]
 % :- [ enroll(1) = 1, enroll(1) = 1, 
@@ -1567,7 +1563,7 @@ we obtain the following ground instance of the integrity constraint in Line~15:
 The above integrity constraint states that the \const{\#sum} of contact hours per week
 must lie in-between~\const{18} and~\const{20}.
 Note that the \const{\#min} and \const{\#max} aggregates in Line~16 and~17, respectively,
-work on the same (multi)set \comment{RK: multiset?} of weighted literals as in Line~15.
+work on the same set of aggregate elements as in Line~15.
 While the integrity constraint in Line~16 stipulates that any course to enroll
 must include more than~\const{2} contact hours,
 the one in Line~17 prohibits enrolling for courses of~\const{6} or more contact hours.
@@ -1642,7 +1638,7 @@ in it must also occur in an atom \REW{(over a domain or built-in predicate)}
 on the right-hand side of a condition (cf.\ Section~\ref{subsec:gringo:condition})
 within the optimization statement.
 As with aggregates, duplicate terms are removed;
-additionally, priorities can be associated with each weighted literal.
+additionally, priorities can be associated with each weighted literal.\comment{Käse}
 A (ground) optimize statement has the form: 
 \index{Statements!Optimize Statements!\#minimize}%
 \index{Statements!Optimize Statements!\#maximize}%
@@ -1856,7 +1852,7 @@ even if they do not appear in the head of any rule.
 Although this does not affect the semantics of a logic program,
 we will see an effect in the text output of the example in the following.
 Their main use case is to implement extensions to plain ASP solving,
-like incremental solving detailed in Section~\ref{subsec:lang:clingo}.
+like incremental solving detailed in Section~\ref{sec:multi}.
 An external statement has the following form:
 %
 \par
@@ -1916,11 +1912,10 @@ and the condition after the colon the role of the body.
 \index{External Functions}%
 \index{Lua}%
 \index{Python}%
-\comment{T: Move or grounding only? R: grounding-only fits nicely here!}
 Utilizing the scripting languages Lua or Python\footnote{\url{http://lua.org} and \url{http://python.org}},
 \gringo's input language can be enriched by arbitrary functions.
 We focus on functions that are evaluated during during grounding here.
-In Section~\ref{yet-to-come}\comment{TODO},
+In Section~\ref{sec:multi},
 we show how to take complete control of the grounding and solving process using the scripting API.
 We do not give an introduction to Lua or Python here (there are numerous tutorials on the web), 
 but give some examples showing the capabilities of this integration.
@@ -2105,9 +2100,6 @@ For example, when calling the~\code{gcd} function in Example~\ref{ex:gcd} with n
 \end{enumerate}
 \end{note}
 
-\subsection{Input Language of \clingo}\label{subsec:lang:clingo}
-\index{Incremental Grounding}%
-\tbf
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
 Solver \clasp~\cite{gekanesc07b} works on logic programs in \smodels\ format~\cite{lparseManual}.

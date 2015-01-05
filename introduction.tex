@@ -81,8 +81,6 @@ The main part of this document, Section~\ref{sec:language},
 is dedicated to the input languages of our tools,
 where Section~\ref{subsec:lang:gringo}
 details the joint input language of \gringo\ and \clingo.
-In Section~\ref{subsec:lang:clingo}, it is extended with
-directives enabling the integration of \python\ and \lua\ capacities with \clingo.
 The input language of \clasp\ is discussed only briefly in Section~\ref{subsec:lang:clasp},
 as it matches the numerical output format of \gringo\ and
 is not supposed to be written directly by a user.
@@ -93,6 +91,8 @@ can be solved with our tools.
 Practical aspects are also in the focus of Section~\ref{sec:options} and~\ref{sec:error:warn},
 where we elaborate and give some hints on the available command line options
 as well as input-related errors and warnings. % that may be reported.
+The control capacities of \clingo\ needed for multi-shot solving are detailed in Section~\ref{sec:multi}.
+This includes a few directives and their interplay with a scripting API.
 We conclude with a summary in Section~\ref{sec:future}.
 
 %For a more theoretical background, the interested reader is referred

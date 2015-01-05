@@ -1931,10 +1931,10 @@ To enable Python support, \gringo\ and \clingo\ have to be compiled from source 
 The first example shows how to add a simple arithmetic function:
 \\[-8pt] % is there a better way to do this?
 \begin{minipage}[t]{0.51\textwidth}
-\lstinputlisting[language={[5.1]Lua}]{examples/gcd-lua.lp}
+\lstinputlisting[language=GringoLua]{examples/gcd-lua.lp}
 \end{minipage}
 \begin{minipage}[t]{0.51\textwidth}
-\lstinputlisting[language=python]{examples/gcd-py.lp}
+\lstinputlisting[language=GringoPython]{examples/gcd-py.lp}
 \end{minipage}\\
 In Line~3 we add a function that calculates the greatest common divisor of two numbers.
 Integers from a logic program are directly mapped to their Lua and Python equivalents
@@ -1961,10 +1961,10 @@ Regarding binding of variables, the same restrictions as with arithmetic in Sect
 This example shows how to return multiple values from a function:
 \\[-8pt] % is there a better way to do this?
 \begin{minipage}[t]{0.53\textwidth}
-\lstinputlisting[language={[5.1]Lua}]{examples/rng-lua.lp}
+\lstinputlisting[language=GringoLua]{examples/rng-lua.lp}
 \end{minipage}
 \begin{minipage}[t]{0.49\textwidth}
-\lstinputlisting[language=python]{examples/rng-py.lp}
+\lstinputlisting[language=GringoPython]{examples/rng-py.lp}
 \end{minipage}\\
 In Line~3 we add a function that emulates an interval.
 Instead of just returning one number,
@@ -2025,10 +2025,10 @@ use the standard constructors or literals available in Lua and Python.
 This example shows how to inspect and create terms:
 \\[-8pt] % is there a better way to do this?
 \begin{minipage}[t]{0.57\textwidth}
-\lstinputlisting[language={[5.1]Lua}]{examples/term-lua.lp}
+\lstinputlisting[language=GringoLua]{examples/term-lua.lp}
 \end{minipage}
 \begin{minipage}[t]{0.45\textwidth}
-\lstinputlisting[language=python]{examples/term-py.lp}
+\lstinputlisting[language=GringoPython]{examples/term-py.lp}
 \end{minipage}\\
 In Line~5 we add function~\code{g},
 which takes a constant and a tuple as arguments,
@@ -2065,10 +2065,10 @@ A complete reference for the Python scripting API is available at: \url{http://p
 This example shows how to implement the \code{max} function:
 \\[-8pt] % is there a better way to do this?
 \begin{minipage}[t]{0.57\textwidth}
-\lstinputlisting[language={[5.1]Lua}]{examples/cmp-lua.lp}
+\lstinputlisting[language=GringoLua]{examples/cmp-lua.lp}
 \end{minipage}
 \begin{minipage}[t]{0.45\textwidth}
-\lstinputlisting[language=python]{examples/cmp-py.lp}
+\lstinputlisting[language=GringoPython]{examples/cmp-py.lp}
 \end{minipage}\\
 In Line~5 we add function~\code{max},
 which takes two terms as arguments

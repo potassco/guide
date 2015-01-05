@@ -8,12 +8,12 @@ course(5,1,4).                               course(5,4,4).
                               course(8,3,5). course(8,4,5).
 
 
-3 { enroll(C) : course(C,_,_) } 6.
+3 { enroll(C) : course(C,S,H) } 6.
 
-:-   #count { C,S,H :     enroll(C), course(C,S,H) } 10.
-:- 2 #count { C,  H : not enroll(C), course(C,2,H) }.
-:- 6 #count { C,3,H :     enroll(C), course(C,3,H);
-              C,4,H :     enroll(C), course(C,4,H) }.
+:-   #count { C,S :     enroll(C), course(C,S,H) } 10.
+:- 2 #count { C,2 : not enroll(C), course(C,2,H) }.
+:- 6 #count { C,3 :     enroll(C), course(C,3,H);
+              C,4 :     enroll(C), course(C,4,H) }.
 
 hours(C,H) :- course(C,S,H).
 max_hours(20).

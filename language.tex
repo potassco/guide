@@ -1150,11 +1150,11 @@ can be expressed as follows.
 
 #sum { 3:bananas; 25:cigars; 10:broomstick } <= 30
 \end{lstlisting}
-Both aggregate atoms can be used as any other atom, possibly preceded by negation, in a body of a rule.
+Both aggregate atoms can be used like any other atom, possibly preceded by negation, in a body of a rule.
 Within both aggregate atoms,
 symbolic atoms like \lstinline{course(ai)} or \lstinline{broomstick} are associated with costs.
-Assuming that \lstinline{course(ai)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broomstick} are true, 
-the aggregates inner sets get evaluated to \lstinline[mathescape]{$\{$4;6$\}$} and \lstinline[mathescape]{$\{$3;10$\}$}, respectively.
+Assuming that \lstinline{course(db)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broomstick} are true, 
+the aggregates inner sets evaluate to \lstinline[mathescape]{$\{$4;6$\}$} and \lstinline[mathescape]{$\{$3;10$\}$}, respectively.
 After applying the \lstinline{#sum} aggregate function to both sets, we get \lstinline{20 <= 10} and \lstinline{13 <= 30};
 hence, in this case, the second aggregate atom holds while the first does not.\eexample
 \end{example}

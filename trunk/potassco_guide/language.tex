@@ -1105,7 +1105,7 @@ The form of an \emph{aggregate atom} occurring in a rule body is as follows:
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L}_n$?}?$\prec_2 s_2$?
 \end{lstlisting}
 %
-Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
+Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$, forming \emph{aggregate elements}, are non-empty tuples of terms and literals, respectively
 (as introduced in Section~\ref{subsec:gringo:normal}). 
 $\alpha$ is the name of some function that is to be applied to the term tuples $\boldsymbol{t}_i$
 that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
@@ -1113,7 +1113,7 @@ that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 Finally, 
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
-Note that one of `$s_1\prec_1$' or `$\prec_2 s_2$'%
+Note that one of the \emph{guards} `$s_1\prec_1$' or `$\prec_2 s_2$'%
 (or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to ``\code{<=}'' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
 respectively.
@@ -1208,7 +1208,7 @@ in this way, the same cost can be accounted for several times.
 
 \paragraph{Head Aggregates} 
 Whenever a rule head is a (single) aggregate atom, the derivable head literals must be distinguished.
-This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples:
+This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples of the aggregate elements:
 \index{Aggregates!Head}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
@@ -1429,7 +1429,7 @@ if space becomes a bottleneck.
 % which are aggregate atoms using counting as their operation.
 
 \paragraph{Non-ground Aggregates}
-\com{R2T: please check. I am particularly unhappy with the $s_1$ and $s_2$ but we do not have a name for these. And this just glosses over saftey. More details?}
+\com{R2T: please check. This just glosses over saftey. More details?}
 After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
 Regarding contained variables,
@@ -1437,6 +1437,7 @@ only variable occurrences in the guards give rise to global variables.
 Hence, any variable in an aggregate element must be bound by 
 either a positive global occurrence or
 a variable that occurs positively in its condition $\boldsymbol{L_i}$.
+\index{Logic Programs!Safety}
 Variable names in aggregate elements have to be chosen carefully to not accidentally clash with global variables.
 Furthermore, pools and intervals in aggregate elements give rise to multiple aggregate elements;
 very similar to rules.
@@ -1499,31 +1500,23 @@ The next constraints of the student regard the subject areas of enrolled courses
 %
 \lstinputlisting[nolol,firstline=13,lastline=16,firstnumber=10]{examples/aggr.lp}
 %
-Each of the three integrity constraints above contains a cardinality constraint.
+Each of the three integrity constraints above contains a \code{\#count} aggregate.
 Recall that aggregates operate on sets and thus duplicates are removed;
-hence we use terms tuples to establish a multiset.
+hence we use terms tuples to take into account courses together with their subject areas.
 Thus, the integrity constraint in Line~10 is instantiated as follows:
-\footnote{Note that \gringo's shortcut expansion of \lstinline{:- \{ course(C,S,H) : enroll(C) \} 10.} is equivalent to the rule in Line~10.}
+\footnote{Because contact hours are uniquely associated to a course, 
+\gringo's shortcut expansion of \lstinline{:- \{ course(C,S,H) : enroll(C) \} 10.} is equivalent to the rule in Line~10 here.
+Similar equivalences exist for the other \code{\#count} aggregates.}
 %
-% \begin{lstlisting}[firstnumber=10,stepnumber=10]
-% :- [ enroll(1) = 1, enroll(1) = 1, 
-%      enroll(2) = 1, enroll(2) = 1,
-%      enroll(3) = 1, enroll(3) = 1,
-%      enroll(4) = 1, enroll(4) = 1, enroll(4) = 1,
-%      enroll(5) = 1, enroll(5) = 1,
-%      enroll(6) = 1, enroll(6) = 1,
-%      enroll(7) = 1, enroll(7) = 1, enroll(7) = 1,
-%      enroll(8) = 1, enroll(8) = 1 ] 10.
-% \end{lstlisting}
 \begin{lstlisting}[firstnumber=10,stepnumber=10]
-:- 10 >= #count { 1,1,5:enroll(1); 1,2,5:enroll(1); 
-                  2,1,4:enroll(2); 2,2,4:enroll(2); 
-                  3,1,6:enroll(3); 3,3,6:enroll(3); 
- 4,1,3:enroll(4); 4,3,3:enroll(4); 4,4,3:enroll(4); 
-                  5,1,4:enroll(5); 5,4,4:enroll(5); 
-                  6,2,2:enroll(6); 6,3,2:enroll(6); 
- 7,2,4:enroll(7); 7,3,4:enroll(7); 7,4,4:enroll(7); 
-                  8,3,5:enroll(8); 8,4,5:enroll(8) }. 
+:- 10 >= #count { 1,1:enroll(1); 1,2:enroll(1); 
+                  2,1:enroll(2); 2,2:enroll(2); 
+                  3,1:enroll(3); 3,3:enroll(3); 
+ 4,1,3:enroll(4); 4,3:enroll(4); 4,4:enroll(4); 
+                  5,1:enroll(5); 5,4:enroll(5); 
+                  6,2:enroll(6); 6,3:enroll(6); 
+ 7,2,4:enroll(7); 7,3:enroll(7); 7,4:enroll(7); 
+                  8,3:enroll(8); 8,4:enroll(8) }. 
 \end{lstlisting}
 %
 Note that courses~\const{4} and~\const{7} count three times because

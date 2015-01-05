@@ -70,6 +70,30 @@
 % this macro is kinda ugly but the only way I found to workaround warnings
 \def\attach{\textattachfile[color=1 0 0]}
 
+% some language definitions
+
+\lstdefinelanguage{GringoPython}%
+  {morekeywords={script,and,break,class,continue,def,del,elif,else,%
+      except,finally,for,from,global,if,import,in,is,lambda,not,%
+      or,pass,print,raise,return,try,while},%
+   sensitive=true,%
+   morecomment=[l]\#,%
+   morestring=[b]',%
+   morestring=[b]",%
+   morecomment=[s]{'''}{'''},%
+   morecomment=[s]{"""}{"""}%
+  }%
+
+\lstdefinelanguage{GringoLua}%
+  {morekeywords={end,script,function,for,if,local,require,print,and,or,not,else,return,then},%
+   sensitive=true,%
+   morecomment=[l]{--},%
+   morecomment=[l]\#,%
+   morestring=[b]',%
+   morestring=[b]",%
+   morecomment=[s]{--[[}{--]]}%
+  }%
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "guide"

@@ -5,4 +5,4 @@ main_street(4).
 noisy :- hotel(X), main_street(X).
 #maximize { Y@1, X : hotel(X), star(X,Y) }.
 #minimize { Y/Z@2, X : hotel(X), cost(X,Y), star(X,Z) }.
-#minimize { 1@3 : noisy }.
+:~ noisy. [ 1@3 ]

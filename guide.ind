@@ -3,7 +3,7 @@
   \item Aggregates, \hyperpage{25}
     \subitem Assignments, \hyperpage{28}
       \subsubitem Domain Predicates, \hyperpage{29}
-    \subitem Average, \code{\#avg}, \hyperpage{65}
+    \subitem Average, \code{\#avg}, \hyperpage{66}
     \subitem Body, \hyperpage{25}
     \subitem Conditions, \hyperpage{23}
       \subsubitem Domain Predicates, \hyperpage{25}
@@ -52,11 +52,7 @@
 
   \item External Functions, \hyperpage{36}
     \subitem Calling, \hyperpage{37}
-    \subitem Term Insertion, \hyperpage{37}
-
-  \indexspace
-
-  \item Incremental Grounding, \hyperpage{39}
+    \subitem Term Insertion, \hyperpage{38}
 
   \indexspace
 
@@ -80,14 +76,14 @@
       \subsubitem Head, \hyperpage{18}
     \subitem Rules, \hyperpage{14}
       \subsubitem Disjunctive, \hyperpage{17}
-    \subitem Safety, \hyperpage{16}, \hyperpage{20--22}, 
+    \subitem Safety, \hyperpage{16}, \hyperpage{20--22}, \hyperpage{29}, 
 		\hyperpage{35, 36}
   \item Lua, \hyperpage{36}
 
   \indexspace
 
-  \item Meta-Statements, \hyperpage{33}
-    \subitem Comments, \hyperpage{33}
+  \item Meta-Statements, \hyperpage{34}
+    \subitem Comments, \hyperpage{34}
     \subitem Const Statements, \code{\#const}, \hyperpage{35}
     \subitem External Statements, \code{\#external}, \hyperpage{35}
     \subitem Show Statements, \code{\#show}, \hyperpage{34}

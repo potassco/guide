@@ -306,9 +306,6 @@ rules are required to be \emph{safe},
 i.e.,
 all variables in a rule must occur in some positive literal
 (a literal not preceded by \code{not}) in the body of the rule.%
-\footnote{%
-The only exception to this are \emph{local} variables, % bound by conditions,
-detailed in Section~\ref{subsec:gringo:condition} and~\ref{subsec:gringo:aggregate}.} 
 For instance, the first two schematic rules in Example~\ref{ex:flies} 
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
 This tells \gringo\ (or the grounding component of \clingo)
@@ -1620,48 +1617,61 @@ This restriction does not exist anymore in \gringo\ and \clingo~4.
 
 \subsubsection{Optimization}\label{subsec:gringo:optimize}
 \index{Statements!Optimize Statements}
-\comment{Also add weak constraints}
 Optimization statements extend the basic question of
 whether a set of atoms is an answer set to
 whether it is an optimal answer set.
-To support this reasoning mode, \gringo\ and \clingo\ adopt the
-optimization statements of \lparse~\cite{lparseManual},
-indicated via keywords \const{\#maximize} and \const{\#minimize}.
-As an optimization statement does not admit a body, any (local) variable
-in it must also occur in an atom \REW{(over a domain or built-in predicate)}
-on the right-hand side of a condition (cf.\ Section~\ref{subsec:gringo:condition})
-within the optimization statement.
-As with aggregates, duplicate terms are removed;
-additionally, priorities can be associated with each weighted literal.\comment{Käse}
-A (ground) optimize statement has the form: 
-\index{Statements!Optimize Statements!\#minimize}%
-\index{Statements!Optimize Statements!\#maximize}%
+To support this reasoning mode, \gringo\ and \clingo\ adopt dlv's weak constraints.\comment{add a citation}
+A weak constraints has a similar form like an integrity constraint (cf. Section \ref{subsec:gringo:normal})
+that is associated with a term tuple:
+\index{Statements!Weak Constraints}%
 \[
-\mathsf{\mu}\,\code{\{}\,\boldsymbol{t}_1:\boldsymbol{L}_1,\dots,\boldsymbol{t}_n:\boldsymbol{L}_n\,\code{\}}
-\] 
-where $\mathsf{\mu}$ is either \code{\#maximize} or \code{\#minimize}, 
-$\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are non-empty tuples of terms and literals, respectively
-(as introduced in Section~\ref{subsec:gringo:normal}).
-The first element of each tuple $\boldsymbol{t}_i$ is supposed to be an (integer) weight $w_i$
-that may optionally be furnished with an (integer) priority $p_i$ by means of term $w_i@p_i$.
+    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$L_1$,$\dots$,$L_n$.~[$w$@$p$,$t_1$,$\dots$,$t_n$]}
+\]
+The priority \code{@$p$} is optional.
+We consider the case that it is omitted first.
+Whenever the body of a weak constraint is true,
+it contributes its term tuple (as with aggregates duplicates are ignored) to a cost function.
+This cost function accumulates the integer weights $w$ of all contributed tuples just like a \#sum aggregate does.
+The semantics of a program with weak constraints is intuitive:
+an answer set is \emph{optimal} 
+if the obtained cost is minimal among all answer sets of the given program.
+In the case that there are different priorities attached to tuples,
+we obtain a cost (possibly zero) for each priority.
+To determine whether an answer set is optimal,
+we do not just compare two single costs
+but lexicographically compare cost tuples whose elements are ordered by priority (greater is more important).
+Note that a tuple is always associated with a priority;
+if it is omitted, then the priority defaults to zero.
+\index{Logic Programs!Safety}
+A weak constraint is safe if the variables in its term tuples are bound by the atoms in the body.
+The safety requirements for the body itself are the same as for integrity constraints.
 
-The semantics of an optimization statement is intuitive:
-an answer set is \emph{optimal} if the sum of weights
-% (using~\const{1} for unsupplied weights)
-of literals that hold is maximal or minimal, as required by the statement,
-among all answer sets of the given program.
-This definition is sufficient if a single optimization statement is specified
-along with a logic program.
-If different priorities occur in the program, 
-then, depending on the type of optimize statement,
-answer sets whose sum of weights assigned to higher priorities
-is maximized or minimized, respectively.
-
-Note that for compatibility with \lparse, if multiple optimize statements are used, 
-default priorities are assigned.
-The $n$-th statement gets priority $n$, thus, the later statements have higher priorities.\comment{RK: not true anymore}
-We suggest that if you want to use more than one optimization statement,
-to always specify priorities to make the program more readable and order independent.
+As an alternative way to express an optimization problem, 
+there are optimization statements,
+which provide another way to write weak constraints.
+A minimize constraint of form:
+\[
+    \code{\#minimize \{ $\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.} 
+\]
+represents the following weak constraints:
+\[
+    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_1$.~[$\boldsymbol{t}_1$]}
+    \quad \dots \quad
+    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_n$.~[$\boldsymbol{t}_n$]}
+\]
+And finally there are maximize constraints.
+Again, these are defined as shortcuts.
+To maximize, the integer weights of the tuples are simply inverted.
+Hence, a maximize statement of form:
+\[
+    \code{\#maximize \{ $w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_1$@$p_1$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.} 
+\]
+represents the following weak constraints:
+\[
+    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_1$.~[-$w$@$p$,$\boldsymbol{t}_1$]}
+    \quad \dots \quad
+    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_n$.~[-$w$@$p$,$\boldsymbol{t}_n$]}
+\]
 
 \begin{example}\label{ex:opt}
 To illustrate optimization, we consider a hotel booking situation
@@ -1688,9 +1698,9 @@ The optimization statements in Line~6--8 are instantiated as follows:%
   \code{\mbox{~}gringo --text \attach{examples/opt.lp}{opt.lp}}}
 %
 \begin{lstlisting}[firstnumber=6,breakindent=0pt,escapechar=&]
-#maximize { 5@1,1:hotel(1), 4@1,2:hotel(2),&\\&            3@1,3:hotel(3), 3@1,4:hotel(4), 2@1,5:hotel(5) }.
-#minimize { 34@2,1:hotel(1), 35@2,2:hotel(2),&\\&            30@2,3:hotel(3), 25@2,4:hotel(4), 30@2,5:hotel(5) }.
-#minimize { 1@3:noisy }.
+:~ hotel(1). [-5@1,1]&\\&:~ hotel(2). [-4@1,2]&\\&:~ hotel(3). [-3@1,3]&\\&:~ hotel(4). [-3@1,4]&\\&:~ hotel(5). [-2@1,5]
+:~ hotel(1). [34@2,1]&\\&:~ hotel(2). [35@2,2]&\\&:~ hotel(3). [30@2,3]&\\&:~ hotel(4). [25@2,4]&\\&:~ hotel(5). [30@2,5]
+:~ noisy. [ 1@3 ]
 \end{lstlisting}
 If we now use \clasp\ or \clingo\ to compute an optimal answer set,%
 \marginlabel{%

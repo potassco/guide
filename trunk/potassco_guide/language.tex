@@ -1720,197 +1720,6 @@ to cost~\const{90} per night.
 \end{example}
 
 
-\subsubsection{Meta-Statements}\label{subsec:gringo:meta}
-\index{Meta-Statements}
-
-After considering the language of logic programs,
-we now introduce features going beyond the contents of a program.
-
-\paragraph{Comments.}
-\index{Meta-Statements!Comments}
-To annotate the source code of a logic program,
-a logic program file may include comments.
-A comment until the end of a line is initiated by symbol ``\code{\%},''
-and a comment within one or over multiple lines is enclosed
-in ``\code{\%*}'' and ``\code{*\%}.''
-As an abstract example, consider:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{logic program}@  %* enclosed comment *%  @\textit{logic program}@
-@\textit{logic program}@  % comment till end of line
-@\textit{logic program}@
-%*
-comment over multiple lines
-*%
-@\textit{logic program}@
-\end{lstlisting}
-
-\paragraph{Show Statements.}
-\index{Meta-Statements!Show Statements, \code{\#show}}%
-Sometimes, one may be interested only in a subset of the atoms belonging
-to an answer set.
-In order to suppress the atoms of ``irrelevant'' predicates from the output
-or even to show arbitrary terms,
-the \code{\#show} declarative can be used.
-There are three different statements:
-%
-\par
-\medskip
-\begin{tabular}{rl}
-\textbf{Show atoms:}   & $\code{\#show}~p\code{/}n\code{.}$
-\\
-\textbf{Show terms:}   & $\code{\#show}~t_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
-\\
-\textbf{Show nothing:} & \code{\#show.}
-\end{tabular}
-\par
-\medskip
-\noindent
-%
-The first~\code{\#show} statement is the most commonly used form.
-Whenever there is at least one statement of this form, all atoms are hidden,
-except those over predicates~$p/n$ given by the respective~\code{\#show} statements.
-The second form can be used to show arbitrary terms.
-The term~$t_0$ is part of the output if the literals in the condition after the~\code{:} hold.
-Unlike the previous form,
-this statement does not automatically hide all atoms.
-To hide all atoms in this case and only show selected terms,
-the last statement (mnemonic: show nothing) can be added to suppress all atoms in the output.
-
-\begin{example}
-This example depicts the standard use case to selectively show atoms:
-\marginlabel{%
-  To inspect the output, invoke:\\
-  \code{\mbox{~}clingo \attach{examples/showa.lp}{showa.lp} 0}\\
-  or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/showa.lp}{showa.lp} \textbackslash \\\mbox{~}| clasp 0}\\
-}
-\lstinputlisting{examples/showa.lp}
-Only atoms over $a/0$ and $q/1$ appear in the output here.
-\eexample
-\end{example}
-
-\begin{example}
-This example depicts how to show terms:
-\marginlabel{%
-  To inspect the output, invoke:\\
-  \code{\mbox{~}clingo \attach{examples/showt.lp}{showt.lp} 0}\\
-  or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/showt.lp}{showt.lp} \textbackslash \\\mbox{~}| clasp 0}\\
-}
-%
-\lstinputlisting{examples/showt.lp}
-%
-When running this example,
-the same output as in the previous example is produced.
-This feature is especially handy when applying meta-programming techniques (c.f. Section~\ref{section-yet-to-come})\comment{RK: todo add ref}
-where the signatures of the reified atoms are unknown and the \code{holds($\cdot$)} atoms would just clutter the output.
-\eexample
-\end{example}
-
-\begin{note}
-The second form of \code{\#show} statements to show terms may contain variables.
-Regarding safety, it behaves similarly to a rule,
-where the term $t_0$ takes the role of the head
-and the condition after the colon the role of the body.
-\index{Logic Programs!Safety}
-\end{note}
-
-\paragraph{Const Statements.}
-\index{Meta-Statements!Const Statements, \code{\#const}}%
-Constants appearing in a logic program may actually be placeholders for
-concrete values to be provided by a user.
-An example of this is given in Section~\ref{subsec:ex:color}.
-Via the \code{\#const} declarative,
-one may define a default value to be inserted for a constant.
-Such a default value can still be overridden via command line option
-\code{--const} (cf.\ Section~\ref{subsec:opt:gringo}).
-Syntactically, \code{\#const} must be followed by an assignment having
-a (symbolic) constant on the left-hand side and a term without variables, pools, intervals on the right-hand side.
-
-\begin{example}
-This example is about using the grounder as a simple calculator:
-%
-\lstinputlisting{examples/const.lp}
-%
-Try running this example using the following calls:
-\begin{lstlisting}[numbers=none,escapeinside={\$}{\$}]
- gringo --text $\attach{examples/const.lp}{const.lp}$
- gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6   -c h=6
- gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6+6 -c y=6
- gringo --text $\attach{examples/const.lp}{const.lp}$ -c x="6+6*6"
-\end{lstlisting}
-Note that to prevent the shell from expanding the \code{*} in the last call 
-or from interpreting parentheses in functions,
-quotes have to be added.
-\eexample
-\end{example}
-
-\paragraph{External Statements.}
-\index{Meta-Statements!External Statements, \code{\#external}}%
-External statements are used to mark atoms as external.
-This means that those atoms are not subject to certain simplifications.
-Namely, 
-atoms marked external are not removed from the bodies of rules, conditions, etc. 
-even if they do not appear in the head of any rule.
-Although this does not affect the semantics of a logic program,
-we will see an effect in the text output of the example in the following.
-Their main use case is to implement extensions to plain ASP solving,
-like incremental solving detailed in Section~\ref{sec:multi}.
-An external statement has the following form:
-%
-\par
-\medskip
-\begin{tabular}{l}
-$\code{\#external}~A_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
-\end{tabular}
-\par
-\medskip
-\noindent
-%
-Here~$A_0$ is an atom over some predicate and
-the part beginning with the~\code{:} is a condition.
-The condition is instantiated to obtain a set of external atoms.
-Note that the condition is discarded after grounding,
-hence, it is a good idea to only use domain predicates or built-ins after the colon.%
-\footnote{Non-domain predicates are supported too
-because in some situations it might be very inconvenient to specify domain predicates.}
-
-\begin{example}
-Consider the following example:
-%
-\marginlabel{%
-To inspect the instantiation of externals, invoke:\\
-\code{%
-\mbox{~}gringo --text \attach{examples/ext.lp}{ext.lp}}\\
-or:\\
-\code{%
-\mbox{~}clingo --text \attach{examples/ext.lp}{ext.lp}}
-}
-%
-\lstinputlisting{examples/ext.lp}
-%
-The external statement in Line~2 gives rise to three external atoms,
-which appear accordingly in the text output.
-With these three atoms, 
-the rule in Line~4 yields three ground instantiations,
-where atoms~\code{q(2)} and~\code{q(3)} appear in the body.
-Because we have the fact \code{q(1)} in Line~3,
-the atom \code{q(1)} is still subject to simplification
-and removed from the body of the respective instantiation of the rule in Line~4.
-The idea here is that no matter how \code{q(1)} is supplied externally,
-there can never be an answer set that does not contain \code{q(1)}.
-\eexample
-\end{example}
-
-\begin{note}
-External statements that contain variables
-have very similar requirements regarding safety as rules.
-The atom $A_0$ takes the role of the head
-and the condition after the colon the role of the body.
-\index{Logic Programs!Safety}
-\end{note}
-
 \subsubsection{External Functions}\label{subsec:lang:extfun}
 \index{Terms!External Functions}%
 \index{External Functions}%
@@ -2102,6 +1911,262 @@ Adding non-deterministic functions can lead to undesired results.
 then a warning is printed and the current substitution is thrown away.
 For example, when calling the~\code{gcd} function in Example~\ref{ex:gcd} with non-integer arguments.
 \end{enumerate}
+\end{note}
+
+\subsubsection{Meta-Statements}\label{subsec:gringo:meta}
+\index{Meta-Statements}
+
+After considering the language of logic programs,
+we now introduce features going beyond the contents of a program.
+
+\paragraph{Comments.}
+\index{Meta-Statements!Comments}
+To annotate the source code of a logic program,
+a logic program file may include comments.
+A comment until the end of a line is initiated by symbol ``\code{\%},''
+and a comment within one or over multiple lines is enclosed
+in ``\code{\%*}'' and ``\code{*\%}.''
+As an abstract example, consider:
+%
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{logic program}@  %* enclosed comment *%  @\textit{logic program}@
+@\textit{logic program}@  % comment till end of line
+@\textit{logic program}@
+%*
+comment over multiple lines
+*%
+@\textit{logic program}@
+\end{lstlisting}
+
+\paragraph{Show Statements.}
+\index{Meta-Statements!Show Statements, \code{\#show}}%
+Sometimes, one may be interested only in a subset of the atoms belonging
+to an answer set.
+In order to suppress the atoms of ``irrelevant'' predicates from the output
+or even to show arbitrary terms,
+the \code{\#show} declarative can be used.
+There are three different statements:
+%
+\par
+\medskip
+\begin{tabular}{rl}
+\textbf{Show atoms:}   & $\code{\#show}~p\code{/}n\code{.}$
+\\
+\textbf{Show terms:}   & $\code{\#show}~t_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
+\\
+\textbf{Show nothing:} & \code{\#show.}
+\end{tabular}
+\par
+\medskip
+\noindent
+%
+The first~\code{\#show} statement is the most commonly used form.
+Whenever there is at least one statement of this form, all atoms are hidden,
+except those over predicates~$p/n$ given by the respective~\code{\#show} statements.
+The second form can be used to show arbitrary terms.
+The term~$t_0$ is part of the output if the literals in the condition after the~\code{:} hold.
+Unlike the previous form,
+this statement does not automatically hide all atoms.
+To hide all atoms in this case and only show selected terms,
+the last statement (mnemonic: show nothing) can be added to suppress all atoms in the output.
+
+\begin{example}
+This example depicts the standard use case to selectively show atoms:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/showa.lp}{showa.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/showa.lp}{showa.lp} \textbackslash \\\mbox{~}| clasp 0}\\
+}
+\lstinputlisting{examples/showa.lp}
+Only atoms over $a/0$ and $q/1$ appear in the output here.
+\eexample
+\end{example}
+
+\begin{example}
+This example depicts how to show terms:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/showt.lp}{showt.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/showt.lp}{showt.lp} \textbackslash \\\mbox{~}| clasp 0}\\
+}
+%
+\lstinputlisting{examples/showt.lp}
+%
+When running this example,
+the same output as in the previous example is produced.
+This feature is especially handy when applying meta-programming techniques (c.f. Section~\ref{section-yet-to-come})\comment{RK: todo add ref}
+where the signatures of the reified atoms are unknown and the \code{holds($\cdot$)} atoms would just clutter the output.
+\eexample
+\end{example}
+
+\begin{note}
+The second form of \code{\#show} statements to show terms may contain variables.
+Regarding safety, it behaves similarly to a rule,
+where the term $t_0$ takes the role of the head
+and the condition after the colon the role of the body.
+\index{Logic Programs!Safety}
+\end{note}
+
+\paragraph{Const Statements.}
+\index{Meta-Statements!Const Statements, \code{\#const}}%
+Constants appearing in a logic program may actually be placeholders for
+concrete values to be provided by a user.
+An example of this is given in Section~\ref{subsec:ex:color}.
+Via the \code{\#const} declarative,
+one may define a default value to be inserted for a constant.
+Such a default value can still be overridden via command line option
+\code{--const} (cf.\ Section~\ref{subsec:opt:gringo}).
+Syntactically, \code{\#const} must be followed by an assignment having
+a (symbolic) constant on the left-hand side and a term without variables, pools, intervals on the right-hand side.
+
+\begin{example}
+This example is about using the grounder as a simple calculator:
+%
+\lstinputlisting{examples/const.lp}
+%
+Try running this example using the following calls:
+\begin{lstlisting}[numbers=none,escapeinside={\$}{\$}]
+ gringo --text $\attach{examples/const.lp}{const.lp}$
+ gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6   -c h=6
+ gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6+6 -c y=6
+ gringo --text $\attach{examples/const.lp}{const.lp}$ -c x="6+6*6"
+\end{lstlisting}
+Note that to prevent the shell from expanding the \code{*} in the last call 
+or from interpreting parentheses in functions,
+quotes have to be added.
+\eexample
+\end{example}
+
+\paragraph{External Statements.}
+\index{Meta-Statements!External Statements, \code{\#external}}%
+External statements are used to mark atoms as external.
+This means that those atoms are not subject to certain simplifications.
+Namely, 
+atoms marked external are not removed from the bodies of rules, conditions, etc. 
+even if they do not appear in the head of any rule.
+Although this does not affect the semantics of a logic program,
+we will see an effect in the text output of the example in the following.
+Their main use case is to implement extensions to plain ASP solving,
+like incremental solving detailed in Section~\ref{sec:multi}.
+An external statement has the following form:
+%
+\par
+\medskip
+\begin{tabular}{l}
+$\code{\#external}~A_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
+\end{tabular}
+\par
+\medskip
+\noindent
+%
+Here~$A_0$ is an atom over some predicate and
+the part beginning with the~\code{:} is a condition.
+The condition is instantiated to obtain a set of external atoms.
+Note that the condition is discarded after grounding,
+hence, it is a good idea to only use domain predicates or built-ins after the colon.%
+\footnote{Non-domain predicates are supported too
+because in some situations it might be very inconvenient to specify domain predicates.}
+
+\begin{example}
+Consider the following example:
+%
+\marginlabel{%
+To inspect the instantiation of externals, invoke:\\
+\code{%
+\mbox{~}gringo --text \attach{examples/ext.lp}{ext.lp}}\\
+or:\\
+\code{%
+\mbox{~}clingo --text \attach{examples/ext.lp}{ext.lp}}
+}
+%
+\lstinputlisting{examples/ext.lp}
+%
+The external statement in Line~2 gives rise to three external atoms,
+which appear accordingly in the text output.
+With these three atoms, 
+the rule in Line~4 yields three ground instantiations,
+where atoms~\code{q(2)} and~\code{q(3)} appear in the body.
+Because we have the fact \code{q(1)} in Line~3,
+the atom \code{q(1)} is still subject to simplification
+and removed from the body of the respective instantiation of the rule in Line~4.
+The idea here is that no matter how \code{q(1)} is supplied externally,
+there can never be an answer set that does not contain \code{q(1)}.
+\eexample
+\end{example}
+
+\begin{note}
+External statements that contain variables
+have very similar requirements regarding safety as rules.
+The atom $A_0$ takes the role of the head
+and the condition after the colon the role of the body.
+\index{Logic Programs!Safety}
+\end{note}
+\paragraph{Program Parts.}
+\index{Meta-Statements!Program Parts, \code{\#program}}
+A logic program can be organized in multiple program parts.
+To begin a new program part, we write the following statement:
+%
+\par
+\medskip
+\begin{tabular}{l}
+\code{\#program~$p$($s_1$,\dots,$s_n$).}
+\end{tabular}
+\par
+\medskip
+\noindent
+%
+where $p$ is the program part name and the parameters $s_i$ are symbolic constants.
+If $n$ is zero, then the parentheses can be omitted.
+All rules, external statements, and show statements for terms following such a directive up to the next program part directive or the end of the file belong to the program part $p/n$.
+All rules not subject to a program part directive belong to the $\code{base}/0$ part.
+
+The default behavior of \gringo\ is to ground (and solve in the case of \clingo) the base part.
+Using the scripting API,
+we can ground other parts than $\code{base}/0$ too.
+Occurrences of symbolic constants 
+that are parameters of a part
+are replaced with ground terms when instantiating the program part.
+
+\begin{example}
+The following example shows how to instantiate program parts: 
+\lstinputlisting[language=GringoLua]{examples/part.lp}
+The above program is organized in two parts $\code{base}/0$ and $\code{a}/2$.
+Note that the fact in the first line is implicitly in the $\code{base}/0$ part.
+Solving the program as is results in answer set $\{\code{a}, \code{c}\}$,
+because the $\code{base}/0$ part is instantiated by default.
+\\[-8pt] % is there a better way to do this?
+\begin{minipage}[t]{0.51\textwidth}
+\lstinputlisting[language=GringoLua]{examples/part-lua.lp}
+\end{minipage}
+\begin{minipage}[t]{0.51\textwidth}
+\lstinputlisting[language=GringoPython]{examples/part-py.lp}
+\end{minipage}\\
+%
+\marginlabel{%
+To inspect the instantiation of program parts, invoke:\\
+\code{%
+\mbox{~}gringo --text \textbackslash\\
+\mbox{~}\attach{examples/part.lp}{part.lp} \attach{examples/part-lua.lp}{part-lua.lp}}\\
+or:\\
+\code{%
+\mbox{~}clingo --text \textbackslash\\
+\mbox{~}\attach{examples/part.lp}{part.lp} \attach{examples/part-py.lp}{part-py.lp}}
+}%
+%
+The above script grounds (Line 9) the $\code{base}/0$ part (Line 7) as well as the $\code{a}/2$ part with parameters \code{1} and \code{3} (Line 8).
+Note the call to solve in Line 10.
+This is essential to solve the program with \clingo\ 
+and even in \gringo\ some post-processing happens in solve - e.g.,
+printing the symbol table of the lparse format~\cite{lparseManual}.
+\eexample
+\end{example}
+
+\begin{note}
+Program parts are mainly interesting for incremental grounding and solving of logic programs detailed in Section~\ref{sec:multi}.
+For single shot solving, program parts should not be used.
+The feature is merely listed for completeness here.
 \end{note}
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}

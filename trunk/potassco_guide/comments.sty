@@ -125,7 +125,7 @@
   \noindent
   \phantomsection
   \label{comment:\thecommentctr}
-  \framebox[\linewidth][c]{\stepcounter{commentctr}{\parbox[t]{\textwidth}{\centering \BFONT\thecommentctr: #1}}}
+  \framebox[\linewidth][c]{\stepcounter{commentctr}{\parbox[t]{\textwidth}{\centering \BFONT\hyperref[comment:lastpage]{\thecommentctr}: #1}}}
   %\framebox[\linewidth][c]{\stepcounter{commentctr}{\BFONT\thecommentctr: \parbox[][][c]{\textwidth-4em}{#1}}}
   \ignorespaces
 }
@@ -138,9 +138,9 @@
   \phantomsection
   \label{comment:\thecommentctr}%
   \stepcounter{commentctr}%
-  \margincomment{\raisebox{.1ex}{\textcolor{red}{\framebox{\rm\thecommentctr}}}\ #1}%
+  \margincomment{\raisebox{.1ex}{\textcolor{red}{\framebox{\rm\hyperref[comment:lastpage]{\thecommentctr}}}}\ #1}%
   {\setlength{\fboxsep}{1pt}%
-    \raisebox{.3ex}{\textcolor{red}{{\tiny\framebox{\rm\thecommentctr}}}}%
+    \raisebox{.3ex}{\textcolor{red}{{\tiny\framebox{\rm\hyperref[comment:lastpage]{\thecommentctr}}}}}%
     }%
 %\setlength{\fboxsep}{3pt}%
   \message{Attention ... COMMENT *\thecommentctr* ...}%
@@ -194,9 +194,10 @@ $\quad\bullet\bullet\bullet$%
 \AtEndDocument{%
 \newpage
 {\vfill\noindent\large
+\section*{Comments}
+\label{comment:lastpage}%
 This article was processed using the comments style on \today.\\
-There are \thecommentctr\ comments to be processed:
-\hfill$\bigcirc_\mathit{Read}\ \bigcirc_\mathit{Modified}$\\
+There are \thecommentctr\ comments to be processed:\\
 \newcounter{ct}%
 \newcounter{lastct}%
 \setcounter{lastct}{\thecommentctr}%

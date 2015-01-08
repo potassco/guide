@@ -66,11 +66,11 @@ Sven Thiele}
 
 \input{abstract}
 \newpage
+\pagestyle{fancy}
 \tableofcontents
 \listoffigures
 \lstlistoflistings
 
-\pagestyle{fancy}
 \include{introduction}
 \include{quickstart}
 \include{language}
@@ -96,5 +96,7 @@ Sven Thiele}
 \newpage
 \phantomsection
 \addcontentsline{toc}{section}{Index}
+% Note: unfortunately printindex uses pagestyle){plain} for first page
+\fancypagestyle{plain}{\pagestyle{fancy}}
 \printindex
 \end{document}

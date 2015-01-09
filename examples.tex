@@ -1,9 +1,9 @@
 \section{Examples}\label{sec:examples}
 
 We exemplarily solve the following problems in ASP:
-$N$-Coloring (Section~\ref{subsec:ex:color}),
-Traveling Salesperson (Section~\ref{subsec:ex:tsp}), and
-Blocks-World Planning (Section~\ref{subsec:ex:block}).%
+$n$-coloring (Section~\ref{subsec:ex:color}),
+traveling salesperson (Section~\ref{subsec:ex:tsp}), and
+blocks-world planning (Section~\ref{subsec:ex:block}).%
 \footnote{The above examples are also discussed in~\cite{gekakasc12a};
   you may also like the videos at~\cite{potassco}.}
 While the first problem could likewise be solved within neighboring paradigms,
@@ -14,7 +14,7 @@ Constraint Programming~\cite{CPHandbook}.
 The third problem coming from the area of planning
 illustrates incremental solving with \clingo.
 
-\subsection{\texorpdfstring{$N$}{N}-Coloring}\label{subsec:ex:color}
+\subsection{\texorpdfstring{$n$}{n}-Coloring}\label{subsec:ex:color}
 
 As already mentioned in Section~\ref{sec:quickstart},
 it is custom in ASP to provide a \emph{uniform}
@@ -22,7 +22,7 @@ problem definition~\cite{martru99a,niemela99a,schlipf95a}.
 We follow this methodology and separate the encoding
 from an instance of the following problem:
 given a (directed) graph, decide whether each node can be assigned
-one of~$N$ colors such that any pair of adjacent nodes is colored differently.
+one of~$n$ colors such that any pair of adjacent nodes is colored differently.
 Note that this problem is NP-complete for~$N\geq 3$
 (see, e.g.,~\cite{papadimitriou94a}),
 and thus it seems unlikely that a worst-case polynomial time algorithm
@@ -40,7 +40,7 @@ Such a reduction is now exemplified.
 We consider directed graphs specified via facts over predicates
 \pred{node}/$1$ and \pred{edge}/$2$.%
 \footnote{%
-  Directedness is not an issue in $N$-Coloring,
+  Directedness is not an issue in $n$-coloring,
   but we will reuse our directed example graph in Section~\ref{subsec:ex:tsp}.}
 The graph shown in Figure~\ref{fig:graph} is represented by the following set of facts:
 %
@@ -52,22 +52,22 @@ Thus, the instance contains six nodes and 17 directed edges.
 
 \subsubsection{Problem Encoding}\label{subsec:color:encoding}
 
-We now proceed by encoding $N$-coloring via non-ground rules that are
+We now proceed by encoding $n$-coloring via non-ground rules that are
 independent of particular instances.
-Typically, an encoding consists of a \emph{Generate}, a \emph{Define},
-and a \emph{Test} part~\cite{lifschitz02a}.
-As $N$-Coloring has a rather simple pattern, the following encoding does
-not contain any Define part:
+Typically, an encoding consists of a \emph{generate}, a \emph{define},
+and a \emph{test} part~\cite{lifschitz02a}.
+As $n$-coloring has a rather simple pattern, the following encoding does
+not contain any define part:
 %
 \lstinputlisting{examples/color.lp}
 %
 In Line~2, we use the \code{\#const} declarative,
 described in Section~\ref{subsec:gringo:meta},
 to install~\const{3} as default value for constant~\const{n} that is to be replaced
-with the number~$N$ of colors.
+with the number~$n$ of colors.
 (The default value can be overridden by invoking \gringo\ with option
- \code{--const n=$N$}.)
-The Generate rule in Line~4 makes use of the shortcut for \const{count} aggregates
+ \code{--const n=$n$}.)
+The generate rule in Line~4 makes use of the shortcut for \const{count} aggregates
 (cf.\ Section~\ref{subsec:gringo:aggregate}).
 For our example graph and~\const{1} substituted for~\var{X},
 we obtain the following ground rule:%
@@ -131,7 +131,7 @@ described in Section~\ref{subsec:gringo:meta}.
 
 \subsection{Traveling Salesperson}\label{subsec:ex:tsp}
 
-We now consider the well-known Traveling Salesperson Problem (TSP),
+We now consider the well-known traveling salesperson problem (TSP),
 where the task is to decide whether there is a round trip that visits
 each node in a graph exactly once (viz., a Hamiltonian cycle) and whose
 accumulated edge costs must not exceed some budget~$B$.
@@ -141,7 +141,7 @@ Rather,
 we want to compute a minimum budget~$B$ along with a round trip of cost~$B$.
 This problem is FP$^\textrm{NP}$-complete (cf.~\cite{papadimitriou94a}),
 that is, it can be solved with a polynomial number of queries to an NP-oracle.
-As with $N$-Coloring,
+As with $n$-coloring,
 we provide a uniform problem definition by separating the encoding from instances.
 
 \subsubsection{Problem Instance}\label{subsec:tsp:instance}
@@ -163,12 +163,12 @@ but differing costs would also be possible.
 
 The first subproblem consists of describing a Hamiltonian cycle,
 constituting a candidate for a minimum-cost round trip.
-Using the Generate-Define-Test pattern~\cite{lifschitz02a},
+Using the generate-define-test pattern~\cite{lifschitz02a},
 we encode this subproblem via the following non-ground rules:
 %
 \lstinputlisting{examples/ham.lp}
 %
-The Generate rules in Line~2 and~3 assert that every node must have
+The generate rules in Line~2 and~3 assert that every node must have
 exactly one outgoing and exactly one incoming edge, respectively,
 belonging to the cycle.
 By inserting the available edges, for node~\const{1},
@@ -180,15 +180,18 @@ Line~2 and~3 are grounded as follows:%
     \mbox{~}\attach{examples/costs.lp}{costs.lp} \attach{examples/graph.lp}{graph.lp}}}
 %
 \begin{lstlisting}[numbers=none]
-1 { cycle(1,2), cycle(1,3), cycle(1,4) } 1.
-1 { cycle(3,1), cycle(4,1) } 1.
+#count { 0,cycle(1,2) : cycle(1,2),
+         0,cycle(1,3) : cycle(1,3),
+         0,cycle(1,4) : cycle(1,4) } = 1.
+#count { 0,cycle(3,1) : cycle(3,1), 
+         0,cycle(4,1) : cycle(4,1) } = 1.
 \end{lstlisting}
 %
 Observe that the first rule groups all outgoing edges of node~\const{1},
 while the second one does the same for incoming edges.
-We proceed by considering the Define rules in Line~5 and~6,
+We proceed by considering the define rules in Line~5 and~6,
 which recursively check whether nodes are reached by a cycle candidate
-produced via the Generate part.
+produced via the generate part.
 Note that the rule in Line~5 builds on the assumption that the cycle
 ``starts'' at node~\code{1}, that is,
 any successor~\var{Y} of~\code{1} is reached by the cycle.
@@ -204,7 +207,7 @@ Boolean Satisfiability~\cite{SATHandbook} or
 Constraint Programming~\cite{CPHandbook}.
 In our present problem, this feature makes sure that all nodes are reached
 by a global cycle from node~\code{1}, thus, excluding isolated subcycles.
-In fact, the Test in Line~8 stipulates that every node in the given graph
+In fact, the test in Line~8 stipulates that every node in the given graph
 is reached, that is, the instances of \pred{cycle}/$2$ in an answer set
 must be the edges of a Hamiltonian cycle.%
 \marginlabel{%
@@ -215,13 +218,12 @@ must be the edges of a Hamiltonian cycle.%
         \mbox{~}clasp -n 0}\\
   or alternatively:\\
   \code{\mbox{~}clingo -n 0 \textbackslash\\
-        \mbox{~}\attach{examples/ham.lp}{ham.lp} \attach{examples/graph.lp}{graph.lp}}}%
-Finally, the additional Display part in Line~10 and~11 states that answer
+        \mbox{~}\attach{examples/ham.lp}{ham.lp} \attach{examples/graph.lp}{graph.lp}}}
+Finally, the additional display part in lines~10 and~11 states that answer
 sets should be projected to instances of \pred{cycle}/$2$, as only they
 describe a solution.
-We have so far not considered edge costs,
-and answer sets for the above 
-part of the encoding correspond to Hamiltonian cycles,
+So far we have not considered edge costs.
+Answer sets for the above part of the encoding correspond to Hamiltonian cycles,
 that is, candidates for a minimum-cost round trip.
 
 In order to minimize costs,
@@ -230,26 +232,26 @@ we add the following optimization statement:
 \lstinputlisting[firstnumber=13]{examples/min.lp}
 %
 Here, edges belonging to the cycle are weighted according to their costs.
-After grounding, the minimization in Line~14 ranges over~17 instances
+After grounding, the minimization in Line~14 ranges over the~17 instances
 of \pred{cycle}/$2$, one for each weighted edge in Figure~\ref{fig:costs}.
 
 \subsubsection{Problem Solution}\label{subsec:tsp:solution}
 \input{figures/tsp}
 
-Finally, we explain how the unique minimum-cost round trip
+Finally, we explain how the unique minimum cost round trip
 (depicted in Figure~\ref{fig:tsp}) can be computed.
 The catch is that we are now interested in optimal answer sets,
 rather than in arbitrary ones.
 In order to determine the optimum, we can start by gradually
-decreasing the costs associated to answer sets
+decreasing the costs associated with answer sets
 until we cannot find a strictly better one anymore.
-\clasp\ (or \clingo) enumerates successively better answer sets
+\clasp\ (or \clingo) successively enumerates better answer sets
 w.r.t.\ the provided optimization statements (cf.\ Section~\ref{subsec:gringo:optimize}).
 Any answer set is printed as soon as it has been computed,
 and the last one is optimal.
 If there are multiple optimal answer sets, an arbitrary one among them is computed.
 For the graph in Figure~\ref{fig:costs},
-the optimal answer set (cf.\ Figure~\ref{fig:tsp}) is unique,
+the optimal answer set (cf.\ Figure~\ref{fig:tsp}) is unique
 and its computation can proceed as follows:%
 \marginlabel{%
   To compute the minimum-cost round trip
@@ -274,29 +276,31 @@ cycle(4,1) cycle(5,6) cycle(6,3)
 Optimization: 11
 \end{lstlisting}
 %
-\comment{T2BK: check/revise options}
 Given that no answer is obtained after the second one,
 we know that~\code{11} is the optimum value,
-but there might be more optimal answer sets that have not been computed yet.
-In order to find them too, we can use the following command line options
-of \clasp\ (cf.\ Section~\ref{subsec:opt:clasp}):
-``\code{--opt-value=11}'' in order to initialize the optimum and
-``\code{--opt-all}'' to compute also equitable
-(rather than only strictly better) answer sets.
+but there might be further optimal answer sets that have not been computed yet.
+To compute all optimal answer sets we can change \clasp's optimization mode using option
+``\code{--opt-mode=optN}''.
+In this mode, \clasp first prints the tentative models where optimality is not yet proven and afterwards prints the optimal models.
+Note that the first optimal model is printed twice in this mode.
+To omit tentative models in the output and only print optimal models, we can add option 
+``\code{--quiet=1}''.
+All the above options work with \clingo\ too.
+
 \marginlabel{%
   The full invocation is:\\
   \code{\mbox{~}gringo \textbackslash\\
     \mbox{~}\attach{examples/ham.lp}{ham.lp} \attach{examples/min.lp}{min.lp} \textbackslash\\
-    \mbox{~}\attach{examples/costs.lp}{costs.lp} \attach{examples/graph.lp}{graph} |\rlap{\:\textbackslash}\\
-    \mbox{~}clasp -n 0 \textbackslash\\
-    \mbox{~}--opt-value=11 \textbackslash\\
-    \mbox{~}--opt-all}\\
+    \mbox{~}\attach{examples/costs.lp}{costs.lp} \attach{examples/graph.lp}{graph.lp} \textbackslash\\
+    \mbox{~}| clasp \textbackslash\\
+    \mbox{~}--opt-mode=optN \textbackslash\\
+    \mbox{~}--quiet=1}\\
   or alternatively:\\
-  \code{\mbox{~}clingo -n 0 \textbackslash\\
-    \mbox{~}--opt-value=11 \textbackslash\\
-    \mbox{~}--opt-all \textbackslash\\
+  \code{\mbox{~}clingo \textbackslash\\
+    \mbox{~}--opt-mode=optN \textbackslash\\
+    \mbox{~}--quiet=1 \textbackslash\\
     \mbox{~}\attach{examples/ham.lp}{ham.lp} \attach{examples/min.lp}{min.lp} \textbackslash\\
-    \mbox{~}\attach{examples/costs.lp}{costs.lp} \attach{examples/graph.lp}{graph}}}%
+    \mbox{~}\attach{examples/costs.lp}{costs.lp} \attach{examples/graph.lp}{graph.lp}}}%
 After obtaining only the second answer given above,
 we are sure that this is the unique optimal answer set,
 whose associated edge costs (cf.\ Figure~\ref{fig:tsp}) correspond to
@@ -305,13 +309,7 @@ Note that, with \const{\#maximize} statements in the input, this correlation
 might be less straightforward because they are compiled into \const{\#minimize}
 statements in the process of generating \lparse's output format~\cite{lparseManual}.
 Furthermore, if there are multiple optimization statements,
-\clasp\ (or \clingo) will report separate optimization values ordered by significance.
-Finally, the two-stage invocation scheme exercised above,
-first determining the optimum and afterwards all (and only) optimal answer sets,
-is recommended for general use.
-Otherwise,
-if using option ``\code{--opt-all}'' right away without knowing the optimum,
-one risks the enumeration of plenty suboptimal answer sets.
+\clasp\ (or \clingo) will report separate optimization values ordered by priority.
 We also invite everyone to explore command line option ``\code{--opt-restart}''
 (cf.\ Section~\ref{subsec:opt:clasp})
 in order to see whether it improves search efficiency on optimization problems.
@@ -319,7 +317,7 @@ in order to see whether it improves search efficiency on optimization problems.
 
 \subsection{Blocks-World Planning}\label{subsec:ex:block}
 
-The Blocks-World is a well-known planning domain,
+The blocks-world is a well-known planning domain
 where finding \emph{shortest} plans has received particular attention~\cite{gupnau92a}.
 In an eventually propositional formalism like ASP,
 a bound on the plan length must be fixed before search can proceed.
@@ -338,7 +336,7 @@ doing only the necessary additions in each step.
 Note that planning is a natural application domain for \iclingo,
 but other problems including some mutable bound can be addressed too, thus,
 \iclingo\ is not a specialized planning system.
-However, we use Blocks-World Planning to illustrate the exploitation of
+However, we use blocks-world planning to illustrate the exploitation of
 \iclingo's incremental computation mode.
 
 
@@ -349,9 +347,9 @@ an instance is given by a set of facts, here,
 over predicates \pred{block}/$1$ (declaring blocks),
 \pred{init}/$1$ (defining the initial state), and
 \pred{goal}/$1$ (specifying the goal state).
-A well-known Blocks-World instance is described by:%
+A well-known blocks-world instance is described by:%
 \footnote{%
-  Blocks-World instances \code{world$i$.lp} for $i\in\{\code{0},\code{1},\code{2},\code{3},\code{4}\}$
+  Blocks-world instances \code{world$i$.lp} for $i\in\{\code{0},\code{1},\code{2},\code{3},\code{4}\}$
   are adaptations of the instances provided at~\cite{erdemBW}.}
 %
 \lstinputlisting{examples/world0.lp}
@@ -365,11 +363,11 @@ the possibility of instantiating variables to compound terms.
 
 \subsubsection{Problem Encoding}\label{subsec:block:encoding}
 
-Our Blocks-World Planning encoding for \clingo\ makes use of \const{\#program} directives
+Our blocks-world planning encoding for \clingo\ makes use of \const{\#program} directives
 defining subprograms \const{base}, \const{cumulative(t)}, and \const{volatile(t)},
 separating the encoding into a static, a cumulative, and a volatile (query) part
 (similar to the approach taken by \iclingo~\cite{gekakaosscth08a}).
-Each of them can be further refined into Generate, Define, Test, and Display constituents, 
+Each of them can be further refined into generate, define, test, and display constituents, 
 as indicated in the comments below:
 %
 \lstinputlisting{examples/blocks.lp}
@@ -385,7 +383,7 @@ over function \const{on}/$2$.
 
 The \const{cumulative} subprogram in Line~7 declares constant~\code{t}
 as a placeholder for step numbers in the cumulative encoding part below.
-Here, the Generate rule in Line~9 states that exactly one block~\var{X}
+Here, the generate rule in Line~9 states that exactly one block~\var{X}
 must be moved to a location~\var{Y} (different from~\var{X}) at each step~\code{t}.
 The integrity constraint in Line~11--13 is used to test whether
 moving block~\var{X} to location~\var{Y} is possible at step~\code{t}
@@ -393,7 +391,7 @@ by denying~\code{\pred{move}(X,Y,t)} to hold if there
 is either some block~\var{A} on~\var{X} or some block~\var{B} distinct from~\var{X} on~\var{Y}
 (this condition is only checked if~\var{Y} is a block, viz., different from constant \const{table})
 at step~\code{t-1}.
-Finally, the Define rule in Line~15 propagates
+Finally, the define rule in Line~15 propagates
 a move to the state at step~\code{t},
 while the rule in Line~16--17 states that a block~\var{X} stays on a location~\var{Z}
 if it is not moved to any other location~\var{Y}.
@@ -406,7 +404,7 @@ satisfied at step~\const{t}.
 
 Our incremental encoding concludes with a second \const{base} part,\comment{T:?}
 as specified in Line~23.
-Note that, for the meta-statements with Display functionality (Line~25--26),
+Note that, for the meta-statements with display functionality (Line~25--26),
 it is actually unimportant whether they belong to a static, cumulative, or
 volatile program part, as answer sets are projected
 (to instances of \pred{move}/$3$) in either case.

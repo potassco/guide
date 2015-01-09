@@ -279,12 +279,13 @@ Optimization: 11
 Given that no answer is obtained after the second one,
 we know that~\code{11} is the optimum value,
 but there might be further optimal answer sets that have not been computed yet.
-To compute all optimal answer sets we can change \clasp's optimization mode using option
+To compute all optimal answer sets,
+we can change \clasp's optimization mode using option
 ``\code{--opt-mode=optN}''.
-In this mode, \clasp first prints the tentative models where optimality is not yet proven and afterwards prints the optimal models.
-Note that the first optimal model is printed twice in this mode.
-To omit tentative models in the output and only print optimal models, we can add option 
-``\code{--quiet=1}''.
+In this mode, \clasp\ first prints the tentative answer sets where optimality is not yet proven and afterwards prints the optimal answer sets.
+Note that the first optimal answer set is printed twice in this mode.
+To omit tentative answer sets in the output and only print optimal answer sets,
+we can add option ``\code{--quiet=1}''.
 All the above options work with \clingo\ too.
 
 \marginlabel{%
@@ -310,10 +311,6 @@ might be less straightforward because they are compiled into \const{\#minimize}
 statements in the process of generating \lparse's output format~\cite{lparseManual}.
 Furthermore, if there are multiple optimization statements,
 \clasp\ (or \clingo) will report separate optimization values ordered by priority.
-We also invite everyone to explore command line option ``\code{--opt-restart}''
-(cf.\ Section~\ref{subsec:opt:clasp})
-in order to see whether it improves search efficiency on optimization problems.
-
 
 \subsection{Blocks-World Planning}\label{subsec:ex:block}
 

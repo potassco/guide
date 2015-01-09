@@ -327,15 +327,11 @@ the same planning problem with a different bound
 involves grounding and solving from scratch.
 \tbr
 In order to reduce such redundancies,
-the incremental ASP system \iclingo~\cite{gekakaosscth08a}
-can gradually increase a bound, % thereby,
-doing only the necessary additions in each step.
-Note that planning is a natural application domain for \iclingo,
-but other problems including some mutable bound can be addressed too, thus,
-\iclingo\ is not a specialized planning system.
-However, we use blocks-world planning to illustrate the exploitation of
-\iclingo's incremental computation mode.
-
+\clingo's scripting API (c.f. Section~\ref{sec:multi}) can be used to solve problems in an incremental fashion.
+Because planning problems where the search horizon is gradually increased are so common,
+\clingo provides an easy to use inbuilt solving and grounding mode to solve such problems.
+We use blocks-world planning to illustrate the exploitation of
+\clingo's incremental computation mode.
 
 \subsubsection{Problem Instance}\label{subsec:block:instance}
 
@@ -361,55 +357,61 @@ the possibility of instantiating variables to compound terms.
 \subsubsection{Problem Encoding}\label{subsec:block:encoding}
 
 Our blocks-world planning encoding for \clingo\ makes use of \const{\#program} directives
-defining subprograms \const{base}, \const{cumulative(t)}, and \const{volatile(t)},
-separating the encoding into a static, a cumulative, and a volatile (query) part
-(similar to the approach taken by \iclingo~\cite{gekakaosscth08a}).
+defining subprograms \const{base}, \const{transition(t)}, and \const{check(t)},
+separating the encoding into 
+a static part, 
+a specification of state transitions, 
+and a part for checking the goal situation and state constraints, respectively.
+The \code{base} part is instantiated at step zero,
+the \code{transition(t)} part is instantiated for steps~$\code{t}>0$,
+and the \code{check(t)} part is instantiated for steps~$\code{t}\geq0$.
+
 Each of them can be further refined into generate, define, test, and display constituents, 
 as indicated in the comments below:
 %
 \lstinputlisting{examples/blocks.lp}
 %
-In the initial program \const{base} part (Line~1--5),
+In the first line we enable \clingo's incremental computation mode.
+
+Next, in the \const{base} part (Line~3--7),
 we define blocks and constant \const{table}
 as instances of predicate \pred{location}/$1$.
 Moreover, we use instances of \pred{init}/$1$
-to initialize predicate \pred{holds}/$2$ for step~\const{0}, thus,
-defining the conditions before the first incremental step.
+to initialize predicate \pred{holds}/$2$ for the initial state at step~\const{0}, thus,
+defining the conditions before the first state transition.
 Note that variable~\var{F} is instantiated to compound terms
 over function \const{on}/$2$.
 
-The \const{cumulative} subprogram in Line~7 declares constant~\code{t}
-as a placeholder for step numbers in the cumulative encoding part below.
-Here, the generate rule in Line~9 states that exactly one block~\var{X}
-must be moved to a location~\var{Y} (different from~\var{X}) at each step~\code{t}.
-The integrity constraint in Line~11--13 is used to test whether
-moving block~\var{X} to location~\var{Y} is possible at step~\code{t}
-by denying~\code{\pred{move}(X,Y,t)} to hold if there
-is either some block~\var{A} on~\var{X} or some block~\var{B} distinct from~\var{X} on~\var{Y}
-(this condition is only checked if~\var{Y} is a block, viz., different from constant \const{table})
-at step~\code{t-1}.
-Finally, the define rule in Line~15 propagates
-a move to the state at step~\code{t},
-while the rule in Line~16--17 states that a block~\var{X} stays on a location~\var{Z}
-if it is not moved to any other location~\var{Y}.
+The \const{transition} subprogram in Line~9 declares constant~\code{t} as a placeholder for step numbers in the program part below.
+Remember that the \code{transitions(t)} part is not instantiated for $\code{t}=0$.
+Hence, it can always refer to two successive time steps at~\code{t} and~\code{t-1}.
+The generate rule in Line~11 states that exactly one block~\var{X} must be moved to a location~\var{Y} (different from~\var{X}) 
+for each state transition at step~$\code{t}$.
+The integrity constraint in Line~13--14 is used to test whether moving block~\var{X} to location~\var{Y} is possible at step~\code{t}.
+The first integrity constraints ensures that block~\var{X} cannot be moved if there is another block~\var{A} on top of it.
+Furthermore, the second integrity constraint excludes all moves where the target block~\var{Y} is below some other block~\var{B} than block~\var{X}
+(this condition is only checked if~\var{Y} is a block, viz., different from constant \const{table}).
+The define rule in Line~16 marks the block that has been moved in predicate~\const{moved/1}.
+Finally, the define rule in Line~17 propagates a move to the state at step~\code{t}.
+While the rules in Line~18 states 
+that a block~\var{X} stays on a location~\var{Z} if it is not moved.
 
-The \const{volatile} subprogram in Line~19 relies on the external atom \code{query(t)} 
-for declaring the next part as a query depending on step number~\const{t}, 
-but not accumulated over successive steps.\comment{T: refine!}
-In fact, the integrity constraint in Line~21 tests whether goal conditions are
-satisfied at step~\const{t}.
+The subprogram \code{check} in Line~20 
+allows for specifying constraints to be checked for each state.
+We check the goal condition in the following test part.
+Note the use of atom \code{query(t)}.
+This atom is provided in incremental mode to post goal queries;
+for each incremental step, there is only one atom over \code{query/1} that is true,
+namely, \code{query(t)} for the current step~\code{t}.
 
-Our incremental encoding concludes with a second \const{base} part,\comment{T:?}
-as specified in Line~23.
-Note that, for the meta-statements with display functionality (Line~25--26),
-it is actually unimportant whether they belong to a static, cumulative, or
-volatile program part, as answer sets are projected
-(to instances of \pred{move}/$3$) in either case.
-\REW{However, by ending the encoding file with a \const{\#base} statement,
-we make sure that the contents of a concatenated instance file
-is included in the static program part.}
-\REW{This is also the default of \iclingo\
-(as well as of \gringo\ and \clingo\ that can be used for non-incremental computations).}%
+Note that the \code{\#show} meta-statement (Line~24--25)
+is not part of any program part.
+It affects the visibility of atoms in all program parts.%
+\footnote{Not so for \code{\#show} statements to show terms.
+These are tied to the program parts they occur in.}
+Furthermore, rules not subject to a \code{\#program} directive are associated with the \code{base} program by default.
+Hence, we do not have to use such directives in instance files
+because the \code{base} part is exactly where we want the facts in the instance to be.
 \marginlabel{%
   To observe the ground program \iclingo\ deals with internally 
   at a step $n$, invoke:\\
@@ -424,30 +426,21 @@ is included in the static program part.}
 
 Finally, let us stress important prerequisites for obtaining
 a well-defined incremental computation result from \clingo.
-First, the ground instances of head atoms of rules in the
-static, cumulative, and volatile program part must be pairwisely disjoint.
-Furthermore, ground instances of head atoms in the volatile part
-must not occur in the static and cumulative parts,
-and those of the cumulative part must not be used in the static part.
-Finally, ground instances of head atoms in either the cumulative or the volatile part
-must be different for each pair of distinct steps.
-This is the case for our encoding because both atoms over \pred{move}/$3$
+First, the ground instances of head atoms of rules in each step must be pairwisely disjoint.
+This is the case for our encoding because atoms over \pred{move}/$3$, \pred{moved}/$2$,
 and those over \pred{holds}/$2$ include~\const{t} as an argument in the
-heads of the rules in Line~9, 15, and~16--17.
+heads of rules in Line~11, Line~16, and~Line~17--18, respectively.
 As the smallest step number to replace~\const{t} with is~\const{1},
 there also is no clash with the ground atoms over \pred{holds}/$2$
-obtained from the head of the static rule in Line~5.
+obtained from the head of the static rule in Line~7.
 Further details on the sketched requirements and their formal background can
 be found in~\cite{gekakaosscth08a}.
-Arguably, many problems including some mutable bound can be encoded
-such that the prerequisites apply.
-Some attention should of course be spent on
-putting rules into the right program parts.
-
+Arguably, many problems including a mutable bound can be encoded
+such that this prerequisite applies.
+Some attention should of course be spent on putting rules into the right program parts.
 
 \subsubsection{Problem Solution}\label{subsec:block:solution}
 
-\tbrw
 We can now use \clingo\ to \emph{incrementally} compute the shortest
 sequence of moves that brings us from the initial to the goal state
 depicted in the instance in Section~\ref{subsec:block:instance}:%
@@ -469,42 +462,21 @@ move(b2,table,1) move(b1,b0,2) move(b2,b1,3)
 This unique answer set tells us that the given problem instance can
 be solved by moving block~\const{b2} to the~\const{table} in order to
 then put~\const{b1} on top of~\const{b0} and finally~\const{b2} on top of~\const{b1}.
-This solution is computed by \clingo\ in three grounding and solving steps,
+This solution is computed by \clingo\ in four grounding and solving steps,
 where, starting from the \const{base} program, constant~\const{t}
-is successively replaced with step numbers~\const{1}, \const{2}, and~\const{3}
-in the~\const{cumulative} and in the~\const{volatile} part.
-While the query postulated in the~\const{volatile} part cannot be
+is successively replaced with step numbers~\const{0}, \const{1}, \const{2}, and~\const{3}
+in the~\const{check} part and step numbers~\const{1}, \const{2}, and~\const{3} in the~\const{transition} part.
+While the goal situation checked in the~\const{check} part cannot be
 fulfilled in steps~\const{1} and~\const{2}, \clingo\ 
 stops its incremental computation after finding an answer set in step~\const{3}.
 The scheme of iterating steps until finding at least one answer set
-is the default behavior of~\clingo,
-which can be customized via command line options
-(cf.\ Section~\ref{subsec:opt:clingo}).
+is the default behavior of the incremental mode.
 
-Finally, let us describe how solutions obtained via an incremental computation
-can be computed in the standard way, that is, in a single pass.
-To this end, the step number can be fixed to some~$n$ via
-option ``\code{--ifixed=$n$}'' (cf.\ Section~\ref{subsec:opt:gringo}),
-\marginlabel{%
-  For non-incremental solving, invoke:\\
-  \code{\mbox{~}gringo --ifixed=$n$ \textbackslash\\
-        \mbox{~}\attach{examples/blocks.lp}{blocks.lp} \textbackslash\\
-        \mbox{~}\attach{examples/world0.lp}{world0.lp} |\rlap{\textbackslash}\\
-        \mbox{~}clasp -n 0}\\
-  or alternatively:\\
-  \code{\mbox{~}clingo -n 0 \textbackslash\\
-        \mbox{~}--ifixed=$n$ \textbackslash\\
-        \mbox{~}\attach{examples/blocks.lp}{blocks.lp} \attach{examples/world0.lp}{world0.lp}}}
-enabling \gringo\ or \clingo\ to generate the ground program present
-inside \clingo\ at step~$n$.
-Note that \const{volatile} parts are here only instantiated for the final step~$n$,
-while \const{cumulative} rules are added for all steps $\const{1},\dots,n$.
-Option ``\code{--ifixed=$n$}'' can be useful for investigating the contents
-of a ground program dealt with at step~$n$ or for using an external solver
-(other than \clasp).
-In the latter case, repeated invocations with varying~$n$
-are required if the bound of an optimal solution is a priori unknown.
-
+Sometimes it might be interesting to inspect the grounding of an incremental program.
+This can be achieved using option \code{--lparse-debug=plain}.
+Adding this option, \clingo\ solves as usual
+but additionally prints the grounded rules to the standard error stream.
+The rules are printed in the same format as the text output but preceded with ``\%''.
 
 % %%% Local Variables: 
 % %%% mode: latex

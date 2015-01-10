@@ -15,7 +15,7 @@ holds(F,0) :- init(F).
 % Define
 moved(X,t) :- move(X,Y,t).
 holds(on(X,Y),t) :- move(X,Y,t).
-holds(on(X,Z),t) :- holds(on(X,Z),t-1), moved(X,t).
+holds(on(X,Z),t) :- holds(on(X,Z),t-1), not moved(X,t).
                     
 #program check(t).
 % Test

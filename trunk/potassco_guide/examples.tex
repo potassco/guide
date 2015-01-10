@@ -3,7 +3,7 @@
 We exemplarily solve the following problems in ASP:
 $n$-coloring (Section~\ref{subsec:ex:color}),
 traveling salesperson (Section~\ref{subsec:ex:tsp}), and
-blocks-world planning (Section~\ref{subsec:ex:block}).%
+blocks world planning (Section~\ref{subsec:ex:block}).%
 \footnote{The above examples are also discussed in~\cite{gekakasc12a};
   you may also like the videos at~\cite{potassco}.}
 While the first problem could likewise be solved within neighboring paradigms,
@@ -171,7 +171,7 @@ we encode this subproblem via the following non-ground rules:
 The generate rules in Line~2 and~3 assert that every node must have
 exactly one outgoing and exactly one incoming edge, respectively,
 belonging to the cycle.
-By inserting the available edges, for node~\const{1},
+By inserting the available edges for node~\const{1},
 Line~2 and~3 are grounded as follows:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
@@ -312,9 +312,9 @@ statements in the process of generating \lparse's output format~\cite{lparseManu
 Furthermore, if there are multiple optimization statements,
 \clasp\ (or \clingo) will report separate optimization values ordered by priority.
 
-\subsection{Blocks-World Planning}\label{subsec:ex:block}
+\subsection{Blocks World Planning}\label{subsec:ex:block}
 
-The blocks-world is a well-known planning domain
+The blocks world is a well-known planning domain
 where finding \emph{shortest} plans has received particular attention~\cite{gupnau92a}.
 With the single shot grounding and solving approach we have used in the previous examples,
 a bound on the plan length must be fixed before search can proceed.
@@ -325,12 +325,12 @@ an ASP system must repeatedly be queried while varying the bound.
 With a traditional ASP system, processing
 the same planning problem with a different bound
 involves grounding and solving from scratch.
-\tbr
+
 In order to reduce such redundancies,
 \clingo's scripting API (c.f. Section~\ref{sec:multi}) can be used to solve problems in an incremental fashion.
 Because planning problems where the search horizon is gradually increased are so common,
-\clingo provides an easy to use inbuilt solving and grounding mode to solve such problems.
-We use blocks-world planning to illustrate the exploitation of
+\clingo\ provides an easy to use inbuilt solving and grounding mode to solve such problems.
+We use blocks world planning to illustrate the exploitation of
 \clingo's incremental computation mode.
 
 \subsubsection{Problem Instance}\label{subsec:block:instance}
@@ -340,23 +340,23 @@ an instance is given by a set of facts, here,
 over predicates \pred{block}/$1$ (declaring blocks),
 \pred{init}/$1$ (defining the initial state), and
 \pred{goal}/$1$ (specifying the goal state).
-A well-known blocks-world instance is described by:%
+A well-known blocks world instance is described by:%
 \footnote{%
-  Blocks-world instances \code{world$i$.lp} for $i\in\{\code{0},\code{1},\code{2},\code{3},\code{4}\}$
+  Blocks world instances \code{world$i$.lp} for $i\in\{\code{0},\code{1},\code{2},\code{3},\code{4}\}$
   are adaptations of the instances provided at~\cite{erdemBW}.}
 %
 \lstinputlisting{examples/world0.lp}
 %
 Note that the facts in Line~13--15 and~24--26 specify the initial
 and the goal state depicted in Line~9-11 and~19--22, respectively.
-We here use (uninterpreted) function \const{on}/$2$ to illustrate another
+Here we use (uninterpreted) function \const{on}/$2$ to illustrate another
 important feature available in \gringo\ and~\clingo, namely,
 the possibility of instantiating variables to compound terms.
 
 
 \subsubsection{Problem Encoding}\label{subsec:block:encoding}
 
-Our blocks-world planning encoding for \clingo\ makes use of \const{\#program} directives
+Our blocks world planning encoding for \clingo\ makes use of \const{\#program} directives
 defining subprograms \const{base}, \const{transition(t)}, and \const{check(t)},
 separating the encoding into 
 a static part, 
@@ -388,12 +388,12 @@ Hence, it can always refer to two successive time steps at~\code{t} and~\code{t-
 The generate rule in Line~11 states that exactly one block~\var{X} must be moved to a location~\var{Y} (different from~\var{X}) 
 for each state transition at step~$\code{t}$.
 The integrity constraint in Line~13--14 is used to test whether moving block~\var{X} to location~\var{Y} is possible at step~\code{t}.
-The first integrity constraints ensures that block~\var{X} cannot be moved if there is another block~\var{A} on top of it.
+The first integrity constraint ensures that block~\var{X} cannot be moved if there is another block~\var{A} on top of it.
 Furthermore, the second integrity constraint excludes all moves where the target block~\var{Y} is below some other block~\var{B} than block~\var{X}
 (this condition is only checked if~\var{Y} is a block, viz., different from constant \const{table}).
-The define rule in Line~16 marks the block that has been moved in predicate~\const{moved/1}.
+The define rule in Line~16 marks the block that is moved via predicate~\const{moved/1}.
 Finally, the define rule in Line~17 propagates a move to the state at step~\code{t}.
-While the rules in Line~18 states 
+While the rule in Line~18 states 
 that a block~\var{X} stays on a location~\var{Z} if it is not moved.
 
 The subprogram \code{check} in Line~20 
@@ -404,7 +404,7 @@ This atom is provided in incremental mode to post goal queries;
 for each incremental step, there is only one atom over \code{query/1} that is true,
 namely, \code{query(t)} for the current step~\code{t}.
 
-Note that the \code{\#show} meta-statement (Line~24--25)
+Note that the \code{\#show} meta-statement (Line~25)
 is not part of any program part.
 It affects the visibility of atoms in all program parts.%
 \footnote{Not so for \code{\#show} statements to show terms.
@@ -431,7 +431,7 @@ This is the case for our encoding because atoms over \pred{move}/$3$, \pred{move
 and those over \pred{holds}/$2$ include~\const{t} as an argument in the
 heads of rules in Line~11, Line~16, and~Line~17--18, respectively.
 As the smallest step number to replace~\const{t} with is~\const{1},
-there also is no clash with the ground atoms over \pred{holds}/$2$
+there is also no clash with the ground atoms over \pred{holds}/$2$
 obtained from the head of the static rule in Line~7.
 Further details on the sketched requirements and their formal background can
 be found in~\cite{gekakaosscth08a}.
@@ -459,18 +459,15 @@ Answer: 1
 move(b2,table,1) move(b1,b0,2) move(b2,b1,3)
 \end{lstlisting}
 %
-This unique answer set tells us that the given problem instance can
-be solved by moving block~\const{b2} to the~\const{table} in order to
-then put~\const{b1} on top of~\const{b0} and finally~\const{b2} on top of~\const{b1}.
+This unique answer set tells us
+that the given problem instance can be solved by moving block~\const{b2} to the~\const{table}
+in order to then put~\const{b1} on top of~\const{b0} and finally~\const{b2} on top of~\const{b1}.
 This solution is computed by \clingo\ in four grounding and solving steps,
-where, starting from the \const{base} program, constant~\const{t}
-is successively replaced with step numbers~\const{0}, \const{1}, \const{2}, and~\const{3}
-in the~\const{check} part and step numbers~\const{1}, \const{2}, and~\const{3} in the~\const{transition} part.
-While the goal situation checked in the~\const{check} part cannot be
-fulfilled in steps~\const{1} and~\const{2}, \clingo\ 
-stops its incremental computation after finding an answer set in step~\const{3}.
-The scheme of iterating steps until finding at least one answer set
-is the default behavior of the incremental mode.
+where, starting from the \const{base} part and \const{check} part where constant~$\const{t}$ is replaced with step number~\const{0}, 
+constant~\const{t} is successively replaced with step numbers~\const{1}, \const{2}, and~\const{3} in the~\const{transition} and~\const{check} parts.
+While the goal situation checked in the~\const{check} part cannot be fulfilled in steps~\const{0}, \const{1}, and~\const{2},
+\clingo\ stops its incremental computation after finding an answer set in step~\const{3}.
+The scheme of iterating steps until finding at least one answer set is the default behavior of the incremental mode.
 
 Sometimes it might be interesting to inspect the grounding of an incremental program.
 This can be achieved using option \code{--lparse-debug=plain}.

@@ -2169,6 +2169,68 @@ For single shot solving, program parts should not be used.
 The feature is merely listed for completeness here.
 \end{note}
 
+\paragraph{Include Statements.}
+Include statements allow for including files from within another file.
+They have the following form:
+%
+\par
+\medskip
+\begin{tabular}{l}
+\code{\#include~"{\itshape file}".}
+\end{tabular}
+\par
+\medskip
+\noindent
+%
+where {\itshape file} is a path to an encoding file.
+When including a file it is first looked up relative to the current working directory.
+If it is not found there, then it is looked up relative to the file it was included from.
+Note that program part directives do not have an influence on included files,
+that is, including a file is equivalent to passing it on the command line.
+
+\begin{example}
+Suppose we have file \attach{examples/include.lp}{include.lp} with the following program:
+%
+\lstinputlisting{examples/include.lp}
+%
+\marginlabel{%
+To inspect the instantiation, invoke:\\
+\code{%
+\mbox{~}gringo --text \textbackslash\\
+\mbox{~}\attach{examples/include.lp}{include.lp}}\\
+or:\\
+\code{%
+\mbox{~}clingo --text \textbackslash\\
+\mbox{~}\attach{examples/include.lp}{include.lp}}
+}%
+%
+We can simply pass the file on the command line
+to include file \attach{examples/bird.lp}{bird.lp} from Example~\ref{ex:flies}.
+
+Because files are included from the current working,
+the following invocation with the given directory layout works too:
+\begin{lstlisting}[numbers=none]
+.
+|-- bird.lp
+\-- examples
+    \-- include.lp
+
+clingo examples/include.lp
+\end{lstlisting}
+
+And because files are included relative to the file with the include statement,
+the following works too:
+\begin{lstlisting}[numbers=none]
+.
+\-- examples
+    |-- bird.lp
+    \-- include.lp
+
+clingo examples/include.lp
+\end{lstlisting}
+\eexample
+\end{example}
+
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
 \tbrc{RK: not complete anymore, if dimacs is listed, opb, wcnf, etc. should be listed too}

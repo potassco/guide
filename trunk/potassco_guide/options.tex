@@ -57,57 +57,49 @@ along with their particular arguments (if required):
 Print help information and exit.
 \item[\code{--version,-v}]~\\
 Print version information and exit.
-%\item[\code{--syntax}]~\\
-%Print syntax information (about the input language) and exit.
-%\item[\code{--stats}]~\\
-%Print (extended) statistic information before termination.
 \item[\code{--verbose[=n],-V}]~\\
 Print additional (progress) information during computation.
 Verbosity level one and two are currently not used by \gringo.
-Level three prints internal representations of rules during grounding.
-(This may be used to identify either semantic errors in an input program or
- performance bottlenecks.)
+The flag implies level three.
+Level three prints internal representations of the logic program.
 \item[\code{--const,-c \textit{c}=\textit{t}}]~\\
-Replace occurrences (in the input program) of a constant~\code{\textit{c}}
-with a term~\code{\textit{t}}.
+Replace occurrences (in the input program) of constant~\code{\textit{c}} with term~\code{\textit{t}}.
+This overrides constant definitions in a source file without a warning.
 \item[\code{--text,-t}]~\\
 Output ground program in (human-readable) text format.
-\item[\code{--reify}]~\\
-Output ground program in form of facts.
-(These facts can then be used to, i.e., write a \attach{examples/meta.lp}{meta-interpreter}.)
-%\comment{add a section about a meta-interpreter}
-\item[\code{--lparse,-l}]~\\
-Output ground program in \lparse's numerical format~\cite{lparseManual}.
-\item[\code{--ground,-g}]~\\
-Enable lightweight mode for processing a ground input program.
-(This option is recommended to 
- omit unnecessary overhead if the input program is already ground,
- but it leads to a syntax error (cf.\ Section~\ref{subsec:error}) otherwise.)
-\item[\code{--ifixed=\textit{n}}]~\\
-Use \code{\textit{n}} as fix step number if the input program
-contains \const{\#cumulative} or \const{\#volatile} statements.
-\REW{(This option permits the handling of programs written for \iclingo\
- in a traditional single pass computation.)}
-\item[\code{--ibase}]~\\
-Process only the static part (that can be initiated by a \const{\#base} statement)
-of an input program.
-(This option may be used to investigate the basic setting of a problem
- including some mutable bound.)
-\item[\code{--dep-graph=filename}]~\\
-This option can be used to get the dependency graph in from
-of a dot\footnote{\url{http://www.graphviz.org/}} file of the program.
-\item[\code{--shift}]~\\
-Removes disjunction by shifting (see \cite{gellif91a}).
+\item[\code{--lparse-rewrite}]~\\
+Can be used in conjunction with the \code{--text} option to print a program in a (human-readable) similar to the lparse format,
+which is passed to the solver.
+\item[\code{--lparse-debug=\{none,plain,lparse,all\}}]~\\
+This option enables additional debugging output to the standard error stream.
+The available arguments are:
+\begin{description}[leftmargin=2cm,style=nextline,align=right,font=\code]
+  \item[none]  No additional output is printed.
+  \item[plain] Prints rules as with~\code{--text} but prefixed with~\code{\%}.
+  \item[lparse] Prints rules as with~\code{--text} and~\code{--lparse-rewrite} but prefixed with~\code{\%\%}.
+  \item[all] Combines argument \code{plain} and \code{all}.
+\end{description}
+
+\item[\code{--warn=[no-]w}]
+This option can be used to enable and disable warnings.
+To disable a warning, the argument has to prefixed with \code{no-}.
+To enable or disable multiple warnings, this option can be passed multiple times with different arguments.
+By default all warnings are enabled.
+The available values for argument \code{w} are:
+\begin{description}[leftmargin=6cm,style=nextline,align=right,font=\code]
+  \item[term-undefined]           See Section~\ref{sec:warn:undefterm}.
+  \item[atom-undefined]           See Section~\ref{sec:warn:undefatm}.
+  \item[nonnonmonotone-aggregate] See Section~\ref{sec:warn:nonmon}.
+  \item[define-cyclic]            See Section~\ref{sec:warn:cycdef}.
+  \item[define-redefinition]      See Section~\ref{sec:warn:redef}.
+  \item[file-included]            See Section~\ref{sec:warn:incfile}.
+\end{description}
 \end{description}
 %
-The default command line when invoking \gringo\ is as follows:
-%
-\begin{lstlisting}[numbers=none]
-gringo --lparse
-\end{lstlisting}
-That is, \gringo\ usually outputs a ground program in \lparse's numerical format,
-dealt with by various ASP solvers \cite{gekanesc07b,siniso02a,linzha04a}.
-
+When calling \gringo\ without options,
+it outputs a ground program in \lparse's numerical format,
+input language of various ASP solvers \cite{gekanesc07b,siniso02a,linzha04a}.
+Note that \gringo\ reads from standard input if no files are given.
 
 \subsection{\clingo\ Options}\label{subsec:opt:clingo}
 
@@ -119,32 +111,33 @@ An abstract invocation of \clingo\ looks as follows:
 clingo [ number | options | filenames ]
 \end{lstlisting}
 %
-A numerical argument is permitted for backward compatibility to
-the usage of solver \smodels~\cite{siniso02a},
-where it specifies the maximum number of answer sets to be computed
-(\code{0}~standing for all answer sets).
-As with \gringo, a number, options, and filenames do not need to be passed to \clingo\
-in any particular order.
+The optional numerical argument allows for specifying the maximum number of answer sets to be computed (\code{0}~standing for all answer sets).
+As with \gringo,
+the number, options, and filenames do not need to be passed to \clingo\ in any particular order.
 Given that \clingo\ combines \gringo\ and \clasp,
-it accepts all options described in the previous section
-and in Section~\ref{subsec:opt:clasp}.
-In particular, (long) options \code{--help} and \code{--version}
-make \clingo\ print the desired information and exit,
-while \code{--text}, \code{--lparse}, and \code{--reify}
-instruct \clingo\ to output a ground program (rather than solving it) like \gringo.
-If neither a filename nor an option that makes \clingo\ exit
-(see Section~\ref{subsec:opt:gringo}) is provided, \clingo\ reads from the standard input.
+it accepts all options described in the previous section and in Section~\ref{subsec:opt:clasp}.
+In particular,
+(long) options \code{--help} and \code{--version} make \clingo\ print the desired information and exit,
+while \code{--text} instructs \clingo\ to output a ground program (rather than solving it) like \gringo.
+If neither a filename nor an option that makes \clingo\ exit (see Section~\ref{subsec:opt:gringo}) is provided,
+\clingo\ reads from the standard input.
 Beyond the options described in Section~\ref{subsec:opt:gringo} and~\ref{subsec:opt:clasp},
 \clingo\ has a single additional option:
 %
 \begin{description}
-\item[\code{--clasp}]~\\
-Run \clingo\ as a plain solver (using embedded \clasp).
+\item[\code{--mode=m}]~\\
+Choose the mode in which \clingo\ should run.
+Available values for \code{m} are:
+\begin{description}[leftmargin=2cm,style=nextline,align=right,font=\code]
+  \item[clingo] Explicitly select \clingo\ mode (the default).
+  \item[gringo] In this mode \clingo\ behaves like \gringo.
+  \item[lparse] In this mode \clingo\ behaves like \clasp.
+\end{description}
+
 \end{description}
 %
 Finally, the default command line when invoking \clingo\
 consists of all \clasp\ defaults (cf.\ Section~\ref{subsec:opt:clasp}).
-
 
 \subsection{\clasp\ Options}\label{subsec:opt:clasp}
 

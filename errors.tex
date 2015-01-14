@@ -16,17 +16,32 @@ in view of the fact that they share a number of functionalities.
 
 \subsection{Errors}\label{subsec:error}
 
+Each error message begins with a location followed by the string \code{error} and an error message:
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{File}@:@\textit{Line}@:@\textit{Column}@-@\textit{Column}@: error: @\textit{Message}@
+  @\textit{Information}@
+@\textit{File}@:@\textit{Line}@:@\textit{Column}@-@\textit{Column}@: note: @\textit{Message}@
+...
+
+\end{lstlisting}
+The location refers to a string in a source file, specified by file name, line number, and beginning and ending column number
+(column $n$ refers to the $n$-th symbol in a line).
+Error messages are sometimes followed by further information and notes spanning multiple lines.
+Each error message is terminated with two newlines.
+
 We start our description with errors that may be encountered during grounding,
 where the following one indicates a syntax error in the input:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: parsing failed:
-        @\textit{File}@:@\textit{Line}@:@\textit{Column}@: unexpected token: @\textit{Token}@
+@\textit{Location}@: error: syntax error, unexpected @\textit{Token}@
 \end{lstlisting}
 %
-To correct this error, please investigate the line~\code{\textit{Line}}
+To correct this error, please investigate the indicated location
 and check whether something looks strange there
 (like a missing period, an unmatched parenthesis, etc.).
+Note that the parser tries to recover from a syntax error.
+This typically means that everything up to the next period is ignored.
+Hence, multiple errors might be printed.
 
 The next error occurs if an input program is not safe:
 %

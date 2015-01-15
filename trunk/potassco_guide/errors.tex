@@ -1,5 +1,7 @@
 \section{Errors and Warnings}\label{sec:errorwarn}
 
+\com{RK: cleanup of warnings is on my todo list since quite a while.
+This section does not always describe the current behavior of \gringo\ but the behavior I would like to have.}
 This section explains the most frequent errors and warnings 
 related to inappropriate inputs or command line options that,
 if they occur,
@@ -116,10 +118,38 @@ This error means that the input does not comply with \lparse's numerical format~
 If you are using \gringo\ to ground logic programs,
 this error should never occur.
 
+\subsubsection{Solving Incremental Programs}
+\tbfc{atom redefined error}
+
 \subsection{Warnings}\label{subsec:warn}
 
-The following warnings may be raised by \gringo, \clingo, or \iclingo:
+This section describes warnings that may be reported by \gringo\ or \clingo.
+Unlike errors, warnings do not terminate the application 
+but rather hint at possible problems, which should be investigated.
+Most warnings have a similar format as the errors described in Sections~\ref{subsec:error:parselp};
+the only difference is that the location is followed by the string \code{warning}.
+
+\subsubsection{Undefined Terms}\label{sec:warn:undefterm}
+This warning may occur within an arithmetic evaluation (cf.~Section~\ref{subsec:gringo:arith})
+or if an error occurs while evaluating an external function (cf.~Section~\ref{subsec:lang:extfun}):
 %
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: warning: term undefined:
+  @\textit{Term}@
+...
+\end{lstlisting}
+%
+It typically means that either a (symbolic) constant or a compound term (over an uninterpreted function)
+has occurred in the scope of some built-in arithmetic function.
+
+The warning message might be followed by further notes.
+For example, if the evaluation of an external function failed,
+by a callstack indicating the location of the error within the source code of the external function.
+
+Instantiations of rules, \code{\#show} statements, \code{\#external} statements, weak constraints, aggregate elements, and conditional literals
+that contain undefined terms are discarded.
+
+\subsubsection{Undefined Atoms}\label{sec:warn:undefatm}
 \begin{lstlisting}[numbers=none,escapechar=@]
 % warning: @\textit{p}@/@\!\textit{i}@ is never defined
 \end{lstlisting}
@@ -128,32 +158,19 @@ This warning, states that a predicate \code{\textit{p}/\!\textit{i}}
 has occurred in some rule body, but not in the head of any rule,
 might point at a mistyped predicate.
 
-\subsubsection{Undefined Terms}\label{sec:warn:undefterm}
-This warning may occur within an arithmetic evaluation (cf.~Section~\ref{subsec:gringo:arith})
-or if an error occurs while evaluating an external function (cf.~Section~\ref{subsec:lang:extfun}):
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: cannot convert @\textit{Term}@ to integer in:
-        @\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Literal}@
-\end{lstlisting}
-%
-It means that either a (symbolic) constant or a compound term
-(over an uninterpreted function with non-zero arity)
-has occurred in the scope of some built-in arithmetic function.
-
-
-\subsubsection{Undefined Atoms}\label{sec:warn:undefatm}
-\tbf
 
 \subsubsection{Nonmonotone Aggregates}\label{sec:warn:nonmon}
-\tbf
+\tbfc{should definitely be a warning because \gringo\ cannot verify recursiveness exactly}
 
 \subsubsection{Acyclic Constant Definition}\label{sec:warn:cycdef}
-\tbf
+\tbfc{better make this an error}
 
 \subsubsection{Redefinition of Constants}\label{sec:warn:redef}
-\tbf
+\tbfc{should this be an error?}
 
 \subsubsection{File Included Multiple Times}\label{sec:warn:incfile}
-\tbf
+\tbfc{maybe this should be an error?}
+
+\subsubsection{Parsing External Functions}\label{sec:warn:parseext}
+\tbfc{better make this an error}
 

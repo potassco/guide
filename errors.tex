@@ -1,4 +1,4 @@
-\section{Errors and Warnings}\label{sec:error}
+\section{Errors and Warnings}\label{sec:errorwarn}
 
 This section explains the most frequent errors and warnings 
 related to inappropriate inputs or command line options that,
@@ -6,6 +6,8 @@ if they occur,
 lead to messages sent to the standard error stream.
 The difference between errors and warnings is that the former involve premature termination,
 while the latter are hints pointing at possibly corrupt input that can still be processed further.
+
+\subsection{Errors}\label{sec:error}
 
 Most of the errors in the following start with the prefix:
 \begin{lstlisting}[numbers=none,escapechar=@]
@@ -15,7 +17,7 @@ where \code{\textit{System}} is either \code{gringo}, \code{clingo}, or \code{cl
 We use \code{\textit{Error}} to denote this preamble.
 Also, all of these errors are fatal and lead to immediate termination.
 
-\subsection{Parsing and Checking Logic Programs}\label{subsec:error:parselp}
+\subsubsection{Parsing and Checking Logic Programs}\label{subsec:error:parselp}
 
 Each of the error message below begins with a location followed by the string \code{error} and an error message:
 \begin{lstlisting}[numbers=none,escapechar=@]
@@ -68,7 +70,7 @@ you might have to bind them with additional positive atoms in the conditions.
 If any of the two errors above is reported,
 then \gringo\ or \clingo\ terminates after parsing and checking with the error message:
 \begin{lstlisting}[numbers=none,escapechar=@]
-*** ERROR: (@\textit{System}@): grounding stopped because of errors
+@\textit{Error}@: grounding stopped because of errors
 \end{lstlisting}
 
 \begin{note}
@@ -76,7 +78,7 @@ No more than 20 errors are printed.
 If this limit is exceeded, the application stops parsing or safety checking and terminates.
 \end{note}
 
-\subsection{Parsing Command Line Options}\label{subsec:error:options}
+\subsubsection{Parsing Command Line Options}\label{subsec:error:options}
 
 All of the tools \gringo, \clasp, and \clingo\
 try to expand incomplete (long) options to recognized ones.
@@ -101,7 +103,7 @@ Finally, the third error occurs if the argument~\code{\textit{Arg}} is invalid f
 The last line is printed in all three cases.
 It indicates that option \code{--help} can be used to display the available options and their arguments.\comment{RK2BK: what is the use of context?}
 
-\subsection{Parsing Logic Programs in Lparse Format}\label{subsec:error:lparse}
+\subsubsection{Parsing Logic Programs in Lparse Format}\label{subsec:error:lparse}
 
 \com{RK2BK: please check}
 The following error message is issued by (embedded) \clasp:

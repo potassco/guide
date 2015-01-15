@@ -1,22 +1,23 @@
-\section{Errors and Warnings}\label{sec:error:warn}
+\section{Errors and Warnings}\label{sec:error}
 
-This section explains the most frequent errors and warnings
+This section explains the most frequent errors and warnings 
 related to inappropriate inputs or command line options that,
-if they occur, lead to messages sent to the standard error stream.
-The difference between errors and warnings is that the former
-involve immediate termination,
-while the latter are hints pointing at possibly corrupt input
-that can still be processed further.
-In the below description of errors (Section~\ref{subsec:error})
-and warnings (Section~\ref{subsec:warn}),
-we refrain from attributing them to a particular one among the tools
-\gringo, \clasp, and \clingo,
-in view of the fact that they share a number of functionalities.
+if they occur,
+lead to messages sent to the standard error stream.
+The difference between errors and warnings is that the former involve premature termination,
+while the latter are hints pointing at possibly corrupt input that can still be processed further.
 
+Most of the errors in the following start with the prefix:
+\begin{lstlisting}[numbers=none,escapechar=@]
+*** ERROR: (@\textit{System}@)
+\end{lstlisting}
+where \code{\textit{System}} is either \code{gringo}, \code{clingo}, or \code{clasp} depending on the system.
+We use \code{\textit{Error}} to denote this preamble.
+Also, all of these errors are fatal and lead to immediate termination.
 
-\subsection{Errors}\label{subsec:error}
+\subsection{Parsing and Checking Logic Programs}\label{subsec:error:parselp}
 
-Each error message begins with a location followed by the string \code{error} and an error message:
+Each of the error message below begins with a location followed by the string \code{error} and an error message:
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{File}@:@\textit{Line}@:@\textit{Column}@-@\textit{Column}@: error: @\textit{Message}@
   @\textit{Information}@
@@ -27,9 +28,10 @@ Each error message begins with a location followed by the string \code{error} an
 The location refers to a string in a source file, specified by file name, line number, and beginning and ending column number
 (column $n$ refers to the $n$-th symbol in a line).
 Error messages are sometimes followed by further information and notes spanning multiple lines.
-Each error message is terminated with two newlines.
+Multiple error messages of this kind might be reported; 
+each error message is terminated with two newlines.
 
-We start our description with errors that may be encountered during grounding,
+We start our description with errors that may be encountered during parsing,
 where the following one indicates a syntax error in the input:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
@@ -41,134 +43,76 @@ and check whether something looks strange there
 (like a missing period, an unmatched parenthesis, etc.).
 Note that the parser tries to recover from a syntax error.
 This typically means that everything up to the next period is ignored.
-Hence, multiple errors might be printed.
 
 The next error occurs if an input program is not safe:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: unsafe variables in:
-@\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Rule}@
-        @\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Var}@
-        ...
+@\textit{Location}@: error: unsafe variables in
+  @\textit{Rule}@
+@\textit{Location}@: note: '@\textit{Var}@' is unsafe
+...
 \end{lstlisting}
 %
-Along with the error message, the \code{\textit{Rule}} and the
-name~\code{\textit{Var}} of at least one variable causing the problem
-are reported.
+Along with the error message,
+the affected rule (\code{\textit{Rule}}) and a list of all unsafe variable occurrences (\code{\textit{Var}}) are reported.
 The first action to take usually consists of checking whether
 variable~\code{\textit{Var}} is actually in the scope of any atom
-(in the positive body of \code{\textit{rule}}) that can bind it.%
+(in the positive body of \code{\textit{Rule}}) that can bind it.%
 \footnote{%
   Recall from Section~\ref{subsec:gringo:arith} and~\ref{subsec:gringo:comp}
-  that a variable in the scope of a built-in arithmetic function may not be bound
-  by a corresponding atom and that built-in comparison predicates do not bind
-  any variable.}
-If~\code{\textit{Var}} is a local variable belonging to an atom~$A$ 
-on the left-hand side of a condition (cf.\ Section~\ref{subsec:gringo:condition})
-or to an aggregate (cf.\ Section~\ref{subsec:gringo:aggregate}),
-an atom over some domain predicate might be included in a condition
-to bind~\code{\textit{Var}}.
-In particular, if~$A$ itself is over a domain predicate,
-the problem is often easily fixed by writing ``\code{$A$:$A$}.''
+  that variables in the scope of built-in arithmetic functions are only bound by their corresponding atoms in some special cases 
+  and that built-in comparison predicates do not bind variables.}
+Also check for variables that occur in aggregate elements (cf.\ Section~\ref{subsec:gringo:aggregate}) or conditional literals (cf.\ Section~\ref{subsec:gringo:condition});
+you might have to bind them with additional positive atoms in the conditions.
 
-The following error is related to conditions
-(cf.\ Section~\ref{subsec:gringo:condition}):
-%
+If any of the two errors above is reported,
+then \gringo\ or \clingo\ terminates after parsing and checking with the error message:
 \begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: unstratified predicate in:
-@\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Rule}@
-        @\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Predicate}@/@\textit{Arity}@
+*** ERROR: (@\textit{System}@): grounding stopped because of errors
 \end{lstlisting}
-%
-The problem is that an atom \code{\textit{Predicate}(...)} such
-that its predicate \code{\textit{Predicate}/\!\textit{Arity}} is not a domain predicate
-(cf.\ Section~\ref{subsec:gringo:condition}) is used on the right-hand side of a condition
-within \code{\textit{Rule}}.
-The error is corrected by either removing the atom or
-by replacing it with another atom over a domain predicate.
 
-The next errors may occur within an arithmetic evaluation
-(cf.\ Section~\ref{subsec:gringo:arith}):
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: cannot convert @\textit{Term}@ to integer in:
-        @\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Literal}@
-\end{lstlisting}
-%
-It means that either a (symbolic) constant or a compound term
-(over an uninterpreted function with non-zero arity)
-has occurred in the scope of some built-in arithmetic function.
+\begin{note}
+No more than 20 errors are printed.
+If this limit is exceeded, the application stops parsing or safety checking and terminates.
+\end{note}
 
-The following error message is issued by (embedded) \clasp:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: Read Error: Line 2, Compute Statement expected!
-\end{lstlisting}
-%
-This error means that the input does not comply with \lparse's
-numerical format~\cite{lparseManual}.
-It is not unlikely that the input can be processed
-by \gringo, \clingo, or \iclingo.
-
-The next error indicates that input in
-\lparse's numerical format~\cite{lparseManual} is corrupt:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: Read Error: Line @\textit{Line}@, Atom out of bounds
-\end{lstlisting}
-%
-There is no way to resolve this problem.
-If the input has been generated by \gringo, \clingo, or \iclingo,
-please report the problem to the authors of this guide.
-
-The following error message is issued by (embedded) \clasp:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: Read Error: Line @\textit{Line}@, Unsupported rule type!
-\end{lstlisting}
-%
-It means that some rule type in \lparse's
-numerical format~\cite{lparseManual} is not supported.
-Most likely, the program under consideration contains
-rules with disjunction in the head.
-
-A similar error may occur with \clingo\ or \iclingo:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: Error: clasp cannot handle disjunctive rules, \
-              use option --shift!
-\end{lstlisting}
-%
-The program under consideration contains rules with disjunction in the head,
-which are currently not supported by \clasp,
-but by \claspD~\cite{drgegrkakoossc08a}.
-The integration of \clasp\ and \claspD\ is a subject to future work
-(cf.\ Section~\ref{sec:future}).
-Furthermore, if your program is head-cycle free, 
-you might want to try \gringo's \code{--shift} option (see \ref{subsec:opt:gringo}).
+\subsection{Parsing Command Line Options}\label{subsec:error:options}
 
 All of the tools \gringo, \clasp, and \clingo\
 try to expand incomplete (long) options to recognized ones.
 Parsing command line options may nonetheless fail due to the following three reasons:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
-ERROR: unknown option: @\textit{Option}@
-ERROR: ambiguous option: '@\!\textit{Option}@' could be:
+@\textit{Error}@: In context '<@\textit{Context}@>': unknown option: '@\textit{Option}@'
+@\textit{Error}@: In context '<@\textit{Context}@>': \
+ambiguous option: '@\textit{Option}@' could be:
   @\textit{Option1}@
   @\textit{Option2}@
   ...
-ERROR: '@\!\textit{Arg}@': invalid value for Option '@\!\textit{Option}@'
+@\textit{Error}@: In context '<@\textit{Context}@>': \
+'@\textit{Arg}@': invalid value for: '@\textit{Option}@'
+*** Info : (@\textit{System}@): Try '--help' for usage information
 \end{lstlisting}
 %
-The first error means that a provided option~\code{\textit{Option}}
-could not be expanded to one that is recognized,
-while the second error expresses that the result of expanding~\code{\textit{Option}}
-is ambiguous.
-Finally, the third error occurs if a provided argument~\code{\textit{Arg}}
-is invalid for option~\code{\textit{Option}}.
-In either case, option \code{--help} can be used to see 
-the recognized options and their arguments.
+The first error means that the option~\code{\textit{Option}}
+could not be expanded to one that is recognized.
+While the second error expresses that the result of expanding~\code{\textit{Option}} is ambiguous.
+Finally, the third error occurs if the argument~\code{\textit{Arg}} is invalid for option~\code{\textit{Option}}.
+The last line is printed in all three cases.
+It indicates that option \code{--help} can be used to display the available options and their arguments.\comment{RK2BK: what is the use of context?}
 
+\subsection{Parsing Logic Programs in Lparse Format}\label{subsec:error:lparse}
+
+\com{RK2BK: please check}
+The following error message is issued by (embedded) \clasp:
+%
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Error}@: Parse Error: @\textit{Message}@
+\end{lstlisting}
+%
+This error means that the input does not comply with \lparse's numerical format~\cite{lparseManual}.
+If you are using \gringo\ to ground logic programs,
+this error should never occur.
 
 \subsection{Warnings}\label{subsec:warn}
 
@@ -183,7 +127,18 @@ has occurred in some rule body, but not in the head of any rule,
 might point at a mistyped predicate.
 
 \subsubsection{Undefined Terms}\label{sec:warn:undefterm}
-\tbf
+This warning may occur within an arithmetic evaluation (cf.~Section~\ref{subsec:gringo:arith})
+or if an error occurs while evaluating an external function (cf.~Section~\ref{subsec:lang:extfun}):
+%
+\begin{lstlisting}[numbers=none,escapechar=@]
+ERROR: cannot convert @\textit{Term}@ to integer in:
+        @\textit{File}@:@\textit{Line}@:@\textit{Column}@: @\textit{Literal}@
+\end{lstlisting}
+%
+It means that either a (symbolic) constant or a compound term
+(over an uninterpreted function with non-zero arity)
+has occurred in the scope of some built-in arithmetic function.
+
 
 \subsubsection{Undefined Atoms}\label{sec:warn:undefatm}
 \tbf

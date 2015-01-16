@@ -21,7 +21,7 @@ Also, all of these errors are fatal and lead to immediate termination.
 
 \subsubsection{Parsing and Checking Logic Programs}\label{subsec:error:parselp}
 
-Each of the error message below begins with a location followed by the string \code{error} and an error message:
+Each of the error messages below begins with a location followed by the string \code{error} and an error message:
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{File}@:@\textit{Line}@:@\textit{Column}@-@\textit{Column}@: error: @\textit{Message}@
   @\textit{Information}@
@@ -69,7 +69,45 @@ variable~\code{\textit{Var}} is actually in the scope of any atom
 Also check for variables that occur in aggregate elements (cf.\ Section~\ref{subsec:gringo:aggregate}) or conditional literals (cf.\ Section~\ref{subsec:gringo:condition});
 you might have to bind them with additional positive atoms in the conditions.
 
-If any of the two errors above is reported,
+If an error in an embedded script occurs (cf.~Section~\ref{subsec:lang:extfun}), the following error message is printed:
+%
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: error: error executing embedded script:
+  @\textit{Information}@
+  ...
+\end{lstlisting}
+%
+The information printed depends on the error that occurred when executing the embedded script.
+This can for example be parse errors or errors that occurred when executing the script.
+Typically, the information contains a trace where the error occurred.
+
+There are three errors associated to \code{\#const} statements (cf.~Section~\ref{subsec:gringo:meta}).
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: error: cyclic constant definition:
+  @\textit{Constant}@
+@\textit{Location}@: note: cycle involves definition:
+  @\textit{Constant}@
+...
+
+@\textit{Location}@: error: redefinition of constant:
+  @\textit{Constant}@
+@\textit{Location}@: note: constant also defined here:
+  @\textit{Constant}@
+...
+
+@\textit{Location}@: error: evaluation of constant failed:
+  @\textit{Constant}@
+@\textit{Note}@
+...
+\end{lstlisting}
+The strings~\code{\textit{Constant}} depict the affected \code{\#const} statements.
+The first error is printed if the statements rely on each other cyclically.
+The second error message is printed if a constant is defined more than once.
+Each statement involved in the cycle or redefinition is printed in the corresponding error message.
+The third error occurs if the right hand side of \code{\#const} statement cannot be evaluated.
+This happens for example if it contains an undefined term, which is then indicated in the notes.
+
+If at least one of the errors above is reported,
 then \gringo\ or \clingo\ terminates after parsing and checking with the error message:
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{Error}@: grounding stopped because of errors
@@ -158,19 +196,9 @@ This warning, states that a predicate \code{\textit{p}/\!\textit{i}}
 has occurred in some rule body, but not in the head of any rule,
 might point at a mistyped predicate.
 
-
 \subsubsection{Nonmonotone Aggregates}\label{sec:warn:nonmon}
 \tbfc{should definitely be a warning because \gringo\ cannot verify recursiveness exactly}
 
-\subsubsection{Acyclic Constant Definition}\label{sec:warn:cycdef}
-\tbfc{better make this an error}
-
-\subsubsection{Redefinition of Constants}\label{sec:warn:redef}
-\tbfc{should this be an error?}
-
 \subsubsection{File Included Multiple Times}\label{sec:warn:incfile}
 \tbfc{maybe this should be an error?}
-
-\subsubsection{Parsing External Functions}\label{sec:warn:parseext}
-\tbfc{better make this an error}
 

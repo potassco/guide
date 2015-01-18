@@ -167,6 +167,11 @@ but rather hint at possible problems, which should be investigated.
 Most warnings have a similar format as the errors described in Sections~\ref{subsec:error:parselp};
 the only difference is that the location is followed by the string \code{warning}.
 
+\begin{note}
+No more than 20 warnings are printed.
+If this limit is exceeded you should definitely fix some warnings.
+\end{note}
+
 \subsubsection{Undefined Terms}\label{sec:warn:undefterm}
 This warning may occur within an arithmetic evaluation (cf.~Section~\ref{subsec:gringo:arith})
 or if an error occurs while evaluating an external function (cf.~Section~\ref{subsec:lang:extfun}):
@@ -179,26 +184,68 @@ or if an error occurs while evaluating an external function (cf.~Section~\ref{su
 %
 It typically means that either a (symbolic) constant or a compound term (over an uninterpreted function)
 has occurred in the scope of some built-in arithmetic function.
-
+%
 The warning message might be followed by further notes.
 For example, if the evaluation of an external function failed,
-by a callstack indicating the location of the error within the source code of the external function.
+by a trace indicating the location of the error within the source code of the external function.
+%
+Typically, it is simple to fix occurrences of this warning
+- for example, if the term ``\code{X/Y}'' causes a warning,
+it can be silenced by adding the comparison literal~``\code{Y!=0}'' to the body of a rule (or condition).
+We suggest to silence all of these warnings in this manner
+and not simply to disable the warning.
 
+\begin{note}
 Instantiations of rules, \code{\#show} statements, \code{\#external} statements, weak constraints, aggregate elements, and conditional literals
 that contain undefined terms are discarded.
+\end{note}
 
 \subsubsection{Undefined Atoms}\label{sec:warn:undefatm}
+This warning is emitted if an atom appears in the body of a rule or condition
+that is never defined in the head of a rule or external statement:
 \begin{lstlisting}[numbers=none,escapechar=@]
-% warning: @\textit{p}@/@\!\textit{i}@ is never defined
+@\textit{Location}@: warning: atom is undefined:
+  @\textit{Atom}@
 \end{lstlisting}
 %
-This warning, states that a predicate \code{\textit{p}/\!\textit{i}}
-has occurred in some rule body, but not in the head of any rule,
-might point at a mistyped predicate.
+where \codeit{Atom} is the atom occurrence without a definition.
+Often, this error indicates that a predicate has been misspelled 
+or that an argument has accidentally been omitted.
 
 \subsubsection{Nonmonotone Aggregates}\label{sec:warn:nonmon}
-\tbfc{should definitely be a warning because \gringo\ cannot verify recursiveness exactly}
+This warning is emitted if a nonmonotone aggregate is outputted during grounding:
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: warning: unstratified nonmonotone aggregate:
+  @\textit{Information}@
+  (applied translation might produce counter-intuitive results)
+\end{lstlisting}
+where \codeit{Information} indicates why an aggregate is undefined
+- for example, if a \code{\#sum} aggregate contains negative weights.
+Keep in mind that \gringo\ performs a static dependency analysis,
+which is only an approximation of the dependencies of a logic program.
+The aggregate occurrence might actually be stratified\comment{there should be some dlv paper we can site here},
+in which case the warning can be silenced using option \code{-Wno-nonmonotone-aggregate} (c.f.~Section~\ref{subsec:opt:gringo}).
+In general, it is a good idea to use non-monotone aggregates in integrity constraints,
+where the aggregate is guaranteed to be stratified.
+
+\begin{note}
+The lparse format only supports monotone aggregates.
+All aggregates supported by \gringo\ are translated into monotone aggregates.
+This translation might produce counter-intuitive results
+if the aggregate is used recursively.\comment{cite vladimir's paper}
+\end{note}
 
 \subsubsection{File Included Multiple Times}\label{sec:warn:incfile}
-\tbfc{maybe this should be an error?}
+If a file is included multiple times,
+either on the command line or with an include directive,
+then the following warning is emitted:
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: warning: already included file:
+  @\textit{Filename}@
+\end{lstlisting}
 
+
+\begin{note}
+Only the first include of a file is considered.
+All additional includes are ignored.
+\end{note}

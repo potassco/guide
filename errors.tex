@@ -158,12 +158,16 @@ this error should never occur.
 
 \subsubsection{Solving Incremental Programs}
 \com{RK2BK: clasp uses another error format than gringo; I would like to format the redefinition error slightly differently in gringo... }
+The following error is issued by (embedded) \clasp\ if a program is not modular:
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{Error}@: program not modular: Redefinition of atom <@\textit{Atom}@,@\textit{Id}@>
   @\textit{Information}@
 \end{lstlisting}
 where \codeit{Atom} is the string representation of the atom that is redefined
 and \codeit{Id} is the unique identifier of the atom introduced when translating the logic program into lparse format.
+If the scripting API~(c.f.~Section~\ref{sec:multi}) is used for grounding,
+then the error message is followed by a trace,
+indicating the source code location where the program has been grounded.
 
 \begin{note}
 Only the case that an atom is redefined is checked by clasp.

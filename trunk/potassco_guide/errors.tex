@@ -15,8 +15,8 @@ Most of the errors in the following start with the prefix:
 \begin{lstlisting}[numbers=none,escapechar=@]
 *** ERROR: (@\textit{System}@)
 \end{lstlisting}
-where \code{\textit{System}} is either \code{gringo}, \code{clingo}, or \code{clasp} depending on the system.
-We use \code{\textit{Error}} to denote this preamble.
+where \codeit{System} is either \code{gringo}, \code{clingo}, or \code{clasp} depending on the system.
+We use \codeit{Error} to denote this preamble.
 Also, all of these errors are fatal and lead to immediate termination.
 
 \subsubsection{Parsing and Checking Logic Programs}\label{subsec:error:parselp}
@@ -58,10 +58,10 @@ The next error occurs if an input program is not safe:
 \end{lstlisting}
 %
 Along with the error message,
-the affected rule (\code{\textit{Rule}}) and a list of all unsafe variable occurrences (\code{\textit{Var}}) are reported.
+the affected rule (\codeit{Rule}) and a list of all unsafe variable occurrences (\codeit{Var}) are reported.
 The first action to take usually consists of checking whether
-variable~\code{\textit{Var}} is actually in the scope of any atom
-(in the positive body of \code{\textit{Rule}}) that can bind it.%
+variable~\codeit{Var} is actually in the scope of any atom
+(in the positive body of \codeit{Rule}) that can bind it.%
 \footnote{%
   Recall from Section~\ref{subsec:gringo:arith} and~\ref{subsec:gringo:comp}
   that variables in the scope of built-in arithmetic functions are only bound by their corresponding atoms in some special cases 
@@ -100,7 +100,7 @@ There are three errors associated to \code{\#const} statements (cf.~Section~\ref
 @\textit{Note}@
 ...
 \end{lstlisting}
-The strings~\code{\textit{Constant}} depict the affected \code{\#const} statements.
+The strings~\codeit{Constant} depict the affected \code{\#const} statements.
 The first error is printed if the statements rely on each other cyclically.
 The second error message is printed if a constant is defined more than once.
 Each statement involved in the cycle or redefinition is printed in the corresponding error message.
@@ -136,10 +136,10 @@ ambiguous option: '@\textit{Option}@' could be:
 *** Info : (@\textit{System}@): Try '--help' for usage information
 \end{lstlisting}
 %
-The first error means that the option~\code{\textit{Option}}
+The first error means that the option~\codeit{Option}
 could not be expanded to one that is recognized.
-While the second error expresses that the result of expanding~\code{\textit{Option}} is ambiguous.
-Finally, the third error occurs if the argument~\code{\textit{Arg}} is invalid for option~\code{\textit{Option}}.
+While the second error expresses that the result of expanding~\codeit{Option} is ambiguous.
+Finally, the third error occurs if the argument~\codeit{Arg} is invalid for option~\codeit{Option}.
 The last line is printed in all three cases.
 It indicates that option \code{--help} can be used to display the available options and their arguments.\comment{RK2BK: what is the use of context?}
 
@@ -157,7 +157,19 @@ If you are using \gringo\ to ground logic programs,
 this error should never occur.
 
 \subsubsection{Solving Incremental Programs}
-\tbfc{atom redefined error}
+\com{RK2BK: clasp uses another error format than gringo; I would like to format the redefinition error slightly differently in gringo... }
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Error}@: program not modular: Redefinition of atom <@\textit{Atom}@,@\textit{Id}@>
+  @\textit{Information}@
+\end{lstlisting}
+where \codeit{Atom} is the string representation of the atom that is redefined
+and \codeit{Id} is the unique identifier of the atom introduced when translating the logic program into lparse format.
+
+\begin{note}
+Only the case that an atom is redefined is checked by clasp.
+The case when there is a positive cycle over two or more incremental steps is not detected,
+which possibly leads to unwanted answer sets.
+\end{note}
 
 \subsection{Warnings}\label{subsec:warn}
 
@@ -232,7 +244,7 @@ where the aggregate is guaranteed to be stratified.
 The lparse format only supports monotone aggregates.
 All aggregates supported by \gringo\ are translated into monotone aggregates.
 This translation might produce counter-intuitive results
-if the aggregate is used recursively.\comment{cite vladimir's paper}
+if a nonmonotone aggregate is used recursively.\comment{cite vladimir's paper}
 \end{note}
 
 \subsubsection{File Included Multiple Times}\label{sec:warn:incfile}

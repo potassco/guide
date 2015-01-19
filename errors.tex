@@ -165,7 +165,7 @@ The following error is issued by (embedded) \clasp\ if a program is not modular:
 \end{lstlisting}
 where \codeit{Atom} is the string representation of the atom that is redefined
 and \codeit{Id} is the unique identifier of the atom introduced when translating the logic program into lparse format.
-If the scripting API~(c.f.~Section~\ref{sec:multi}) is used for grounding,
+If the scripting API~(cf.~Section~\ref{sec:multi}) is used for grounding,
 then the error message is followed by a trace,
 indicating the source code location where the program has been grounded.
 
@@ -239,8 +239,8 @@ where \codeit{Information} indicates why an aggregate is undefined
 - for example, if a \code{\#sum} aggregate contains negative weights.
 Keep in mind that \gringo\ performs a static dependency analysis,
 which is only an approximation of the dependencies of a logic program.
-The aggregate occurrence might actually be stratified\comment{there should be some dlv paper we can site here},
-in which case the warning can be silenced using option \code{-Wno-nonmonotone-aggregate} (c.f.~Section~\ref{subsec:opt:gringo}).
+The aggregate occurrence might actually be stratified~(cf.~\cite{twgng03,aspcore2}),
+in which case the warning can be silenced using option \code{-Wno-nonmonotone-aggregate} (cf.~Section~\ref{subsec:opt:gringo}).
 In general, it is a good idea to use non-monotone aggregates in integrity constraints,
 where the aggregate is guaranteed to be stratified.
 
@@ -248,7 +248,7 @@ where the aggregate is guaranteed to be stratified.
 The lparse format only supports monotone aggregates.
 All aggregates supported by \gringo\ are translated into monotone aggregates.
 This translation might produce counter-intuitive results
-if a nonmonotone aggregate is used recursively.\comment{cite vladimir's paper}
+if a nonmonotone aggregate is used recursively~(cf.~\cite{ferlif05a}).
 \end{note}
 
 \subsubsection{File Included Multiple Times}\label{sec:warn:incfile}

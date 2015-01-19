@@ -37,6 +37,9 @@
 \setlength\railboxskip{16pt}
 \setlength\railnamesep{-2pt}
 \sloppy
+
+% \setcounter{tocdepth}{4}
+
 \author{%
 Martin Gebser \and 
 Roland Kaminski \and  
@@ -75,15 +78,15 @@ Sven Thiele}
 \include{introduction}
 \include{quickstart}
 \include{language}
+\include{multi}
 \include{examples}
 \include{options}
 \include{errors}
-\include{multi}
-\include{future}
-\include{todo}
+% \include{future}
 \newpage
 \appendix
 %\include{restrictions}
+\include{resources}
 \include{lparse}
 \include{gringo3}
 \include{iclingo}
@@ -100,4 +103,6 @@ Sven Thiele}
 % Note: unfortunately printindex uses pagestyle){plain} for first page
 \fancypagestyle{plain}{\pagestyle{fancy}}
 \printindex
+\newpage
+\include{todo}
 \end{document}

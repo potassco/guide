@@ -1,0 +1,32 @@
+
+\section{Heuristic-driven Solving}
+\label{sec:heuristic}
+
+This section is not yet ready for publishing
+and will be included in one of the forthcoming editions of this guide.
+
+Information on domain-specific heuristic-driven solving with \clasp\ and \clingo\ can be obtained at the following references.
+
+\begin{itemize}
+\item \cite{gekaotroscwa13a}
+\item \url{http://www.cs.uni-potsdam.de/hclasp}
+
+
+  Attention! \hclasp\ is superseded by \clasp~3,
+  including all of its functionalities.
+\item \clasp~3 supports options:
+\begin{lstlisting}[numbers=none]
+ --heuristic=Domain : Use domain knowledge to Vsids-like heuristic
+
+ --dom-mod=<arg>         : Default modification for domain heuristic
+      <arg>: <mod>[,<pick>]
+        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
+        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
+\end{lstlisting}
+\end{itemize}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "guide"
+%%% End: 

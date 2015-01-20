@@ -893,10 +893,9 @@ Pools are expanded just like intervals, i.e.,
 conjunctively in the head and disjunctively in the body of a rule.
 In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
 \footnote{%
-This example uses the fact that there are no one-elementary tuples.
+  This example uses the fact that there are no one-elementary tuples (cf.~Section~\ref{subsec:gringo:normal}).
 For example, the tuple \code{(1;2,3)} expands into \code{(1)} and \code{(2,3)}.
 Hence, \code{(1)} is not a tuple here but equal to integer \code{1}.}
-\comment{T2R: Reference to ``no one-elementary tuples''}
 \begin{example}\label{ex:pool}
 The following program makes use of pooling. 
 It is similar to Example~\ref{ex:int}
@@ -926,13 +925,15 @@ This rule expands into the same set of facts as before.
 As in Example~\ref{ex:int}, additional constraints involving~\code{X} and~\code{Y} can be added.
 \eexample
 \end{example}
-\comment{T2R: Example/Note on difference to intervals}
+
+For another example on pooling, featuring non-consecutive elements, see Section~\ref{subsec:color:instance}.
+
 \subsubsection{Conditions and Conditional Literals}\label{subsec:gringo:condition}
 \index{Aggregates!Conditions}
 \index{Logic Programs!Literals!Conditions}%
 %
 A \emph{conditional literal} is of form $L:\boldsymbol{L}$,
-where $L$ is a literal and $\boldsymbol{L}$ is a tuple of literals, called \textit{conditions}.
+where $L$ is a literal and $\boldsymbol{L}$ is a tuple of literals, called \textit{condition}.
 As in mathematical set notation,
 we use the symbol~``\code{:}'' to formulate conditions.
 Whenever $\boldsymbol{L}$ is empty, we get a regular literal and denote it as usual by $L$.
@@ -992,7 +993,7 @@ if disjunction is unintended.}
 \end{example}
 
 Further following set notation,
-several conditions can be imposed by separating them through a comma, viz~``\code{,}''.
+a condition can be composed by separating literals with a comma, viz~``\code{,}''.
 Note that commas are used to separate both literals in rule bodies as well as conditions.
 To resolve this ambiguity, 
 a condition is terminated with a semicolon ``\code{;}'' (rather than ``\code{,}''), if further body literals follow.
@@ -1413,10 +1414,10 @@ a variable that occurs positively in its condition $\boldsymbol{L_i}$.
 \index{Logic Programs!Safety}
 Variable names in aggregate elements have to be chosen carefully to avoid clashes with global variables.
 Furthermore, pools and intervals in aggregate elements give rise to multiple aggregate elements;
-\REWc{very similar to rules}{T:???}.
+very similar to the disjunctive unpacking of pools and intervals in rules.
 The following example, making exhaustive use of aggregates,
 demonstrates a lot of different features
-(note that it \REPc{does not observe}{ignores}{T2R:?} Remark~\ref{rem:aggr-assign}).
+(note that it ignores Remark~\ref{rem:aggr-assign}).
 
 \begin{example}\label{ex:aggr}
 Consider a situation where an informatics student
@@ -1588,8 +1589,6 @@ Users familiar to \gringo~3 might remember that conditions in aggregates
 had to be either literals over domain predicates or built-ins.
 This restriction does not exist anymore in \gringo\ and \clingo~4.
 \end{note}
-
-%\com{Should we mention stratifed aggregates that do not necessarily need conditions?}
 
 \subsubsection{Optimization}\label{subsec:gringo:optimize}
 \index{Statements!Optimize Statements}
@@ -1844,7 +1843,6 @@ which compares two terms \code{a} and \code{b}
 as \gringo's built-in comparison predicates (cf. Section \ref{subsec:gringo:comp}) would do.
 It returns a negative integer if \code{a < b}, zero if \code{a = b}, and a positive integer if \code{a > b}.
 A complete reference for the Python scripting API is available at: \url{http://potassco.sourceforge.net/gringo.html}
-\comment{T2R: clingo?}
 \begin{example}
 This example shows how to implement the \code{max} function:
 \\[-8pt] % is there a better way to do this?
@@ -1921,7 +1919,7 @@ Sometimes, one may be interested only in a subset of the atoms belonging
 to an answer set.
 In order to suppress the atoms of ``irrelevant'' predicates from the output
 or even to show arbitrary terms,
-the \code{\#show} \REP{declarative}{directive} can be used.
+the \code{\#show} directive can be used.
 There are three different statements:
 %
 \par
@@ -1973,7 +1971,7 @@ This example depicts how to show terms:
 %
 When running this example,
 the same output as in the previous example is produced.
-This feature is especially handy when applying meta-programming techniques (cf. Section~\ref{section-yet-to-come})\comment{RK: todo add ref}
+This feature is especially handy when applying meta-programming techniques (cf.~Section~\ref{sec:meta})
 where the signatures of the reified atoms are unknown and the \code{holds($\cdot$)} atoms would just clutter the output.
 \eexample
 \end{example}
@@ -1991,7 +1989,7 @@ and the condition after the colon the role of the body.
 Constants appearing in a logic program may actually be placeholders for
 concrete values provided by a user.
 An example of this is given in Section~\ref{subsec:ex:color}.
-Via the \code{\#const} \REP{declarative}{directive},
+Via the \code{\#const} directive,
 one may define a default value to be inserted for a constant.
 Such a default value can still be overridden via command line option
 \code{--const} (cf.\ Section~\ref{subsec:opt:gringo}).
@@ -2026,7 +2024,7 @@ even if they do not appear in the head of any rule.
 Although this does not affect the semantics of a logic program,
 we will see an effect in the text output of the example below.
 Their main use case is to implement extensions to plain ASP solving,
-like \REP{incremental}{multi-shot solving} solving detailed in Section~\ref{sec:multi}.
+like multi-shot solving detailed in Section~\ref{sec:multi}.
 An external statement has the following form:
 %
 \par
@@ -2039,7 +2037,7 @@ $\code{\#external}~A_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{
 \noindent
 %
 Here~$A_0$ is an atom over some predicate and
-the part \REP{beginning with}{following} the~\code{:} is a \INS{tuple of} condition\INS{s}.
+the part following the~\code{:} is a condition.
 The condition is instantiated to obtain a set of external atoms.
 Note that the condition is discarded after grounding,
 hence, it is a good idea to only use domain predicates or built-ins after the colon.%

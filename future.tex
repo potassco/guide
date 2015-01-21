@@ -1,21 +1,21 @@
 \section{Future Work}\label{sec:future}
 
-\com{RK: just some stuff that came to my mind because the old stuff was mostly addressed}
 We conclude this guide with a brief outlook on the future development
-of \gringo, \clasp, and \clingo.
+of \gringo~\cite{gescth07a}, \clasp~\cite{gekasc09c}, and \clingo~\cite{gekakasc14b}.
 An important goal of future releases will be improving usability
 by adding functionalities that make some errors and warnings obsolete.
 In particular, we consider adding support for arbitrary positive loops
 as well as language constructs that allow for redefining atoms in incremental logic programs.
 Furthermore, since \clasp\ supports disjunctive programs for solving problems on the second level of the polynomial hierarchy, 
 adding support for (recursive) nonmonotone aggregates is an interesting topic.
-Systems like \clingcon\ support multi-valued variables and constraints that cannot be encoded efficiently in plain ASP in a straightforward manner.
-The \asprin\ system supports complex preferences that go beyond simple cardinality or subset minimization.
+Systems like \clingcon~\cite{geossc09a,ostsch12a} support multi-valued variables and constraints that cannot be encoded efficiently in plain ASP in a straightforward manner.
+This will be addressed in the near future by including constraint processing capacities into grounding as well as solving.
+The \asprin\ system~\cite{brderosc15a} supports complex preferences that go beyond simple cardinality or subset minimization.
 We are planning to extend the input language of \gringo\ to be able to express general aggregate-like language constructs,
-which allow for representing the multitude of constraints available in Constraint Programming~(CSP)~\cite{CPHandbook} 
-and also complex preferences.
+which allow for representing the multitude of constraints available in Constraint Programming~\cite{CPHandbook} 
+as well as complex preferences, as treated by \asprin.
 For the representation of ground programs,
-we are working on a new intermediate language format to fix some shortcomings of the lparse format
+we are working on a new intermediate language format to fix some shortcomings of the \smodels\ format
 and also to represent general language constructs.
 
 %%% Local Variables: 

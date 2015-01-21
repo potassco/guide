@@ -143,7 +143,7 @@ Finally, the third error occurs if the argument~\codeit{Arg} is invalid for opti
 The last line is printed in all three cases.
 It indicates that option \code{--help} can be used to display the available options and their arguments.\comment{RK2BK: what is the use of context?}
 
-\subsubsection{Parsing Logic Programs in Lparse Format}\label{subsec:error:lparse}
+\subsubsection{Parsing Logic Programs in \smodels\ Format}\label{subsec:error:lparse}
 
 \com{RK2BK: please check}
 The following error message is issued by (embedded) \clasp:
@@ -152,7 +152,7 @@ The following error message is issued by (embedded) \clasp:
 @\textit{Error}@: Parse Error: @\textit{Message}@
 \end{lstlisting}
 %
-This error means that the input does not comply with \lparse's numerical format~\cite{lparseManual}.
+This error means that the input does not comply with \smodels's numerical format~\cite{lparseManual}.
 If you are using \gringo\ to ground logic programs,
 this error should never occur.
 
@@ -164,7 +164,7 @@ The following error is issued by (embedded) \clasp\ if a program is not modular:
   @\textit{Information}@
 \end{lstlisting}
 where \codeit{Atom} is the string representation of the atom that is redefined
-and \codeit{Id} is the unique identifier of the atom introduced when translating the logic program into lparse format.
+and \codeit{Id} is the unique identifier of the atom introduced when translating the logic program into \smodels\ format.
 If the scripting API~(cf.~Section~\ref{sec:multi}) is used for grounding,
 then the error message is followed by a trace,
 indicating the source code location where the program has been grounded.
@@ -245,7 +245,7 @@ In general, it is a good idea to use non-monotone aggregates in integrity constr
 where the aggregate is guaranteed to be stratified.
 
 \begin{note}
-The lparse format only supports monotone aggregates.
+The \smodels\ format only supports monotone aggregates.
 All aggregates supported by \gringo\ are translated into monotone aggregates.
 This translation might produce counter-intuitive results
 if a nonmonotone aggregate is used recursively~(cf.~\cite{ferlif05a}).

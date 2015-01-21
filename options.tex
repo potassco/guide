@@ -68,7 +68,7 @@ This overrides constant definitions in a source file without a warning.
 \item[\code{--text,-t}]~\\
 Output ground program in (human-readable) text format.
 \item[\code{--lparse-rewrite}]~\\
-Can be used in conjunction with the \code{--text} option to print a program in a (human-readable) similar to the lparse format,
+Can be used in conjunction with the \code{--text} option to print a program in a (human-readable) similar to the \smodels\ format,
 which is passed to the solver.
 \item[\code{--lparse-debug=\{none,plain,lparse,all\}}]~\\
 This option enables additional debugging output to the standard error stream.
@@ -95,7 +95,7 @@ The available values for argument \code{w} are:
 \end{description}
 %
 When calling \gringo\ without options,
-it outputs a ground program in \lparse's numerical format,
+it outputs a ground program in \smodels's numerical format,
 input language of various ASP solvers \cite{gekanesc07b,siniso02a,linzha04a}.
 Note that \gringo\ reads from standard input if no files are given.
 
@@ -139,7 +139,7 @@ consists of all \clasp\ defaults (cf.\ Section~\ref{subsec:opt:clasp}).
 \subsection{\clasp\ Options}\label{subsec:opt:clasp}
 
 Stand-alone \clasp~\cite{gekanesc07b} is a solver for ground programs in
-\lparse's numerical format~\cite{lparseManual}. Beyond that, it can also
+\smodels's numerical format~\cite{lparseManual}. Beyond that, it can also
 be used as a SAT (on a simplified version of DIMACS/CNF format%
 \footnote{%
 \url{http://www.satcompetition.org/2009/format-benchmarks2009.html}
@@ -168,7 +168,7 @@ In fact, it is typical to use \clasp\ in a pipe with \gringo\ in the following w
 gringo [ ... ] | clasp [ ... ]
 \end{lstlisting}
 In such a pipe, \gringo\ instantiates an input program and outputs the ground
-rules in \lparse's numerical format,
+rules in \smodels's numerical format,
 which is then consumed by \clasp\ that computes and outputs answer sets.
 Note that \clasp\ offers plenty of options to configure its behavior.
 We thus categorize them according to their functionalities in the following description.

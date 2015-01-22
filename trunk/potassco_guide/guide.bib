@@ -14,6 +14,8 @@
 
 @String{cacm =   "Communications of the ACM"}
 
+@String{elsevier = "Elsevier Science"}
+
 @String{ieee =   "IEEE Press"}
 
 @String{ios =    "IOS Press"}
@@ -30,9 +32,9 @@
 
 @String{lncs =   "Lecture Notes in Computer Science"}
 
-@String{mit =    "MIT Press"}
-
 @String{m-k =    "Morgan Kaufmann Publishers"}
+
+@String{mit =    "MIT Press"}
 
 @String{ngc =    "New Generation Computing"}
 
@@ -43,8 +45,6 @@
 @String{tplp =   "Theory and Practice of Logic Programming"}
 
 @String{wiley =  "John Wiley \& sons"}
-
-@String{elsevier = "Elsevier Science"}
 
 @InProceedings{angelinesc05c,
   author =       "C. Anger and M. Gebser and T. Linke and A. Neumann and
@@ -64,6 +64,18 @@
   pages =        "12--17",
 }
 
+@InCollection{apblwa87a,
+  author =       "K. Apt and H. Blair and A. Walker",
+  title =        "Towards a Theory of Declarative Knowledge",
+  booktitle =    "Foundations of Deductive Databases and Logic
+                 Programming",
+  publisher =    m-k,
+  year =         "1987",
+  editor =       "J. Minker",
+  chapter =      "2",
+  pages =        "89--148",
+}
+
 @InCollection{apblwa88a,
   author =       "K. Apt and H. Blair and A. Walker",
   title =        "Towards a Theory of Declarative Knowledge",
@@ -78,12 +90,40 @@
   note =         "\url{http://asparagus.cs.uni-potsdam.de/}",
 }
 
+@Misc{aspcore2,
+  author =       "F. Calimeri and W. Faber and M. Gebser and G. Ianni
+                 and R. Kaminski and T. Krennwallner and N. Leone and F.
+                 Ricca and T. Schaub",
+  title =        "{ASP-Core-2}: Input language format",
+  howpublished = "Available at
+                 \url{https://www.mat.unical.it/aspcomp2013/files/ASP-CORE-2.0.pdf}",
+  year =         "2012",
+}
+
+@Book{baral02a,
+  author =       "C. Baral",
+  title =        "Knowledge Representation, Reasoning and Declarative
+                 Problem Solving",
+  publisher =    "Cambridge University Press",
+  year =         "2003",
+}
+
 @Book{baral03a,
   author =       "C. Baral",
   title =        "Knowledge Representation, Reasoning and Declarative
                  Problem Solving",
   publisher =    "Cambridge University Press",
   year =         "2003",
+}
+
+@Article{bflnrp00,
+  author =       "F. Buccafurri and N. Leone and P. Rullo",
+  title =        "Enhancing Disjunctive Datalog by Constraints",
+  journal =      "IEEE Trans. on Knowl. and Data Eng.",
+  volume =       "12",
+  number =       "5",
+  year =         "2000",
+  pages =        "845--860",
 }
 
 @Article{biere08a,
@@ -96,16 +136,21 @@
   pages =        "75--97",
 }
 
-@Book{bihemawa08a,
-  author =       "A. Biere and M. Heule and H. {van Maaren} and T.
-                 Walsh",
-  title =        "Handbook of Satisfiability",
-  booktitle =    "Handbook of Satisfiability",
-  publisher =    ios,
-  year =         "2009",
-  volume =       "185",
-  series =       "Frontiers in Artificial Intelligence and
-                 Applications",
+@InProceedings{brderosc15a,
+  author =	 "G. Brewka and J. Delgrande and J. Romero and T. Schaub",
+  title =	 "asprin: Customizing Answer Set Preferences without a Headache",
+  crossref =	 "aaai15",
+  note =	 "To appear."
+}
+
+@Article{breitr11a,
+  author =       "G. Brewka and T. Eiter and M. Truszczy{\'n}ski",
+  title =        "Answer set programming at a glance",
+  journal =      cacm,
+  volume =       "54",
+  number =       "12",
+  year =         "2011",
+  pages =        "92--103",
 }
 
 @Article{daeigovo01a,
@@ -199,22 +244,6 @@
   pages =        "502--518",
 }
 
-@Misc{erdemBW,
-  author =       "E. Erdem",
-  title =        "The Blocks World",
-  howpublished = "\url{http://people.sabanciuniv.edu/esraerdem/ASP-benchmarks/bw.html}",
-}
-
-@Article{erdlif03a,
-  author =       "E. Erdem and V. Lifschitz",
-  title =        "Tight Logic Programs",
-  journal =      tplp,
-  year =         "2003",
-  volume =       "3",
-  number =       "4-5",
-  pages =        "499--518",
-}
-
 @Article{eitgot95a,
   author =       "T. Eiter and G. Gottlob",
   title =        "On the Computational Cost of Disjunctive Logic
@@ -238,6 +267,22 @@
   pages =        "23--60",
 }
 
+@Misc{erdemBW,
+  author =       "E. Erdem",
+  title =        "The Blocks World",
+  howpublished = "\url{http://people.sabanciuniv.edu/esraerdem/ASP-benchmarks/bw.html}",
+}
+
+@Article{erdlif03a,
+  author =       "E. Erdem and V. Lifschitz",
+  title =        "Tight Logic Programs",
+  journal =      tplp,
+  year =         "2003",
+  volume =       "3",
+  number =       "4-5",
+  pages =        "499--518",
+}
+
 @Article{fages94a,
   author =       "F. Fages",
   title =        "Consistency of {C}lark's completion and the existence
@@ -258,16 +303,6 @@
   pages =        "45--74",
 }
 
-@Article{litatu99a,
-  author =       "V. Lifschitz and L. Tang and H. Turner",
-  title =        "Nested Expressions in Logic Programs",
-  journal =      amai,
-  year =         "1999",
-  pages =        "369--389",
-  volume =       "25",
-  number =       "3-4",
-}
-
 @InProceedings{ferraris05a,
   author =       "P. Ferraris",
   title =        "Answer Sets for Propositional Theories",
@@ -283,6 +318,27 @@
   year =         "1995",
 }
 
+@PhdThesis{freeman95a,
+  author =       "J. Freeman",
+  title =        "Improvements to Propositional Satisfiability Search
+                 Algorithms",
+  adress =       "Department of Computer and Information Science",
+  school =       "University of Pennsylvania",
+  year =         "1995",
+}
+
+@Unpublished{gehakalisc14a,
+  author =       "M. Gebser and A. Harrison and R. Kaminski and V.
+                 Lifschitz and T. Schaub",
+  title =        "Abstract Gringo",
+  note =         "Availabel at
+                 \url{http://www.cs.utexas.edu/users/vl/papers/AG.pdf}",
+  OPTkey =       "",
+  OPTmonth =     "",
+  OPTyear =      "",
+  OPTannote =    "",
+}
+
 @Misc{gejaosscth08a,
   author =       "M. Gebser and T. Janhunen and M. Ostrowski and T.
                  Schaub and S. Thiele",
@@ -293,11 +349,43 @@
   note =         "\url{http://www.cs.uni-potsdam.de/wv/pdfformat/gejaosscth08a.pdf}",
 }
 
+@Article{gekakaosscsc11a,
+  author =       "M. Gebser and R. Kaminski and B. Kaufmann and M.
+                 Ostrowski and T. Schaub and M. Schneider",
+  title =        "Potassco: The {P}otsdam Answer Set Solving
+                 Collection",
+  journal =      aicom,
+  year =         "2011",
+  volume =       "24",
+  number =       "2",
+  pages =        "107--124",
+}
+
 @InProceedings{gekakaosscth08a,
   author =       "M. Gebser and R. Kaminski and B. Kaufmann and M.
                  Ostrowski and T. Schaub and S. Thiele",
   title =        "Engineering an Incremental {ASP} Solver",
   crossref =     "iclp08",
+}
+
+@Book{gekakasc12a,
+  author =       "M. Gebser and R. Kaminski and B. Kaufmann and T.
+                 Schaub",
+  title =        "Answer Set Solving in Practice",
+  publisher =    "Morgan and Claypool Publishers",
+  year =         "2012",
+  series =       "Synthesis Lectures on Artificial Intelligence and
+                 Machine Learning",
+}
+
+@InProceedings{gekakasc14b,
+  author =       "M. Gebser and R. Kaminski and B. Kaufmann and T.
+                 Schaub",
+  title =        "\textit{Clingo} = {ASP} + Control: Preliminary
+                 Report",
+  crossref =     "iclp-tc14",
+  volume =       "arXiv:1405.3694v1",
+  note =         "Available at \url{http://arxiv.org/abs/1405.3694v1}",
 }
 
 @InProceedings{gekanesc07a,
@@ -332,6 +420,14 @@
   pages =        "15--19",
 }
 
+@InProceedings{gekaotroscwa13a,
+  author =       "M. Gebser and B. Kaufmann and R. Otero and J. Romero
+                 and T. Schaub and P. Wanko",
+  title =        "Domain-specific Heuristics in Answer Set Programming",
+  crossref =     "aaai13",
+  pages =        "350--356",
+}
+
 @InProceedings{gekasc09a,
   author =       "M. Gebser and B. Kaufmann and T. Schaub",
   title =        "Solution Enumeration for Projected {B}oolean Search
@@ -348,6 +444,26 @@
   pages =        "509--514",
 }
 
+@Article{gekasc09c,
+  author =       "M. Gebser and B. Kaufmann and T. Schaub",
+  title =        "Conflict-Driven Answer Set Solving: From Theory to
+                 Practice",
+  journal =      aij,
+  year =         "2012",
+  volume =       "187-188",
+  pages =        "52--89",
+}
+
+@Article{gekasc11b,
+  author =       "M. Gebser and R. Kaminski and T. Schaub",
+  title =        "Complex Optimization in Answer Set Programming",
+  journal =      tplp,
+  volume =       "11",
+  number =       "4-5",
+  pages =        "821--839",
+  year =         "2011",
+}
+
 @InCollection{gelfond08a,
   author =       "M. Gelfond",
   title =        "Answer Sets",
@@ -356,11 +472,42 @@
   crossref =     "KRHandbook",
 }
 
+@Book{gelkah14a,
+  author =       "M. Gelfond and Y. Kahl",
+  title =        "Knowledge Representation, Reasoning, and the Design of
+                 Intelligent Agents: The Answer-Set Programming
+                 Approach",
+  publisher =    "Cambridge University Press",
+  year =         "2014",
+}
+
+@Article{gelleo02a,
+  author =       "M. Gelfond and N. Leone",
+  title =        "Logic programming and knowledge representation --- the
+                 {A}-{P}rolog perspective",
+  journal =      aij,
+  volume =       "138",
+  number =       "1-2",
+  pages =        "3--38",
+  year =         "2002",
+}
+
 @InProceedings{gellif88a,
   author =       "M. Gelfond and V. Lifschitz",
   title =        "The Stable Model Semantics for Logic Programming",
   crossref =     "iclp88",
   pages =        "1070--1080",
+}
+
+@InProceedings{gellif88b,
+  author =       "M. Gelfond and V. Lifschitz",
+  title =        "The Stable Model Semantics for Logic Programming",
+  editor =       "R. Kowalski and K. Bowen",
+  booktitle =    "Proceedings of the Fifth International Conference and
+                 Symposium of Logic Programming (ICLP'88)",
+  year =         "1988",
+  pages =        "1070--1080",
+  publisher =    "MIT Press",
 }
 
 @Article{gellif91a,
@@ -373,15 +520,11 @@
   year =         "1991",
 }
 
-@Article{gelleo02a,
-  author =       "M. Gelfond and N. Leone",
-  title =        "Logic programming and knowledge representation --- the
-                 {A}-{P}rolog perspective",
-  journal =      aij,
-  volume =       "138",
-  number =       "1-2",
-  pages =        "3--38",
-  year =         "2002",
+@InProceedings{geossc09a,
+  author =       "M. Gebser and M. Ostrowski and T. Schaub",
+  title =        "Constraint Answer Set Solving",
+  crossref =     "iclp09",
+  pages =        "235--249",
 }
 
 @Article{gerosc91a,
@@ -445,6 +588,13 @@
   pages =        "223--254",
 }
 
+@InProceedings{haliya14a,
+  author =       "A. Harrison and V. Lifschitz and F. Yang",
+  title =        "The Semantics of Gringo and Infinitary Propositional
+                 Formulas",
+  crossref =     "kr14",
+}
+
 @Article{janisesiyo06a,
   author =       "T. Janhunen and I. Niemel{\"a} and D. Seipel and P.
                  Simons and J. You",
@@ -490,6 +640,23 @@
   volume =       "157",
   number =       "1-2",
   pages =        "115--137",
+}
+
+@Article{litatu99a,
+  author =       "V. Lifschitz and L. Tang and H. Turner",
+  title =        "Nested Expressions in Logic Programs",
+  journal =      amai,
+  year =         "1999",
+  pages =        "369--389",
+  volume =       "25",
+  number =       "3-4",
+}
+
+@Book{lloyd87a,
+  author =       "J. Lloyd",
+  title =        "Foundations of Logic Programming",
+  publisher =    springer,
+  year =         "1987",
 }
 
 @Misc{lparseManual,
@@ -558,18 +725,6 @@
   pages =        "530--535",
 }
 
-@Article{niolti06a,
-  author =       "R. Nieuwenhuis and A. Oliveras and C. Tinelli",
-  title =        "Solving {SAT} and {SAT} Modulo Theories: From an
-                 abstract {D}avis-{P}utnam-{L}ogemann-{L}oveland
-                 procedure to {DPLL}({T})",
-  journal =      jacm,
-  year =         "2006",
-  volume =       "53",
-  number =       "6",
-  pages =        "937--977",
-}
-
 @Article{niemela99a,
   author =       "I. Niemel{\"a}",
   title =        "Logic Programs with Stable Model Semantics as a
@@ -586,6 +741,28 @@
   title =        "Logic, Programming and Prolog",
   publisher =    wiley,
   year =         "1995",
+}
+
+@Article{niolti06a,
+  author =       "R. Nieuwenhuis and A. Oliveras and C. Tinelli",
+  title =        "Solving {SAT} and {SAT} Modulo Theories: From an
+                 abstract {D}avis-{P}utnam-{L}ogemann-{L}oveland
+                 procedure to {DPLL}({T})",
+  journal =      jacm,
+  year =         "2006",
+  volume =       "53",
+  number =       "6",
+  pages =        "937--977",
+}
+
+@Article{ostsch12a,
+  author =       "M. Ostrowski and T. Schaub",
+  title =        "{ASP} modulo {CSP}: The clingcon system",
+  journal =      tplp,
+  year =         "2012",
+  volume =       "12",
+  number =       "4-5",
+  pages =        "485--503",
 }
 
 @Book{papadimitriou94a,
@@ -668,11 +845,77 @@
   pages =        "267--279",
 }
 
+@InProceedings{twgng03,
+  author =       "T. Dell'Armi and W. Faber and G. Ielpa and N. Leone
+                 and G. Pfeifer",
+  title =        "Aggregate Functions in {DLV}",
+  booktitle =    "Answer Set Programming: Advances in Theory and
+                 Implementation, volume 78 of CEUR Workshop proceedings,
+                 274--288. Online: CEUR-WS.org/Vol78",
+  year =         "2003",
+  pages =        "274--288",
+}
+
 @InProceedings{warsch04a,
   author =       "J. Ward and J. Schlipf",
   title =        "Answer Set Programming with Clause Learning",
   crossref =     "lpnmr04",
   pages =        "302--313",
+}
+
+@Proceedings{aaai13,
+  editor =       "M. {desJardins} and M. Littman",
+  title =        "Proceedings of the Twenty-Seventh National Conference
+                 on Artificial Intelligence ({AAAI}'13)",
+  booktitle =    "Proceedings of the Twenty-Seventh National Conference
+                 on Artificial Intelligence (AAAI'13)",
+  publisher =    "AAAI Press",
+  year =         "2013",
+}
+
+@Proceedings{aaai15,
+  editor =	 "B. Bonet and S. Koenig",
+  title =	 "Proceedings of the Twenty-Ninth National Conference on Artificial Intelligence (AAAI'15)",
+  booktitle =	 "Proceedings of the Twenty-Ninth National Conference on Artificial Intelligence (AAAI'15)",
+  publisher =	 "AAAI Press",
+  year =	 2015
+}
+
+
+@Book{bihemawa08a,
+  author =       "A. Biere and M. Heule and H. {van Maaren} and T.
+                 Walsh",
+  title =        "Handbook of Satisfiability",
+  booktitle =    "Handbook of Satisfiability",
+  publisher =    ios,
+  year =         "2009",
+  volume =       "185",
+  series =       "Frontiers in Artificial Intelligence and
+                 Applications",
+}
+
+@Proceedings{cpaior09,
+  editor =       "W. {van Hoeve} and J. Hooker",
+  title =        "Proceedings of the Sixth International Conference on
+                 Integration of {AI} and {OR} Techniques in Constraint
+                 Programming for Combinatorial Optimization Problems
+                 ({CPAIOR}'09)",
+  booktitle =    "Proceedings of the Sixth International Conference on
+                 Integration of AI and OR Techniques in Constraint
+                 Programming for Combinatorial Optimization Problems
+                 (CPAIOR'09)",
+  publisher =    "Springer-Verlag",
+  series =       "Lecture Notes in Computer Science",
+  year =         "2009",
+  volume =       "5547",
+}
+
+@Book{CPHandbook,
+  editor =       "F. Rossi and P. {van Beek} and T. Walsh",
+  title =        "Handbook of Constraint Programming",
+  booktitle =    "Handbook of Constraint Programming",
+  publisher =    elsevier,
+  year =         "2006",
 }
 
 @Proceedings{dac01,
@@ -716,6 +959,45 @@
   publisher =    springer,
 }
 
+@Proceedings{iclp-tc14,
+  editor =       "M. Leuschel and T. Schrijvers",
+  title =        "Technical Communications of the Thirtieth
+                 International Conference on Logic Programming
+                 ({ICLP}'14)",
+  booktitle =    "Technical Communications of the Thirtieth
+                 International Conference on Logic Programming
+                 (ICLP'14)",
+  volume =       "14",
+  OPTnumber =    "4-5",
+  year =         "2014",
+  series =       "Theory and Practice of Logic Programming, Online
+                 Supplement",
+}
+
+@Proceedings{iclp08,
+  title =        "Proceedings of the Twenty-fourth International
+                 Conference on Logic Programming ({ICLP}'08)",
+  booktitle =    "Proceedings of the Twenty-fourth International
+                 Conference on Logic Programming (ICLP'08)",
+  year =         "2008",
+  editor =       "M. {Garcia de la Banda} and E. Pontelli",
+  volume =       "5366",
+  series =       lncs,
+  publisher =    springer,
+}
+
+@Proceedings{iclp09,
+  title =        "Proceedings of the Twenty-fifth International
+                 Conference on Logic Programming ({ICLP}'09)",
+  year =         "2009",
+  booktitle =    "Proceedings of the Twenty-fifth International
+                 Conference on Logic Programming (ICLP'09)",
+  editor =       "P. Hill and D. Warren",
+  volume =       "5649",
+  series =       lncs,
+  publisher =    springer,
+}
+
 @Proceedings{iclp88,
   title =        "Proceedings of the Fifth International Conference on
                  Logic Programming ({ICLP}'88)",
@@ -734,18 +1016,6 @@
   year =         "1994",
   editor =       "P. {Van Hentenryck}",
   publisher =    mit,
-}
-
-@Proceedings{iclp08,
-  title =        "Proceedings of the Twenty-fourth International
-                 Conference on Logic Programming ({ICLP}'08)",
-  booktitle =    "Proceedings of the Twenty-fourth International
-                 Conference on Logic Programming (ICLP'08)",
-  year =         "2008",
-  editor =       "M. {Garcia de la Banda} and E. Pontelli",
-  volume =       "5366",
-  series =       lncs,
-  publisher =    springer,
 }
 
 @Proceedings{ijcai07,
@@ -770,19 +1040,24 @@
   publisher =    aaai,
 }
 
+@Proceedings{kr14,
+  title =        "Proceedings of the Fourteenth International Conference
+                 on Principles of Knowledge Representation and Reasoning
+                 ({KR}'14)",
+  booktitle =    "Proceedings of the Fourteenth International Conference
+                 on Principles of Knowledge Representation and Reasoning
+                 (KR'14)",
+  editor =       "C. Baral and G. De Giacomo and T. Eiter",
+  publisher =    "AAAI Press",
+  year =         "2014",
+}
+
 @Book{KRHandbook,
   editor =       "V. Lifschitz and F. {van Hermelen} and B. Porter",
   booktitle =    "Handbook of Knowledge Representation",
   title =        "Handbook of Knowledge Representation",
   publisher =    "Elsevier",
   year =         "2008",
-}
-
-@Book{lloyd87a,
-  author =       "J. Lloyd",
-  title =        "Foundations of Logic Programming",
-  publisher =    springer,
-  year =         "1987",
 }
 
 @Proceedings{lpar05,
@@ -933,131 +1208,6 @@
   publisher =    springer,
 }
 
-@Proceedings{cpaior09,
-  editor =       "W. {van Hoeve} and J. Hooker",
-  title =        "Proceedings of the Sixth International Conference on
-                 Integration of {AI} and {OR} Techniques in Constraint
-                 Programming for Combinatorial Optimization Problems
-                 ({CPAIOR}'09)",
-  booktitle =    "Proceedings of the Sixth International Conference on
-                 Integration of AI and OR Techniques in Constraint
-                 Programming for Combinatorial Optimization Problems
-                 (CPAIOR'09)",
-  publisher =    "Springer-Verlag",
-  series =       "Lecture Notes in Computer Science",
-  year =         "2009",
-  volume =       "5547",
-}
-
-@Article{gekakaosscsc11a,
-  author =       "M. Gebser and R. Kaminski and B. Kaufmann and M.
-                 Ostrowski and T. Schaub and M. Schneider",
-  title =        "Potassco: The {P}otsdam Answer Set Solving
-                 Collection",
-  journal =      aicom,
-  year =         "2011",
-  volume =       "24",
-  number =       "2",
-  pages =        "107--124",
-}
-
-@Book{gekakasc12a,
-  author =       "M. Gebser and R. Kaminski and B. Kaufmann and T.
-                 Schaub",
-  title =        "Answer Set Solving in Practice",
-  publisher =    "Morgan and Claypool Publishers",
-  year =         "2012",
-  series =       "Synthesis Lectures on Artificial Intelligence and
-                 Machine Learning",
-}
-
-@Book{baral02a,
-  author =       "C. Baral",
-  title =        "Knowledge Representation, Reasoning and Declarative
-                 Problem Solving",
-  publisher =    "Cambridge University Press",
-  year =         "2003",
-}
-
-@Article{breitr11a,
-  author =       "G. Brewka and T. Eiter and M. Truszczy{\'n}ski",
-  title =        "Answer set programming at a glance",
-  journal =      cacm,
-  volume =       "54",
-  number =       "12",
-  year =         "2011",
-  pages =        "92--103",
-}
-
-@Book{gelkah14a,
-  author =       "M. Gelfond and Y. Kahl",
-  title =        "Knowledge Representation, Reasoning, and the Design of
-                 Intelligent Agents: The Answer-Set Programming
-                 Approach",
-  publisher =    "Cambridge University Press",
-  year =         "2014",
-}
-
-@InProceedings{gellif88b,
-  author =       "M. Gelfond and V. Lifschitz",
-  title =        "The Stable Model Semantics for Logic Programming",
-  editor =       "R. Kowalski and K. Bowen",
-  booktitle =    "Proceedings of the Fifth International Conference and
-                 Symposium of Logic Programming (ICLP'88)",
-  year =         "1988",
-  pages =        "1070--1080",
-  publisher =    "MIT Press",
-}
-
-@Article{gekasc09c,
-  author =       "M. Gebser and B. Kaufmann and T. Schaub",
-  title =        "Conflict-Driven Answer Set Solving: From Theory to
-                 Practice",
-  journal =      aij,
-  year =         "2012",
-  volume =       "187-188",
-  pages =        "52--89",
-}
-
-@Article{gekasc11b,
-  author =       "M. Gebser and R. Kaminski and T. Schaub",
-  title =        "Complex Optimization in Answer Set Programming",
-  journal =      tplp,
-  volume =       "11",
-  number =       "4-5",
-  pages =        "821--839",
-  year =         "2011",
-}
-
-@InCollection{apblwa87a,
-  author =       "K. Apt and H. Blair and A. Walker",
-  title =        "Towards a Theory of Declarative Knowledge",
-  booktitle =    "Foundations of Deductive Databases and Logic
-                 Programming",
-  publisher =    m-k,
-  year =         "1987",
-  editor =       "J. Minker",
-  chapter =      "2",
-  pages =        "89--148",
-}
-
-@PhdThesis{freeman95a,
-  author =       "J. Freeman",
-  title =        "Improvements to Propositional Satisfiability Search
-                 Algorithms",
-  adress =       "Department of Computer and Information Science",
-  school =       "University of Pennsylvania",
-  year =         "1995",
-}
-
-@Book{CPHandbook,
-  editor =       "F. Rossi and P. {van Beek} and T. Walsh",
-  title =        "Handbook of Constraint Programming",
-  booktitle =    "Handbook of Constraint Programming",
-  publisher =    elsevier,
-  year =         "2006",
-}
-
 @Book{SATHandbook,
   editor =       "A. Biere and M. Heule and H. {van Maaren} and T.
                  Walsh",
@@ -1068,154 +1218,5 @@
   volume =       "185",
   series =       "Frontiers in Artificial Intelligence and
                  Applications",
-}
-
-@InProceedings{haliya14a,
-  author =       "A. Harrison and V. Lifschitz and F. Yang",
-  title =        "The Semantics of Gringo and Infinitary Propositional
-                 Formulas",
-  crossref =     "kr14",
-}
-
-@Proceedings{kr14,
-  title =        "Proceedings of the Fourteenth International Conference
-                 on Principles of Knowledge Representation and Reasoning
-                 ({KR}'14)",
-  booktitle =    "Proceedings of the Fourteenth International Conference
-                 on Principles of Knowledge Representation and Reasoning
-                 (KR'14)",
-  editor =       "C. Baral and G. De Giacomo and T. Eiter",
-  publisher =    "AAAI Press",
-  year =         "2014",
-}
-
-@Article{bflnrp00,
-  author =       "F. Buccafurri and N. Leone and P. Rullo",
-  title =        "Enhancing Disjunctive Datalog by Constraints",
-  journal =      "IEEE Trans. on Knowl. and Data Eng.",
-  volume =       "12",
-  number =       "5",
-  year =         "2000",
-  pages =        "845--860",
-}
-
-@InProceedings{twgng03,
-  author =       "T. Dell'Armi and W. Faber and G. Ielpa and N. Leone
-                 and G. Pfeifer",
-  title =        "Aggregate Functions in {DLV}",
-  booktitle =    "Answer Set Programming: Advances in Theory and
-                 Implementation, volume 78 of CEUR Workshop proceedings,
-                 274--288. Online: CEUR-WS.org/Vol78",
-  year =         "2003",
-  pages =        "274--288",
-}
-
-@Misc{aspcore2,
-  author =       "F. Calimeri and W. Faber and M. Gebser and G. Ianni
-                 and R. Kaminski and T. Krennwallner and N. Leone and F.
-                 Ricca and T. Schaub",
-  title =        "{ASP-Core-2}: Input language format",
-  howpublished = "Available at
-                 \url{https://www.mat.unical.it/aspcomp2013/files/ASP-CORE-2.0.pdf}",
-  year =         "2012",
-}
-
-@InProceedings{gekakasc14b,
-  author =       "M. Gebser and R. Kaminski and B. Kaufmann and T.
-                 Schaub",
-  title =        "\textit{Clingo} = {ASP} + Control: Preliminary
-                 Report",
-  crossref =     "iclp-tc14",
-  volume =       "arXiv:1405.3694v1",
-  note =         "Available at \url{http://arxiv.org/abs/1405.3694v1}",
-}
-
-@Proceedings{iclp-tc14,
-  editor =       "M. Leuschel and T. Schrijvers",
-  title =        "Technical Communications of the Thirtieth
-                 International Conference on Logic Programming
-                 ({ICLP}'14)",
-  booktitle =    "Technical Communications of the Thirtieth
-                 International Conference on Logic Programming
-                 (ICLP'14)",
-  volume =       "14",
-  OPTnumber =    "4-5",
-  year =         "2014",
-  series =       "Theory and Practice of Logic Programming, Online
-                 Supplement",
-}
-
-@InProceedings{geossc09a,
-  author =       "M. Gebser and M. Ostrowski and T. Schaub",
-  title =        "Constraint Answer Set Solving",
-  crossref =     "iclp09",
-  pages =        "235--249",
-}
-
-@Proceedings{iclp09,
-  title =        "Proceedings of the Twenty-fifth International
-                 Conference on Logic Programming ({ICLP}'09)",
-  year =         "2009",
-  booktitle =    "Proceedings of the Twenty-fifth International
-                 Conference on Logic Programming (ICLP'09)",
-  editor =       "P. Hill and D. Warren",
-  volume =       "5649",
-  series =       lncs,
-  publisher =    springer,
-}
-
-@Article{ostsch12a,
-  author =       "M. Ostrowski and T. Schaub",
-  title =        "{ASP} modulo {CSP}: The clingcon system",
-  journal =      tplp,
-  year =         "2012",
-  volume =       "12",
-  number =       "4-5",
-  pages =        "485--503",
-}
-
-@Unpublished{gehakalisc14a,
-  author =       "M. Gebser and A. Harrison and R. Kaminski and V.
-                 Lifschitz and T. Schaub",
-  title =        "Abstract Gringo",
-  note =         "Availabel at
-                 \url{http://www.cs.utexas.edu/users/vl/papers/AG.pdf}",
-  OPTkey =       "",
-  OPTmonth =     "",
-  OPTyear =      "",
-  OPTannote =    "",
-}
-
-@InProceedings{gekaotroscwa13a,
-  author =       "M. Gebser and B. Kaufmann and R. Otero and J. Romero
-                 and T. Schaub and P. Wanko",
-  title =        "Domain-specific Heuristics in Answer Set Programming",
-  crossref =     "aaai13",
-  pages =        "350--356",
-}
-
-@Proceedings{aaai13,
-  editor =       "M. {desJardins} and M. Littman",
-  title =        "Proceedings of the Twenty-Seventh National Conference
-                 on Artificial Intelligence ({AAAI}'13)",
-  booktitle =    "Proceedings of the Twenty-Seventh National Conference
-                 on Artificial Intelligence (AAAI'13)",
-  publisher =    "AAAI Press",
-  year =         "2013",
-}
-
-@InProceedings{brderosc15a,
-  author =	 "G. Brewka and J. Delgrande and J. Romero and T. Schaub",
-  title =	 "asprin: Customizing Answer Set Preferences without a Headache",
-  crossref =	 "aaai15",
-  note =	 "To appear."
-}
-
-@Proceedings{aaai15,
-  editor =	 "B. Bonet and S. Koenig",
-  title =	 "Proceedings of the Twenty-Ninth National Conference on Artificial Intelligence (AAAI'15)",
-  booktitle =	 "Proceedings of the Twenty-Ninth National Conference on Artificial Intelligence (AAAI'15)",
-  publisher =	 "AAAI Press",
-  year =	 2015
 }
 

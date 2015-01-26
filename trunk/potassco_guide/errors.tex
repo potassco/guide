@@ -16,24 +16,64 @@ Most of the errors in the following start with the prefix:
 *** ERROR: (@\textit{System}@)
 \end{lstlisting}
 where \codeit{System} is either \code{gringo}, \code{clingo}, or \code{clasp} depending on the system.
-We use \codeit{Error} to denote this preamble.
-Also, all of these errors are fatal and lead to immediate termination.
+In the following sections, we use \codeit{Error} to denote this prefix.
+All of the errors with this prefix are fatal and lead to immediate termination.
+
+\subsubsection{Parsing Command Line Options}\label{subsec:error:options}
+
+We start with errors emmited during command line parsing,
+which are handled equally by \gringo, \clasp, and \clingo.
+All our tools try to expand incomplete (long) options to recognized ones.
+Parsing command line options may nonetheless fail due to the following three reasons:
+%
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Error}@: In context '@\textit{Context}@': unknown option: '@\textit{Option}@'
+@\textit{Error}@: In context '@\textit{Context}@': \
+ambiguous option: '@\textit{Option}@' could be:
+  @\textit{Option1}@
+  @\textit{Option2}@
+  ...
+@\textit{Error}@: In context '<@\textit{Context}@>': \
+'@\textit{Arg}@': invalid value for: '@\textit{Option}@'
+*** Info : (@\textit{System}@): Try '--help' for usage information
+\end{lstlisting}
+%
+The first error means that the option~\codeit{Option}
+could not be expanded to one that is recognized.
+While the second error expresses that the result of expanding~\codeit{Option} is ambiguous.
+It is followed by a list of option canditates \codeit{Option1}, \codeit{Option2}, \dots, all sharing the same prefix.
+Finally, the third error occurs if the argument~\codeit{Arg} is invalid for option~\codeit{Option}.
+All three error messages include a context~\codeit{Context} in which the option is parsed.
+Often, this is simply the system name 
+but can also be the name of a configuration in a portfolio file
+or the string \code{tester} for errors in options regarding the disjunctive tester.\comment{references to clasps command-line options would be nice}
+The last line is printed in all three cases.
+It indicates that option \code{--help} can be used to display the available options and their arguments.
 
 \subsubsection{Parsing and Checking Logic Programs}\label{subsec:error:parselp}
 
-Each of the error messages below begins with a location followed by the string \code{error} and an error message:
+Next, we consider errors emitted durnig the parsing and checking of logic programs.
+Unlike the error messages in the previous section, 
+such errors include location information to ease finding and fixing the problem.
+Each of the error messages below begins with a location followed by the string \code{error} and a short description of the error in~\codeit{Message}:
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{File}@:@\textit{Line}@:@\textit{Column}@-@\textit{Column}@: error: @\textit{Message}@
   @\textit{Information}@
 @\textit{File}@:@\textit{Line}@:@\textit{Column}@-@\textit{Column}@: note: @\textit{Message}@
+  @\textit{Information}@
 ...
 
 \end{lstlisting}
-The location refers to a string in a source file, specified by file name, line number, and beginning and ending column number
+The location refers to a string in a source file,
+specified by file name~\codeit{File},
+line number~\codeit{Line},
+and beginning and ending column number~\code{Column}
 (column $n$ refers to the $n$-th symbol in a line).
-Error messages are sometimes followed by further information and notes spanning multiple lines.
-Multiple error messages of this kind might be reported; 
-each error message is terminated with two newlines.
+Error messages are sometimes followed by further desriptions in the string~\codeit{Information} indented by two spaces.
+An optional list of similarly structured notes, discernable via the string~\code{note}, can follow this part.
+Such notes typically refer to locations that are in conflict with the object referred to in the location of the error message.
+Multiple error messages of this kind might be reported;
+each error message is terminated with two newlines after the notes.
 
 We start our description with errors that may be encountered during parsing,
 where the following one indicates a syntax error in the input:
@@ -117,31 +157,6 @@ then \gringo\ or \clingo\ terminates after parsing and checking with the error m
 No more than 20 errors are printed.
 If this limit is exceeded, the application stops parsing or safety checking and terminates.
 \end{note}
-
-\subsubsection{Parsing Command Line Options}\label{subsec:error:options}
-
-All of the tools \gringo, \clasp, and \clingo\
-try to expand incomplete (long) options to recognized ones.
-Parsing command line options may nonetheless fail due to the following three reasons:
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Error}@: In context '<@\textit{Context}@>': unknown option: '@\textit{Option}@'
-@\textit{Error}@: In context '<@\textit{Context}@>': \
-ambiguous option: '@\textit{Option}@' could be:
-  @\textit{Option1}@
-  @\textit{Option2}@
-  ...
-@\textit{Error}@: In context '<@\textit{Context}@>': \
-'@\textit{Arg}@': invalid value for: '@\textit{Option}@'
-*** Info : (@\textit{System}@): Try '--help' for usage information
-\end{lstlisting}
-%
-The first error means that the option~\codeit{Option}
-could not be expanded to one that is recognized.
-While the second error expresses that the result of expanding~\codeit{Option} is ambiguous.
-Finally, the third error occurs if the argument~\codeit{Arg} is invalid for option~\codeit{Option}.
-The last line is printed in all three cases.
-It indicates that option \code{--help} can be used to display the available options and their arguments.\comment{RK2BK: what is the use of context?}
 
 \subsubsection{Parsing Logic Programs in \smodels\ Format}\label{subsec:error:lparse}
 

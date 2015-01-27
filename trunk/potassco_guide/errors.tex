@@ -75,6 +75,7 @@ Such notes typically refer to locations that are in conflict with the object ref
 Multiple error messages of this kind might be reported;
 each error message is terminated with two newlines after the notes.
 
+\paragraph{Logic Program Parsing}
 We start our description with errors that may be encountered during parsing,
 where the following one indicates a syntax error in the input:
 %
@@ -88,6 +89,7 @@ and check whether something looks strange there
 Note that the parser tries to recover from a syntax error.
 This typically means that everything up to the next period is ignored.
 
+\paragraph{Safety Checking}
 The next error occurs if an input program is not safe:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
@@ -98,7 +100,7 @@ The next error occurs if an input program is not safe:
 \end{lstlisting}
 %
 Along with the error message,
-the affected rule (\codeit{Rule}) and a list of all unsafe variable occurrences (\codeit{Var}) are reported.
+the affected rule~\codeit{Rule} and a list of all unsafe variable occurrences~\codeit{Var} are reported.
 The first action to take usually consists of checking whether
 variable~\codeit{Var} is actually in the scope of any atom
 (in the positive body of \codeit{Rule}) that can bind it.%
@@ -109,10 +111,11 @@ variable~\codeit{Var} is actually in the scope of any atom
 Also check for variables that occur in aggregate elements (cf.\ Section~\ref{subsec:gringo:aggregate}) or conditional literals (cf.\ Section~\ref{subsec:gringo:condition});
 you might have to bind them with additional positive atoms in the conditions.
 
+\paragraph{Script Execution and Parsing}
 If an error in an embedded script occurs (cf.~Section~\ref{subsec:lang:extfun}), the following error message is printed:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Location}@: error: error executing embedded script:
+@\textit{Location}@: error: failed to execute script:
   @\textit{Information}@
   ...
 \end{lstlisting}
@@ -121,6 +124,7 @@ The information printed depends on the error that occurred when executing the em
 This can for example be parse errors or errors that occurred when executing the script.
 Typically, the information contains a trace where the error occurred.
 
+\paragraph{Defining Constants}
 There are three errors associated to \code{\#const} statements (cf.~Section~\ref{subsec:gringo:meta}).
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{Location}@: error: cyclic constant definition:
@@ -216,8 +220,11 @@ or if an error occurs while evaluating an external function (cf.~Section~\ref{su
 It typically means that either a (symbolic) constant or a compound term (over an uninterpreted function)
 has occurred in the scope of some built-in arithmetic function.
 %
+The string~\codeit{Term} depicts the term that failed to evaluate.
+%
 The warning message might be followed by further notes.
-For example, if the evaluation of an external function failed,
+For example, 
+if the evaluation of an external function failed,
 by a trace indicating the location of the error within the source code of the external function.
 %
 Typically, it is simple to fix occurrences of this warning
@@ -256,7 +263,7 @@ Keep in mind that \gringo\ performs a static dependency analysis,
 which is only an approximation of the dependencies of a logic program.
 The aggregate occurrence might actually be stratified~(cf.~\cite{twgng03,aspcore2}),
 in which case the warning can be silenced using option \code{-Wno-nonmonotone-aggregate} (cf.~Section~\ref{subsec:opt:gringo}).
-In general, it is a good idea to use non-monotone aggregates in integrity constraints,
+In general, it is a good idea to use non-monotone aggregates only in integrity constraints,
 where the aggregate is guaranteed to be stratified.
 
 \begin{note}

@@ -144,7 +144,7 @@ There are three errors associated to \code{\#const} statements (cf.~Section~\ref
 @\textit{Note}@
 ...
 \end{lstlisting}
-The strings~\codeit{Constant} depict the affected \code{\#const} statements.
+The strings~\codeit{Constant} provide the affected \code{\#const} statements.
 The first error is printed if the statements rely on each other cyclically.
 The second error message is printed if a constant is defined more than once.
 Each statement involved in the cycle or redefinition is printed in the corresponding error message.
@@ -204,7 +204,7 @@ the only difference is that the location is followed by the string \code{warning
 
 \begin{note}
 No more than 20 warnings are printed.
-If this limit is exceeded you should definitely fix some warnings.
+If this limit is exceeded, you should definitely fix some warnings.
 \end{note}
 
 \subsubsection{Undefined Terms}\label{sec:warn:undefterm}
@@ -220,7 +220,7 @@ or if an error occurs while evaluating an external function (cf.~Section~\ref{su
 It typically means that either a (symbolic) constant or a compound term (over an uninterpreted function)
 has occurred in the scope of some built-in arithmetic function.
 %
-The string~\codeit{Term} depicts the term that failed to evaluate.
+The string~\codeit{Term} provides the term that failed to evaluate.
 %
 The warning message might be followed by further notes.
 For example, 
@@ -251,13 +251,17 @@ Often, this error indicates that a predicate has been misspelled
 or that an argument has accidentally been omitted.
 
 \subsubsection{Nonmonotone Aggregates}\label{sec:warn:nonmon}
-This warning is emitted if a nonmonotone aggregate is outputted during grounding:
+This warning is emitted if a nonmonotone aggregate is output during grounding:
+\comment{MG: 
+I suggest using the adjective \emph{recursive} instead of \emph{unstratified}.
+The terminology ``recursive aggregate'' is common,
+but ``stratified aggregate'' is not.}
 \begin{lstlisting}[numbers=none,escapechar=@]
 @\textit{Location}@: warning: unstratified nonmonotone aggregate:
   @\textit{Information}@
   (applied translation might produce counter-intuitive results)
 \end{lstlisting}
-where \codeit{Information} indicates why an aggregate is undefined
+where \codeit{Information} indicates why an aggregate is unstratified
 - for example, if a \code{\#sum} aggregate contains negative weights.
 Keep in mind that \gringo\ performs a static dependency analysis,
 which is only an approximation of the dependencies of a logic program.

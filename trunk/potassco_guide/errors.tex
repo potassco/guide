@@ -251,24 +251,20 @@ Often, this error indicates that a predicate has been misspelled
 or that an argument has accidentally been omitted.
 
 \subsubsection{Nonmonotone Aggregates}\label{sec:warn:nonmon}
-This warning is emitted if a nonmonotone aggregate is output during grounding:
-\comment{MG: 
-I suggest using the adjective \emph{recursive} instead of \emph{unstratified}.
-The terminology ``recursive aggregate'' is common,
-but ``stratified aggregate'' is not.}
+This warning is emitted if a recursive nonmonotone aggregate is output during grounding:
 \begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Location}@: warning: unstratified nonmonotone aggregate:
+@\textit{Location}@: warning: recursive nonmonotone aggregate:
   @\textit{Information}@
   (applied translation might produce counter-intuitive results)
 \end{lstlisting}
-where \codeit{Information} indicates why an aggregate is unstratified
-- for example, if a \code{\#sum} aggregate contains negative weights.
+where \codeit{Information} indicates why the aggregate is nonmontone
+- for example because of negative weights in a \code{\#sum} aggregate.
 Keep in mind that \gringo\ performs a static dependency analysis,
 which is only an approximation of the dependencies of a logic program.
-The aggregate occurrence might actually be stratified~(cf.~\cite{twgng03,aspcore2}),
+The aggregate occurrence might actually be non-recursive,
 in which case the warning can be silenced using option \code{-Wno-nonmonotone-aggregate} (cf.~Section~\ref{subsec:opt:gringo}).
 In general, it is a good idea to use non-monotone aggregates only in integrity constraints,
-where the aggregate is guaranteed to be stratified.
+where the aggregate occurrence is guaranteed to be non-recursive.
 
 \begin{note}
 The \smodels\ format only supports monotone aggregates.

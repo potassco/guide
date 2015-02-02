@@ -15,7 +15,7 @@ Information on domain-specific heuristic-driven solving with \clasp\ and \clingo
   Attention! \hclasp\ is superseded by \clasp~3,
   including all of its functionalities.
 \item \clasp~3 supports options:
-\begin{lstlisting}[numbers=none]
+\scriptsize\begin{lstlisting}[numbers=none]
  --heuristic=Domain : Use domain knowledge to Vsids-like heuristic
 
  --dom-mod=<arg>         : Default modification for domain heuristic
@@ -25,7 +25,363 @@ Information on domain-specific heuristic-driven solving with \clasp\ and \clingo
 \end{lstlisting}
 \end{itemize}
 
+\iffalse
+\texttt{hclasp} declarative programming of clasp heuristics 
+% hclasp gives a general declarative framework for incorporating
+% domain-specific heuristics into ASP solving. 
 
+\begin{itemize}
+	\item \href{http://potassco.sourceforge.net}%{\guillemotleftPotassco}
+\end{itemize}
+%  ======================== overview ====================== 
+
+
+\subsection{Overview}
+
+\texttt{hclasp} provides a general declarative framework to incorporate domain-specific heuristics into ASP solving. It extends \texttt{clasp} allowing to program the heuristic of the solver directly from the ASP code. 
+
+ For a formal description of \texttt{hclasp}, please read our \href{http://www.cs.uni-potsdam.de/wv/pdfformat/gekaotroscwa13a.pdf}{paper}. 
+
+For a detailed description of \texttt{hclasp} implementation,  please read the system \href{text/hclasp-README}{README}.
+
+ Here we explain how to  \hyperlink{install}{install} the system,  we give a short tutorial on \hyperlink{howto}{how does hclasp work},  followed by an example on the \hyperlink{bw}{Blocks World},  and we describe some of our \hyperlink{experiments}{experiments}. 
+
+\subsubsection{Contents}
+\begin{itemize}
+	\item \hyperlink{install}{Installation}
+	\item \hyperlink{howto}{Tutorial}
+	\item \hyperlink{bw}{Example: The Blocks World}
+	\item \hyperlink{experiments}{Experiments}
+\end{itemize}
+
+\subsection{Installation}
+
+\texttt{hclasp} source code and precompiled linux binaries are available \href{http://sourceforge.net/projects/potassco/files/hclasp}{here}.  
+
+To compile the system, please run the configure file and follow the instructions that will appear in the screen.  
+
+\texttt{hclasp} can be run with grounders \href{http://potassco.sourceforge.net/}{Gringo} or      \href{http://www.tcs.hut.fi/Software/smodels/}{lparse} as front-ends. 
+
+
+
+\subsection{Tutorial}
+
+\texttt{hclasp} defines a new heuristic, named \texttt{domain},  that modifies \texttt{vsids} heuristics of \texttt{clasp} allowing to program it from the ASP code.  
+
+
+
+To switch to \texttt{clasp} normal behavior, simply select another heuristic from command line,  for example, with \texttt{--heu=vsids} or \texttt{--heu=berkmin}. 
+
+ Next we present some examples to explain how does \texttt{hclasp} work. 
+
+
+
+\paragraph{Positive sign}
+
+ In \texttt{hclasp} the heuristic information is represented by the predicate \texttt{\_heuristic}.  For example, the atom \texttt{\_heuristic(a,sign,1)} tells \texttt{hclasp} that  when deciding on atom \texttt{a} it should be given a positive sign,   ie. it should be set to true.  We start with the following logic program \texttt{example1} and the \texttt{gringo} + \texttt{hclasp} execution:
+\begin{verbatim}
+_heuristic(a,sign,1).
+{a}.
+\end{verbatim}
+\begin{verbatim}
+$ gringo example1 | hclasp
+...
+Answer: 1    
+_heuristic(a,sign,1) a
+\end{verbatim}
+
+ When searching for an answer set, \texttt{hclasp} first propagates the heuristic atom and next updates its heuristic knowledge about atom \texttt{a}. Then it has to decide on \texttt{a} making it either true or false. Following the current heuristic knowledge,  \texttt{hclasp} makes \texttt{a} true and finally returns the answer set \texttt{\{\_heuristic(a,sign,1),a\}}. 
+% We would obtain a similar result using any positive integer instead of 1 in the heuristic fact.
+
+
+\paragraph{Negative sign}
+
+In the next program \texttt{example2} the \texttt{heuristic} fact  asserts that when deciding on atom \texttt{a}  it should be given a negative sign, ie. it should be set to false: 
+\begin{verbatim}
+_heuristic(a,sign,-1).
+{a}.
+\end{verbatim}
+\begin{verbatim}
+$ gringo example2 | hclasp                                                                                 
+...
+Answer: 1                                                                                                           
+_heuristic(a,sign,-1)
+\end{verbatim}
+
+\texttt{hclasp} propagates the heuristic fact and updates its heuristic knowledge, decides on atom \texttt{a} making it false and finally returns the answer set \{ \texttt{\_heuristic(a,sign,-1)}\}. 
+
+ These two examples illustrate that the heuristic atoms modify \texttt{hclasp} decisions,  leading the solver to find first either the answer set with \texttt{a} (in \texttt{example1}) or the answer set without it (in \texttt{example2}). However, as long as heuristic atoms appear only in the head of the rules, the answer sets of the program remain the same (modulo heuristic atoms). For example, if we ask for all answer sets of \texttt{example1}  we get one without \texttt{a} and one with \texttt{a},  and the same happens with \texttt{example2}: 
+\begin{verbatim}
+$ gringo example2 | hclasp 0                                                                                
+...
+Answer: 1                                                                                                           
+_heuristic(a,sign,-1)
+Answer: 2                                                                                                           
+_heuristic(a,sign,-1) a
+\end{verbatim}
+
+\paragraph{Showing the heuristic information}
+
+ For the heuristic atoms to take effect, they and their contained atoms must be  made visible to \texttt{hclasp}. For example, if we add to \texttt{example2} the lines: 
+\begin{verbatim}
+#hide.
+#show a.
+\end{verbatim}
+
+then \texttt{hclasp} knows nothing about the heuristic atom, and operates as \texttt{clasp} would do normally with \texttt{vsids} heuristic. The same would happen if instead we added:  
+\begin{verbatim}
+#hide.
+#show _heuristic.
+\end{verbatim}
+
+ because \texttt{hclasp} would know nothing about the atom \texttt{a} contained inside the heuristic atom. 
+
+\paragraph{Level}
+
+\texttt{hclasp} assigns to each atom a level, and it decides on atoms of the highest possible level. The default value for each atom is \texttt{0},  and both positive and negative integers are valid. Let's see the program \texttt{example3}, where level \texttt{10} is assigned to atom \texttt{a}: 
+\begin{verbatim}
+_heuristic(a,sign,1).
+_heuristic(b,sign,1).
+_heuristic(a,level,10).
+{a,b}.
+:- a, b.
+\end{verbatim}
+\begin{verbatim}
+$ gringo example3 | hclasp                                                                                  
+...
+_heuristic(a,sign,1)   _heuristic(b,sign,1) 
+_heuristic(a,level,10) a\end{verbatim}
+
+\texttt{hclasp} propagates the heuristic facts, and given that the level of \texttt{a} becomes greater than the level of \texttt{b}, \texttt{hclasp} decides on it (with positive sign) and finally \texttt{b} is propagated to false. If, for example, we added the fact \texttt{\_heuristic(b,level,20)},  the answer set would contain \texttt{b} instead of \texttt{a}. This would also be the case if we used \texttt{\_heuristic(a,level,-10)} instead of \texttt{\_heuristic(a,level,10)}.  
+
+\paragraph{Dynamic heuristic atoms}
+
+Heuristic atoms can be used as any other atoms of the logic program, and they only affect the heuristic of the solver when they are true. Let's see \texttt{example4}, where the heuristic atoms for \texttt{c} depend on \texttt{b}: 
+\begin{verbatim}
+_heuristic(a,sign,1).
+_heuristic(b,sign,1).
+_heuristic(a,level,10).
+{a,b}.
+:- a, b.
+{c}.
+_heuristic(c,sign,1)  :- b.
+_heuristic(c,sign,-1) :- not b.
+\end{verbatim}
+\begin{verbatim}
+$ gringo example4 | hclasp                                                                                 
+...
+_heuristic(a,sign,1)   _heuristic(b,sign,1) 
+_heuristic(a,level,10) a
+_heuristic(c,sign,-1)\end{verbatim}
+
+ In this case first \texttt{hclasp} proceeds as in \texttt{example3}.  Then after propagating that b is false,  the heuristic fact \texttt{\_heuristic(c,sign,-1)} is propagated, so when deciding on \texttt{c}, it is assigned to false.  If we extended the program adding the fact \texttt{\_heuristic(b,level,20)}, the answer set would contain \texttt{b} and \texttt{c} instead of \texttt{a}.  
+
+\paragraph{True and false}
+
+ The modifiers \texttt{true} and \texttt{false} allow to refer at the same time to the level and the sign of an atom. Internally,  for the \texttt{true} and \texttt{false} heuristic atoms, \texttt{hclasp} defines new \texttt{level} and \texttt{sign} heuristic atoms following these rules: 
+\begin{verbatim}
+_heuristic(X,level,Y) :- _heuristic(X,true,Y).
+_heuristic(X,sign,1)  :- _heuristic(X,true,Y).
+_heuristic(X,level,Y) :- _heuristic(X,false,Y).
+_heuristic(X,sign,-1) :- _heuristic(X,false,Y).
+\end{verbatim}
+
+For instance, \texttt{example4} can be rewritten as: 
+\begin{verbatim}
+_heuristic(b,sign,1).
+_heuristic(a,true,10).
+{a,b}.
+:- a, b.
+{c}.
+_heuristic(c,sign,1)  :- b.
+_heuristic(c,sign,-1) :- not b.
+\end{verbatim}
+
+ In this case the fact \texttt{\_heuristic(a,true,10)} stands for the previous facts \texttt{\_heuristic(a,level,10)} and \texttt{heuristic(a,sign,1)}. 
+
+\paragraph{Priorities between heuristic atoms}
+
+\texttt{hclasp} allows to represent priorities between different heuristic atoms that refer to the same atom.  The priority is represented by a positive integer as a fourth term. The higher the integer, the higher the priority of the heuristic atom. For example, \texttt{\_heuristic(c,sign,1,10)} and \texttt{\_heuristic(c,sign,-1,20)} are valid heuristic atoms. If both are true, then the sign assigned to \texttt{c} is \texttt{-1} (because \texttt{20>10}).  Let's see \texttt{example5}: 
+\begin{verbatim}
+_heuristic(b,sign,1).
+_heuristic(a,true,10).
+{a,b}.
+:- a, b.
+{c}.
+_heuristic(c,sign,1,10 ).
+_heuristic(c,sign,-1,20) :- not b.
+\end{verbatim}
+\begin{verbatim}
+$ gringo example5 | hclasp                                                                               
+...
+_heuristic(b,sign,1)    _heuristic(a,true,10) 
+_heuristic(c,sign,1,10) a
+_heuristic(c,sign,-1,20)\end{verbatim}
+
+ First \texttt{hclasp} proceeds as in \texttt{example3}. Then after propagating that b is false,  the heuristic atom \texttt{\_heuristic(c,sign,-1,20)} is propagated, and given that \texttt{20>10} the sign for atom \texttt{c} is \texttt{-1}, so when deciding on \texttt{c}, it is assigned to false.  If, for example, we added the fact \texttt{\_heuristic(c,sign,1,30)} to the program, the answer set would contain atom \texttt{c}. 
+
+ Whenever we use only three terms for a heuristic atom, the priority assigned to it is the absolute value of the modifiers value.  For example, if \texttt{\_heuristic(c,level,-10)} and \texttt{\_heuristic(c,level,5)} were true,  then as \texttt{abs(-10)>abs(5)} the level of \texttt{c} would be \texttt{-10}. 
+
+\paragraph{Init and factor}
+
+ The modifiers \texttt{init} and \texttt{factor} allow to modify the score that clasp heuristic assigns to each atom.  Compared to the \texttt{level} modifier, \texttt{init} and \texttt{factor} allow to bias the search without stablishing a strict ranking among the atoms. 
+
+ With \texttt{init} we can add a value to the initial heuristic score of an atom. For example, if \texttt{\_heuristic(a,init,2)} is true, then a value of \texttt{2} is added to  the initial score that the heuristic assigns to atom \texttt{a}. Note that as the search proceeds, the initial score of an atom decays, so \texttt{init} only affects the beginning of the search. 
+
+ To bias the whole search we can use the \texttt{factor} modifier,  that multiplies for a value the heuristic score of an atom. For example, if \texttt{\_heuristic(a,factor,2)} is true, then the heuristic score for atom \texttt{a}  is multiplied by \texttt{2}. 
+
+\paragraph{Domain choices}
+
+ With command line option \texttt{--stats} we can see some statistics of \texttt{hclasp} search. The statistics are the same as those generated by \texttt{clasp}, but with one addition:  after the word \texttt{Domain} we can see how many decisions where made on atoms that appear  inside an heuristic atom. This information may give us some insight about the performed search. For instance, this is part of the output of \texttt{example5} with option \texttt{--stats}: 
+\begin{verbatim}
+$ gringo example5 | hclasp --stats                                                                       
+...
+Models      : 1+    
+Time        : 0.000s (Solving: 0.00s ...)
+CPU Time    : 0.000s
+Choices     : 2      (Domain: 2)
+Conflicts   : 0
+Restarts    : 0     
+...
+\end{verbatim}
+
+ The line about \texttt{Choices} tells us that  two decisions were made, and that both where made on atoms contained in heuristic atoms. 
+%  ======================== Blocks World hclasp ====================== 
+
+
+\subsection{Example: The Blocks World}
+
+ We apply \texttt{hclasp} to answer set planning in the Blocks World.  We begin with a basic encoding \texttt{bw.lp} of the problem: 
+\begin{verbatim}
+time(1..lasttime).                                                                                                                                                                                         
+location(B) :- block(B).                                                                                            
+location(table).                                                                                                    
+                                                                                                                    
+1 { move(B,L,T) : block(B) : location(L) } 1 :- time(T).                                           
+                                                                                                                    
+on(B,L,T)   :- move(B,L,T).                                                                             
+non(B,L1,T) :- on(B,L,T), L!=L1, location(L1). 
+on(B,L,T+1) :- on(B,L,T), not non(B,L,T+1), T \end{verbatim}
+
+ and one instance \texttt{ins} (the Sussman anomaly): 
+\begin{verbatim}
+#const lasttime=3.
+block(a). block(b). block(c).
+on(b,table,0). 
+on(c,a,0).
+on(a,table,0).
+
+:- not on(a,b,lasttime).
+:- not on(b,c,lasttime).
+:- not on(c,table,lasttime).
+\end{verbatim}
+
+If we execute:
+\begin{verbatim}
+$ gringo bw.lp ins | hclasp\end{verbatim}
+
+\texttt{hclasp} will run as \texttt{clasp} with \texttt{vsids} heuristic. Now can try to improve the performance of the system programming the heuristic. 
+
+ In \texttt{bw.lp} once all the values for predicate \texttt{move} are given,  the values of \texttt{on} and \texttt{non} are determined and may be propagated by \texttt{hclasp}. This suggests that deciding only on \texttt{move} may be a good strategy. We can do that with \texttt{hclasp} adding the following simple heuristic rule to a file \texttt{heur.lp}: 
+\begin{verbatim}
+_heuristic(move(B,L,T),level,1)  :- block(B), location(L), time(T).\end{verbatim}
+
+and executing:
+\begin{verbatim}
+$ gringo bw.lp ins heur.lp | hclasp\end{verbatim}
+
+ Given that the level of \texttt{move} is higher,  \texttt{hclasp} will decide first on atoms of that predicate,  and the values of the other predicates will be propagated. 
+
+ We may prefer to soften the heuristic modification to simply bias the search  towards \texttt{move} predicate, without stablishing a strict preference towards it.  For that we can use, for example, the rule: 
+\begin{verbatim}
+_heuristic(move(B,L,T),init,2) :- block(B), location(L), time(T).\end{verbatim} or: 
+\begin{verbatim}
+_heuristic(move(B,L,T),factor,2) :- block(B), location(L), time(T).\end{verbatim}
+
+ or the combination of both.  The first rule adds \texttt{2} to the initial score of \texttt{move} atoms,  while the second multiplies the heuristic score of \texttt{move} by \texttt{2}.  
+
+ Whenever we decide on a true \texttt{move} atom,  the other \texttt{move} atoms for the same \texttt{time} are determined to be false,  and can be propagated by \texttt{hclasp}. So deciding on true \texttt{move} atoms may be a good idea. For that we can either use the \texttt{true} modifier to express a strict preference: 
+\begin{verbatim}
+_heuristic(move(B,L,T),true,1) :- block(B), location(L), time(T).\end{verbatim}
+
+or just bias the search with \texttt{init} and \texttt{sign}:
+\begin{verbatim}
+_heuristic(move(B,L,T),init,2) :- block(B), location(L), time(T).
+_heuristic(move(B,L,T),sign,1) :- block(B), location(L), time(T).\end{verbatim}
+
+or with \texttt{factor} and \texttt{sign}:
+\begin{verbatim}
+_heuristic(move(B,L,T),factor,2) :- block(B), location(L), time(T).
+_heuristic(move(B,L,T),sign,1)   :- block(B), location(L), time(T).\end{verbatim}
+
+
+
+ So far we have given the same heuristic values to all \texttt{move} atoms, but other options may be interesting. For example, we may prefer to decide first on earlier \texttt{move} atoms,  so that \texttt{hclasp} performs a forward search. This can be represented with the following rule:
+\begin{verbatim}
+_heuristic(move(B,L,T),true,lasttime-T+1) :- block(B), location(L), time(T).\end{verbatim}
+
+For \texttt{lasttime=3} the rule gives level \texttt{3} to \texttt{move} atoms of time \texttt{1},  level \texttt{2} to those of time \texttt{2} and level \texttt{1} to those of time \texttt{3},  assigning always a positive sign.  In this manner, \texttt{hclasp} will decide first on a true \texttt{move} atom of time \texttt{1}, then on one of time \texttt{2},  and so on. 
+
+  Another strategy is to perform a backwards search on \texttt{move} from the last to the first time instant directed by the goals. We can use the next dynamic heuristic rule:
+\begin{verbatim}
+_heuristic(move(B,L,T),true,T) :- on(B,L,T).\end{verbatim}
+
+As before, the rule can be softened using \texttt{sign} with \texttt{init} or \texttt{factor}. At the start of the search the goal \texttt{on} atoms will be true in the last time instant,  and with this rule \texttt{hclasp} will decide on a true \texttt{move} atom that will make one of them true. Then some \texttt{on} atoms will be propagated to the previous time instant,  and the process is repeated until reaching the first time instant. 
+
+ We can also choose to promote the \texttt{on} predicate.  For example, with any of these rules or with a combination of them: 
+\begin{verbatim}
+_heuristic(on(B,L,T),level,1)  :- block(B), location(L), time(T).
+_heuristic(on(B,L,T),init,2)   :- block(B), location(L), time(T).
+_heuristic(on(B,L,T),factor,3) :- block(B), location(L), time(T).\end{verbatim}
+
+ Another interesting alternative is the following heuristic rule,  that proved to be very good in our experiments (more on this below): 
+\begin{verbatim}
+_heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{verbatim}
+
+ The idea is to make the goal \texttt{on} atoms persist backwards, one by one, from the last time instant to the first. Note that a higher level is given to atoms at earlier time instants. First \texttt{hclasp} will decide on one goal \texttt{on} atom of the last but one instant,  then it will decide to make it persist in the previous situation, and so on.  Later, it will make persist backwards another goal \texttt{on} atom. With this heuristic the idea is not to decide on atoms that lead to many propagations (as with \texttt{move} atoms) but rather to make correct decisions (given that most of the times the value of \texttt{on} will persist by inertia). 
+%  ======================= experiment ===================== 
+
+
+\subsection{Experiments}
+
+ We have performed an empirical evaluation of \texttt{hclasp} in three different settings. In the first, we studied single static heuristic modifications for ASP planning problems.  In the second, we solved abductive problems with optimization statements,   and in the third we solved PDDL planning problems translated to ASP.   For a more detailed description of the experiments and the results,  please read the Experiments section of our \href{http://www.cs.uni-potsdam.de/wv/pdfformat/gekaotroscwa13a.pdf}{paper}.  
+
+\subsubsection{Experiments with static heuristic modifications}
+
+ In this setting we focus on well-known ASP planning benchmarks in order to contrast heuristic modifications on comparable problems. The benchmarks are Labyrinth, Sokoban, and Hanoi Tower, each comprising 32 instances from the third ASP competition. We experiment with 38 heuristic modifications, promoting the choice of actions and fluents via the heuristic modifiers  \texttt{factor} (1,2,4,8,16),  \texttt{init} (2,4,8,16), \texttt{level} (1,-1),  \texttt{sign} (1,-1),  as well as attributing values to \texttt{factor}, \texttt{init}, and \texttt{level}  by ascending and descending time points. 
+
+No single heuristic modification improved over \texttt{vsids} heuristic in all benchmarks,  but for all benchmarks there were some heuristic modifications that clearly improved \texttt{vsids} performance.  
+
+The encodings and the instances can be found \href{benchmarks/static_benchmarks/benchmarks.zip}{here},    and the results \href{benchmarks/static_benchmarks/results.zip}{here}.
+
+\subsubsection{Experiments on abductive problems with optimization}
+
+ We performed experiments on three different problems using abduction in combination with a minimize statement to minimize the number of abducibles. We considered benchmarks of Circuit Diagnosis, Metabolic Network Expansion and Transcriptional Network Repair. To supporting minimization, we assign false to the abducibles (\texttt{sign=-1})  and gradually increase the bias of their choice by imposing \texttt{factor} 2, 4, 8 or 16,  or we enforce it via a level modifier (\texttt{level=1}). 
+
+In this setting the performance of \texttt{hclasp} clearly improved over \texttt{vsids} heuristic. For example, using \texttt{sign=-1} and \texttt{level=1} the timeouts where reduced from 115 to 83 in Circuit Diagnosis, from 100 to 0 in Metabolic Network Expansion, and from 140 to 1 in Transcriptional Network Repair problems. 
+
+For Circuit Diagnosis the encodings and the instances can be found \href{benchmarks/optimization_benchmarks/circuit-diagnosis/circuit-diagnosis-benchmarks.zip}{here},     and the results \href{benchmarks/optimization_benchmarks/circuit-diagnosis/circuit-diagnosis-results.zip}{here}.
+
+For Metabolic Network Expansion the encodings and the instances can be found \href{benchmarks/optimization_benchmarks/bio-expansion/bio-expansion-benchmarks.zip}{here},     and the results \href{benchmarks/optimization_benchmarks/bio-expansion/bio-expansion-results.zip}{here}.
+
+For Transcriptional Network Repair the encodings and the instances can be found \href{benchmarks/optimization_benchmarks/bio-repair/bio-repair-benchmarks.zip}{here},     and the results \href{benchmarks/optimization_benchmarks/bio-repair/bio-repair-results.zip}{here}.
+
+\subsubsection{Experiments on PDDL planning}
+
+ For PDDL planning we selected 20 instances from the STRIPS domains of the 2000 and 2002 planning competitions. We translated these PDDL instances into ASP facts via \href{http://potassco.sourceforge.net/labs.html}{plasp} and used a simple planning encoding with 15 different plan lengths (5, 10, ..., 75). We applied the heuristic rule that makes the fluents persist backwards in time, in this case refering to both positive and negative truth values: 
+\begin{verbatim}
+
+       _heuristic(holds(F,T-1),true, lasttime-T+1) :- holds(F,T).
+       _heuristic(holds(F,T-1),false,lasttime-T+1) :- not holds(F,T), fluent(F), time(T).
+\end{verbatim}
+
+ The performance of \texttt{hclasp} for this setting was excellent,  finding 427 more plans than \texttt{vsids} and doing 347 less timeouts (out of 3000 instances). 
+
+The encodings and the instances can be found \href{benchmarks/pddl_benchmarks/pddl-benchmarks.zip}{here},  and the results \href{benchmarks/pddl_benchmarks/pddl-results.zip}{here}.
+
+%\iffalse
+
+\fi
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "guide"

@@ -1,5 +1,5 @@
 % Generate
-1 { move(D,P,T) : disk(D), peg(P) } 1 :- moves(M), T = 1..M.
+{ move(D,P,T) : disk(D), peg(P) } = 1 :- moves(M), T = 1..M.
 % Define
 move(D,T) :- move(D,_,T).
 on(D,P,0)   :- init_on(D,P).

@@ -45,9 +45,10 @@ Such a declarative solution is now exemplified.
 \caption{Towers of Hanoi: Initial and Goal Situation.\label{fig:toh_inst}}
 \end{figure}
 We describe the pegs and disks of a Towers of Hanoi puzzle via facts over the predicates
-\pred{peg}/$1$ and \pred{disk}/$1$. %that correspond to the pegs and disks in the puzzle.
+\pred{peg}/$1$ and \pred{disk}/$1$ (the number denotes the arity of the predicate).
+%that correspond to the pegs and disks in the puzzle.
 Disks are numbered by consecutive integers starting at~\const{1},
-where a disk with a smaller number is considered to be bigger than a disk with a greater number.
+where a disk with a lesser number is considered to be bigger than a disk with a greater number.
 The names of the pegs can be arbitrary; in our case, we use \const{a}, \const{b}, and \const{c}. 
 Furthermore, the predicates \pred{init\char`\_on}/$2$ and \pred{goal\char`\_on}/$2$ describe the initial
 and the goal situation, respectively.
@@ -295,7 +296,8 @@ SATISFIABLE
 
 Models       : 1+    
 Calls        : 1
-Time         : 0.017s (Solving: 0.01s 1st Model: 0.01s Unsat: 0.00s)
+Time         : 0.017s (Solving: 0.01s 1st Model: 0.01s
+                                          Unsat: 0.00s)
 CPU Time     : 0.010s
 \end{lstlisting}
 % Models      : 1+    

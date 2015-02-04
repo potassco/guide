@@ -3,7 +3,7 @@
   \item Aggregates, \hyperpage{26}
     \subitem Assignments, \hyperpage{29}
       \subsubitem Domain Predicates, \hyperpage{29}
-    \subitem Average, \code{\#avg}, \hyperpage{76}
+    \subitem Average, \code{\#avg}, \hyperpage{77}
     \subitem Body, \hyperpage{26}
     \subitem Conditions, \hyperpage{24}
       \subsubitem Domain Predicates, \hyperpage{26}

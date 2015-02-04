@@ -116,26 +116,6 @@ in the following encoding:%
              solve our Towers of Hanoi puzzle.}%
 %
 \lstinputlisting[basicstyle=\small\ttfamily]{examples/toh_enc.lp}
-% The variables \code{D}, \code{P}, \code{T}, and \code{M} are used
-% to refer to disks, pegs, the \code{T}-th move in the sequence of moves, and the length of the sequence, respectively.
-% \begin{lstlisting}
-% % Generate
-% 1 { move(D,P,T) : disk(D) : peg(P) } 1 :- moves(M), T = 1..M.
-% % Define
-% move(D,T)   :- move(D,_,T).
-% on(D,P,0)   :- init_on(D,P).
-% on(D,P,T)   :- move(D,P,T).
-% on(D,P,T+1) :- on(D,P,T), not move(D,T+1), not moves(T).
-% blocked(D-1,P,T+1) :- on(D,P,T), disk(D), not moves(T).
-% blocked(D-1,P,T)   :- blocked(D,P,T), disk(D).
-% % Test
-% :- move(D,P,T), blocked(D-1,P,T).
-% :- move(D,T), on(D,P,T-1), blocked(D,P,T).
-% :- goal_on(D,P), not on(D,P,M), moves(M). 
-% :- not 1 { on(D,P,T) : peg(P) } 1, disk(D), moves(M), T = 1..M.
-% #hide.
-% #show move/3. 
-% \end{lstlisting}%
 %
 Note that the variables \var{D}, \var{P}, \var{T}, and \var{M} are used
 to refer to disks, pegs, 
@@ -148,16 +128,13 @@ exactly one move of a disk~\var{D} to some peg~\var{P}
 must be executed.
 % ``guess'' exactly one move that puts an arbitrary disk to some arbitrary peg.
 The head of the rule (left of~``\code{:-}'')
-is a so-called cardinality constraint (detailed in Section~\ref{subsec:gringo:aggregate}). 
-It
-consists of a set of literals,
-expanded using the predicates behind the colon
-(detailed in Section~\ref{subsec:gringo:condition}),
-along with a lower and an upper bound.
-The cardinality constraint is satisfied if % and only if 
-the number of true elements
-is in-between the lower and the upper bound (both inclusive),
-which are both~\const{1} in our case.
+is a so-called cardinality constraint (detailed in Section~\ref{subsec:gringo:aggregate}).
+\comment{RK: Here cardinality constraint is used but the notion is only given in a remark at the end of the Shortcuts paragraph. Maybe we should not call this paragraph Cardinality Constraints?}
+It consists of a set of literals,
+expanded using the predicates behind the colon (detailed in Section~\ref{subsec:gringo:condition}),
+along with the guard~``\code{= 1}''.
+The cardinality constraint is satisfied
+if the number of true elements is equal to one as specified by the guard.
 Since the cardinality constraint occurs as the head of a rule,
 it allows for deriving (``guessing'') atoms 
 over the predicate \pred{move}/$3$ to be true.
@@ -294,11 +271,11 @@ move(4,c,9) move(3,a,10) move(4,a,11) move(2,c,12) \
 move(4,b,13) move(3,c,14) move(4,c,15)
 SATISFIABLE
 
-Models       : 1+    
-Calls        : 1
-Time         : 0.017s (Solving: 0.01s 1st Model: 0.01s
-                                          Unsat: 0.00s)
-CPU Time     : 0.010s
+Models   : 1+    
+Calls    : 1
+Time     : 0.017s (Solving: 0.01s 1st Model: 0.01s \
+                                      Unsat: 0.00s)
+CPU Time : 0.010s
 \end{lstlisting}
 % Models      : 1+    
 % Time        : 0.010

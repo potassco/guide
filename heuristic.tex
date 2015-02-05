@@ -2,36 +2,23 @@
 
 
 \section{Heuristic-driven Solving}
-%\label{sec:heuristic}
-
-This section is not yet ready for publishing
-and will be included in one of the forthcoming editions of this guide.
-
-Information on domain-specific heuristic-driven solving with \clasp\ and \clingo\ can be obtained at the following references.
-
-\begin{itemize}
-\item \cite{gekaotroscwa13a}
-\item \url{http://www.cs.uni-potsdam.de/hclasp}
-
-
-  Attention! \hclasp\ is superseded by \clasp~3,
-  including all of its functionalities.
-\item \clasp~3 supports options:
-\scriptsize\begin{lstlisting}[numbers=none]
- --heuristic=Domain : Use domain knowledge to Vsids-like heuristic
-
- --dom-mod=<arg>         : Default modification for domain heuristic
-      <arg>: <mod>[,<pick>]
-        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
-        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
-\end{lstlisting}
-\end{itemize}
-
-%\iffalse
-
-\section{Heuristic-driven Solving}
 \label{sec:heuristic}
 
+%This section is not yet ready for publishing
+%and will be included in one of the forthcoming editions of this guide.
+
+%Information on domain-specific heuristic-driven solving with \clasp\ and \clingo\ can be obtained at the following references.
+%
+%\begin{itemize}
+%\item \cite{gekaotroscwa13a}
+%\item \url{http://www.cs.uni-potsdam.de/hclasp}
+%
+%
+%  Attention! \hclasp\ is superseded by \clasp~3,
+%  including all of its functionalities.
+%\end{itemize}
+
+%\iffalse
 
 \clasp\ and \clingo\ provide a general declarative framework to incorporate domain-specific heuristics into ASP solving,  
 that allows to program the heuristic of the solver directly from the ASP code. 
@@ -253,7 +240,7 @@ Restarts    : 0
 %  ======================== Blocks World hclasp ====================== 
 
 
-\subsection{Example: The Blocks World}
+\paragraph{Example: The Blocks World}
 
  We apply \clasp\ to answer set planning in the Blocks World.  We begin with a basic encoding \texttt{bw.lp} of the problem: 
 \begin{verbatim}
@@ -368,6 +355,19 @@ _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{verbatim}
  Later, it will make persist backwards another goal \texttt{on} atom. 
  With this heuristic the idea is not to decide on atoms that lead to many propagations (as with \texttt{move} atoms) 
  but rather to make correct decisions (given that most of the times the value of \texttt{on} will persist by inertia). 
+
+
+ \paragraph{Command line heuristice option}
+ \clasp\ supports the following command line options:
+\scriptsize\begin{lstlisting}[numbers=none]
+ --heuristic=Domain : Use domain knowledge to Vsids-like heuristic
+
+ --dom-mod=<arg>         : Default modification for domain heuristic
+      <arg>: <mod>[,<pick>]
+        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
+        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
+\end{lstlisting}
+
 
 \iffalse
 

@@ -2,9 +2,8 @@
 \section{Optimization and Preference handling}
 \label{sec:prefopt}
 
-This section is not yet ready for publishing
-and will be included in one of the forthcoming editions of this guide.
-
+%This section is not yet ready for publishing
+%and will be included in one of the forthcoming editions of this guide.
 
 Information on optimization and preference handling can be obtained at the following references.
 
@@ -14,34 +13,25 @@ Information on optimization and preference handling can be obtained at the follo
 \item Video series on \clasp~3's optimization capacities \url{http://potassco.sourceforge.net/videos.html}
 \end{itemize}
 
-\iffalse
+%\iffalse
+\subsection{Preference Handling with asprin}
 
-\texttt{asprin} a general framework for qualitative and quantitative optimization in answer set programming 
-\begin{itemize}
-	\item x %\href{http://potassco.sourceforge.net}%{\guillemotleftPotassco}
-\end{itemize}
-%  ======================== overview ====================== 
+\asprin\ is a general framework for qualitative and quantitative optimization in ASP
+that allows to compute optimal stable models of logic programs with preferences, and     
+to easily define new preference types.
+Some preference types (subset, pareto...) are already defined in the asprin library, 
+but many more can be defined  simply writing a logic program.  
+For a formal description of asprin, please refer to \cite{brderosc15a}. 
+\asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
+at \url{https://sourceforge.net/projects/potassco/files/asprin}.  
 
-
-asprin is a general framework for optimization in ASP that allows 
-\begin{itemize}
-	\item  computing optimal stable models of logic programs with preferences, and     
-	\item  defining new preference types in a very easy way. 
-\end{itemize}
-
-Some preference types (subset, pareto...) are already defined in the asprin library, but many more can be defined  simply writing a logic program.  
-
- For a formal description of asprin, please read our \href{files/brderosc14a.pdf}{paper}. 
-
-asprin source code and precompiled binaries for Linux, Mac and Windows are available  \href{https://sourceforge.net/projects/potassco/files/asprin}{here}.  
-
-\subsubsection{Tutorial}
-\begin{itemize}
-	\item \hyperlink{example}{A Simple Example}
-	\item \hyperlink{many}{Computing Many Optimal Stable Models}
-	\item \hyperlink{more}{More Preference Types}
-	\item \hyperlink{new}{Implementing New Preference Types}
-\end{itemize}
+%\subsubsection{Tutorial}
+%\begin{itemize}
+%	\item \hyperlink{example}{A Simple Example}
+%	\item \hyperlink{many}{Computing Many Optimal Stable Models}
+%	\item \hyperlink{more}{More Preference Types}
+%	\item \hyperlink{new}{Implementing New Preference Types}
+%\end{itemize}
 % 
 % <p>
 % Some of our experiments can be found <a href="files/asprin_experiments.pdf">here</a>, 
@@ -53,9 +43,9 @@ asprin source code and precompiled binaries for Linux, Mac and Windows are avail
 %  ======================== Basic Case ====================== 
 
 
-\subsubsection{A Simple Example}
+\paragraph{A Simple Example}
 
- Let's start with program  example1.lp, that we call the base program,  and the  clingo  execution: 
+Let's start with program  \code{example1.lp}, that we call the base program,  and the  \clingo\  execution: 
 \begin{verbatim}
 
 gr(1..5).
@@ -85,11 +75,9 @@ Answer: 3
 m(1) a(1) b(1) b(2) b(3) b(4) b(5)
 
 \end{verbatim}
-
- We get three stable models, one with m(1), one with m(2) and another with m(3). We call them M1, M2 and M3. 
-
- Now let's find the stable models of the base program that are subset minimal with respect to predicate a/1. 
- We write the following preference specification in preference1.lp: 
+We get three stable models, one with $m(1)$, one with $m(2)$ and another with $m(3)$. We call them $M_1$, $M_2$ and $M_3$. 
+Now let's find the stable models of the base program that are subset minimal with respect to predicate $a/1$. 
+We write the following preference specification in \code{preference1.lp}: 
 \begin{verbatim}
 
 #preference(p1,subset){                                                                                             
@@ -97,13 +85,11 @@ m(1) a(1) b(1) b(2) b(3) b(4) b(5)
 }.
 #optimize(p1).
 \end{verbatim}
-
- The first three lines define a preference statement of name p1 and type subset that contains one preference element 
-\\ "a(X) :- gr(X)". The body of the preference element has to be formed by domain predicates of the base program.
-\\ Intuitively, the preference statement defines a preference of type subset over atoms of predicate a/1. 
-\\ The last line is an optimize statement that instructs asprin to compute stable models that are optimal with respect to p1. 
-
- We are ready to compute one optimal stable model: 
+The first three lines define a preference statement of name $p1$ and type $subset$ that contains one preference element 
+\lstinline{a(X) :- gr(X)}. The body of the preference element has to be formed by domain predicates of the base program.
+Intuitively, the preference statement defines a preference of type subset over atoms of predicate $a/1$. 
+The last line is an optimize statement that instructs asprin to compute stable models that are optimal with respect to $p1$. 
+We are ready to compute one optimal stable model: 
 \begin{verbatim}
 
 $ asprin example1.lp preference1.lp asprin.lib
@@ -118,11 +104,12 @@ Models       : 1
   Enumerated : 2
 
 \end{verbatim}
+File \code{asprin.lib} is the preference library of \asprin\, it is a logic program implementing many preference types.
+In the execution first asprin finds the stable model $M_2$ of the base program. Then it looks for a stable model that is preferred to $M_2$ and finds $M_1$. 
+In the last step \asprin\ looks for a stable model that is preferred to $M_1$,  and given that no one is found this proves the optimality of $M_1$. 
+In total, one optimal model was computed, and two stable models were enumerated. 
 
- File asprin.lib is the preference library of asprin, it is a logic program implementing many preference types.
-\\ In the execution first asprin finds the stable model M2 of the base program. Then it looks for a stable model that is preferred to M2 and finds M1. In the last step asprin looks for a stable model that is preferred to M1,  and given that no one is found this proves the optimality of M1. In total, one optimal model was computed, and two stable models were enumerated. 
-
- If we want to minimize both a/1 and b/1, we can use the preference specification of preference2.lp: 
+If we want to minimize both $a/1$ and $b/1$, we can use the preference specification of \code{preference2.lp}: 
 \begin{verbatim}
 
 #preference(p2,subset){                                                                                             
@@ -131,8 +118,7 @@ Models       : 1
 }.
 #optimize(p2).
 \end{verbatim}
-
- Then we get that M2 is already an optimal stable model: 
+Then we get that $M_2$ is already an optimal stable model: 
 \begin{verbatim}
 
 $ ./asprin example1.lp preference2.lp asprin.lib
@@ -145,9 +131,8 @@ Models       : 1
   Enumerated : 1
 \end{verbatim}
 
-\subsubsection{Computing Many Optimal Stable Models}
-
- As in clingo, in asprin  we can compute n optimal models adding the number n to the command line,  where 0 is used to compute all optimal models. 
+\paragraph{Computing Many Optimal Stable Models}
+As in \clingo, in \asprin\  we can compute $n$ optimal models adding the number $n$ to the command line,  where $0$ is used to compute all optimal models. 
 \begin{verbatim}
 
 $ ./asprin example1.lp preference1.lp asprin.lib 0
@@ -165,17 +150,17 @@ Models       : 2
   Enumerated : 3
 
 \end{verbatim}
+\asprin\ runs as before for computing one optimal model. Then it searches for a stable model of the base program that is not worse than $M_1$, finds $M_3$ and proves that it is optimal. 
+In the last step, \asprin\ looks for some stable model that is not worse than $M_1$ and $M_3$,  and given that there is none, it finishes. 
+It has enumerated $3$ stable models, $2$ of which are optimal. 
 
-asprin runs as before for computing one optimal model. Then it searches for a stable model of the base program that is not worse than M1, finds M3 and proves that it is optimal. In the last step, asprin looks for some stable model that is not worse than M1 and M3,  and given that there is none, it finishes. It has enumerated 3 stable models, 2 of which are optimal. 
-
- if we add a file c1.lp: 
+If we add a file \code{c1.lp}: 
 \begin{verbatim}
 
 {c(1)}.
 #show c/1.
 \end{verbatim}
-
- then we get two optimal stable models more, that contain c(1): 
+then we get two optimal stable models more, that contain $c(1)$: 
 \begin{verbatim}
 
 $ ./asprin example1.lp preference1.lp asprin.lib c1.lp 0
@@ -199,10 +184,12 @@ Models       : 4
   Enumerated : 5
   
 \end{verbatim}
+When \asprin looks for a stable model that is not worse than $M_1$,  
+first it looks for models that interpret the same way as $M_1$ the atoms that appear in the preference statements. 
+This way it finds the second optimal model, that contains $c(1)$, and prints it followed by the line \lstinline{OPTIMUM FOUND *}.  
+Then it continues searching, finds $M_3$ and the process continues. 
 
- When asprin looks for a stable model that is not worse than M1,  first it looks for models that interpret the same way as M1 the atoms that appear in the preference statements. This way it finds the second optimal model, that contains c(1), and prints it followed by the line "OPTIMUM FOUND *".  Then it continues searching, finds M3 and the process continues. 
-
- We can project the optimal models on the atoms of the preference statements with option --projection: 
+We can project the optimal models on the atoms of the preference statements with option \lstinline{--projection}: 
 \begin{verbatim}
 
 $ ./asprin example1.lp preference1.lp asprin.lib c1.lp 0 --projection
@@ -221,21 +208,21 @@ Models       : 2
   
 \end{verbatim}
 
-\subsubsection{More Preference Types}
+\paragraph{More Preference Types}
 
- The library of asprin, asprin.lib, implements the following basic preference types:  
+The library of \asprin, \code{asprin.lib}, implements the following basic preference types:  
 \begin{itemize}
-	\item  subset and superset   
-	\item  less(cardinality) and more(cardinality)   
-	\item  less(weight) and more(weight)   
-	\item  aso   (Answer Set Optimization, [1])   
-	\item  poset (Qualitative Preferences, [2])  
+	\item  $subset$ and $superset$   
+	\item  $less(cardinality)$ and $more(cardinality)$   
+	\item  $less(weight)$ and $more(weight)$   
+	\item  $aso$   (Answer Set Optimization, \cite{brnitr03a})   
+	\item  $poset$ (Qualitative Preferences, \cite{rogima10a})  
 \end{itemize}
 
- [1] Gerhard Brewka, Ilkka Niemela, Miroslaw Truszczynski: Answer Set Optimization. IJCAI 2003: 867-872. 
- [2] Emanuele Di Rosa, Enrico Giunchiglia, Marco Maratea: Solving satisfiability problems with preferences. Constraints 15(4): 485-515 (2010). 
+% [1] Gerhard Brewka, Ilkka Niemela, Miroslaw Truszczynski: Answer Set Optimization. IJCAI 2003: 867-872. 
+% [2] Emanuele Di Rosa, Enrico Giunchiglia, Marco Maratea: Solving satisfiability problems with preferences. Constraints 15(4): 485-515 (2010). 
 
- For example, we can minimize the cardinality of the atoms of predicate b/1 as follows: 
+For example, we can minimize the cardinality of the atoms of predicate b/1 as follows: 
 \begin{verbatim}
 
 #preference(p3,less(cardinality)){                                                                                             
@@ -256,7 +243,8 @@ Models       : 1
   
 \end{verbatim}
 
- The library of asprin implements the following composite preference types:  
+The library of  \asprin\ implements the following composite preference types,  
+that appeared in \cite{sonpon06a}:
 \begin{itemize}
 	\item  and   
 	\item  not    
@@ -264,11 +252,11 @@ Models       : 1
 	\item  pareto  
 \end{itemize}
 
-They all have appeared in:
+%They all have appeared in \cite{sonpon06a}. :
+%
+% [3] Tran Cao Son, Enrico Pontelli: Planning with preferences using logic programming. TPLP 6(5): 559-607 (2006). 
 
- [3] Tran Cao Son, Enrico Pontelli: Planning with preferences using logic programming. TPLP 6(5): 559-607 (2006). 
-
-  As an example, in preference4.lp we can apply a pareto preference p4 on top of p1 and p3: 
+As an example, in \code{preference4.lp} we can apply a pareto preference $p4$ on top of $p1$ and $p3$: 
 \begin{verbatim}
 
 #preference(p1,subset){                                                                                             
@@ -302,7 +290,7 @@ Models       : 3
 
 \end{verbatim}
 
- Or in preference5.lp we apply a lexicographic order p5 giving priority to p1 over p3: 
+Or in \code{preference5.lp} we apply a lexicographic order $p5$ giving priority to $p1$ over $p3$: 
 \begin{verbatim}
 
 #preference(p1,subset){                                                                                             
@@ -335,9 +323,10 @@ Models       : 2
   
 \end{verbatim}
 
-\subsubsection{Implementing New Preference Types}
+\paragraph{Implementing New Preference Types}
 
- The parser of asprin translates the preference and optimize statements into gringo rules.  With preference1.lp we get the rules: 
+The parser of \asprin\ translates the preference and optimize statements into gringo rules.  
+With \code{preference1.lp} we get the rules: 
 \begin{verbatim}
 
 preference(p1,subset).
@@ -345,21 +334,25 @@ preference(p1,(1,(X)),1,for(a(X)),()) :- gr(X).
 optimize(p1).
 \end{verbatim}
 
- The first and third lines are easy to understand. The second line can be read as: in preference statement p1, the first element has variables \{X\},  and in the first position of the element there is a positive literal a(X)  that has an empty list of weights associated. For details about the translation, please have a look at our  \href{files/brderosc14a.pdf}{paper}. 
+The first and third lines are easy to understand. 
+The second line can be read as: in preference statement $p1$, the first element has variables $\{X\}$,  
+and in the first position of the element there is a positive literal $a(X)$  that has an empty list of weights associated. 
+For details about the translation, please have a look at the paper (\cite{brderosc15a}). 
 
- So far we have specified a preference statement of type subset, but for asprin this preference type subset has no predefined meaning. This has to be given by a preference program,  ie. a logic program the represents the semantics of the given preference type. Preference programs start with a directive: 
+So far we have specified a preference statement of type subset, 
+but for \asprin\ this preference type subset has no predefined meaning. 
+This has to be given by a preference program,  ie. a logic program the represents the semantics of the given preference type. 
+Preference programs start with a directive: 
 \begin{verbatim}
 
 #program preference(type).
 \end{verbatim}
-
- and end at the end of a file, or with a directive:  
+and end at the end of a file, or with a directive:  
 \begin{verbatim}
 
 #program base.
 \end{verbatim}
-
- that signals the start of a base program. For the subset type, we have the file subset-simple.lp: 
+that signals the start of a base program. For the subset type, we have the file \code{subset-simple.lp}: 
 \begin{verbatim}
 
 #program preference(subset).
@@ -367,19 +360,20 @@ better(P) :- preference(P,subset);
              not holds(X) : preference(P,_,_,for(X),_), not holds'(X);
              1 #sum { 1 : not holds(X), holds'(X), preference(P,_,_,for(X),_) }.
 \end{verbatim}
+Consider that we want to compare two stable models $H$ and $H'$. 
+The true atoms in $H$ are represented by facts of predicate $holds/1$,  and the true atoms in $H'$ are represented by facts of predicate $holds'/1$. 
+Intuitively, $better(P)$ is true if $H$ is preferred to $H'$ with respect to a preference statement $P$ of type subset. 
+More formally, $better(P)$ is true if all the atoms of the preference statement that are false in $H'$ are also false in $H$,  
+and at least one of the atoms of the preference statement is false in $H$ and true in $H'$. 
 
- Consider that we want to compare two stable models H and H'. The true atoms in H are represented by facts of predicate holds/1,  and the true atoms in H' are represented by facts of predicate holds'/1. Intuitively, better(P) is true if H is preferred to H' with respect to a preference statement P of type subset. More formally, better(P) is true if all the atoms of the preference statement that are false in H' are also false in H,  and at least one of the atoms of the preference statement is false in H and true in H'. 
-
- We also have file basic.lp: 
+We also have file \code{basic.lp}: 
 \begin{verbatim}
 
 #program preference.
 :- not better(P), optimize(P).
 \end{verbatim}
-
- where we state that better(P) must hold if P is optimized. 
-
- Then instead of using the asprin library at asprin.lib  we can use the preference program we have defined: 
+where we state that $better(P)$ must hold if $P$ is optimized. 
+Then instead of using the \asprin\ library at \code{asprin.lib} we can use the preference program we have defined: 
 \begin{verbatim}
 
 $ ./asprin example1.lp preference1.lp basic.lp subset-simple.lp 0
@@ -397,8 +391,10 @@ Models       : 2
   Enumerated : 3
 
 \end{verbatim}
+Other new preference types can be easily defined in this way.  
+If you want to do this, having a look at \code{asprin.lib} may be the best point to start. 
 
- Other new preference types can be easily defined in this way.  If you want to do this, having a look at asprin.lib may be the best point to start. 
+\iffalse
 \fi
 
 %%% Local Variables: 

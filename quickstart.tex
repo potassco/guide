@@ -94,7 +94,7 @@ Here, it abbreviates distinct facts over four values:
 % Finally, in the last line the number of moves to solve the problem is given.
 In summary, the facts in Line~1--5 describe the 
 Towers of Hanoi puzzle in Figure~\ref{fig:toh_inst} along
-with the requirement that the goal ought to be achieved with~\const{15} moves.
+with the requirement that the goal ought to be achieved with\comment{BK: within?}~\const{15} moves.
 
 \subsection{Problem Encoding}
 
@@ -287,7 +287,7 @@ The following two lines indicate \clingo's state.
 \clingo\ should print immediately that it is reading.
 Once this is done, it prints \code{Solving...} to the command line.
 The Towers of Hanoi instance above is so easy to solve 
-that you will not make a difference.
+that you will not see the delay.
 But for larger problems it is typically possible to see a delay.
 Lines starting with \code{Answer: }
 indicate that the (output) atoms of an answer set follow in the line below.
@@ -332,7 +332,7 @@ time spent for solving (\code{Solving}),
 time until the first model was found (\code{1st Model}), and
 time used to prove unsatisfiability%
 \footnote{
-No unsatisfiability proof is done here, hence, this time is zero here.
+No unsatisfiability proof is done here, hence, this time is zero.
 But for example, when enumerating all models, this is the time spent between finding the last model and termination.
 } (\code{Unsat}).
 % Following that, there are some time measurements: 

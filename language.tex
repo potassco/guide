@@ -70,7 +70,7 @@ which are \emph{lowercase} or \emph{uppercase}, respectively,
 where leading occurrences of ``\code{\char`\_}'' are allowed
 (may be useful to circumvent name clashes).
 Furthermore, a string is an arbitrary sequence of characters
-enclosed in inverted comma (\code{"$\cdot$"}),
+enclosed in double quotes (\code{"$\cdot$"}),
 where any occurrences of ``\code{\textbackslash}'', newline, and inverted comma
 must be masked via ``\code{\textbackslash\textbackslash}'', ``\code{\textbackslash n}'',
 and ``\code{\textbackslash"}''.
@@ -457,7 +457,7 @@ We only mention that the simple disjunctive program \code{\pred{a};\pred{b}.} ha
 one containing~\pred{a} and another one containing~\pred{b},
 while both atoms do not jointly belong to an answer set.
 After adding the rules of Example~\ref{ex:as:one}, a single answer set containing both~\pred{a} and~\pred{b} is obtained.
-This illustrates that disjunction in ASP in neither strictly exclusive or inclusive but subject to minimization.
+This illustrates that disjunction in ASP is neither strictly exclusive or inclusive but subject to minimization.
 
 In general, the use of disjunction may increase
 computational complexity~\cite{eitgot95a}.
@@ -756,7 +756,7 @@ The values of~\var{X} and~\var{Y} are obtained via atoms of the predicate \pred{
 The first assignment depends on~\var{X} to provide shortcut~\var{XX}.
 Similarly, the second assignment depends on~\var{Y} to provide shortcut~\var{YY}.
 The third assignment provides variable \var{Y'} because it occurs in a simple arithmetic expression,
-winch is solved during unification.
+which is solved during unification.
 The last assignment provides no variables and,
 hence, is just a test,
 checking if its left-hand side equals its right-hand side.
@@ -838,7 +838,7 @@ Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
 An interval is expanded differently depending on where it occurs.
 In the head of a rule, an interval is expanded conjunctively
-and disjunctively in the body of a rule, respectively.
+and disjunctively in the body of a rule.
 So we could have simply used the fact \code{num(1..5).} to represent the five facts.
 
 \begin{example}\label{ex:int}
@@ -1258,7 +1258,7 @@ is expanded by \gringo\ to
 #count{ 0,a : a; 0,a : a }.
 \end{lstlisting}  
 
-In fact, within the term tuple produced by \gringo\
+In fact, within the term tuple produced by \gringo,
 the first term indicates the number of preceding default negations,
 and the second reproduces the atom as a term in order to make the whole term tuple unique.
 
@@ -1331,8 +1331,9 @@ Otherwise, if the literals do not belong to domain predicates,
 the value of an aggregate is not known during grounding,
 in which case \gringo\ or \clingo\ unwraps all possible outcomes of the
 aggregate's evaluation.
-The latter can lead to a space blow-up, which should be taken into account
-if space becomes a bottleneck.
+The latter can lead to a space blow-up,
+which should be taken into account
+because this often leads to problems for larger instances.
 \end{note}
 
 % In particular, if there are multiple occurrences
@@ -1585,7 +1586,7 @@ is not recommended in general because the space blow-up may be significant.
 \end{example}
 
 \begin{note}
-Users familiar to \gringo~3 might remember that conditions in aggregates 
+Users familiar with \gringo~3 might remember that conditions in aggregates 
 had to be either literals over domain predicates or built-ins.
 This restriction does not exist anymore in \gringo\ and \clingo~4.
 \end{note}
@@ -1595,7 +1596,7 @@ This restriction does not exist anymore in \gringo\ and \clingo~4.
 Optimization statements extend the basic question of
 whether a set of atoms is an answer set to
 whether it is an optimal answer set.
-To support this reasoning mode, \gringo\ and \clingo\ adopt dlv's weak constraints~\cite{bflnrp00}.
+To support this reasoning mode, \gringo\ and \clingo\ adopt \dlv's weak constraints~\cite{bflnrp00}.
 The form of weak constraints is similar to integrity constraints (cf.~Section \ref{subsec:gringo:normal})
 being associated with a term tuple:
 \index{Statements!Weak Constraints}%
@@ -1702,7 +1703,7 @@ to cost~\const{90} per night.
 \index{Python}%
 Utilizing the scripting languages Lua or Python\footnote{\url{http://lua.org} and \url{http://python.org}},
 \gringo's input language can be enriched by arbitrary functions.
-We focus on functions that are evaluated during during grounding here.
+We focus on functions that are evaluated during grounding here.
 In Section~\ref{sec:multi},
 we show how to take complete control of the grounding and solving process using the scripting API.
 We do not give an introduction to Lua or Python here (there are numerous tutorials on the web), 
@@ -1878,7 +1879,7 @@ Note that the maximum of constant \code{a} and integer \code{3} is \code{a}.
 \begin{note}~
 \begin{enumerate}
 \item The grounder assumes that all external functions are deterministic.
-That is, if a functions is called during grounding multiple times with the same arguments,
+That is, if a function is called during grounding multiple times with the same arguments,
 then it should always return the same values.
 Adding non-deterministic functions can lead to undesired results.
 \item If an error occurs during the evaluation of an external function,
@@ -2158,7 +2159,7 @@ They have the following form:
 \medskip
 \noindent
 %
-where {\itshape file} is a path to an encoding file.
+where \codeit{file} is a path to an encoding file.
 When including a file it is first looked up relative to the current working directory.
 If it is not found there, then it is looked up relative to the file it was included from.
 Note that program part directives do not have an influence on included files,

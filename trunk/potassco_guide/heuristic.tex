@@ -20,85 +20,85 @@
 
 %\iffalse
 
-\clasp\ and \clingo\ provide a general declarative framework to incorporate domain-specific heuristics into ASP solving,  
-that allows to program the heuristic of the solver directly from the ASP code. 
+\clasp\ and \clingo\ provide a general declarative framework to incorporate domain-specific heuristics into ASP solving,  \comment{BK: Check comma that vs. which!}
+that allows to program the heuristic of the solver directly from the ASP code.
 A formal description can be found in \cite{gekaotroscwa13a}.
-The framework defines a new heuristic, named \texttt{domain},  
-that modifies \texttt{vsids} heuristics of \clasp\ allowing to program it from the ASP code.  
-Next we present some examples to explain how does the framework work. 
+The framework defines a new heuristic, named \texttt{domain},
+that modifies\comment{BK: ``the'' vsids?} \texttt{vsids} heuristics of \clasp\ allowing to program it from the ASP code.
+Next we present some examples to explain how does the framework work.\comment{BK: ``how the framework works''?}
 
 \paragraph{Positive sign}
 
-With the heuristic \code{domain}, the heuristic information is represented by the predicate \texttt{\_heuristic}.  
-For example, the atom \texttt{\_heuristic(a,sign,1)} tells  \clasp\ that  when deciding on atom \texttt{a} 
-it should be given a positive sign, i.e. it should be set to true.  
+With the heuristic \code{domain}, the heuristic information is represented by the predicate \texttt{\_heuristic}.
+For example, the atom \texttt{\_heuristic(a,sign,1)} tells  \clasp\ that  when deciding on atom \texttt{a}
+it should be given a positive sign, i.e. it should be set to true.
 Given the following logic program \texttt{example1}:
 \begin{verbatim}
 _heuristic(a,sign,1).
 {a}.
 \end{verbatim}
-this in the \gringo and \clasp\ execution:
+this in the \gringo\ and \clasp\ execution:\comment{BK: word missing?}
 \begin{verbatim}
 $ gringo example1 | clasp --heuristic=Domain
 ...
-Answer: 1    
+Answer: 1
 _heuristic(a,sign,1) a
 \end{verbatim}
 
-When searching for an answer set, \clasp\ first propagates the heuristic atom and next updates its heuristic knowledge about atom \texttt{a}. 
-Then it has to decide on \texttt{a} making it either true or false. 
-Following the current heuristic knowledge,  \clasp\ makes \texttt{a} true and finally returns the answer set \texttt{\{\_heuristic(a,sign,1),a\}}. 
+When searching for an answer set, \clasp\ first propagates the heuristic atom and next updates its heuristic knowledge about atom \texttt{a}.
+Then it has to decide on \texttt{a} making it either true or false.
+Following the current heuristic knowledge,  \clasp\ makes \texttt{a} true and finally returns the answer set \texttt{\{\_heuristic(a,sign,1),a\}}.
 % We would obtain a similar result using any positive integer instead of 1 in the heuristic fact.
 
 \paragraph{Negative sign}
 
-In the next program \texttt{example2} the \texttt{heuristic} fact  asserts that when deciding on atom \texttt{a}  
-it should be given a negative sign, ie. it should be set to false: 
+In the next program \texttt{example2} the \texttt{heuristic} fact  asserts that when deciding on atom \texttt{a}
+it should be given a negative sign, ie. it should be set to false:
 \begin{verbatim}
 _heuristic(a,sign,-1).
 {a}.
 \end{verbatim}
 We execute as before:
 \begin{verbatim}
-$ gringo example2 | clasp --heuristic=Domain                                                              
+$ gringo example2 | clasp --heuristic=Domain
 ...
-Answer: 1                                                                                                           
+Answer: 1
 _heuristic(a,sign,-1)
 \end{verbatim}
-\clasp\ propagates the heuristic fact and updates its heuristic knowledge, 
-decides on atom \texttt{a} making it false and finally returns the answer set \{ \texttt{\_heuristic(a,sign,-1)}\}. 
+\clasp\ propagates the heuristic fact and updates its heuristic knowledge,
+decides on atom \texttt{a} making it false and finally returns the answer set \{ \texttt{\_heuristic(a,sign,-1)}\}.
 
-These two examples illustrate that the heuristic atoms modify \clasp\ decisions,  
-leading the solver to find first either the answer set with \texttt{a} (in \texttt{example1}) or the answer set without it (in \texttt{example2}). 
-However, as long as heuristic atoms appear only in the head of the rules, 
-the answer sets of the program remain the same (modulo heuristic atoms). 
-For example, if we ask for all answer sets of \texttt{example1}  we get one without \texttt{a} and one with \texttt{a},  
-and the same happens with \texttt{example2}: 
+These two examples illustrate that the heuristic atoms modify \clasp\ decisions,
+leading the solver to find first either the answer set with \texttt{a} (in \texttt{example1}) or the answer set without it (in \texttt{example2}).
+However, as long as heuristic atoms appear only in the head of the rules,
+the answer sets of the program remain the same (modulo heuristic atoms).
+For example, if we ask for all answer sets of \texttt{example1}  we get one without \texttt{a} and one with \texttt{a},
+and the same happens with \texttt{example2}:
 \begin{verbatim}
-$ gringo example2 | clasp --heuristic=Domain 0                                                                                
+$ gringo example2 | clasp --heuristic=Domain 0
 ...
-Answer: 1                                                                                                           
+Answer: 1
 _heuristic(a,sign,-1)
-Answer: 2                                                                                                           
+Answer: 2
 _heuristic(a,sign,-1) a
 \end{verbatim}
 
 \paragraph{Showing the heuristic information}
 
-For the heuristic atoms to take effect, they and their contained atoms must be  made visible to \clasp. For example, if we add to \texttt{example2} the lines: 
+For the heuristic atoms to take effect, they and their contained atoms must be  made visible to \clasp. For example, if we add to \texttt{example2} the lines:
 \begin{verbatim}
 #show a.
 \end{verbatim}
-then \clasp\ knows nothing about the heuristic atom, and operates as \clasp\ would do normally with \texttt{vsids} heuristic. The same would happen if instead we added:  
+then \clasp\ knows nothing about the heuristic atom, and operates as \clasp\ would do normally with \texttt{vsids} heuristic. The same would happen if instead we added:
 \begin{verbatim}
 #show _heuristic.
 \end{verbatim}
- because \clasp\ would know nothing about the atom \texttt{a} contained inside the heuristic atom. 
+ because \clasp\ would know nothing about the atom \texttt{a} contained inside the heuristic atom.\comment{BK: paragraph reads strange!}
 
 \paragraph{Level}
-\clasp\ with heuristic \code{domain} assigns to each atom a level, and it decides on atoms of the highest possible level. 
-The default value for each atom is \texttt{0},  and both positive and negative integers are valid. 
-Let's see the program \texttt{example3}, where level \texttt{10} is assigned to atom \texttt{a}: 
+\clasp\ with heuristic \code{domain} assigns to each atom a level, and it decides on atoms of the highest possible level.
+The default value for each atom is \texttt{0},  and both positive and negative integers are valid.
+Let's see the program \texttt{example3}\comment{BK: ``look at''?}, where level \texttt{10} is assigned to atom \texttt{a}:
 \begin{verbatim}
 _heuristic(a,sign,1).
 _heuristic(b,sign,1).
@@ -108,21 +108,21 @@ _heuristic(a,level,10).
 \end{verbatim}
 And the execution:
 \begin{verbatim}
-$ gringo example3 | clasp --heuristic=Domain                                                                                  
+$ gringo example3 | clasp --heuristic=Domain
 ...
-_heuristic(a,sign,1)   _heuristic(b,sign,1) 
+_heuristic(a,sign,1)   _heuristic(b,sign,1)
 _heuristic(a,level,10) a\end{verbatim}
 
-\clasp\ propagates the heuristic facts, and given that the level of \texttt{a} becomes greater than the level of \texttt{b}, 
-\clasp\ decides on it (with positive sign) and finally \texttt{b} is propagated to false. 
-If, for example, we added the fact \texttt{\_heuristic(b,level,20)},  the answer set would contain \texttt{b} instead of \texttt{a}. 
-This would also be the case if we used \texttt{\_heuristic(a,level,-10)} instead of \texttt{\_heuristic(a,level,10)}.  
+\clasp\ propagates the heuristic facts, and given that the level of \texttt{a} becomes greater than the level of \texttt{b},
+\clasp\ decides on it (with positive sign) and finally \texttt{b} is propagated to false.
+If, for example, we added the fact \texttt{\_heuristic(b,level,20)},  the answer set would contain \texttt{b} instead of \texttt{a}.
+This would also be the case if we used \texttt{\_heuristic(a,level,-10)} instead of \texttt{\_heuristic(a,level,10)}.
 
 \paragraph{Dynamic heuristic atoms}
 
-Heuristic atoms can be used as any other atoms of the logic program, 
-and they only affect the heuristic of the solver when they are true. 
-Let's see \texttt{example4}, where the heuristic atoms for \texttt{c} depend on \texttt{b}: 
+Heuristic atoms can be used as any other atoms of the logic program,
+and they only affect the heuristic of the solver when they are true.
+Let's see \texttt{example4}, where the heuristic atoms for \texttt{c} depend on \texttt{b}:
 \begin{verbatim}
 _heuristic(a,sign,1).
 _heuristic(b,sign,1).
@@ -134,22 +134,22 @@ _heuristic(c,sign,1)  :- b.
 _heuristic(c,sign,-1) :- not b.
 \end{verbatim}
 \begin{verbatim}
-$ gringo example4 | clasp --heuristic=Domain                                                                                  
+$ gringo example4 | clasp --heuristic=Domain
 ...
-_heuristic(a,sign,1)   _heuristic(b,sign,1) 
+_heuristic(a,sign,1)   _heuristic(b,sign,1)
 _heuristic(a,level,10) a
 _heuristic(c,sign,-1)\end{verbatim}
 
-In this case first \clasp\ proceeds as in \texttt{example3}.  
-Then after propagating that b is false,  the heuristic fact \texttt{\_heuristic(c,sign,-1)} is propagated, 
-so when deciding on \texttt{c}, it is assigned to false.  If we extended the program adding the fact \texttt{\_heuristic(b,level,20)}, 
-the answer set would contain \texttt{b} and \texttt{c} instead of \texttt{a}.  
+In this case\comment{BK: comma?} first \clasp\ proceeds as in \texttt{example3}.
+Then after propagating that b is false,  the heuristic fact \texttt{\_heuristic(c,sign,-1)} is propagated,
+so when deciding on \texttt{c}, it is assigned to false.  If we extended the program adding the fact \texttt{\_heuristic(b,level,20)},
+the answer set would contain \texttt{b} and \texttt{c} instead of \texttt{a}.
 
 \paragraph{True and false}
 
- The modifiers \texttt{true} and \texttt{false} allow to refer at the same time to the level and the sign of an atom. 
- Internally,  for the \texttt{true} and \texttt{false} heuristic atoms, 
- \clasp\ defines new \texttt{level} and \texttt{sign} heuristic atoms following these rules: 
+ The modifiers \texttt{true} and \texttt{false} allow to refer at the same time to the level and the sign of an atom.
+ Internally,  for the \texttt{true} and \texttt{false} heuristic atoms,
+ \clasp\ defines new \texttt{level} and \texttt{sign} heuristic atoms following these rules:
 \begin{verbatim}
 _heuristic(X,level,Y) :- _heuristic(X,true,Y).
 _heuristic(X,sign,1)  :- _heuristic(X,true,Y).
@@ -157,7 +157,7 @@ _heuristic(X,level,Y) :- _heuristic(X,false,Y).
 _heuristic(X,sign,-1) :- _heuristic(X,false,Y).
 \end{verbatim}
 
-For instance, \texttt{example4} can be rewritten as: 
+For instance, \texttt{example4} can be rewritten as:
 \begin{verbatim}
 _heuristic(b,sign,1).
 _heuristic(a,true,10).
@@ -168,16 +168,16 @@ _heuristic(c,sign,1)  :- b.
 _heuristic(c,sign,-1) :- not b.
 \end{verbatim}
 
-In this case the fact \texttt{\_heuristic(a,true,10)} stands for the previous 
-facts \texttt{\_heuristic(a,level,10)} and \texttt{heuristic(a,sign,1)}. 
+In this case the fact \texttt{\_heuristic(a,true,10)} stands for the previous
+facts \texttt{\_heuristic(a,level,10)} and \texttt{heuristic(a,sign,1)}.
 
 \paragraph{Priorities between heuristic atoms}
 
-\clasp\ allows to represent priorities between different heuristic atoms that refer to the same atom.  
-The priority is represented by a positive integer as a fourth term. 
-The higher the integer, the higher the priority of the heuristic atom. 
-For example, \texttt{\_heuristic(c,sign,1,10)} and \texttt{\_heuristic(c,sign,-1,20)} are valid heuristic atoms. 
-If both are true, then the sign assigned to \texttt{c} is \texttt{-1} (because \texttt{20>10}).  Let's see \texttt{example5}: 
+\clasp\ allows to represent priorities between different heuristic atoms that refer to the same atom.
+The priority is represented by a positive integer as a fourth term.
+The higher the integer, the higher the priority of the heuristic atom.
+For example, \texttt{\_heuristic(c,sign,1,10)} and \texttt{\_heuristic(c,sign,-1,20)} are valid heuristic atoms.
+If both are true, then the sign assigned to \texttt{c} is \texttt{-1} (because \texttt{20>10}).  Let's see \texttt{example5}:
 \begin{verbatim}
 _heuristic(b,sign,1).
 _heuristic(a,true,10).
@@ -188,77 +188,77 @@ _heuristic(c,sign,1,10 ).
 _heuristic(c,sign,-1,20) :- not b.
 \end{verbatim}
 \begin{verbatim}
-$ gringo example5 | clasp --heuristic=Domain                                                                                
+$ gringo example5 | clasp --heuristic=Domain
 ...
-_heuristic(b,sign,1)    _heuristic(a,true,10) 
+_heuristic(b,sign,1)    _heuristic(a,true,10)
 _heuristic(c,sign,1,10) a
 _heuristic(c,sign,-1,20)\end{verbatim}
 
-First \clasp\ proceeds as in \texttt{example3}. 
-Then after propagating that b is false,  the heuristic atom \texttt{\_heuristic(c,sign,-1,20)} is propagated, 
-and given that \texttt{20>10} the sign for atom \texttt{c} is \texttt{-1}, so when deciding on \texttt{c}, it is assigned to false.  
-If, for example, we added the fact \texttt{\_heuristic(c,sign,1,30)} to the program, the answer set would contain atom \texttt{c}. 
+First \clasp\ proceeds as in \texttt{example3}.
+Then after propagating that b is false,  the heuristic atom \texttt{\_heuristic(c,sign,-1,20)} is propagated,
+and given that \texttt{20>10} the sign for atom \texttt{c} is \texttt{-1}, so when deciding on \texttt{c}, it is assigned to false.
+If, for example, we added the fact \texttt{\_heuristic(c,sign,1,30)} to the program, the answer set would contain atom \texttt{c}.
 
-Whenever we use only three terms for a heuristic atom, the priority assigned to it is the absolute value of the modifiers value.  
-For example, if \texttt{\_heuristic(c,level,-10)} and \texttt{\_heuristic(c,level,5)} were true,  
-then as \texttt{abs(-10)>abs(5)} the level of \texttt{c} would be \texttt{-10}. 
+Whenever we use only three terms for a heuristic atom, the priority assigned to it is the absolute value of the modifiers\comment{BK: ``modifier's''?} value.
+For example, if \texttt{\_heuristic(c,level,-10)} and \texttt{\_heuristic(c,level,5)} were true,
+then as \texttt{abs(-10)>abs(5)} the level of \texttt{c} would be \texttt{-10}.
 
 \paragraph{Init and factor}
 
-The modifiers \texttt{init} and \texttt{factor} allow to modify the score that clasp heuristic assigns to each atom.  
-Compared to the \texttt{level} modifier, \texttt{init} and \texttt{factor} allow to bias the search without stablishing a strict ranking among the atoms. 
+The modifiers \texttt{init} and \texttt{factor} allow to modify the score that clasp heuristic assigns to each atom.
+Compared to the \texttt{level} modifier, \texttt{init} and \texttt{factor} allow to bias the search without stablishing\comment{BK: establishing!} a strict ranking among the atoms.
 
-With \texttt{init} we can add a value to the initial heuristic score of an atom. 
-For example, if \texttt{\_heuristic(a,init,2)} is true, then a value of \texttt{2} is added to  
-the initial score that the heuristic assigns to atom \texttt{a}. 
-Note that as the search proceeds, the initial score of an atom decays, so \texttt{init} only affects the beginning of the search. 
+With \texttt{init} we can add a value to the initial heuristic score of an atom.
+For example, if \texttt{\_heuristic(a,init,2)} is true, then a value of \texttt{2} is added to
+the initial score that the heuristic assigns to atom \texttt{a}.
+Note that as the search proceeds, the initial score of an atom decays, so \texttt{init} only affects the beginning of the search.
 
-To bias the whole search we can use the \texttt{factor} modifier,  
-that multiplies for a value the heuristic score of an atom. 
-For example, if \texttt{\_heuristic(a,factor,2)} is true, then the heuristic score for atom \texttt{a}  is multiplied by \texttt{2}. 
+To bias the whole search\comment{BK: comma?} we can use the \texttt{factor} modifier,\comment{BK: no comma ;)}
+that multiplies for a value the heuristic score of an atom.
+For example, if \texttt{\_heuristic(a,factor,2)} is true, then the heuristic score for atom \texttt{a}  is multiplied by \texttt{2}.
 
 \paragraph{Domain choices}
 
-With command line option \texttt{--stats} we can see some statistics of \clasp\ search. 
-The statistics are the same as those generated usually by \clasp, but with one addition:  
-after the word \texttt{Domain} we can see how many decisions where made on atoms that appear  inside an heuristic atom. 
-This information may give us some insight about the performed search. 
-For instance, this is part of the output of \texttt{example5} with option \texttt{--stats}: 
+With command line option \texttt{--stats} we can see some statistics of \clasp\ search.
+The statistics are the same as those generated usually by \clasp, but with one addition:
+after the word \texttt{Domain} we can see how many decisions where made on atoms that appear  inside an heuristic atom.
+This information may give us some insight about the performed search.
+For instance, this is part of the output of \texttt{example5} with option \texttt{--stats}:
 \begin{verbatim}
-$ gringo example5 | clasp --heuristic=Domain  --stats                                                                       
+$ gringo example5 | clasp --heuristic=Domain  --stats
 ...
-Models      : 1+    
+Models      : 1+
 Time        : 0.000s (Solving: 0.00s ...)
 CPU Time    : 0.000s
 Choices     : 2      (Domain: 2)
 Conflicts   : 0
-Restarts    : 0     
+Restarts    : 0
 ...
 \end{verbatim}
 
- The line about \texttt{Choices} tells us that  two decisions were made, and that both where made on atoms contained in heuristic atoms. 
-%  ======================== Blocks World hclasp ====================== 
+ The line about \texttt{Choices} tells us that  two decisions were made, and that both where made on atoms contained in heuristic atoms.
+%  ======================== Blocks World hclasp ======================
 
 
 \paragraph{Example: The Blocks World}
 
- We apply \clasp\ to answer set planning in the Blocks World.  We begin with a basic encoding \texttt{bw.lp} of the problem: 
+ We apply \clasp\ to answer set planning in the Blocks World.  We begin with a basic encoding \texttt{bw.lp} of the problem:
 \begin{verbatim}
-time(1..lasttime).                                                                                                                                                                                         
-location(B) :- block(B).                                                                                            
-location(table).                                                                                                    
-                                                                                                                    
-1 { move(B,L,T) : block(B) , location(L) } 1 :- time(T).                                           
-                                                                                                                    
-on(B,L,T)   :- move(B,L,T).                                                                             
-non(B,L1,T) :- on(B,L,T), L<L1, location(L1). 
+time(1..lasttime).
+location(B) :- block(B).
+location(table).
+
+1 { move(B,L,T) : block(B) , location(L) } 1 :- time(T).
+
+on(B,L,T)   :- move(B,L,T).
+non(B,L1,T) :- on(B,L,T), L<L1, location(L1).
 on(B,L,T+1) :- on(B,L,T), not non(B,L,T+1), time(T). \end{verbatim}
 
- and one instance \texttt{ins} (the Sussman anomaly): 
+ and one instance \texttt{ins} (the Sussman anomaly\comment{BK: Should I now that?}):
 \begin{verbatim}
 #const lasttime=3.
 block(a). block(b). block(c).
-on(b,table,0). 
+on(b,table,0).
 on(c,a,0).
 on(a,table,0).
 
@@ -271,12 +271,12 @@ If we execute:
 \begin{verbatim}
 $ gringo bw.lp ins | clasp \end{verbatim}
 
-\clasp\ will run with \texttt{vsids} heuristic. Now can try to improve the performance of the system programming the heuristic. 
+\clasp\ will run with \texttt{vsids} heuristic. Now can try\comment{BK: ``we'' missing?} to improve the performance of the system programming the heuristic.
 
- In \texttt{bw.lp} once all the values for predicate \texttt{move} are given,  
- the values of \texttt{on} and \texttt{non} are determined and may be propagated by \clasp. 
- This suggests that deciding only on \texttt{move} may be a good strategy. 
- We can do that with \clasp\ adding the following simple heuristic rule to a file \texttt{heur.lp}: 
+ In \texttt{bw.lp}\comment{BK: comma?} once all the values for predicate \texttt{move} are given,
+ the values of \texttt{on} and \texttt{non} are determined and may be propagated by \clasp.
+ This suggests that deciding only on \texttt{move} may be a good strategy.
+ We can do that with \clasp\ adding the following simple heuristic rule to a file \texttt{heur.lp}:
 
 \begin{verbatim}
 _heuristic(move(B,L,T),level,1)  :- block(B), location(L), time(T).\end{verbatim}
@@ -285,22 +285,22 @@ and executing:
 \begin{verbatim}
 $ gringo bw.lp ins heur.lp | clasp --heuristic=Domain \end{verbatim}
 
-Given that the level of \texttt{move} is higher,  \clasp\ will decide first on atoms of that predicate,  
-and the values of the other predicates will be propagated. 
+Given that the level of \texttt{move} is higher,  \clasp\ will decide first on atoms of that predicate,
+and the values of the other predicates will be propagated.
 
-We may prefer to soften the heuristic modification to simply bias the search  towards \texttt{move} predicate, 
-without stablishing a strict preference towards it.  For that we can use, for example, the rule: 
+We may prefer to soften the heuristic modification to simply bias the search  towards \comment{BK: ``the''?}\texttt{move} predicate,
+without stablishing\comment{BK: establishing!} a strict preference towards it.  For that we can use, for example, the rule:
 \begin{verbatim}
-_heuristic(move(B,L,T),init,2) :- block(B), location(L), time(T).\end{verbatim} or: 
+_heuristic(move(B,L,T),init,2) :- block(B), location(L), time(T).\end{verbatim} or:
 \begin{verbatim}
 _heuristic(move(B,L,T),factor,2) :- block(B), location(L), time(T).\end{verbatim}
 
-or the combination of both.  The first rule adds \texttt{2} to the initial score of \texttt{move} atoms,  
-while the second multiplies the heuristic score of \texttt{move} by \texttt{2}.  
+or the combination of both.  The first rule adds \texttt{2} to the initial score of \texttt{move} atoms,
+while the second multiplies the heuristic score of \texttt{move} by \texttt{2}.
 
-Whenever we decide on a true \texttt{move} atom,  the other \texttt{move} atoms for the same \texttt{time} are determined to be false,  
-and can be propagated by \clasp. So deciding on true \texttt{move} atoms may be a good idea. 
-For that we can either use the \texttt{true} modifier to express a strict preference: 
+Whenever we decide on a true \texttt{move} atom,  the other \texttt{move} atoms for the same \texttt{time} are determined to be false,
+and can be propagated by \clasp. So deciding on true \texttt{move} atoms may be a good idea.
+For that we can either use the \texttt{true} modifier to express a strict preference:
 \begin{verbatim}
 _heuristic(move(B,L,T),true,1) :- block(B), location(L), time(T).\end{verbatim}
 
@@ -316,45 +316,45 @@ _heuristic(move(B,L,T),sign,1)   :- block(B), location(L), time(T).\end{verbatim
 
 
 
-So far we have given the same heuristic values to all \texttt{move} atoms, 
-but other options may be interesting. For example, we may prefer to decide first on earlier \texttt{move} atoms,  
+So far we have given the same heuristic values to all \texttt{move} atoms,
+but other options may be interesting. For example, we may prefer to decide first on earlier \texttt{move} atoms,
 so that \clasp\ performs a forward search. This can be represented with the following rule:
 \begin{verbatim}
 _heuristic(move(B,L,T),true,lasttime-T+1) :- block(B), location(L), time(T).\end{verbatim}
 
-For \texttt{lasttime=3} the rule gives level \texttt{3} to \texttt{move} atoms of time \texttt{1},  
-level \texttt{2} to those of time \texttt{2} and level \texttt{1} to those of time \texttt{3},  
-assigning always a positive sign.  In this manner, \clasp\ will decide first on a true \texttt{move} 
-atom of time \texttt{1}, then on one of time \texttt{2},  and so on. 
+For \texttt{lasttime=3} the rule gives level \texttt{3} to \texttt{move} atoms of time \texttt{1},
+level \texttt{2} to those of time \texttt{2}\comment{BK: comma?} and level \texttt{1} to those of time \texttt{3},
+assigning always a positive sign.  In this manner, \clasp\ will decide first on a true \texttt{move}
+atom of time \texttt{1}, then on one of time \texttt{2},  and so on.
 
-Another strategy is to perform a backwards search on \texttt{move} from the last to the 
+Another strategy is to perform a backwards search on \texttt{move} from the last to the
 first time instant directed by the goals. We can use the next dynamic heuristic rule:
 \begin{verbatim}
 _heuristic(move(B,L,T),true,T) :- on(B,L,T).\end{verbatim}
 
-As before, the rule can be softened using \texttt{sign} with \texttt{init} or \texttt{factor}. 
-At the start of the search the goal \texttt{on} atoms will be true in the last time instant,  
-and with this rule \clasp\ will decide on a true \texttt{move} atom that will make one of them true. 
-Then some \texttt{on} atoms will be propagated to the previous time instant,  
-and the process is repeated until reaching the first time instant. 
+As before, the rule can be softened using \texttt{sign} with \texttt{init} or \texttt{factor}.
+At the start of the search the goal \texttt{on} atoms will be true in the last time instant,
+and with this rule \clasp\ will decide on a true \texttt{move} atom that will make one of them true.
+Then some \texttt{on} atoms will be propagated to the previous time instant,
+and the process is repeated until reaching the first time instant.
 
- We can also choose to promote the \texttt{on} predicate.  For example, with any of these rules or with a combination of them: 
+ We can also choose to promote the \texttt{on} predicate.  For example, with any of these rules or with a combination of them:
 \begin{verbatim}
 _heuristic(on(B,L,T),level,1)  :- block(B), location(L), time(T).
 _heuristic(on(B,L,T),init,2)   :- block(B), location(L), time(T).
 _heuristic(on(B,L,T),factor,3) :- block(B), location(L), time(T).\end{verbatim}
 
- Another interesting alternative is the following heuristic rule,  that proved to be very good in our experiments (more on this below): 
+ Another interesting alternative is the following heuristic rule,  that proved to be very good\comment{BK: ``useful''/``promising``?} in our experiments (more on this below):
 \begin{verbatim}
 _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{verbatim}
 
- The idea is to make the goal \texttt{on} atoms persist backwards, one by one, from the last time instant to the first. 
- Note that a higher level is given to atoms at earlier time instants. 
- First \clasp\ will decide on one goal \texttt{on} atom of the last but one instant,  
- then it will decide to make it persist in the previous situation, and so on.  
- Later, it will make persist backwards another goal \texttt{on} atom. 
- With this heuristic the idea is not to decide on atoms that lead to many propagations (as with \texttt{move} atoms) 
- but rather to make correct decisions (given that most of the times the value of \texttt{on} will persist by inertia). 
+ The idea is to make the goal \texttt{on} atoms persist backwards, one by one, from the last time instant to the first.
+ Note that a higher level is given to atoms at earlier time instants.
+ First\comment{BK: comma?} \clasp\ will decide on one goal \texttt{on} atom of the last but one instant,
+ then it will decide to make it persist in the previous situation, and so on.
+ Later, it will make persist backwards another goal \texttt{on} atom.
+ With this heuristic the idea is not to decide on atoms that lead to many propagations (as with \texttt{move} atoms)
+ but rather to make correct decisions (given that most of the times the value of \texttt{on} will persist by inertia).
 
 
  \paragraph{Command line heuristice option}
@@ -372,7 +372,7 @@ _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{verbatim}
 \iffalse
 
 \fi
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "guide"
-%%% End: 
+%%% End:

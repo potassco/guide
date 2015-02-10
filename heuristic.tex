@@ -359,6 +359,7 @@ _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{verbatim}
 
  \paragraph{Command line heuristice option}
  \clasp\ supports the following command line options:
+{
 \scriptsize\begin{lstlisting}[numbers=none]
  --heuristic=Domain : Use domain knowledge to Vsids-like heuristic
 
@@ -367,7 +368,7 @@ _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{verbatim}
         <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
         <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
 \end{lstlisting}
-
+}
 
 \iffalse
 

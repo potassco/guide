@@ -1,7 +1,7 @@
 \section{Input Languages}\label{sec:language}
 
 This section provides an overview of the input languages of
-grounder \gringo, combined grounder and solver \clingo, 
+grounder \gringo, combined grounder and solver \clingo,
 and of solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
@@ -10,21 +10,21 @@ Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
 
 The tool \gringo~\cite{gescth07a} is a grounder capable of translating
-user-defined logic programs (usually, containing variables) into 
+user-defined logic programs (usually, containing variables) into
 equivalent ground (that is, variable-free) programs.
 The output of \gringo\ can be piped into solver \clasp~\cite{gekanesc07a,gekasc09c},
 which then computes answer sets.
 System \clingo\ internally couples \gringo\ and \clasp, thus,
 it takes care of both grounding and solving.
-In contrast to \gringo\ outputting ground programs, 
+In contrast to \gringo\ outputting ground programs,
 \clingo\ returns answer sets.
 
 Usually, logic programs are specified in one or more (text) files whose names are
 % passed via the command line
 provided as arguments
 in an invocation of either \gringo\ or \clingo.
-% We below provide a description of 
-In what follows, we describe the 
+% We below provide a description of
+In what follows, we describe the
 constructs belonging to the input language of \gringo\ and \clingo.
 
 \subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
@@ -65,7 +65,7 @@ The basic building blocks are simple terms:
 as well as the tokens ``\var{\char`\_}'', \const{\#sup}, and \const{\#inf}.
 An integer is represented by means of an arithmetic expression,
 further explained in Section~\ref{subsec:gringo:arith}.
-Constants and variables are distinguished by their first letters, 
+Constants and variables are distinguished by their first letters,
 which are \emph{lowercase} or \emph{uppercase}, respectively,
 where leading occurrences of ``\code{\char`\_}'' are allowed
 (may be useful to circumvent name clashes).
@@ -81,7 +81,7 @@ in the language of a logic program.%
           constants and function symbols is called \emph{Herbrand universe}.}
 Unlike with a variable name whose recurrences within a rule refer to the same variable,
 the token ``\var{\char`\_}'' (not followed by any letter)
-stands for an \emph{anonymous variable} that does not recur anywhere. 
+stands for an \emph{anonymous variable} that does not recur anywhere.
 (One can view this as if a new variable name is invented on each
  occurrence of ``\var{\char`\_}''.)
 In addition, there are the special constants \const{\#sup} and \const{\#inf}
@@ -92,7 +92,7 @@ we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 Next, (uninterpreted) \emph{functions} are complex terms composed of a name (like a constant)
 and one or more terms as arguments. % ,
 % surrounded by parentheses and separated by comma.
-For instance, 
+For instance,
 \code{\const{at}(\const{peter},\const{time}(12),X)}
 is a function with three arguments:
 constant \const{peter}, another function \code{\const{time}(12)}
@@ -100,10 +100,10 @@ with an integer argument, and variable~\var{X}.
 Finally, there are \emph{tuples}, which are similar to \emph{functions} but without a name.
 Note that there are no one-elementary tuples; a term of form \code{($t$)} is equivalent to \code{$t$}.
 Examples for tuples are:
-the empty tuple \code{()} and 
+the empty tuple \code{()} and
 the tuple \code{(\const{at},\const{peter},\const{time}(12),X)} with four elements.
 
-Rules of the following forms are admitted in a 
+Rules of the following forms are admitted in a
 \emph{normal logic program} (with integrity constraints):
 \par
 \medskip
@@ -121,7 +121,7 @@ Rules of the following forms are admitted in a
 \par
 \medskip
 \noindent
-The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same 
+The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same
 syntactic form as a constant or function.
 \index{Logic Programs!Atoms}%
 In the \emph{body} of a rule or an integrity constraint,
@@ -145,7 +145,7 @@ meaning that the literals in its body must not jointly be satisfied.
 In ASP, the intended models of a logic program, i.e.,
 sets of variable-free atoms such that all rules
 (including facts and integrity constraints)
-of the program are satisfied when the atoms in the set are true, 
+of the program are satisfied when the atoms in the set are true,
 are such that every true atom has an (acyclic) derivation from the program.
 Such models are called \emph{answer sets}.
 To get the idea, let us consider some small examples.
@@ -161,7 +161,7 @@ b :- a.
 When \pred{a} and \pred{b} are false, the bodies of both rules are false as well,
 so that the rules are satisfied.
 Furthermore, there is no (true) atom to be derived,
-which shows that the empty set is an answer set. 
+which shows that the empty set is an answer set.
 On the other hand, if only either \pred{a} or~\pred{b} is true,
 the second or the first rule, respectively, is unsatisfied:
 the body holds, but not the head.
@@ -211,7 +211,7 @@ Since \code{\pred{c}.} is a fact,
 atom \pred{c} must unconditionally be true, i.e.,
 it belongs to every model.
 In view of this,
-the integrity constraint 
+the integrity constraint
 \code{:-\:c,\:not\:\pred{b}.}
 tells us that \pred{b} must be true as well
 in order to prevent its body from being satisfied.
@@ -223,9 +223,9 @@ so that atom~\pred{a} must be false.
 Hence, the set containing \pred{b} and~\pred{c}
 is the only answer set of our logic program.
 
-In the above examples, 
+In the above examples,
 we used propositional logic programs to exemplify the idea
-of an answer set: a model of a logic program such that all its true atoms are 
+of an answer set: a model of a logic program such that all its true atoms are
 (acyclically) derivable.
 In practice, logic programs are typically non-propositional, i.e.,
 they include schematic rules with variables.
@@ -277,7 +277,7 @@ Now it becomes apparent that \const{tweety}
 may fly or not, while \const{tux} surely does not fly.
 Thus, there are two answer sets for the three schematic rules above,
 instantiated with \const{tweety} and \const{tux}.%
-\marginlabel{To compute both answer sets, 
+\marginlabel{To compute both answer sets,
              invoke:\\
              \code{\mbox{~}clingo \attach{examples/bird.lp}{bird.lp} \textbackslash\\
                    \mbox{~}\attach{examples/fly.lp}{fly.lp} 0}\\
@@ -293,13 +293,13 @@ In fact, grounder \gringo\ (or the grounding component of \clingo)
 takes care of instantiating variables
 such that an equivalent propositional logic program is obtained.
 To this end,
-rules are required to be \emph{safe}, 
+rules are required to be \emph{safe},
 \label{pg:safe}%
 \index{Logic Programs!Safety}%
 i.e.,
 all variables in a rule must occur in some positive literal
 (a literal not preceded by \code{not}) in the body of the rule.%
-For instance, the first two schematic rules in Example~\ref{ex:flies} 
+For instance, the first two schematic rules in Example~\ref{ex:flies}
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
 This tells \gringo\ (or the grounding component of \clingo)
 that the values to be substituted for~\var{X} are limited to birds.
@@ -315,35 +315,35 @@ but it cannot be used to derive any atom.
 This universal meaning still applies when more sophisticated language constructs,
 as described in the following, are used.
 
-% Throughout this section we further extend the predicates that can be used 
+% Throughout this section we further extend the predicates that can be used
 % in a rule including comparison predicates (Section \ref{subsec:gringo:comp}) and aggregates (Section \ref{subsec:gringo:aggregate}).
 % Furthermore, \gringo{} expects rules to be safe, i.e., \index{Safe Program}
 % all variables that appear in a rule have to appear in some positive literal (a literal not preceded by \code{not}) in the body.
 % If a variable appears positively in some predicate, then we say that this predicate binds the variable.
 %
 % Intuitively, the head of a rule has to be true whenever all its body literals are true.
-% In ASP every atom needs some derivation, i.e., 
+% In ASP every atom needs some derivation, i.e.,
 % an atom cannot be true if there is no rule deriving it.
 % This implies that only atoms appearing in some head can appear in answer sets.
 % Furthermore, derivations%
-% \footnote{There are extensions like disjunctions 
-% that go beyond simple derivability and also require minimality w.r.t. a reduct. 
+% \footnote{There are extensions like disjunctions
+% that go beyond simple derivability and also require minimality w.r.t. a reduct.
 % We do not cover the semantics of such constraints in this guide.}%
 % have to be acyclic,
 % a feature that is important to model reachability.
 % As a simple example, consider the program \code{a :- b. b :- a.}
 % The only answer set to this program is the empty set.
 % Adding either \code{a.} or \code{b.} to the program results in the answer set $\{a,b\}$.
-% Finally, note that default negation is ignored when checking for acyclic derivations 
+% Finally, note that default negation is ignored when checking for acyclic derivations
 % (we do not need a reason for an atom being false).
-% Default negation can be used to express choices, e.g., the program \code{a :- not b. b :- not a.} 
+% Default negation can be used to express choices, e.g., the program \code{a :- not b. b :- not a.}
 % has the two answer sets $\{a\}$ and $\{b\}$.
 % But in practice it is never needed to express choices this way.
-% For example in the introductory example in Section~\ref{sec:quickstart} we used a cardinality 
+% For example in the introductory example in Section~\ref{sec:quickstart} we used a cardinality
 % constraint, which provides a much more readable way to introduce choices.
 % %\com{This paragraph contains a lot of information. Could someone help me making it more readable?}
 %
-% A fact has an empty body and thus its associated head predicate is always true 
+% A fact has an empty body and thus its associated head predicate is always true
 % and appears in all answer sets.
 % On the other hand, integrity constraints eliminate answer set candidates.
 % They are merely tests that discard unwanted answer sets.
@@ -354,18 +354,18 @@ as described in the following, are used.
 \subsubsection{Classical Negation}\label{subsec:gringo:negation}
 \index{Logic Programs!Literals!Classical Negation}
 
-% In logic programs, 
+% In logic programs,
 The connective \code{not} expresses default negation,
 i.e., a literal $\code{not}~A$ is assumed to hold unless atom~$A$ is derived to be true.
 In contrast, the classical (or strong) negation of an atom~\cite{gellif91a} % proposition
-holds only if % the complement of the proposition 
+holds only if % the complement of the proposition
 it can be derived.
 Classical negation, indicated by symbol ``\code{-}'', is permitted in front of atoms.
-That is, if $A$ is an atom, then $\code{-}A$ is 
+That is, if $A$ is an atom, then $\code{-}A$ is
 an atom representing the complement of~$A$.
 % Semantically, $\code{-}A$ is simply a new atom,
 The semantic relationship between $A$ and~$\code{-}A$
-is simply that they 
+is simply that they
 % with the additional condition that~$A$ and~$\code{-}A$
 must not jointly hold.
 Hence,
@@ -375,7 +375,7 @@ without explicitly writing it in a logic program.
 Depending on the logic program at hand,
 it may be possible that neither~$A$ nor~$\code{-}A$ is contained in an answer set,
 thus representing a state where the truth and the falsity of~$A$ are both unknown.
-% Observe that 
+% Observe that
 % that can be
 % implemented via integrity constraints whose effect is to eliminate
 % any answer set candidate containing complementary atoms.
@@ -390,7 +390,7 @@ in the following way:
 \lstinputlisting{examples/flycn.lp} % [firstnumber=3]
 %
 Given the individuals \const{tweety} and \const{tux},
-classical negation is reflected by 
+classical negation is reflected by
 the following (implicit) integrity constraints:%
 \marginlabel{By invoking:\\
   \code{\mbox{~}clingo --text \textbackslash\\
@@ -398,7 +398,7 @@ the following (implicit) integrity constraints:%
   or alternatively:\\
   \code{\mbox{~}gringo --text \textbackslash\\
         \mbox{~}\attach{examples/bird.lp}{bird.lp} \attach{examples/flycn.lp}{flycn.lp}}\\
-the reader can observe that % \gringo\ indeed produces 
+the reader can observe that % \gringo\ indeed produces
 the integrity constraint in Line~4 is indeed part of the grounding.
 The second one in Line 5 is not printed;
 it becomes obsolete by a static analysis exhibiting that
@@ -409,7 +409,7 @@ it becomes obsolete by a static analysis exhibiting that
 :- flies(tux),    -flies(tux).
 \end{lstlisting}
 There are still two answer sets,
-containing \code{-\pred{flies}(\const{tux})} and 
+containing \code{-\pred{flies}(\const{tux})} and
 either \code{\pred{flies}(\const{tweety})} or \code{-\pred{flies}(\const{tweety})}.
 
 Now assume that we add the following fact to the program:
@@ -418,7 +418,7 @@ flies(tux).
 \end{lstlisting}
 Then,
 \code{\pred{flies}(\const{tux})} must unconditionally be true,
-and \code{-\pred{flies}(\const{tux})} is still derived by 
+and \code{-\pred{flies}(\const{tux})} is still derived by
 an instance of the third schematic rule.
 % There no longer is any answer set for our new program using classical negation.
 % In fact, answer set candidates that contain both
@@ -426,7 +426,7 @@ Since every answer set candidate containing
 both \code{\pred{flies}(\const{tux})} and \code{-\pred{flies}(\const{tux})}
 triggers
 % \code{\pred{flies}(\const{tux})} and
-% \code{\pred{-flies}(\const{tux})} violate 
+% \code{\pred{-flies}(\const{tux})} violate
 the (implicit) integrity constraint in Line~5,
 there no longer is any answer set.
 \eexample
@@ -463,21 +463,21 @@ In general, the use of disjunction may increase
 computational complexity~\cite{eitgot95a}.
 % This is why \clingo%
 % \footnote{Run as a monolithic system performing both grounding and \emph{solving}.}
-% and solvers like 
+% and solvers like
 % \assat~\cite{linzha04a},
 % \clasp~\cite{gekanesc07a,gekasc09c},
 % \nomorepp~\cite{angelinesc05c},
 % \smodels~\cite{siniso02a}, and
 % \smodelscc~\cite{warsch04a}
-% do not % work on 
+% do not % work on
 % handle disjunctive programs.
 % Rather,
 % \claspD~\cite{drgegrkakoossc08a},
 % \cmodels~\cite{gilima06a,lierler05a}, or
 % \gnt~\cite{janisesiyo06a}
-% is needed % to be used 
+% is needed % to be used
 % for solving a disjunctive program.%
-% \footnote{% System 
+% \footnote{% System
 %   \dlv~\cite{dlv03a} also deals with disjunctive programs,
 %   but it uses a different syntax than presented here.}
 We thus suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
@@ -489,7 +489,7 @@ instead of disjunction, unless the latter is required for complexity reasons.
 
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
-They are satisfied whenever their positive counter-parts are but not vice versa. 
+They are satisfied whenever their positive counter-parts are but not vice versa.
 Unlike (purely) positive literals,
 such literals do require a proof of $A$;
 in other words, they cannot span positive cycles subject to minimization.
@@ -500,10 +500,10 @@ a :- not not b.
 b :- not not a.
 \end{lstlisting}
 %
-This program has the same stable models as the one in Example~\ref{ex:as:one} 
+This program has the same stable models as the one in Example~\ref{ex:as:one}
 as well as the additional stable model containing both \pred{a} and \pred{b}.
 This is because neither ``\code{not not a}'' nor ``\code{not not b}'' must be (finitely) derivable.
-In fact, in contrast to Example~\ref{ex:as:one}, 
+In fact, in contrast to Example~\ref{ex:as:one},
 the above program induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
 
 Also, there are literals in the head of rules.
@@ -511,11 +511,11 @@ These offer just another way to write integrity constraints,
 putting the emphasis on the head literal.
 In fact, the rule
 \(\code{not}~A_0\)~\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\)\code{.}
-is equivalent to 
+is equivalent to
 \code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n,\code{not}~\code{not}~A_0\)\code{.}
 and with double negation in the head, rule
 \(\code{not}~\code{not}~A_0\)~\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\)\code{.}
-is equivalent to 
+is equivalent to
 \code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n,\code{not}~A_0\)\code{.}
 
 \begin{example}\label{ex:as:flynn}
@@ -639,7 +639,7 @@ only counts as positive in the sense of safety for simple arithmetic terms (cf.\
 Such simple arithmetic terms are terms with exactly one variable occurrence
 composed of the arithmetic functions \code{+}, \code{-} and \code{*}, and integers.
 Moreover,
-if multiplication is used, then the constant part must not evaluate to $0$ for the variable occurrence to be considered positive. 
+if multiplication is used, then the constant part must not evaluate to $0$ for the variable occurrence to be considered positive.
 E.g., the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\const{2}*(\var{X}+\const{1})).}
 is considered safe, but
 the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
@@ -656,7 +656,7 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
 \index{Comparison Predicates!Greater or Equal, \code{>=}}
 \index{Logic Programs!Atoms!Comparison Predicates}
 
-Grounder \gringo\ and the grounding component of \clingo\ 
+Grounder \gringo\ and the grounding component of \clingo\
 feature a total order among variable-free terms.
 The built-in predicates to compare terms are
 \code{!=} (not equal),
@@ -717,7 +717,7 @@ does not count as a positive occurrence in the sense of safety (cf.\ Page~\pager
 i.e.,
 comparison literals are not considered to be positive.
 Note that comparison literals can be preceded with \code{not} or \code{not}~\code{not}.
-In the first case, this is equivalent to using the complementary comparison literal 
+In the first case, this is equivalent to using the complementary comparison literal
 (e.g., \code{<} and \code{>=} complement one another).
 In the second case, the prefix has no effect on the meaning of the literal.
 \index{Logic Programs!Safety}%
@@ -729,7 +729,7 @@ In the second case, the prefix has no effect on the meaning of the literal.
 \index{Assignments!Variable Assignment, \code{=}}
 \index{Logic Programs!Atoms!Assignments}
 
-Sometimes, it is desirable to define the value of a variable relative to a term, 
+Sometimes, it is desirable to define the value of a variable relative to a term,
 and to then reuse the variable as a shorthand.
 The built-in predicate~''\code{=}'' admits unifying
 (while solving simple arithmetic terms; see Section~\ref{subsec:gringo:arith})
@@ -783,11 +783,11 @@ are used to instantiate the variable~\var{X} occurring
 as the second argument in terms on the left-hand sides of~\code{=}.
 With a value for~\var{X} at hand,
 we can further check whether the arithmetic evaluation of~\code{\var{X}+\const{1}},
-occurring as the third argument, coincides with the 
+occurring as the third argument, coincides with the
 corresponding value given on the right-hand side of~\code{=}.
 %
 % Note the usage of \code{X+1} in the term.
-% \gringo{} does not try to unify any term containing arithmetic 
+% \gringo{} does not try to unify any term containing arithmetic
 % but in this example \code{X} occurs also directly as second argument of the argument
 % and can thus be unified with.
 % The term $X+1$ is merely a test that is deferred and checked later.
@@ -799,7 +799,7 @@ corresponding value given on the right-hand side of~\code{=}.
 \end{example}
 
 \begin{note}
-If a variable assignment is preceded by \code{not}, 
+If a variable assignment is preceded by \code{not},
 no unification happens.
 Instead, the expression $\code{not}~t_1~\code{=}~t_n$ is equivalent to $t_1~\code{!=}~t_n$.
 Like with comparison literals, the prefix ``\code{not~not}'' has no effect.
@@ -821,7 +821,7 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 % Of course cyclic assignments cannot bind variables.
 % For example the rule  is rejected by \gringo{}.
 % Either \code{X} or \code{Y} has to be provided by some positive predicate in this case.
-% Additionally, unification is restricted to ground terms on the right hand side of the assignment, 
+% Additionally, unification is restricted to ground terms on the right hand side of the assignment,
 % that is, all variables on the right hand side have to be bound by some other predicate.
 \end{note}
 
@@ -873,7 +873,7 @@ to the rule body to exclude the diagonals of the grid.
 
 \begin{note}
 An occurrence of a variable in the specification of the bounds
-of an integer interval, like~\var{S} in Line~2 of Example~\ref{ex:int}, 
+of an integer interval, like~\var{S} in Line~2 of Example~\ref{ex:int},
 does not count as a positive occurrence
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
 Hence, such a variable must also have another positive occurrence elsewhere;
@@ -897,7 +897,7 @@ In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
 For example, the tuple \code{(1;2,3)} expands into \code{(1)} and \code{(2,3)}.
 Hence, \code{(1)} is not a tuple here but equal to integer \code{1}.}
 \begin{example}\label{ex:pool}
-The following program makes use of pooling. 
+The following program makes use of pooling.
 It is similar to Example~\ref{ex:int}
 but with the difference that unlike intervals pools have a fixed size:%
 \marginlabel{%
@@ -986,7 +986,7 @@ are expanded to different basic language constructs.\footnote{%
 Recall our suggestion from Section~\ref{subsec:gringo:disjunction}
 to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 instead of disjunction, unless the latter is required for complexity reasons.
-This also means that conditions must 
+This also means that conditions must
 not be used \emph{outside of aggregates} in rule heads
 if disjunction is unintended.}
 \eexample
@@ -995,11 +995,11 @@ if disjunction is unintended.}
 Further following set notation,
 a condition can be composed by separating literals with a comma, viz~``\code{,}''.
 Note that commas are used to separate both literals in rule bodies as well as conditions.
-To resolve this ambiguity, 
+To resolve this ambiguity,
 a condition is terminated with a semicolon ``\code{;}'' (rather than ``\code{,}''), if further body literals follow.
 
 \begin{example}\label{ex:sort}
-The following program uses a literal with a composite condition in the middle of the rule body. 
+The following program uses a literal with a composite condition in the middle of the rule body.
 Note the semicolon ``\code{;}'' after the condition:
 %
 \lstinputlisting{examples/sort.lp}
@@ -1028,12 +1028,12 @@ We obtain an answer set where the elements of \code{set}/$1$ are ordered via \co
 There are three important issues about the usage of conditions:
 \begin{enumerate}
 %
-\item 
-Any variable occurring within a condition 
+\item
+Any variable occurring within a condition
 does not count as a positive occurrence outside the condition
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
-Variables occurring in atoms not subject to any condition are \emph{global}. 
-Each variable within an atom in front of a condition 
+Variables occurring in atoms not subject to any condition are \emph{global}.
+Each variable within an atom in front of a condition
 must be global or have a positive occurrence on the right-hand side of
 the condition.
 %
@@ -1046,7 +1046,7 @@ before a condition is further evaluated.
 Hence, the names of variables in conditions must be chosen with care,
 making sure that they do not \emph{accidentally} match the names of global variables.
 %
-\item 
+\item
 We suggest to use \emph{domain predicates}~\cite{lparseManual}
 or built-ins (both used in lines~2 and~3  of Example~\ref{ex:sort})
 in conditions.
@@ -1073,11 +1073,11 @@ For further details see~\cite{haliya14a}.
 
 Aggregates are one of the most useful modeling constructs since they allow for forming values from groups of selected items.
 Together with comparisons they allow for expressing conditions over these items.
-For instance, we can express that the sum of a semester's course credits must be at least 20, 
+For instance, we can express that the sum of a semester's course credits must be at least 20,
 or that the sum of the prizes of my shopping items should not exceed 30 euros.
 
 More formally,
-an aggregate is a function on a set of tuples that are normally subject to conditions. 
+an aggregate is a function on a set of tuples that are normally subject to conditions.
 By comparing an aggregated value with given values, we can extract a truth value from an aggregate's evaluation,
 thus, obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
@@ -1091,28 +1091,28 @@ The form of an \emph{aggregate atom} occurring in a rule body is as follows:
 \end{lstlisting}
 %
 Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$, forming \emph{aggregate elements}, are non-empty tuples of terms and literals, respectively
-(as introduced in Section~\ref{subsec:gringo:normal}). 
+(as introduced in Section~\ref{subsec:gringo:normal}).
 $\alpha$ is the name of some function that is to be applied to the term tuples $\boldsymbol{t}_i$
 that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 %
-Finally, 
-the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$ 
+Finally,
+the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
 Note that one of the \emph{guards} `$s_1\prec_1$' or `$\prec_2 s_2$'%
 (or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to ``\code{<=}'' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
 respectively.
 
-Currently, \gringo\ (and \clingo) support the aggregates 
+Currently, \gringo\ (and \clingo) support the aggregates
 \code{\#count}
 \index{Aggregates!Count, \code{\#count}}%
-(the number of elements), 
+(the number of elements),
 \code{\#sum}
 \index{Aggregates!Sum, \code{\#sum}}%
-(the sum of weights), 
+(the sum of weights),
 \code{\#sum+}
 \index{Aggregates!Sum plus, \code{\#sum+}}%
-(the sum of positive weights), 
+(the sum of positive weights),
 \code{\#min}
 \index{Aggregates!Minimum, \code{\#min}}%
 (the minimum weight), and
@@ -1130,7 +1130,7 @@ instances of the natural language examples for aggregates given at the beginning
 can be expressed as follows.
 
 \begin{lstlisting}[numbers=none]
-20 <= #sum { 4:course(db);      6:course(ai); 
+20 <= #sum { 4:course(db);      6:course(ai);
              8:course(project); 3:course(xml) }
 
 #sum { 3:bananas; 25:cigars; 10:broomstick } <= 30
@@ -1138,7 +1138,7 @@ can be expressed as follows.
 Both aggregate atoms can be used like any other atom, possibly preceded by negation, in a body of a rule.
 Within both aggregate atoms,
 symbolic atoms like \lstinline{course(ai)} or \lstinline{broomstick} are associated with costs.
-Assuming that \lstinline{course(db)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broomstick} are true, 
+Assuming that \lstinline{course(db)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broomstick} are true,
 the aggregates inner sets evaluate to \lstinline[mathescape]{$\{$4;6$\}$} and \lstinline[mathescape]{$\{$3;10$\}$}, respectively.
 After applying the \lstinline{#sum} aggregate function to both sets, we get \lstinline{20 <= 10} and \lstinline{13 <= 30};
 hence, in this case, the second aggregate atom holds while the first does not.
@@ -1148,8 +1148,8 @@ Hence, duplicates are not accounted for twice.
 %
 For instance, the following aggregate atoms express the same:
 \begin{lstlisting}[numbers=none,escapechar=@]
-#count {42:a;       t:not b         } = 2@\textnormal{ and}@ 
-#count {42:a; 42:a; t:not b; t:not b} = 2@\textnormal{.}@  
+#count {42:a;       t:not b         } = 2@\textnormal{ and}@
+#count {42:a; 42:a; t:not b; t:not b} = 2@\textnormal{.}@
 \end{lstlisting}
 That is, if \lstinline{a} holds but not \lstinline{b}, both inner sets reduce to \lstinline[mathescape]{$\{$42;t$\}$};
 and so both aggregate atoms evaluate to true.
@@ -1166,7 +1166,7 @@ Likewise, the literals of other aggregates are understood as sets.
 %
 Consider the next two summation aggregates:
 \begin{lstlisting}[numbers=none,escapechar=@]
-#sum { 3    :cost(1,2,3); 3    :cost(2,3,3) } = 3@\textnormal{ and}@ 
+#sum { 3    :cost(1,2,3); 3    :cost(2,3,3) } = 3@\textnormal{ and}@
 #sum { 3,1,2:cost(1,2,3); 3,2,3:cost(2,3,3) } = 6@\textnormal{.}@
 \end{lstlisting}
 As done in Section~\ref{subsec:tsp:instance},
@@ -1183,7 +1183,7 @@ To see this, observe that after evaluating the conditions in each aggregate, the
 In other words, associating each cost with its respective arc enforces a multi-set property;
 in this way, the same cost can be accounted for several times.
 
-\paragraph{Head Aggregates} 
+\paragraph{Head Aggregates}
 Whenever a rule head is a (single) aggregate atom, the derivable head literals must be distinguished.
 This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples of the aggregate elements:
 \index{Aggregates!Head}
@@ -1193,10 +1193,10 @@ This is done by appending such atoms (or in general literals) separated by an ad
 \end{lstlisting}
 %
 Here, all $L_i$ are symbolic literals as introduced in Section~\ref{subsec:gringo:normal}, while all other entities are as described above.
-The second colon in 
+The second colon in
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$:$\boldsymbol{L_i}$}
 is dropped whenever $\boldsymbol{L_i}$ is empty,
-yielding 
+yielding
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
 %
 Unlike with body aggregates, only singular head aggregates are supported.
@@ -1208,7 +1208,7 @@ In fact, when producing \smodels\ format, all aggregate atoms occurring in rule 
 For details consult~\cite{siniso02a,gekakasc12a}.
 \end{note}
 
-\paragraph{Shortcuts} 
+\paragraph{Shortcuts}
 There are some shorthands that can be used in the syntactic representation of aggregates.
 %
 The expression
@@ -1217,7 +1217,7 @@ The expression
 $s_1 \prec_1 ${$L_1$:$\boldsymbol{L_1}$;$\,\dots\,$;$L_n$:$\boldsymbol{L_n}$}$ \prec_2 s_2$
 \end{lstlisting}
 %
-where all entities are defined as above 
+where all entities are defined as above
 is a shortcut for
 %
 \begin{lstlisting}[numbers=none,mathescape]
@@ -1244,7 +1244,7 @@ For example, the rule
 is expanded by \gringo\ to
 \begin{lstlisting}[numbers=none]
 #count{ 0,a : a; 0,b : b }.
-\end{lstlisting}  
+\end{lstlisting}
 Here, \gringo\ generates two distinct term tuples \lstinline{0,a} and \lstinline{0,b}.
 With \clingo, we obtain four answer sets representing all sets over \code{a} and \code{b}.
 
@@ -1256,7 +1256,7 @@ The rule
 is expanded by \gringo\ to
 \begin{lstlisting}[numbers=none]
 #count{ 0,a : a; 0,a : a }.
-\end{lstlisting}  
+\end{lstlisting}
 
 In fact, within the term tuple produced by \gringo,
 the first term indicates the number of preceding default negations,
@@ -1268,8 +1268,8 @@ To see this, observe that the rule
 \end{lstlisting}
 is expanded by \gringo\ to
 \begin{lstlisting}[numbers=none]
-:- #count{ 0,a : a; 
-           1,b : not b; 
+:- #count{ 0,a : a;
+           1,b : not b;
            2,c : not not c } > 0.
 \end{lstlisting}
 
@@ -1277,7 +1277,7 @@ is expanded by \gringo\ to
 By allowing the omission of \const{\#count},
 so-called ``cardinality constraints''~\cite{siniso02a}
 can almost be written in their traditional notation (without keyword, yet different separators),
-as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.  
+as put forward in the legendary \lparse\ grounder~\cite{lparseManual}.
 \end{note}
 
 \paragraph{Assignment Aggregates}
@@ -1299,7 +1299,7 @@ Under the assumption that atom~\pred{a} holds,
 the atoms \code{\pred{sum}(\const{5})}, \code{\pred{min}(\const{2})},
 \code{\pred{max}(\const{3})}, and \code{\pred{cnt}(\const{2})} are
 derived by the above rules.
-If~\pred{a} does not hold, we derive 
+If~\pred{a} does not hold, we derive
 \code{\pred{sum}(\const{0})}, \code{\pred{min}(\const{\#sup})},
 \code{\pred{max}(\const{\#inf})}, and \code{\pred{cnt}(\const{0})}.
 %
@@ -1308,7 +1308,7 @@ Here, the special constants \const{\#sup} and \const{\#inf}
 obtained by applying \code{\#min} and \code{\#max} to the empty set of weights, respectively,
 indicate the neutral elements of the aggregates.
 %
-These constants can also be used as weights, subject to 
+These constants can also be used as weights, subject to
 \code{\#min} and \code{\#max} (in order to exceed any other ground term):
 \begin{lstlisting}[numbers=none]
 bot :-      #min { #inf : a } -1000.
@@ -1357,7 +1357,7 @@ because this often leads to problems for larger instances.
 % % \begin{equation*}%\label{eq:aggregate:atom}
 % $(
 %   l\,
-%   \const{\#count} 
+%   \const{\#count}
 %   \,
 %   \code{\char`\{}
 %   \,
@@ -1368,7 +1368,7 @@ because this often leads to problems for larger instances.
 %   \code{\char`\}}
 %   \,
 %   u
-% )$ 
+% )$
 % %\end{equation*}
 % reduces to
 % $(
@@ -1390,14 +1390,14 @@ because this often leads to problems for larger instances.
 % Of course, the use of~$l$ and~$u$ is optional also with \const{\#count}.
 % As an example, note that the next aggregate atoms express the same:
 % \begin{lstlisting}[numbers=none,escapechar=@]
-% 1 #sum   [a=1, not b=1]     1  @\textnormal{and}@ 
-% 1 #count {a,a, not b,not b} 1@\textnormal{.}@  
+% 1 #sum   [a=1, not b=1]     1  @\textnormal{and}@
+% 1 #count {a,a, not b,not b} 1@\textnormal{.}@
 % \end{lstlisting}
 % Keyword \const{\#count} can be omitted (like \const{\#sum}),
 % so that the following are synonyms:
 % \begin{lstlisting}[numbers=none,escapechar=@]
-% 1 #count {a, not b} 1  @\textnormal{and}@ 
-% 1        {a, not b} 1@\textnormal{.}@  
+% 1 #count {a, not b} 1  @\textnormal{and}@
+% 1        {a, not b} 1@\textnormal{.}@
 % \end{lstlisting}
 % The last notation is similar to the one of so-called
 % ``cardinality constraints''~\cite{siniso02a,lparseManual},
@@ -1409,7 +1409,7 @@ After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
 Regarding contained variables,
 only variable occurrences in the guards give rise to global variables.
-Hence, any variable in an aggregate element must be bound by 
+Hence, any variable in an aggregate element must be bound by
 either a positive global occurrence or
 a variable that occurs positively in its condition $\boldsymbol{L_i}$.
 \index{Logic Programs!Safety}
@@ -1455,13 +1455,13 @@ yields the following ground rule:%
   \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}
 %
 \begin{lstlisting}[numbers=none]
-3 <= #count { 0,enroll(1) : enroll(1); 
+3 <= #count { 0,enroll(1) : enroll(1);
               0,enroll(2) : enroll(2);
-              0,enroll(3) : enroll(3); 
-              0,enroll(4) : enroll(4); 
-              0,enroll(5) : enroll(5); 
+              0,enroll(3) : enroll(3);
+              0,enroll(4) : enroll(4);
+              0,enroll(5) : enroll(5);
               0,enroll(6) : enroll(6);
-              0,enroll(7) : enroll(7); 
+              0,enroll(7) : enroll(7);
               0,enroll(8) : enroll(8) } <= 6.
 \end{lstlisting}
 %
@@ -1479,19 +1479,19 @@ Each of the three integrity constraints above contains a \code{\#count} aggregat
 Recall that aggregates operate on sets and thus duplicates are removed;
 hence we use terms tuples to take into account courses together with their subject areas.
 Thus, the integrity constraint in Line~10 is instantiated as follows:
-\footnote{Because contact hours are uniquely associated to a course, 
+\footnote{Because contact hours are uniquely associated to a course,
 \gringo's shortcut expansion of \lstinline{:- \{ course(C,S,H) : enroll(C) \} 10.} is equivalent to the rule in Line~10 here.
 Similar equivalences exist for the other \code{\#count} aggregates.}
 %
 \begin{lstlisting}[firstnumber=10,stepnumber=10]
-:- 10 >= #count { 1,1:enroll(1); 1,2:enroll(1); 
-                  2,1:enroll(2); 2,2:enroll(2); 
-                  3,1:enroll(3); 3,3:enroll(3); 
- 4,1,3:enroll(4); 4,3:enroll(4); 4,4:enroll(4); 
-                  5,1:enroll(5); 5,4:enroll(5); 
-                  6,2:enroll(6); 6,3:enroll(6); 
- 7,2,4:enroll(7); 7,3:enroll(7); 7,4:enroll(7); 
-                  8,3:enroll(8); 8,4:enroll(8) }. 
+:- 10 >= #count { 1,1:enroll(1); 1,2:enroll(1);
+                  2,1:enroll(2); 2,2:enroll(2);
+                  3,1:enroll(3); 3,3:enroll(3);
+ 4,1,3:enroll(4); 4,3:enroll(4); 4,4:enroll(4);
+                  5,1:enroll(5); 5,4:enroll(5);
+                  6,2:enroll(6); 6,3:enroll(6);
+ 7,2,4:enroll(7); 7,3:enroll(7); 7,4:enroll(7);
+                  8,3:enroll(8); 8,4:enroll(8) }.
 \end{lstlisting}
 %
 Note that courses~\const{4} and~\const{7} count three times because
@@ -1500,7 +1500,7 @@ distinct instantiations for~\var{S} in
 \code{\const{course}(\var{4},\var{S},\const{3})} and
 \code{\const{course}(\var{7},\var{S},\const{4})}, respectively.
 Comparing the above ground instance,
-the meaning of the integrity constraint in Line~10 is that the 
+the meaning of the integrity constraint in Line~10 is that the
 number of eligible subject areas over all enrolled courses
 must be more than~\const{10}.
 Similarly, the integrity constraint in Line~11 expresses the requirement
@@ -1508,7 +1508,7 @@ that at most one course of subject area~\const{2} (``practical informatics'')
 is not enrolled,
 while Line~12 stipulates that the enrolled courses
 amount to less than six nominations of
-subject area~\const{3} (``technical informatics'') 
+subject area~\const{3} (``technical informatics'')
 or~\const{4} (``applied informatics'').
 
 The remaining constraints of the student deal with contact hours.
@@ -1586,7 +1586,7 @@ is not recommended in general because the space blow-up may be significant.
 \end{example}
 
 \begin{note}
-Users familiar with \gringo~3 might remember that conditions in aggregates 
+Users familiar with \gringo~3 might remember that conditions in aggregates
 had to be either literals over domain predicates or built-ins.
 This restriction does not exist anymore in \gringo\ and \clingo~4.
 \end{note}
@@ -1609,7 +1609,7 @@ Whenever the body of a weak constraint is satisfied,
 it contributes its term tuple (as with aggregates duplicates are ignored) to a cost function.
 This cost function accumulates the integer weights $w$ of all contributed tuples just like a \#sum aggregate does.
 The semantics of a program with weak constraints is intuitive:
-an answer set is \emph{optimal} 
+an answer set is \emph{optimal}
 if the obtained cost is minimal among all answer sets of the given program.
 Whenever there are different priorities attached to tuples,
 we obtain a (possibly zero) cost for each priority.
@@ -1622,12 +1622,12 @@ if it is omitted, then the priority defaults to zero.
 A weak constraint is safe if the variables in its term tuples are bound by the atoms in the body
 and the safety requirements for the body itself are the same as for integrity constraints.
 
-As an alternative way to express an optimization problem, 
+As an alternative way to express an optimization problem,
 there are optimization statements,
 which provide another way to write weak constraints.
 A minimize constraint of form:
 \[
-    \code{\#minimize \{ $\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.} 
+    \code{\#minimize \{ $\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.}
 \]
 represents the following $n$ weak constraints:
 \[
@@ -1640,7 +1640,7 @@ Again, these are defined as shortcuts.
 To maximize, the integer weights of the tuples are simply inverted.
 Hence, a maximize statement of form:
 \[
-    \code{\#maximize \{ $w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_1$@$p_1$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.} 
+    \code{\#maximize \{ $w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_1$@$p_1$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.}
 \]
 represents the followingg $n$ weak constraints:
 \[
@@ -1706,7 +1706,7 @@ Utilizing the scripting languages Lua or Python\footnote{\url{http://lua.org} an
 We focus on functions that are evaluated during grounding here.
 In Section~\ref{sec:multi},
 we show how to take complete control of the grounding and solving process using the scripting API.
-We do not give an introduction to Lua or Python here (there are numerous tutorials on the web), 
+We do not give an introduction to Lua or Python here (there are numerous tutorials on the web),
 but give some examples showing the capabilities of this integration.
 In the following, we show code snippets for both scripting languages.
 Note that our precompiled binaries ship with Lua support and can be used to run the Lua examples.
@@ -1736,7 +1736,7 @@ or:\\
 }
 %
 The function is called in Line~3 and the result stored in predicate \code{gcd}/$3$.
-Note that external function calls look like function symbols but are preceded by ``\code{@}''. 
+Note that external function calls look like function symbols but are preceded by ``\code{@}''.
 \index{External Functions!Calling}%
 Regarding binding of variables, the same restrictions as with arithmetic in Section \ref{subsec:gringo:arith} apply.
 \end{example}
@@ -1770,7 +1770,7 @@ The values in the table or list returned from a call to \code{\@rng(X,Y)} are th
 In fact, this function behaves exactly like the interval~\code{X..Y}.
 \index{External Functions!Term Insertion}
 
-An interesting use case for returning multiple values is to pull whole 
+An interesting use case for returning multiple values is to pull whole
 instances from external sources, like for example a database or some text file not already in fact format.
 \eexample
 \end{example}
@@ -1790,7 +1790,7 @@ Finally, the terms \code{\#sup} and \code{\#inf} are mapped to the constants \co
 
 To construct terms from within the scripting language,
 the \code{Id} and \code{Fun} classes have a constructor to create objects (in Lua it is a global function).
-To create an object representing a constant, 
+To create an object representing a constant,
 there is the \code{Id(name)} constructor,
 which  simply takes the string representation of the constant as argument.
 Similarly, for functions
@@ -1832,7 +1832,7 @@ or:\\
 }
 %
 The function is called in Line~3 and the result stored in predicate \code{g}/$3$.
-Using this scheme, 
+Using this scheme,
 new terms can be created during grounding
 that cannot be constructed by means of plain ASP.
 Another interesting application might be string concatenation.
@@ -1840,7 +1840,7 @@ Another interesting application might be string concatenation.
 \end{example}
 
 The last function of interest here is the \code{cmp(a,b)} function,
-which compares two terms \code{a} and \code{b} 
+which compares two terms \code{a} and \code{b}
 as \gringo's built-in comparison predicates (cf. Section \ref{subsec:gringo:comp}) would do.
 It returns a negative integer if \code{a < b}, zero if \code{a = b}, and a positive integer if \code{a > b}.
 A complete reference for the Python scripting API is available at: \url{http://potassco.sourceforge.net/gringo.html}
@@ -1856,7 +1856,7 @@ This example shows how to implement the \code{max} function:
 In Line~5 we add function~\code{max},
 which takes two terms as arguments
 and returns the maximum of both.
-We are using the \code{cmp} here to compare terms. 
+We are using the \code{cmp} here to compare terms.
 We cannot use the \code{>} relation here
 because it cannot compare objects of different types,
 e.g., integers and strings.
@@ -2009,7 +2009,7 @@ Try running this example using the following calls:
  gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6+6 -c y=6
  gringo --text $\attach{examples/const.lp}{const.lp}$ -c x="6+6*6"
 \end{lstlisting}
-Note that to prevent the shell from expanding the \code{*} in the last call 
+Note that to prevent the shell from expanding the \code{*} in the last call
 or from interpreting parentheses in functions,
 quotes have to be added.
 \eexample
@@ -2019,8 +2019,8 @@ quotes have to be added.
 \index{Meta-Statements!External Statements, \code{\#external}}%
 External statements are used to mark atoms as external.
 This means that those atoms are not subject to certain simplifications.
-Namely, 
-atoms marked external are not removed from the bodies of rules, conditions, etc. 
+Namely,
+atoms marked external are not removed from the bodies of rules, conditions, etc.
 even if they do not appear in the head of any rule.
 Although this does not affect the semantics of a logic program,
 we will see an effect in the text output of the example below.
@@ -2061,7 +2061,7 @@ or:\\
 %
 The external statement in Line~2 gives rise to three external atoms,
 which appear accordingly in the text output.
-With these three atoms, 
+With these three atoms,
 the rule in Line~4 yields three ground instantiations,
 where atoms~\code{q(2)} and~\code{q(3)} appear in the body.
 Because we have the fact \code{q(1)} in Line~3,
@@ -2102,12 +2102,12 @@ All rules not subject to a program part directive belong to the $\code{base}/0$ 
 The default behavior of \gringo\ is to ground (and solve in the case of \clingo) the base part.
 Using the scripting API,
 we can ground other parts than $\code{base}/0$ too.
-Occurrences of symbolic constants 
+Occurrences of symbolic constants
 that are parameters of a part
 are replaced with ground terms when instantiating the program part.
 
 \begin{example}
-The following example shows how to instantiate program parts: 
+The following example shows how to instantiate program parts:
 \lstinputlisting[language=GringoLua]{examples/part.lp}
 The above program is organized in two parts $\code{base}/0$ and $\code{a}/2$.
 Note that the fact in the first line is implicitly in the $\code{base}/0$ part.
@@ -2134,7 +2134,7 @@ or:\\
 %
 The above script grounds (Line 9) the $\code{base}/0$ part (Line 7) as well as the $\code{a}/2$ part with parameters \code{1} and \code{3} (Line 8).
 Note the call to solve in Line 10.
-This is essential to solve the program with \clingo\ 
+This is essential to solve the program with \clingo\
 and even in \gringo\ some post-processing happens in solve - e.g.,
 printing the symbol table of the \smodels\ format~\cite{lparseManual}.
 \eexample
@@ -2210,12 +2210,22 @@ clingo examples/include.lp
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
-\tbrc{RK: not complete anymore, if dimacs is listed, opb, wcnf, etc. should be listed too\par T: We need Benjamin!}
-%
-Solver \clasp~\cite{gekanesc07b} works on logic programs in \smodels\ format~\cite{lparseManual}.
-This numerical format, which is not supposed to be human-readable,
-is output by \gringo\ and can be piped into \clasp.
-Such an invocation of \clasp\ looks as follows:
+Solver \clasp~\cite{gekanesc07b} can be run as a solver for ASP, SAT, Maximum Satisfiability (MaxSAT; \cite{liman09a}),
+and Pseudo-Boolean (PB; \cite{rouman09a}) constraint satisfaction/optimization.
+To this end, \clasp\ accepts logic programs in \smodels\ format~\cite{lparseManual},
+SAT and MaxSAT instances in DIMACS-cnf\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}}
+and DIMACS-wcnf format\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}},
+and PB problems in OPB/WBO format\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}}.
+% To this end, \clasp\ accepts problems in
+% \smodels\ format~\cite{lparseManual},
+% DIMACS-cnf format\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}},
+% DIMACS-wcnf format\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}},
+% and OPB/WBO format\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}}.
+Finally, \clasp\ may be used as a (C++) library, as done within \clingo.
+
+For ASP solving,
+\clasp\ is typically invoked in a pipe reading
+a logic program output by \gringo:
 %
 \begin{lstlisting}[numbers=none]
 gringo [ options | files ] | clasp [ number | options ]
@@ -2224,32 +2234,62 @@ gringo [ options | files ] | clasp [ number | options ]
 Note that \code{number} may be provided to specify a maximum number of answer sets
 to be computed, where~\code{0} makes \clasp\ compute all answer sets.
 This maximum number can also be set via
-option \code{--number} or its abbreviation \code{-n}
+option \code{--models} or its abbreviation \code{-n}
 (cf.\ Section~\ref{subsec:opt:clasp}).
 By default, \clasp\ computes one answer set (if it exists).
-If a logic program in \smodels\ format has been stored in a \code{file},
-it can be redirected into \clasp\ as follows:%
+
+To solve a problem in one of the supported formats stored in a \code{file},
+an invocation of \clasp\ looks as follows:%
 \footnote{%
-  The same is achieved by using option \code{--file} or its short form \code{-f}
+  Option \code{--file} or its short form \code{-f} can be used to
+  distinguish a file name from a number
   (cf.\ Section~\ref{subsec:opt:clasp}).}
-%
 \begin{lstlisting}[numbers=none]
-clasp [ number | options ] < file
+clasp [ number | options ] file
 \end{lstlisting}
-%
-Via option \code{--dimacs},
-\clasp\ can also be instructed to compute models of a propositional formula
-in DIMACS/CNF format~\cite{dimacs}.
-If such a formula is contained in \code{file},
-then \clasp\ can be invoked in the following way:
-%
-\begin{lstlisting}[numbers=none]
-clasp [ number | options ] --dimacs < file
-\end{lstlisting}
-%
-Finally, \clasp\ may be used as a library, as done within \clingo.
- 
-%%% Local Variables: 
+In general, \clasp\ autodetects the input format. However,
+option \code{--opt-sat} is necessary to distinguish a
+MaxSAT instance in DIMACS-cnf format from a normal SAT instance.
+% \tbrc{RK: not complete anymore, if dimacs is listed, opb, wcnf, etc. should be listed too\par T: We need Benjamin!}
+% %
+% Solver \clasp~\cite{gekanesc07b} works on logic programs in \smodels\ format~\cite{lparseManual}.
+% This numerical format, which is not supposed to be human-readable,
+% is output by \gringo\ and can be piped into \clasp.
+% Such an invocation of \clasp\ looks as follows:
+% %
+% \begin{lstlisting}[numbers=none]
+% gringo [ options | files ] | clasp [ number | options ]
+% \end{lstlisting}
+% %
+% Note that \code{number} may be provided to specify a maximum number of answer sets
+% to be computed, where~\code{0} makes \clasp\ compute all answer sets.
+% This maximum number can also be set via
+% option \code{--number} or its abbreviation \code{-n}
+% (cf.\ Section~\ref{subsec:opt:clasp}).
+% By default, \clasp\ computes one answer set (if it exists).
+% If a logic program in \smodels\ format has been stored in a \code{file},
+% it can be redirected into \clasp\ as follows:%
+% \footnote{%
+%   The same is achieved by using option \code{--file} or its short form \code{-f}
+%   (cf.\ Section~\ref{subsec:opt:clasp}).}
+% %
+% \begin{lstlisting}[numbers=none]
+% clasp [ number | options ] < file
+% \end{lstlisting}
+% %
+% Via option \code{--dimacs},
+% \clasp\ can also be instructed to compute models of a propositional formula
+% in DIMACS/CNF format~\cite{dimacs}.
+% If such a formula is contained in \code{file},
+% then \clasp\ can be invoked in the following way:
+% %
+% \begin{lstlisting}[numbers=none]
+% clasp [ number | options ] --dimacs < file
+% \end{lstlisting}
+% %
+% Finally, \clasp\ may be used as a library, as done within \clingo.
+
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "guide"
-%%% End: 
+%%% End:

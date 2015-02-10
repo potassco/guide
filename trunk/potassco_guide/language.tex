@@ -2210,18 +2210,17 @@ clingo examples/include.lp
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
-Solver \clasp~\cite{gekanesc07b} can be run as a solver for ASP, SAT, Maximum Satisfiability (MaxSAT; \cite{liman09a}),
-and Pseudo-Boolean (PB; \cite{rouman09a}) constraint satisfaction/optimization.
+Solver \clasp~\cite{gekanesc07b} can be used to solve ASP, SAT, Maximum Satisfiability (MaxSAT; \cite{liman09a}),
+and Pseudo-Boolean (PB; \cite{rouman09a}) constraint satisfaction/optimization problems.
 To this end, \clasp\ accepts logic programs in \smodels\ format~\cite{lparseManual},
 SAT and MaxSAT instances in DIMACS-cnf\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}}
-and DIMACS-wcnf format\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}},
-and PB problems in OPB/WBO format\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}}.
+and DIMACS-wcnf\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}} format,
+and PB problems in OPB/WBO\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}} format.
 % To this end, \clasp\ accepts problems in
 % \smodels\ format~\cite{lparseManual},
 % DIMACS-cnf format\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}},
 % DIMACS-wcnf format\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}},
 % and OPB/WBO format\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}}.
-Finally, \clasp\ may be used as a (C++) library, as done within \clingo.
 
 For ASP solving,
 \clasp\ is typically invoked in a pipe reading
@@ -2240,54 +2239,12 @@ By default, \clasp\ computes one answer set (if it exists).
 
 To solve a problem in one of the supported formats stored in a \code{file},
 an invocation of \clasp\ looks as follows:%
-\footnote{%
-  Option \code{--file} or its short form \code{-f} can be used to
-  distinguish a file name from a number
-  (cf.\ Section~\ref{subsec:opt:clasp}).}
 \begin{lstlisting}[numbers=none]
 clasp [ number | options ] file
 \end{lstlisting}
 In general, \clasp\ autodetects the input format. However,
 option \code{--opt-sat} is necessary to distinguish a
 MaxSAT instance in DIMACS-cnf format from a normal SAT instance.
-% \tbrc{RK: not complete anymore, if dimacs is listed, opb, wcnf, etc. should be listed too\par T: We need Benjamin!}
-% %
-% Solver \clasp~\cite{gekanesc07b} works on logic programs in \smodels\ format~\cite{lparseManual}.
-% This numerical format, which is not supposed to be human-readable,
-% is output by \gringo\ and can be piped into \clasp.
-% Such an invocation of \clasp\ looks as follows:
-% %
-% \begin{lstlisting}[numbers=none]
-% gringo [ options | files ] | clasp [ number | options ]
-% \end{lstlisting}
-% %
-% Note that \code{number} may be provided to specify a maximum number of answer sets
-% to be computed, where~\code{0} makes \clasp\ compute all answer sets.
-% This maximum number can also be set via
-% option \code{--number} or its abbreviation \code{-n}
-% (cf.\ Section~\ref{subsec:opt:clasp}).
-% By default, \clasp\ computes one answer set (if it exists).
-% If a logic program in \smodels\ format has been stored in a \code{file},
-% it can be redirected into \clasp\ as follows:%
-% \footnote{%
-%   The same is achieved by using option \code{--file} or its short form \code{-f}
-%   (cf.\ Section~\ref{subsec:opt:clasp}).}
-% %
-% \begin{lstlisting}[numbers=none]
-% clasp [ number | options ] < file
-% \end{lstlisting}
-% %
-% Via option \code{--dimacs},
-% \clasp\ can also be instructed to compute models of a propositional formula
-% in DIMACS/CNF format~\cite{dimacs}.
-% If such a formula is contained in \code{file},
-% then \clasp\ can be invoked in the following way:
-% %
-% \begin{lstlisting}[numbers=none]
-% clasp [ number | options ] --dimacs < file
-% \end{lstlisting}
-% %
-% Finally, \clasp\ may be used as a library, as done within \clingo.
 
 %%% Local Variables:
 %%% mode: latex

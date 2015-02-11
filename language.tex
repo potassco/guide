@@ -1,9 +1,7 @@
 \section{Input Languages}\label{sec:language}
 
 This section provides an overview of the input languages of
-grounder \gringo, combined grounder and solver \clingo,
-and %of 
-solver \clasp.
+grounder \gringo, combined grounder and solver \clingo, and solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
@@ -80,8 +78,7 @@ a variable is a placeholder for \emph{all} variable-free terms
 in the language of a logic program.%
 \footnote{The set of all terms constructible from the available
           constants and function symbols is called \emph{Herbrand universe}.}
-Unlike %with 
-a variable name whose recurrences within a rule refer to the same variable,
+Unlike a variable name whose recurrences within a rule refer to the same variable,
 the token ``\var{\char`\_}'' (not followed by any letter)
 stands for an \emph{anonymous variable} that does not recur anywhere.
 (One can view this as if a new variable name is invented on each
@@ -164,22 +161,20 @@ When \pred{a} and \pred{b} are false, the bodies of both rules are false as well
 so that the rules are satisfied.
 Furthermore, there is no (true) atom to be derived,
 which shows that the empty set is an answer set.
-On the other hand, %if only either \pred{a} or~\pred{b} is true,
-when only \pred{a} or only \pred{b} is true,
-% the second or the first rule, respectively, is unsatisfied:
-the second or the first rule is unsatisfied respectively:
-the body holds, but not the head.
-Hence, an answer set cannot contain \pred{a} or~\pred{b} only.
+On the other hand, 
+if \pred{a} is true but \pred{b} is not,
+then the first rule is unsatisfied because the body holds but the head does not.
+Similarly, the second rule is unsatisfied if \pred{b} is true and \pred{a} is not.
+Hence, an answer set cannot contain only one of the atoms \pred{a} and~\pred{b}.
 It remains to investigate the set including both \pred{a} and~\pred{b}.
-Although both rules are satisfied, % it is also clear that
+Although both rules are satisfied,
 \pred{a} and~\pred{b} cannot be derived acyclically:
 \pred{a} relies on~\pred{b}, and vice versa.
-That is, the set including both \pred{a} and~\pred{b} is not an answer set. % either.
+That is, the set including both \pred{a} and~\pred{b} is not an answer set.
 Hence, the empty set is the only answer set of the logic program.
 \eexample
 \end{example}
 
-% For a second example, 
 Consider the following logic program:
 %
 \begin{lstlisting}[numbers=none]
@@ -303,7 +298,7 @@ rules are required to be \emph{safe},
 \index{Logic Programs!Safety}%
 i.e.,
 all variables in a rule must occur in some positive literal
-(a literal not preceded by \code{not}) in the body of the rule. %
+(a literal not preceded by \code{not}) in the body of the rule.
 For instance, the first two schematic rules in Example~\ref{ex:flies}
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
 This tells \gringo\ (or the grounding component of \clingo)

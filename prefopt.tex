@@ -2,28 +2,31 @@
 \section{Optimization and Preference handling}
 \label{sec:prefopt}
 
-%This section is not yet ready for publishing
-%and will be included in one of the forthcoming editions of this guide.
+\subsection{Multi-objective optimization}
+\label{sec:oprimization}
+
+This section is not yet ready for publishing
+and will be included in one of the forthcoming editions of this guide.
 
 Information on optimization and preference handling can be obtained at the following references.
 
 \begin{itemize}
 \item Optimization \cite{gekakasc11b,gekakasc11c,gekasc11b,ankamasc12a}
-\item Preference handling \cite{brderosc14a,brderosc15a}
+% \item Preference handling \cite{brderosc14a,brderosc15a}
 \item Video series on \clasp~3's optimization capacities \url{http://potassco.sourceforge.net/videos.html}
 \end{itemize}
 
 %\iffalse
 \subsection{Preference Handling with asprin}
 
-\asprin\ is a general framework for qualitative and quantitative optimization in ASP
+\asprin\ provides a general framework for qualitative and quantitative optimization in ASP
 that allows to compute optimal stable models of logic programs with preferences, and     
 to easily define new preference types.
-Some preference types (subset, pareto...) are already defined in the asprin library, 
+Some preference types (subset, pareto, \dots) are already defined in \asprin's library, 
 but many more can be defined  simply writing a logic program.  
 For a formal description of asprin, please refer to \cite{brderosc15a}. 
 \asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
-at \url{https://sourceforge.net/projects/potassco/files/asprin}.  
+at \url{https://sourceforge.net/projects/potassco/files/asprin}.\comment{TS: use asprin webpage}
 
 %\subsubsection{Tutorial}
 %\begin{itemize}
@@ -65,7 +68,7 @@ b(2..5) :- m(3).
 \end{verbatim}
 \begin{verbatim}
 
-$ clingo-4 example1.lp 0
+$ clingo example1.lp 0
 ...
 Answer: 1
 m(2) a(1) a(2) b(1) 

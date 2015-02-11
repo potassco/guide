@@ -1,15 +1,23 @@
 \section{Introduction}\label{sec:introduction}
 
-The ``Potsdam Answer Set Solving Collection'' (Potassco;~\cite{potassco,gekakaosscsc11a,gekakasc12a})
+The ``Potsdam Answer Set Solving Collection'' (Potassco;~\cite{gekakaosscsc11a,gekakasc12a,potassco})
 gathers a variety of tools for Answer Set Programming (ASP;~%
 \cite{ankolisc05a,baral02a,breitr11a,gelfond08a,gelkah14a,gelleo02a,lifschitz02a,martru99a,niemela99a}),
 including grounder \gringo, solver \clasp, and their combination within the integrated ASP system \clingo.
 Their common goal is to enable users
-to rapidly solve difficult computational problems in ASP,
+to rapidly solve computationally difficult problems in ASP,
 a declarative programming paradigm based on
 logic programs and their answer sets.
 
-To be more precise, 
+This guide, for one, aims at enabling ASP novices to make use of the aforementioned tools.
+For another, it provides a reference of the tools' features that ASP adepts might be tempted to exploit.
+%
+A formal introduction to (a large fragment of) the input language of \gringo\ (and \clingo) and its precise semantics is given in~\cite{gehakalisc14a}.
+The foundations and algorithms underlying the grounding and solving technology used in \gringo\ and \clasp\ is described in detail in~\cite{gekakasc12a}.
+%
+For further aspects of ASP we refer the interested reader to the literature~\cite{baral02a,gelkah14a}.
+
+In fact, 
 we focus in this guide on ASP and thus the computation of so-called stable models of a logic program~\cite{gellif88b}.
 Moreover, \clasp\ can be used as a full-fledged SAT, MaxSAT, or PB solver (see~\cite{SATHandbook}), 
 accepting propositional CNF formulas in (extended) DIMACS format as well as PB formulas in OPB and WBO format.
@@ -31,9 +39,7 @@ please
 consult the support pages at~\cite{potassco}
 or use the Potassco mailing list:
 \href{mailto:potassco-users@lists.sourceforge.net}{\texttt{potassco-users@lists.sourceforge.net}}.
-
-\com{RK: should we mention packages available in distributions here as well?}
-\com{MO: imho yes.}
+\com{RK: mention packages available in distributions here!}
 
 After downloading (and possibly building) a tool,
 one can check whether everything works fine by invoking the tool
@@ -122,8 +128,6 @@ in margin boxes, like the one on the right.
              to stay within margins.}
 Occurrences of ``\code{\char`\\}''
 usually mean that text in a command line, broken for space reasons, is actually continuous.
-
-We omit formal aspects of ASP and refer the interested reader for this to the literature~\cite{baral02a,gelkah14a,gekakasc12a}.
 
 After all these preliminaries, it is time to start our guided tour
 through the main Potassco~\cite{potassco} tools.

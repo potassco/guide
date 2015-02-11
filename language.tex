@@ -2,7 +2,8 @@
 
 This section provides an overview of the input languages of
 grounder \gringo, combined grounder and solver \clingo,
-and of solver \clasp.
+and %of 
+solver \clasp.
 The joint input language of \gringo\ and \clingo\ is detailed in
 Section~\ref{subsec:lang:gringo}.
 Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \clasp.
@@ -66,20 +67,21 @@ as well as the tokens ``\var{\char`\_}'', \const{\#sup}, and \const{\#inf}.
 An integer is represented by means of an arithmetic expression,
 further explained in Section~\ref{subsec:gringo:arith}.
 Constants and variables are distinguished by their first letters,
-which are \emph{lowercase} or \emph{uppercase}, respectively,
+which are \emph{lowercase} and \emph{uppercase}, respectively,
 where leading occurrences of ``\code{\char`\_}'' are allowed
 (may be useful to circumvent name clashes).
 Furthermore, a string is an arbitrary sequence of characters
 enclosed in double quotes (\code{"$\cdot$"}),
-where any occurrences of ``\code{\textbackslash}'', newline, and inverted comma
-must be masked via ``\code{\textbackslash\textbackslash}'', ``\code{\textbackslash n}'',
-and ``\code{\textbackslash"}''.
+where any occurrences of ``\code{\textbackslash}'', newline, and double quote %inverted comma
+must be escaped via ``\code{\textbackslash\textbackslash}'', ``\code{\textbackslash n}'',
+and ``\code{\textbackslash"}'' respectively.
 While a constant or string represents itself,
 a variable is a placeholder for \emph{all} variable-free terms
 in the language of a logic program.%
 \footnote{The set of all terms constructible from the available
           constants and function symbols is called \emph{Herbrand universe}.}
-Unlike with a variable name whose recurrences within a rule refer to the same variable,
+Unlike %with 
+a variable name whose recurrences within a rule refer to the same variable,
 the token ``\var{\char`\_}'' (not followed by any letter)
 stands for an \emph{anonymous variable} that does not recur anywhere.
 (One can view this as if a new variable name is invented on each
@@ -146,7 +148,7 @@ In ASP, the intended models of a logic program, i.e.,
 sets of variable-free atoms such that all rules
 (including facts and integrity constraints)
 of the program are satisfied when the atoms in the set are true,
-are such that every true atom has an (acyclic) derivation from the program.
+are such that every true atom has an (acyclic) derivation from the program.\comment{OS: rewrite!}
 Such models are called \emph{answer sets}.
 To get the idea, let us consider some small examples.
 
@@ -162,8 +164,10 @@ When \pred{a} and \pred{b} are false, the bodies of both rules are false as well
 so that the rules are satisfied.
 Furthermore, there is no (true) atom to be derived,
 which shows that the empty set is an answer set.
-On the other hand, if only either \pred{a} or~\pred{b} is true,
-the second or the first rule, respectively, is unsatisfied:
+On the other hand, %if only either \pred{a} or~\pred{b} is true,
+when only \pred{a} or only \pred{b} is true,
+% the second or the first rule, respectively, is unsatisfied:
+the second or the first rule is unsatisfied respectively:
 the body holds, but not the head.
 Hence, an answer set cannot contain \pred{a} or~\pred{b} only.
 It remains to investigate the set including both \pred{a} and~\pred{b}.
@@ -175,7 +179,8 @@ Hence, the empty set is the only answer set of the logic program.
 \eexample
 \end{example}
 
-For a second example, consider the following logic program:
+% For a second example, 
+Consider the following logic program:
 %
 \begin{lstlisting}[numbers=none]
 a :- not b.
@@ -183,7 +188,7 @@ b :- not a.
 \end{lstlisting}
 %
 Here, the empty set is not a model because both rules are unsatisfied.
-However, the sets containing only either~\pred{a} or~\pred{b} are models.
+However, the sets containing only~\pred{a} or only~\pred{b} are models.
 To see that each of them is an answer set,
 note that~\pred{a} is derived by the rule \code{\pred{a}\,:-\:not\:\pred{b}.}
 if \pred{b} is false;
@@ -242,7 +247,7 @@ the following schematic rules:
 \lstinputlisting{examples/fly.lp} %[firstnumber=3]
 %
 The first rule expresses that it is generally possible that a bird flies,
-unless the contrary, subject of the second rule, is the case.
+unless the contrary, subject to the second rule, is the case.
 The definite knowledge that penguins cannot fly
 is specified by the third rule.
 
@@ -298,7 +303,7 @@ rules are required to be \emph{safe},
 \index{Logic Programs!Safety}%
 i.e.,
 all variables in a rule must occur in some positive literal
-(a literal not preceded by \code{not}) in the body of the rule.%
+(a literal not preceded by \code{not}) in the body of the rule. %
 For instance, the first two schematic rules in Example~\ref{ex:flies}
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
 This tells \gringo\ (or the grounding component of \clingo)
@@ -428,7 +433,7 @@ triggers
 % \code{\pred{flies}(\const{tux})} and
 % \code{\pred{-flies}(\const{tux})} violate
 the (implicit) integrity constraint in Line~5,
-there no longer is any answer set.
+there is no longer any answer set.
 \eexample
 \end{example}
 
@@ -480,7 +485,7 @@ computational complexity~\cite{eitgot95a}.
 % \footnote{% System
 %   \dlv~\cite{dlv03a} also deals with disjunctive programs,
 %   but it uses a different syntax than presented here.}
-We thus suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
+We thus suggest using ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 instead of disjunction, unless the latter is required for complexity reasons.
 
 \subsubsection{Double Negation and Head Literals}\label{subsec:gringo:double}

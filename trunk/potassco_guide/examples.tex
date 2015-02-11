@@ -389,11 +389,13 @@ The generate rule in Line~11 states that exactly one block~\var{X} must be moved
 for each state transition at step~$\code{t}$.
 The integrity constraint in Line~13--14 is used to test whether moving block~\var{X} to location~\var{Y} is possible at step~\code{t}.
 The first integrity constraint ensures that block~\var{X} cannot be moved if there is another block~\var{A} on top of it.
-Furthermore, the second integrity constraint excludes all moves where the target block~\var{Y} is below some other block~\var{B} than block~\var{X}
-(this condition is only checked if~\var{Y} is a block, viz., different from constant \const{table}).
+Furthermore, the second integrity constraint excludes all moves where the target block~\var{Y} is blocked because it is below some other block~\var{B}.
+Because the number of blocks that can be put on the table is not limited, the condition is only checked if~\var{Y} is a block, viz., ``\code{Y != table}''.
+Also, this constraint allows for void moves, that is,
+the constraint only eliminates solutions where the block~\var{X} being moved is different from block~\var{B}, viz., ``\code{X != B}''.
 The define rule in Line~16 marks the block that is moved via predicate~\const{moved/1}.
 Finally, the define rule in Line~17 propagates a move to the state at step~\code{t}.
-While the rule in Line~18 states 
+While the rule in Line~18 states
 that a block~\var{X} stays on a location~\var{Z} if it is not moved.
 
 The subprogram \code{check} in Line~20 
@@ -412,17 +414,6 @@ These are tied to the program parts they occur in.}
 Furthermore, rules not subject to a \code{\#program} directive are associated with the \code{base} program by default.
 Hence, we do not have to use such directives in instance files
 because the \code{base} part is exactly where we want the facts in the instance to be.
-\marginlabel{%
-  To observe the ground program \iclingo\ deals with internally 
-  at a step $n$, invoke:\\
-  \code{\mbox{~}gringo -t \textbackslash\\
-        \mbox{~}--ifixed=$n$ \textbackslash\\
-        \mbox{~}\attach{examples/blocks.lp}{blocks.lp} \attach{examples/world0.lp}{world0.lp}}\\
-  Furthermore you can try: \\
-  \code{\attach{examples/world1.lp}{world1.lp}},  
-  \code{\attach{examples/world2.lp}{world2.lp}}, \\
-  \code{\attach{examples/world3.lp}{world3.lp}}, 
-  \code{\attach{examples/world4.lp}{world4.lp}}.}
 
 Finally, let us stress important prerequisites for obtaining
 a well-defined incremental computation result from \clingo.

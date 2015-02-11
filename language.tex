@@ -903,9 +903,9 @@ but with the difference that unlike intervals pools have a fixed size:%
 \marginlabel{%
   The simplified ground program obtained from pools
   can be inspected by invoking:\\
-  \code{\mbox{~}clingo --text \attach{examples/pool.lp}{pool.lp}}\\
+  \code{\mbox{~}clingo --text \textbackslash\newline\mbox{~}\attach{examples/pool.lp}{pool.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo --text \attach{examples/pool.lp}{pool.lp}}}
+  \code{\mbox{~}gringo --text \textbackslash\newline\mbox{~}\attach{examples/pool.lp}{pool.lp}}}
 \lstinputlisting[xrightmargin=-5pt]{examples/pool.lp}
 %
 Because the pools in this rule all occur in the head,
@@ -1047,7 +1047,7 @@ Hence, the names of variables in conditions must be chosen with care,
 making sure that they do not \emph{accidentally} match the names of global variables.
 %
 \item
-We suggest to use \emph{domain predicates}~\cite{lparseManual}
+We suggest using \emph{domain predicates}~\cite{lparseManual}
 or built-ins (both used in lines~2 and~3  of Example~\ref{ex:sort})
 in conditions.
 \index{Aggregates!Conditions!Domain Predicates}%

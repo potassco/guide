@@ -215,11 +215,6 @@ used to configure its global behavior.
 The options listed below can be used to configure
 the main solving and reasoning strategies of \clasp.
 \begin{description}
-  \item[\code{--parallel-mode=\textit{n}[,\textit{mode}]}]~\\
-    Run parallel search with \textit{n} threads~\cite{gekasc12b}, where
-    \textit{mode} can be either \code{compete} for competition-based (portfolio) search
-    or \code{split} for splitting-based search via distribution of guiding paths.
-
   \item[\code{--models,-n \textit{n}}]~\\
     Compute at most~\code{\textit{n}} models,
     \code{\textit{n}}=\code{0} standing for compute all models.
@@ -252,6 +247,11 @@ the main solving and reasoning strategies of \clasp.
   Initialize objective function(s) to minimize with \code{\textit{n1}[,\textit{n2},\textit{n3}...]}.
   \item[\code{--opt-sat}]~\\
     Treat problems in DIMACS-cnf format as MaxSAT optimization problems.
+
+  \item[\code{--parallel-mode,-t \textit{n}[,\textit{mode}]}]~\\
+    Enable parallel solving with \textit{n} threads~\cite{gekasc12b}, where
+    \textit{mode} can be either \code{compete} for competition-based (portfolio) search
+    or \code{split} for splitting-based search via distribution of guiding paths.
 \end{description}
 
 \subsubsection{Fine-Tuning Options}\label{subsec:clasp:tune}

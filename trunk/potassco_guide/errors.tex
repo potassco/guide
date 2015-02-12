@@ -163,12 +163,10 @@ If this limit is exceeded, the application stops parsing or safety checking and 
 \end{note}
 
 \subsubsection{Parsing Logic Programs in \smodels\ Format}\label{subsec:error:lparse}
-
-\com{RK2BK: please check}
 The following error message is issued by (embedded) \clasp:
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Error}@: Parse Error: @\textit{Message}@
+@\textit{Location}@: parse error: @\textit{Message}@
 \end{lstlisting}
 %
 This error means that the input does not comply with \smodels's numerical format~\cite{lparseManual}.
@@ -179,7 +177,7 @@ this error should never occur.
 \com{RK2BK: clasp uses another error format than gringo; I would like to format the redefinition error slightly differently in gringo... }
 The following error is issued by (embedded) \clasp\ if a program is not modular:
 \begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Error}@: program not modular: Redefinition of atom <@\textit{Atom}@,@\textit{Id}@>
+@\textit{Error}@: program not modular: redefinition of atom <@\textit{Atom}@,@\textit{Id}@>
   @\textit{Information}@
 \end{lstlisting}
 where \codeit{Atom} is the string representation of the atom that is redefined

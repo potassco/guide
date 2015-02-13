@@ -489,7 +489,7 @@ instead of disjunction, unless the latter is required for complexity reasons.
 
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
-They are satisfied whenever their positive counter-parts are but not vice versa.
+They are satisfied whenever their positive counterparts are but not vice versa.
 Unlike (purely) positive literals,
 such literals do require a proof of $A$;
 in other words, they cannot span positive cycles subject to minimization.
@@ -716,9 +716,9 @@ An occurrence of a variable in the scope of a built-in comparison literal
 does not count as a positive occurrence in the sense of safety (cf.\ Page~\pageref{pg:safe}),
 i.e.,
 comparison literals are not considered to be positive.
-Note that comparison literals can be preceded with \code{not} or \code{not}~\code{not}.
+Note that comparison literals can be preceded by \code{not} or \code{not}~\code{not}.
 In the first case, this is equivalent to using the complementary comparison literal
-(e.g., \code{<} and \code{>=} complement one another).
+(e.g., \code{<} and \code{>=} complement each other).
 In the second case, the prefix has no effect on the meaning of the literal.
 \index{Logic Programs!Safety}%
 \end{note}
@@ -730,10 +730,10 @@ In the second case, the prefix has no effect on the meaning of the literal.
 \index{Logic Programs!Atoms!Assignments}
 
 Sometimes, it is desirable to define the value of a variable relative to a term,
-and to then reuse the variable as a shorthand.
-The built-in predicate~''\code{=}'' admits unifying
+and then reuse the variable as a shorthand.
+The built-in predicate~``\code{=}'' unifies
 (while solving simple arithmetic terms; see Section~\ref{subsec:gringo:arith})
-variables on one side with terms on its other side,
+variables on one side with terms on the other side,
 whenever the resulting assignment atom occurs
 in the bodies of rules or on the right-hand sides of conditions
 (detailed in Section~\ref{subsec:gringo:condition}).
@@ -752,7 +752,7 @@ The usage of variable assignments is illustrated by the following program:%
 %
 The body of the rule in Line~2 contains four variable assignments,
 which directly or indirectly depend on~\var{X} and~\var{Y}.
-The values of~\var{X} and~\var{Y} are obtained via atoms of the predicate \pred{num}/$1$.
+The values of~\var{X} and~\var{Y} are obtained via instances of the predicate \pred{num}/$1$.
 The first assignment depends on~\var{X} to provide shortcut~\var{XX}.
 Similarly, the second assignment depends on~\var{Y} to provide shortcut~\var{YY}.
 The third assignment provides variable \var{Y'} because it occurs in a simple arithmetic expression,
@@ -909,7 +909,7 @@ but with the difference that unlike intervals pools have a fixed size:%
 \lstinputlisting[xrightmargin=-5pt]{examples/pool.lp}
 %
 Because the pools in this rule all occur in the head,
-the pools expand conjunctively.
+they are expanded conjunctively.
 Furthermore, the two pools expand into the cross product \code{(1..3)$\times$(1..3)},
 resulting in the following set of facts:
 \begin{lstlisting}[numbers=none]
@@ -917,7 +917,7 @@ grid(1,1).  grid(1,2).  grid(1,3).
 grid(2,1).  grid(2,2).  grid(2,3).
 grid(3,1).  grid(3,2).  grid(3,3).
 \end{lstlisting}
-Like intervals, pools can also be used in the body of a rule where they expand disjunctively:
+Like intervals, pools can also be used in the body of a rule where they are expanded disjunctively:
 \begin{lstlisting}
 grid(X,Y) :- X=(1;2;3), Y=(1;2;3).
 \end{lstlisting}
@@ -945,7 +945,7 @@ a :- b:c.
 yields \code{a} whenever either \code{c} is false (and thus no matter whether \code{b} holds or not) or both \code{b} and \code{c} are true.
 
 \begin{note}
-Logically, $L$ and $\boldsymbol{L}$ act as head and body,
+Logically, $L$ and $\boldsymbol{L}$ act as head and body respectively,
 which gives the conditional literal $L:\boldsymbol{L}$ the flavor of a nested implication
 (see~\cite{haliya14a} for details).
 \eexample{}
@@ -1009,7 +1009,7 @@ whenever there is an element~\code{Y} between~\code{X} and~\code{Z}.
 Hence, all rule instantiations where~\code{X} and~\code{Z} are not direct successors are discarded
 because they have a false body.
 On the other hand, whenever~\code{X} and~\code{Z} succeed each other,
-the condition is false for all elements~\code{Z}.
+the condition is false for all elements~\code{Z}.\comment{O2R: I got confused. should it be for all elements Y?}
 This means that the literal with condition stands for an empty conjunction, which is true:%
 \marginlabel{%
   The reader can reproduce these ground rules by invoking:\\

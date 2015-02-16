@@ -141,14 +141,15 @@ literals are satisfied, then~$A_0$ must be true.
 On the other hand, an integrity constraint is a rule that filters solution candidates,
 meaning that the literals in its body must not jointly be satisfied.
 
-In ASP, the intended models of a logic program, i.e.,
-sets of variable-free atoms such that all rules
-(including facts and integrity constraints)
-of the program are satisfied when the atoms in the set are true,
-are such that every true atom has an (acyclic) derivation from the program.\comment{OS: rewrite!}
-Such models are called \emph{answer sets}.
-To get the idea, let us consider some small examples.
+In ASP, a logic program is associated with a collection of \emph{answer sets}.
+Each such answer set consists of a set of allegedly true (variable-free) atoms that relate to the program as follows.
+First, all rules (including facts and integrity constraints) of the program are satisfied wrt the atoms in the answer set.
+Second, every atom in an answer set has an (acyclic) derivation from the program.
+%
+See~\cite{gellif88b,gelfond08a,lifschitz08a} for formal definitions of answer sets of logic programs.
 
+To get the idea, let us consider some small examples.
+%
 \begin{example}\label{ex:as:one}
 Consider the following logic program:
 %

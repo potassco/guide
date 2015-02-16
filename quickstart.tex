@@ -2,20 +2,13 @@
 \section{Quickstart}\label{sec:quickstart}
 
 \input{figures/hanoi}
-% In this section we demonstrate the expressive power 
-% and the simple yet powerful modeling language of \gringo{}
-% by looking at the 
 As an introductory example,
 we consider a simple Towers of Hanoi puzzle,
-consisting of
-% It consists of 
-three pegs and four disks of different size.
-% which can be put onto the pegs. 
+consisting of three pegs and four disks of different size.
 As shown in Figure~\ref{fig:toh_inst},
 the goal is to move all disks from the left peg to the right one,
 where only the topmost disk of a peg can be moved at a time.
 %
-%where at each time only the topmost disc can be moved on top of another peg.
 Furthermore, 
 a disk cannot be moved to a peg already containing some disk that is smaller.
 Although there is an efficient algorithm to solve our simple Towers of Hanoi puzzle,
@@ -46,7 +39,6 @@ Such a declarative solution is now exemplified.
 \end{figure}
 We describe the pegs and disks of a Towers of Hanoi puzzle via facts over the predicates
 \pred{peg}/$1$ and \pred{disk}/$1$ (the number denotes the arity of the predicate).
-%that correspond to the pegs and disks in the puzzle.
 Disks are numbered by consecutive integers starting at~\const{1},
 where a disk with a lesser number is considered to be bigger than a disk with a greater number.
 The names of the pegs can be arbitrary; in our case, we use \const{a}, \const{b}, and \const{c}. 
@@ -54,8 +46,6 @@ Furthermore, the predicates \pred{init\char`\_on}/$2$ and \pred{goal\char`\_on}/
 and the goal situation, respectively.
 Their arguments, the number of a disk and the name of a peg,
 determine the location of a disk in the respective situation.
- % argument is the peg 
-% on which the disc is located in the initial or goal situation.
 Finally, the predicate \pred{moves}/$1$ specifies the number of moves 
 in which the goal must be achieved.
 % within which the goal situation has to be reached.
@@ -128,8 +118,7 @@ exactly one move of a disk~\var{D} to some peg~\var{P}
 must be executed.
 % ``guess'' exactly one move that puts an arbitrary disk to some arbitrary peg.
 The head of the rule (left of~``\code{:-}'')
-is a so-called cardinality constraint (detailed in Section~\ref{subsec:gringo:aggregate}).
-\comment{RK: Here cardinality constraint is used but the notion is only given in a remark at the end of the Shortcuts paragraph. Maybe we should not call this paragraph Cardinality Constraints?}
+is a so-called cardinality constraint (see Section~\ref{subsec:gringo:aggregate}).
 It consists of a set of literals,
 expanded using the predicates behind the colon (detailed in Section~\ref{subsec:gringo:condition}),
 along with the guard~``\code{= 1}''.

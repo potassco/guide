@@ -27,8 +27,22 @@ The framework defines a new heuristic, named \texttt{domain},
 that modifies\comment{BK: ``the'' vsids?} \texttt{vsids} heuristics of \clasp\ allowing to program it from the ASP code.
 Next we present some examples to explain how does the framework work.\comment{BK: ``how the framework works''?}
 
+\begin{lstlisting}[numbers=none]
+ --heuristic=Domain : Use domain knowledge in Vsids-like heuristic
+\end{lstlisting}
+
 \subsection{Structure-oriented heuristics}
 \tbf
+
+
+\clasp\ supports the following command line options:
+\begin{lstlisting}[numbers=none]
+ --dom-mod=<arg>         : Default modification for domain heuristic
+      <arg>: <mod>[,<pick>]
+        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
+        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
+\end{lstlisting}
+
 \subsection{User-defined heuristics}
 
 \paragraph{Positive sign}
@@ -361,18 +375,6 @@ _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{lstlisting}
  but rather to make correct decisions (given that most of the times the value of \texttt{on} will persist by inertia).
 
 
- \paragraph{Command line heuristice option}
- \clasp\ supports the following command line options:
-{
-\scriptsize\begin{lstlisting}[numbers=none]
- --heuristic=Domain : Use domain knowledge in Vsids-like heuristic
-
- --dom-mod=<arg>         : Default modification for domain heuristic
-      <arg>: <mod>[,<pick>]
-        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
-        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
-\end{lstlisting}
-}
 
 \iffalse
 

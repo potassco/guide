@@ -38,7 +38,6 @@ constructs belonging to the input language of \gringo\ and \clingo.
 
 \comment{T2R: Upgrade tuple definition}
 \begin{figure}
-\vspace*{-19mm}
 \railnontermfont{\rmfamily\itshape}%
 \railalias{rusc}{\tt\char95}\railterm{rusc}
 \railalias{rlsc}{[A-Za-z0-9\tt\char95']}\railterm{rlsc}
@@ -52,7 +51,7 @@ constructs belonging to the input language of \gringo\ and \clingo.
   string      : '"' ((any | (bs esc))*) '"';
   variable    : (rusc*) '[A-Z]' (rlsc*);
   function    : constant '(' term (',' term*) ')';
-  tuple       :          '(' term (',' term*) ')';
+  tuple       :          '(' (term (',' | ',' term+))? ')';
 \end{rail}
 \caption{Grammar for Terms.\label{fig:terms}}
 \end{figure}

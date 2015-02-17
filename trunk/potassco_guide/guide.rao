@@ -4,7 +4,7 @@
 \rail@t {any}
 \rail@t {bs}
 \rail@t {esc}
-\rail@i {1}{ term : simpleterm | function | tuple; simpleterm : (integer | constant | string | variable | rusc | '\#sup' | '\#inf'); constant : (rusc*) '[a-z]' (rlsc*); string : '"' ((any | (bs esc))*) '"'; variable : (rusc*) '[A-Z]' (rlsc*); function : constant '(' term (',' term*) ')'; tuple : '(' term (',' term*) ')'; }
+\rail@i {1}{ term : simpleterm | function | tuple; simpleterm : (integer | constant | string | variable | rusc | '\#sup' | '\#inf'); constant : (rusc*) '[a-z]' (rlsc*); string : '"' ((any | (bs esc))*) '"'; variable : (rusc*) '[A-Z]' (rlsc*); function : constant '(' term (',' term*) ')'; tuple : '(' (term (',' | ',' term+))? ')'; }
 \rail@o {1}{
 \rail@begin{3}{term}
 \rail@bar
@@ -96,16 +96,20 @@
 \rail@endbar
 \rail@term{)}[]
 \rail@end
-\rail@begin{3}{tuple}
+\rail@begin{4}{tuple}
 \rail@term{(}[]
-\rail@nont{term}[]
 \rail@bar
 \rail@nextbar{1}
+\rail@nont{term}[]
+\rail@bar
+\rail@term{,}[]
+\rail@nextbar{2}
 \rail@plus
 \rail@term{,}[]
 \rail@nont{term}[]
-\rail@nextplus{2}
+\rail@nextplus{3}
 \rail@endplus
+\rail@endbar
 \rail@endbar
 \rail@term{)}[]
 \rail@end

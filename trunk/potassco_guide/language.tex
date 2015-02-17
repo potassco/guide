@@ -36,6 +36,7 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \index{Terms!\code{\#sup}}
 \index{Terms!\code{\#inf}}
 
+\comment{T2R: Upgrade tuple definition}
 \begin{figure}
 \vspace*{-19mm}
 \railnontermfont{\rmfamily\itshape}%
@@ -97,10 +98,15 @@ is a function with three arguments:
 constant \const{peter}, another function \code{\const{time}(12)}
 with an integer argument, and variable~\var{X}.
 Finally, there are \emph{tuples}, which are similar to \emph{functions} but without a name.
-\REWc{Note that there are no one-elementary tuples; a term of form \code{($t$)} is equivalent to \code{$t$}.}{T2R: Update!}
 Examples for tuples are:
 the empty tuple \code{()} and
 the tuple \code{(\const{at},\const{peter},\const{time}(12),X)} with four elements.
+Tuples may optionally end in a comma ``\code{,}''
+for distinguishing one-elementary tuples.
+That is, \code{($t$,)} is a one-elementary tuple,
+while a term of form \code{($t$)} is equivalent to \code{$t$}.
+Thus, \code{(42,)} is a one-elementary tuple, whereas \code{(42)} is not.
+The above quadruple is equivalent to \code{(\const{at},\const{peter},\const{time}(12),X,)}.
 
 Rules of the following forms are admitted in a
 \emph{normal logic program} (with integrity constraints):

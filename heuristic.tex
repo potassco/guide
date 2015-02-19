@@ -18,164 +18,204 @@
 %  including all of its functionalities.
 %\end{itemize}
 
-%\iffalse
-
-\clasp\ and \clingo\ provide a general declarative framework to incorporate domain-specific heuristics into ASP solving,  \comment{BK: Check comma that vs. which!}
-that allows to program the heuristic of the solver directly from the ASP code.
+\clasp\ and \clingo\ provide a general declarative framework to incorporate domain-specific heuristics into answer set solving,  
+allowing to modify the heuristic of the solver directly from a logic program or from the command line.
 A formal description can be found in \cite{gekaotroscwa13a}.
-The framework defines a new heuristic, named \texttt{domain},
-that modifies\comment{BK: ``the'' vsids?} \texttt{vsids} heuristics of \clasp\ allowing to program it from the ASP code.
-Next we present some examples to explain how does the framework work.\comment{BK: ``how the framework works''?}
+The framework is implemented as a new heuristic, named \code{Domain},
+that extends the \code{Vsids} heuristics of \clasp\ 
+and can be activated using option \code{--heuristic=Domain}.
+In this section, 
+first we describe how to modify the heuristic from a logic program, 
+and then we explain how to apply modifications from the command line.
 
-\begin{lstlisting}[numbers=none]
- --heuristic=Domain : Use domain knowledge in Vsids-like heuristic
-\end{lstlisting}
+%\begin{lstlisting}[numbers=none]
+% --heuristic=Domain : Use domain knowledge in Vsids-like heuristic
+%\end{lstlisting}
 
-\subsection{Structure-oriented heuristics}
-\tbf
+%\subsection{User-defined heuristics}
+\subsection{Programming heuristics}
+
+The \code{Domain} heuristic allows to represent heuristic information with the special predicate \code{\_heuristic}.
+There are different types of heuristic information, 
+that can be represented with the modifiers 
+\code{sign}, \code{level}, \code{true}, \code{false}, \code{init} and \code{factor}.
+We will introduce them step by step.
 
 
-\clasp\ supports the following command line options:
-\begin{lstlisting}[numbers=none]
- --dom-mod=<arg>         : Default modification for domain heuristic
-      <arg>: <mod>[,<pick>]
-        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
-        <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
-\end{lstlisting}
+%We introduce the method to program the heuristic step by step.
 
-\subsection{User-defined heuristics}
+\paragraph{Sign}
 
-\paragraph{Positive sign}
+The \code{Domain} heuristic gives to every atom an integer \code{sign} value, which by default is $0$.
+When deciding on an atom, if its sign value is greater than $0$, it is assigned to true. 
+If the sign value is less than 0, it is assigned to false, 
+and if it is $0$, the sign is determined by the default sign heuristic.
+%In the previous example %\ref{example:psign} 
+%If the value 
+%In the previous example, 
+%we would obtain the same result using any positive integer instead of $1$ in the heuristic fact.
+%With the \code{Domain} heuristic, the heuristic information is represented by the predicate \code{\_heuristic}.
 
-With the heuristic \code{domain}, the heuristic information is represented by the predicate \texttt{\_heuristic}.
-For example, the atom \texttt{\_heuristic(a,sign,1)} tells  \clasp\ that  when deciding on atom \texttt{a}
-it should be given a positive sign, i.e. it should be set to true.
-Given the following logic program \texttt{example1}:
-\begin{lstlisting}[numbers=none]
-_heuristic(a,sign,1).
-{a}.
-\end{lstlisting}
-this in the \gringo\ and \clasp\ execution:\comment{BK: word missing?}
-\begin{lstlisting}[numbers=none]
-$ gringo example1 | clasp --heuristic=Domain
-...
-Answer: 1
-_heuristic(a,sign,1) a
-\end{lstlisting}
+To apply a positive sign to atom \code{a} we can use the atom \code{\_heuristic(a,sign,1)}. 
+This tells the solver that if it decides on atom \code{a},
+the sign given to the atom should be positive, i.e. the atom should be set to true.
+\begin{example}
+\label{example:psign}
+Consider the following program:
+\lstinputlisting[numbers=none]{examples/psign.lp}
+%this is the \gringo\ and \clasp\ execution:
+%\begin{lstlisting}[numbers=none]
+%$ gringo example1 | clasp \mbox{~}--heuristic=Domain
+%...
+%Answer: 1
+%_heuristic(a,sign,1) a
+%\end{lstlisting}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \mbox{~}--heuristic=Domain \attach{examples/psign.lp}{psign.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/psign.lp}{psign.lp} \textbackslash \\\mbox{~}| clasp \mbox{~}--heuristic=Domain}\\
+}
+At the start of the search, 
+the solver propagates the heuristic atom 
+and updates its heuristic knowledge about atom \code{a}.
+Then it has to decide on \code{a}, making it either true or false.
+Following the current heuristic knowledge, 
+the solver makes \code{a} true and returns the answer set \code{\{\_heuristic(a,sign,1),a\}}.
+\eexample
+\end{example}
 
-When searching for an answer set, \clasp\ first propagates the heuristic atom and next updates its heuristic knowledge about atom \texttt{a}.
-Then it has to decide on \texttt{a} making it either true or false.
-Following the current heuristic knowledge,  \clasp\ makes \texttt{a} true and finally returns the answer set \texttt{\{\_heuristic(a,sign,1),a\}}.
-% We would obtain a similar result using any positive integer instead of 1 in the heuristic fact.
+\begin{note}
+The result would be the same if in the heuristic fact we used instead of $1$ any positive integer.
+\end{note}
 
-\paragraph{Negative sign}
 
-In the next program \texttt{example2} the \texttt{heuristic} fact  asserts that when deciding on atom \texttt{a}
+\begin{example}
+\label{example:nsign}
+In the next program 
+%program \code{example2} 
+the \code{heuristic} fact  asserts that when deciding on atom \code{a}
 it should be given a negative sign, ie. it should be set to false:
-\begin{lstlisting}[numbers=none]
-_heuristic(a,sign,-1).
-{a}.
-\end{lstlisting}
-We execute as before:
-\begin{lstlisting}[numbers=none]
-$ gringo example2 | clasp --heuristic=Domain
-...
-Answer: 1
-_heuristic(a,sign,-1)
-\end{lstlisting}
-\clasp\ propagates the heuristic fact and updates its heuristic knowledge,
-decides on atom \texttt{a} making it false and finally returns the answer set \{ \texttt{\_heuristic(a,sign,-1)}\}.
+\lstinputlisting[numbers=none]{examples/nsign.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \mbox{~}--heuristic=Domain \attach{examples/nsign.lp}{nsign.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/nsign.lp}{nsign.lp} \textbackslash \\\mbox{~}| clasp \mbox{~}--heuristic=Domain}\\
+}
+The solver propagates the heuristic fact and updates its heuristic knowledge,
+decides on atom \code{a} making it false and finally 
+returns the answer set \mbox{\{ \code{\_heuristic(a,sign,-1)}\}}.
+\eexample
+\end{example}
 
-These two examples illustrate that the heuristic atoms modify \clasp\ decisions,
-leading the solver to find first either the answer set with \texttt{a} (in \texttt{example1}) or the answer set without it (in \texttt{example2}).
+%\begin{note}
+These two examples illustrate that the heuristic atoms modify the decisions of the solver,
+leading to either finding first the answer set with \code{a} or the answer set without it.
 However, as long as heuristic atoms appear only in the head of the rules,
 the answer sets of the program remain the same (modulo heuristic atoms).
-For example, if we ask for all answer sets of \texttt{example1}  we get one without \texttt{a} and one with \texttt{a},
-and the same happens with \texttt{example2}:
-\begin{lstlisting}[numbers=none]
-$ gringo example2 | clasp --heuristic=Domain 0
-...
-Answer: 1
-_heuristic(a,sign,-1)
-Answer: 2
-_heuristic(a,sign,-1) a
-\end{lstlisting}
+For example, if we ask for all answer sets of Example \ref{example:psign},
+we obtain one without \code{a} and one with \code{a},
+and the same happens with Example \ref{example:nsign}, 
+although in this case the answer sets are printed in the opposite order.
+%\end{note}
+
 
 \paragraph{Showing the heuristic information}
 
-For the heuristic atoms to take effect, they and their contained atoms must be  made visible to \clasp. For example, if we add to \texttt{example2} the lines:
+For the heuristic atoms to take effect, they and the atoms to which they refer 
+must be shown in the logic program\footnote{Note that in \gringo\ if no \code{\#show} statement appears in 
+the program, then all atoms are shown.}. 
+For example, if we add to Example \ref{example:nsign} the line:
 \begin{lstlisting}[numbers=none]
-#show a.
+#show a/0.
 \end{lstlisting}
-then \clasp\ knows nothing about the heuristic atom, and operates as \clasp\ would do normally with \texttt{vsids} heuristic. The same would happen if instead we added:
+then the heuristic atom is not shown, 
+and the solver operates as it would normally do with the \code{Vsids} heuristic. 
+The same would happen if instead we added:
 \begin{lstlisting}[numbers=none]
-#show _heuristic.
+#show _heuristic/3.
 \end{lstlisting}
- because \clasp\ would know nothing about the atom \texttt{a} contained inside the heuristic atom.\comment{BK: paragraph reads strange!}
+because then the atom \code{a}, that appears in the heuristic atom, would not be shown.
+
+\begin{note}
+Printing the heuristic atoms in the output of \clingo\ or \clasp\ may often be a burden.
+To overcome this issue,
+we can use the command line option \code{--out-hide-aux},
+that allows to avoid printing atoms starting with underscore ``\_''.
+\end{note}
 
 \paragraph{Level}
-\clasp\ with heuristic \code{domain} assigns to each atom a level, and it decides on atoms of the highest possible level.
-The default value for each atom is \texttt{0},  and both positive and negative integers are valid.
-Let's see the program \texttt{example3}\comment{BK: ``look at''?}, where level \texttt{10} is assigned to atom \texttt{a}:
-\begin{lstlisting}[numbers=none]
-_heuristic(a,sign,1).
-_heuristic(b,sign,1).
-_heuristic(a,level,10).
-{a,b}.
-:- a, b.
-\end{lstlisting}
-And the execution:
-\begin{lstlisting}[numbers=none]
-$ gringo example3 | clasp --heuristic=Domain
-...
-_heuristic(a,sign,1)   _heuristic(b,sign,1)
-_heuristic(a,level,10) a\end{lstlisting}
+The \code{Domain} heuristic assigns to each atom a level, and it decides on atoms of the highest possible level.
+The default value for each atom is \code{0},  and both positive and negative integers are valid.
+\begin{example} 
+\label{example:level}
+In this example,  
+level \code{10} is assigned to atom \code{a}:
+\lstinputlisting[numbers=none]{examples/level.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \mbox{~}--heuristic=Domain \attach{examples/level.lp}{level.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/level.lp}{level.lp} \textbackslash \\\mbox{~}| clasp \mbox{~}--heuristic=Domain}\\
+}
+The first answer set we obtain is 
+\code{ \{\_heuristic(a,sign,1), \_heuristic(b,sign,1), \_heuristic(a,level,10), a \}}.
+\comment{JR: I am not sure about writing the whole answer set here. 
+  On the one hand, it is big.
+  On the other hand, it gives a clear idea about the fact that heuristic atoms are like any other atoms.}
+The solver propagates the heuristic facts, and given that the level of \code{a} becomes greater than the level of \code{b},
+decides on it (with positive sign) and finally \code{b} is propagated to false.
+If we added the fact \code{\_heuristic(b,level,20)},  the answer set would contain \code{b} instead of \code{a}.
+This would also be the case if we used \code{\_heuristic(a,level,-10)} instead of \code{\_heuristic(a,level,10)}.
+\eexample
+\end{example}
 
-\clasp\ propagates the heuristic facts, and given that the level of \texttt{a} becomes greater than the level of \texttt{b},
-\clasp\ decides on it (with positive sign) and finally \texttt{b} is propagated to false.
-If, for example, we added the fact \texttt{\_heuristic(b,level,20)},  the answer set would contain \texttt{b} instead of \texttt{a}.
-This would also be the case if we used \texttt{\_heuristic(a,level,-10)} instead of \texttt{\_heuristic(a,level,10)}.
+\begin{note}
+The \code{Domain} heuristic is an extension of the \code{Vsids} heuristic, 
+so when there are many unassigned atoms with the highest level,
+the heuristic decides, among them, on the one with the highest \code{Vsids} score.
+\end{note}
 
 \paragraph{Dynamic heuristic atoms}
 
 Heuristic atoms can be used as any other atoms of the logic program,
 and they only affect the heuristic of the solver when they are true.
-Let's see \texttt{example4}, where the heuristic atoms for \texttt{c} depend on \texttt{b}:
-\begin{lstlisting}[numbers=none]
-_heuristic(a,sign,1).
-_heuristic(b,sign,1).
-_heuristic(a,level,10).
-{a,b}.
-:- a, b.
-{c}.
-_heuristic(c,sign,1)  :- b.
-_heuristic(c,sign,-1) :- not b.
-\end{lstlisting}
-\begin{lstlisting}[numbers=none]
-$ gringo example4 | clasp --heuristic=Domain
-...
-_heuristic(a,sign,1)   _heuristic(b,sign,1)
-_heuristic(a,level,10) a
-_heuristic(c,sign,-1)\end{lstlisting}
-
-In this case\comment{BK: comma?} first \clasp\ proceeds as in \texttt{example3}.
-Then after propagating that b is false,  the heuristic fact \texttt{\_heuristic(c,sign,-1)} is propagated,
-so when deciding on \texttt{c}, it is assigned to false.  If we extended the program adding the fact \texttt{\_heuristic(b,level,20)},
-the answer set would contain \texttt{b} and \texttt{c} instead of \texttt{a}.
+\begin{example}
+\label{example:dynamic}
+In the next program the heuristic atoms for \code{c} depend on \code{b}:
+\lstinputlisting[numbers=none]{examples/dynamic.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \mbox{~}--heuristic=Domain \attach{examples/dynamic.lp}{dynamic.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/dynamic.lp}{dynamic.lp} \textbackslash \\\mbox{~}| clasp \mbox{~}--heuristic=Domain}\\
+}
+The first answer set we obtain 
+% with the \code{Domain} heuristic 
+is \code{ \{ \_heuristic(a,sign,1), \_heuristic(b,sign,1), \_heuristic(a,level,10),  a, \_heuristic(c,sign,-1) \}}.
+First the solver proceeds as in Example \ref{example:level}.
+Then, after propagating that \code{b} is false,  
+the heuristic fact \code{\_heuristic(c,sign,-1)} is propagated,
+so when deciding on \code{c}, it is assigned to false.  
+If we added the fact \code{\_heuristic(b,level,20)},
+the first answer set would contain \code{b} and \code{c} instead of \code{a}.
+\eexample
+\end{example}
 
 \paragraph{True and false}
 
- The modifiers \texttt{true} and \texttt{false} allow to refer at the same time to the level and the sign of an atom.
- Internally,  for the \texttt{true} and \texttt{false} heuristic atoms,
- \clasp\ defines new \texttt{level} and \texttt{sign} heuristic atoms following these rules:
+ The modifiers \code{true} and \code{false} allow to refer at the same time to the \code{level} and the \code{sign} of an atom.
+ Internally,  for the \code{true} and \code{false} heuristic atoms,
+ the solver defines new \code{level} and \code{sign} heuristic atoms following these rules:
 \begin{lstlisting}[numbers=none]
 _heuristic(X,level,Y) :- _heuristic(X,true,Y).
 _heuristic(X,sign,1)  :- _heuristic(X,true,Y).
 _heuristic(X,level,Y) :- _heuristic(X,false,Y).
 _heuristic(X,sign,-1) :- _heuristic(X,false,Y).
 \end{lstlisting}
-
-For instance, \texttt{example4} can be rewritten as:
+For instance, the program of Example \ref{example:dynamic}
+can be rewritten as:
 \begin{lstlisting}[numbers=none]
 _heuristic(b,sign,1).
 _heuristic(a,true,10).
@@ -185,65 +225,78 @@ _heuristic(a,true,10).
 _heuristic(c,sign,1)  :- b.
 _heuristic(c,sign,-1) :- not b.
 \end{lstlisting}
-
-In this case the fact \texttt{\_heuristic(a,true,10)} stands for the previous
-facts \texttt{\_heuristic(a,level,10)} and \texttt{heuristic(a,sign,1)}.
+In this case the fact \code{\_heuristic(a,true,10)} stands for the previous
+facts \code{\_heuristic(a,level,10)} and \code{heuristic(a,sign,1)}.
 
 \paragraph{Priorities between heuristic atoms}
 
-\clasp\ allows to represent priorities between different heuristic atoms that refer to the same atom.
+The \code{Domain} heuristic allows to represent priorities between different heuristic atoms that refer to the same atom.
 The priority is represented by a positive integer as a fourth term.
 The higher the integer, the higher the priority of the heuristic atom.
-For example, \texttt{\_heuristic(c,sign,1,10)} and \texttt{\_heuristic(c,sign,-1,20)} are valid heuristic atoms.
-If both are true, then the sign assigned to \texttt{c} is \texttt{-1} (because \texttt{20>10}).  Let's see \texttt{example5}:
-\begin{lstlisting}[numbers=none]
-_heuristic(b,sign,1).
-_heuristic(a,true,10).
-{a,b}.
-:- a, b.
-{c}.
-_heuristic(c,sign,1,10 ).
-_heuristic(c,sign,-1,20) :- not b.
-\end{lstlisting}
-\begin{lstlisting}[numbers=none]
-$ gringo example5 | clasp --heuristic=Domain
-...
-_heuristic(b,sign,1)    _heuristic(a,true,10)
-_heuristic(c,sign,1,10) a
-_heuristic(c,sign,-1,20)\end{lstlisting}
+For example, \code{\_heuristic(c,sign,1,10)} and \code{\_heuristic(c,sign,-1,20)} are valid heuristic atoms.
+If both are true, then the sign assigned to \code{c} is \code{-1} (because \code{20>10}).  
 
-First \clasp\ proceeds as in \texttt{example3}.
-Then after propagating that b is false,  the heuristic atom \texttt{\_heuristic(c,sign,-1,20)} is propagated,
-and given that \texttt{20>10} the sign for atom \texttt{c} is \texttt{-1}, so when deciding on \texttt{c}, it is assigned to false.
-If, for example, we added the fact \texttt{\_heuristic(c,sign,1,30)} to the program, the answer set would contain atom \texttt{c}.
+\begin{example}
+\label{example:priority}
+Consider the following program:
+\lstinputlisting[numbers=none]{examples/priority.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \mbox{~}--heuristic=Domain \attach{examples/priority.lp}{priority.lp}}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/priority.lp}{priority.lp} \textbackslash \\\mbox{~}| clasp \mbox{~}--heuristic=Domain}\\
+}
+The first answer set we obtain is 
+\code{ \{
+\_heuristic(b,sign,1),    \_heuristic(a,true,10),
+\_heuristic(c,sign,1,10), a,
+\_heuristic(c,sign,-1,20)
+\} }.
+First the solver proceeds as in Example \ref{example:level}. 
+Then, after propagating that \code{b} is false, 
+the heuristic atom \code{\_heuristic(c,sign,-1,20)} is propagated,
+and given that \code{20>10} the sign for atom \code{c} is \code{-1}, 
+so when deciding on \code{c}, it is assigned to false.
+If we added the fact \code{\_heuristic(c,sign,1,30)}, 
+the first answer set would also contain atom \code{c}.
+\eexample
+\end{example}
 
-Whenever we use only three terms for a heuristic atom, the priority assigned to it is the absolute value of the modifiers\comment{BK: ``modifier's''?} value.
-For example, if \texttt{\_heuristic(c,level,-10)} and \texttt{\_heuristic(c,level,5)} were true,
-then as \texttt{abs(-10)>abs(5)} the level of \texttt{c} would be \texttt{-10}.
+\begin{note}
+Whenever we use only three terms for a heuristic atom, 
+the priority assigned to it is the absolute value of the modifier's value.
+For example, if \code{\_heuristic(c,level,-10)} and \code{\_heuristic(c,level,5)} are true,
+then as \code{abs(-10)>abs(5)}, the level of \code{c} is \code{-10}.
+\end{note}
 
 \paragraph{Init and factor}
 
-The modifiers \texttt{init} and \texttt{factor} allow to modify the score that clasp heuristic assigns to each atom.
-Compared to the \texttt{level} modifier, \texttt{init} and \texttt{factor} allow to bias the search without stablishing\comment{BK: establishing!} a strict ranking among the atoms.
+The modifiers \code{init} and \code{factor} allow to 
+modify the score that the \code{Vsids} heuristic assigns to each atom.
+Compared to the \code{level} modifier, 
+\code{init} and \code{factor} allow to bias the search without establishing a strict ranking among the atoms.
 
-With \texttt{init} we can add a value to the initial heuristic score of an atom.
-For example, if \texttt{\_heuristic(a,init,2)} is true, then a value of \texttt{2} is added to
-the initial score that the heuristic assigns to atom \texttt{a}.
-Note that as the search proceeds, the initial score of an atom decays, so \texttt{init} only affects the beginning of the search.
+With \code{init} we can add a value to the initial heuristic score of an atom.
+For example, if \code{\_heuristic(a,init,2)} is true, then a value of \code{2} is added to
+the initial score that the heuristic assigns to atom \code{a}.
+Note that as the search proceeds, the initial score of an atom decays, 
+so \code{init} only affects the beginning of the search.
 
-To bias the whole search\comment{BK: comma?} we can use the \texttt{factor} modifier,\comment{BK: no comma ;)}
-that multiplies for a value the heuristic score of an atom.
-For example, if \texttt{\_heuristic(a,factor,2)} is true, then the heuristic score for atom \texttt{a}  is multiplied by \texttt{2}.
+To bias the whole search, we can use the \code{factor} modifier,
+that multiplies the heuristic score of an atom by a given value.
+For example, if \code{\_heuristic(a,factor,2)} is true, 
+then the heuristic score for atom \code{a} is multiplied by \code{2}.
 
 \paragraph{Domain choices}
 
-With command line option \texttt{--stats} we can see some statistics of \clasp\ search.
-The statistics are the same as those generated usually by \clasp, but with one addition:
-after the word \texttt{Domain} we can see how many decisions where made on atoms that appear  inside an heuristic atom.
+With command line option \code{--stats} we can see some statistics of the search.
+Using the \code{Domain} heuristic
+the statistics are the same as usual, but there is one addition: 
+after the word \code{Domain} we can see how many decisions where made on atoms 
+that appear inside a heuristic atom.
 This information may give us some insight about the performed search.
-For instance, this is part of the output of \texttt{example5} with option \texttt{--stats}:
+For instance, this is part of the output of the program of Example \ref{example:dynamic}:
 \begin{lstlisting}[numbers=none]
-$ gringo example5 | clasp --heuristic=Domain  --stats
 ...
 Models      : 1+
 Time        : 0.000s (Solving: 0.00s ...)
@@ -253,132 +306,200 @@ Conflicts   : 0
 Restarts    : 0
 ...
 \end{lstlisting}
+The line about \code{Choices} tells us that  two decisions were made, 
+and that both where made on atoms contained in heuristic atoms.
 
- The line about \texttt{Choices} tells us that  two decisions were made, and that both where made on atoms contained in heuristic atoms.
 %  ======================== Blocks World hclasp ======================
 
 
 \paragraph{Example: The Blocks World}
+\comment{JR: This should be made coherent with the Incremental Solving Section, 
+             where Blocks World also appears.}
+We will apply the \code{Domain} heuristic to a planning planning in the Blocks World.  
+We begin with a basic encoding of the problem:
+\lstinputlisting[numbers=none]{examples/bw.lp}
+and one instance:
+\lstinputlisting[numbers=none]{examples/bw_ins.lp}
+%
+%If we execute:
+%\begin{lstlisting}[numbers=none]
+%$ gringo bw.lp ins | clasp \end{lstlisting}
+%\clasp\ will run with \code{vsids} heuristic. Now we can try to improve the performance of the system programming the heuristic.
+In this encoding, once all the values for predicate \code{move} are given,
+the values of \code{on} and \code{non} are determined and may be propagated by the solver.
+This suggests that deciding only on \code{move} may be a good strategy.
+We can do that with the \code{Domain} heuristic 
+adding the following heuristic rule:
 
- We apply \clasp\ to answer set planning in the Blocks World.  We begin with a basic encoding \texttt{bw.lp} of the problem:
-\begin{lstlisting}[numbers=none]
-time(1..lasttime).
-location(B) :- block(B).
-location(table).
-
-1 { move(B,L,T) : block(B) , location(L) } 1 :- time(T).
-
-on(B,L,T)   :- move(B,L,T).
-non(B,L1,T) :- on(B,L,T), L<L1, location(L1).
-on(B,L,T+1) :- on(B,L,T), not non(B,L,T+1), time(T). \end{lstlisting}
-
- and one instance \texttt{ins} (the Sussman anomaly\comment{BK: Should I now that?}):
-\begin{lstlisting}[numbers=none]
-#const lasttime=3.
-block(a). block(b). block(c).
-on(b,table,0).
-on(c,a,0).
-on(a,table,0).
-
-:- not on(a,b,lasttime).
-:- not on(b,c,lasttime).
-:- not on(c,table,lasttime).
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),level,1) :- block(B), location(L), 
+                                   time(T).
 \end{lstlisting}
-
-If we execute:
-\begin{lstlisting}[numbers=none]
-$ gringo bw.lp ins | clasp \end{lstlisting}
-
-\clasp\ will run with \texttt{vsids} heuristic. Now can try\comment{BK: ``we'' missing?} to improve the performance of the system programming the heuristic.
-
- In \texttt{bw.lp}\comment{BK: comma?} once all the values for predicate \texttt{move} are given,
- the values of \texttt{on} and \texttt{non} are determined and may be propagated by \clasp.
- This suggests that deciding only on \texttt{move} may be a good strategy.
- We can do that with \clasp\ adding the following simple heuristic rule to a file \texttt{heur.lp}:
-
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),level,1)  :- block(B), location(L), time(T).\end{lstlisting}
-
-and executing:
-\begin{lstlisting}[numbers=none]
-$ gringo bw.lp ins heur.lp | clasp --heuristic=Domain \end{lstlisting}
-
-Given that the level of \texttt{move} is higher,  \clasp\ will decide first on atoms of that predicate,
+Given that the level of \code{move} is higher,  the solver 
+will decide first on atoms of that predicate,
 and the values of the other predicates will be propagated.
 
-We may prefer to soften the heuristic modification to simply bias the search  towards \comment{BK: ``the''?}\texttt{move} predicate,
-without stablishing\comment{BK: establishing!} a strict preference towards it.  For that we can use, for example, the rule:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),init,2) :- block(B), location(L), time(T).\end{lstlisting} or:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),factor,2) :- block(B), location(L), time(T).\end{lstlisting}
+We may prefer to soften the heuristic modification to simply bias the search  towards the \code{move} predicate,
+without establishing a strict preference towards it.  For that we can use, for example, the rule:
+\comment{JR: MAybe there is a good way to avoid all these long domain bodies}
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),init,2) :- block(B), location(L), 
+                                  time(T).
+\end{lstlisting} 
+or:
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),factor,2) :- block(B), location(L), 
+                                    time(T).
+\end{lstlisting}
+or the combination of both.  
+The first rule adds \code{2} to the initial score of \code{move} atoms,
+while the second multiplies the heuristic score of \code{move} by \code{2}.
 
-or the combination of both.  The first rule adds \texttt{2} to the initial score of \texttt{move} atoms,
-while the second multiplies the heuristic score of \texttt{move} by \texttt{2}.
+Whenever we decide on a true \code{move} atom,  
+the other \code{move} atoms for the same \code{time} are determined to be false,
+and can be propagated by the solver. 
+So deciding on true \code{move} atoms may be a good idea.
+For that we can either use the \code{true} modifier to express a strict preference:
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),true,1) :- block(B), location(L), 
+                                  time(T).
+\end{lstlisting}
+or just bias the search with \code{init} and \code{sign}:
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),init,2) :- block(B), location(L), 
+                                  time(T).
+_heuristic(move(B,L,T),sign,1) :- block(B), location(L), 
+                                  time(T).
+\end{lstlisting}
+or with \code{factor} and \code{sign}:
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),factor,2) :- block(B), location(L), 
+                                    time(T).
+_heuristic(move(B,L,T),sign,1)   :- block(B), location(L), 
+                                    time(T).
+\end{lstlisting}
 
-Whenever we decide on a true \texttt{move} atom,  the other \texttt{move} atoms for the same \texttt{time} are determined to be false,
-and can be propagated by \clasp. So deciding on true \texttt{move} atoms may be a good idea.
-For that we can either use the \texttt{true} modifier to express a strict preference:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),true,1) :- block(B), location(L), time(T).\end{lstlisting}
+So far we have given the same heuristic values to all \code{move} atoms,
+but other options may be interesting. 
+For example, we may prefer to decide first on earlier \code{move} atoms,
+so that the solver performs a forward search. 
+This can be represented with the following rule:
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),true,lasttime-T+1) :- block(B),                                             
+                                             location(L),
+                                             time(T).
+\end{lstlisting}
+For \code{lasttime=3} the rule gives level \code{3} to \code{move} atoms of time \code{1},
+level \code{2} to those of time \code{2}, and level \code{1} to those of time \code{3},
+assigning always a positive sign.  
+In this manner, 
+the solver will decide first on a true \code{move} atom of time \code{1}, 
+then on one of time \code{2}, and so on.
 
-or just bias the search with \texttt{init} and \texttt{sign}:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),init,2) :- block(B), location(L), time(T).
-_heuristic(move(B,L,T),sign,1) :- block(B), location(L), time(T).\end{lstlisting}
-
-or with \texttt{factor} and \texttt{sign}:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),factor,2) :- block(B), location(L), time(T).
-_heuristic(move(B,L,T),sign,1)   :- block(B), location(L), time(T).\end{lstlisting}
-
-
-
-So far we have given the same heuristic values to all \texttt{move} atoms,
-but other options may be interesting. For example, we may prefer to decide first on earlier \texttt{move} atoms,
-so that \clasp\ performs a forward search. This can be represented with the following rule:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),true,lasttime-T+1) :- block(B), location(L), time(T).\end{lstlisting}
-
-For \texttt{lasttime=3} the rule gives level \texttt{3} to \texttt{move} atoms of time \texttt{1},
-level \texttt{2} to those of time \texttt{2}\comment{BK: comma?} and level \texttt{1} to those of time \texttt{3},
-assigning always a positive sign.  In this manner, \clasp\ will decide first on a true \texttt{move}
-atom of time \texttt{1}, then on one of time \texttt{2},  and so on.
-
-Another strategy is to perform a backwards search on \texttt{move} from the last to the
-first time instant directed by the goals. We can use the next dynamic heuristic rule:
-\begin{lstlisting}[numbers=none]
-_heuristic(move(B,L,T),true,T) :- on(B,L,T).\end{lstlisting}
-
-As before, the rule can be softened using \texttt{sign} with \texttt{init} or \texttt{factor}.
-At the start of the search the goal \texttt{on} atoms will be true in the last time instant,
-and with this rule \clasp\ will decide on a true \texttt{move} atom that will make one of them true.
-Then some \texttt{on} atoms will be propagated to the previous time instant,
+Another strategy is to perform a backwards search on \code{move} from the last to the
+first time instant, directed by the goals. 
+We can use the following dynamic heuristic rule: 
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(move(B,L,T),true,T) :- on(B,L,T).
+\end{lstlisting}
+As before, the rule can be softened using \code{sign} with \code{init} or \code{factor}.
+At the start of the search, the goal \code{on} atoms will be true at the last time instant.
+With this rule the solver will decide on a \code{move} atom that will make one of them true.
+Then some \code{on} atoms will be propagated to the previous time instant,
 and the process is repeated until reaching the first time instant.
 
- We can also choose to promote the \texttt{on} predicate.  For example, with any of these rules or with a combination of them:
-\begin{lstlisting}[numbers=none]
-_heuristic(on(B,L,T),level,1)  :- block(B), location(L), time(T).
-_heuristic(on(B,L,T),init,2)   :- block(B), location(L), time(T).
-_heuristic(on(B,L,T),factor,3) :- block(B), location(L), time(T).\end{lstlisting}
+We can also choose to promote the \code{on} predicate.  
+For example, with any of this rules:
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(on(B,L,T),level,1)  :- block(B), location(L), 
+                                  time(T).
+_heuristic(on(B,L,T),init,2)   :- block(B), location(L), 
+                                  time(T).
+_heuristic(on(B,L,T),factor,3) :- block(B), location(L), 
+                                  time(T).
+\end{lstlisting}
 
- Another interesting alternative is the following heuristic rule,  that proved to be very good\comment{BK: ``useful''/``promising``?} in our experiments (more on this below):
-\begin{lstlisting}[numbers=none]
-_heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).\end{lstlisting}
+Another interesting alternative is the following heuristic rule,  
+that proved to be very useful in practice (see \cite{gekaotroscwa13a}):
+%\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
+_heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).
+\end{lstlisting}
+The idea is to make the goal \code{on} atoms persist backwards, 
+one by one, from the last time instant to the first one.
+Note that a higher level is given to atoms at earlier time instants.
+First, the solver will decide on one goal \code{on} atom of the last but one time instant,
+then it will decide to make it persist to the previous situation, and so on.
+Later, it will make persist backwards another goal \code{on} atom.
+With this heuristic the idea is not to decide on atoms that lead to many propagations (as with \code{move} atoms)
+but rather to make correct decisions, 
+given that very often the value of atoms of predicate \code{on} will persist by inertia.
 
- The idea is to make the goal \texttt{on} atoms persist backwards, one by one, from the last time instant to the first.
- Note that a higher level is given to atoms at earlier time instants.
- First\comment{BK: comma?} \clasp\ will decide on one goal \texttt{on} atom of the last but one instant,
- then it will decide to make it persist in the previous situation, and so on.
- Later, it will make persist backwards another goal \texttt{on} atom.
- With this heuristic the idea is not to decide on atoms that lead to many propagations (as with \texttt{move} atoms)
- but rather to make correct decisions (given that most of the times the value of \texttt{on} will persist by inertia).
 
+%\subsection{Structure-oriented heuristics}
+\subsection{Command line structure-oriented heuristics}
 
+The \code{Domain} heuristic also allows to modify the heuristic of the solver from the command line.
+For this, as before, the \code{Domain} heuristic is activated with option \code{--heuristic=Domain}, 
+but now the heuristic modifications are specified by option:
+\begin{center}\lstinline{--dom-mod=<mod>[,<pick>]}\end{center}
+where \code{<mod>} ranges from \code{0} to \code{5} and specifies the modifier and the value:
+\begin{center}
+\begin{tabular}{clc|clc}
+\code{<mod>} & Modifier         & Value       & \code{<mod>} & Modifier     & Value\\
+\hline 
+\code{0}     & No   &                               & \code{1}     & \code{level} & \code{1}\\
+\code{2}     & \code{sign}      & \code{ 1}                      & \code{3}     & \code{true}  & \code{1}\\
+\code{4}     & \code{sign}      & \code{-1}                     & \code{5}     & \code{false} & \code{1}
+\end{tabular}
+\end{center}
+and \code{<pick>} specifies bit-wise the atoms to which the modification is applied:
+\comment{JR2BK: Please check, I am not sure if that's right}
+\begin{center}
+\begin{tabular}{rcl}
+\code{0}  & & All atoms\\
+\code{1}  & & Atoms that belong to strongly connected components\\
+\code{2}  & & Atoms that belong to head cycle free components\\
+\code{4}  & & Atoms that appear in disjunctions\\
+\code{8}  & & Atoms that appear in optimization statements\\
+\code{16} & & Atoms that are shown
+\end{tabular}
+\end{center}
+For example, with option \code{--dom-mod=5,16} 
+we apply modifier \code{false} with value \code{1} 
+to the atoms that appear in the optimization statements, 
+and with option \code{--dom-mod=1,20} 
+we apply modifier \code{level} with value \code{1}
+to both the atoms that appear in disjunctions and to the atoms that are shown.
 
-\iffalse
+Comparing with programmed heuristics, 
+the command line heuristics do not allow to apply modifiers \code{init} or \code{factor} 
+and cannot represent dynamic heuristics,
+but they allow to directly refer to structural components of the program 
+(strongly connected components, head cycle free components\ldots)
+and they do not require of any grounding, 
+which may be important in some big problems.
 
-\fi
+\comment{JR: Should we say something about how are the programmed and the command line heuristics combined?}
+%\clasp\ supports the following command line options:
+%\begin{scriptsize}
+%\begin{lstlisting}[numbers=none]
+% --dom-mod=<arg>         : Default modification for domain heuristic
+%      <arg>: <mod>[,<pick>]
+%        <mod>  : Default modification {0=no|1=level|2=pos|3=true|4=neg|5=false}
+ %       <pick> : Apply <mod> to {0=all|1=scc|2=hcc|4=disj|8=min|16=show} atoms
+%\%end{lstlisting}
+%\end{scriptsize}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "guide"

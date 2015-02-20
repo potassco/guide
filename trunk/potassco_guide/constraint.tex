@@ -23,11 +23,14 @@ Information on constraint programming with \gringo\ (and \clingcon) can be obtai
 for subsequently solving them with off-the-shelf ASP solvers such as \clasp.
 
 Within \gringo's input language,
-all constraint relations and constraint variables are (currently) preceded by a dollar symbol, \texttt{\$}.
+all constraint relations and constraint variables are (currently) preceded by a dollar symbol, ``\var{\$}''.
 In addition, there is a global constraint
-\begin{itemize}
-\item[] \texttt{\#disjoint\{ term : value \}}
-\end{itemize}
+\begin{lstlisting}[numbers=none,escapechar=?]
+#disjoint{?$\boldsymbol{t}_1$?:?$c_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$c_n$?:?$\boldsymbol{L}_n$?}
+\end{lstlisting}
+where $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are given as in Section~\ref{subsec:gringo:aggregate},
+and $c_i$ is a value (over a constraint expression).
+%
 The idea is that sets of values labeled with the same term(s) must be disjoint.
 
 The overall compilation follows the order encoding \cite{tatakiba09a,bageinscsotawe13a} and

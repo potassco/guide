@@ -2,8 +2,8 @@
 \section{Heuristic-driven Solving}
 \label{sec:heuristic}
 
-\clasp\ and \clingo\ provide means for incorporating domain-specific heuristics into ASP solving,  
-allowing to modify the heuristic of the solver from within a logic program or from the command line.
+\clasp\ and \clingo\ provide means for incorporating domain-specific heuristics into ASP solving.
+This allows for modifying the heuristic of the solver from within a logic program or from the command line.
 A formal description can be found in \cite{gekaotroscwa13a}.
 The framework is implemented as a new heuristic, named \code{Domain},
 that extends the \code{Vsids} heuristics of \clasp\ 
@@ -13,7 +13,7 @@ In what follows,
 we first describe how to modify the solver's heuristic from within a logic program, 
 and then we explain how to apply modifications from the command line.
 
-\subsection{Programming heuristics}
+\subsection{Heuristic Programming}
 
 Heuristic information can be represented within a logic program my means of the dedicated predicate \code{\_heuristic}.
 There are different types of heuristic information
@@ -166,7 +166,7 @@ the obtained first answer set would contain \code{b} and \code{c} instead of \co
 
 \paragraph{True and false.}
 
- The modifiers \code{true} and \code{false} allow to refer at the same time to the \code{level} and the \code{sign} of an atom.
+ The modifiers \code{true} and \code{false} allow us to refer at the same time to the \code{level} and the \code{sign} of an atom.
  Internally,  for the \code{true} and \code{false} heuristic atoms,
  the solver defines new \code{level} and \code{sign} heuristic atoms following these rules:
 \begin{lstlisting}[numbers=none]
@@ -191,7 +191,7 @@ facts \code{\_heuristic(a,level,10)} and \code{heuristic(a,sign,1)}.
 
 \paragraph{Priorities between heuristic atoms.}
 
-The \code{Domain} heuristic allows to represent priorities between different heuristic atoms that refer to the same atom.
+The \code{Domain} heuristic allows for representing priorities between different heuristic atoms that refer to the same atom.
 The priority is optionally represented by a positive integer as a fourth argument.
 The higher the integer, the higher the priority of the heuristic atom.
 For example, \code{\_heuristic(c,sign,1,10)} and \code{\_heuristic(c,sign,-1,20)} are valid heuristic atoms.
@@ -231,7 +231,7 @@ the level of \code{c} is \code{-10} because $|\code{-10}|>|\code{5}|$.
 
 The modifiers \code{init} and \code{factor} allow for modifying the scores assigned to atoms by the underlying \code{Vsids} heuristic.
 Compared to the \code{level} modifier, 
-\code{init} and \code{factor} allow to bias the search without establishing a strict ranking among the atoms.
+\code{init} and \code{factor} allow us to bias the search without establishing a strict ranking among the atoms.
 
 With \code{init}, we can add a value to the initial heuristic score of an atom.
 For example, if \code{\_heuristic(a,init,2)} is true, then a value of \code{2} is added to
@@ -267,7 +267,7 @@ and that both where made on atoms contained in \code{\_heuristic} atoms.
 \label{example:blocks:world:heuristic}
 \comment{JR: This should be made coherent with the Incremental Solving Section, 
              where Blocks World also appears.
-    \par TS: Or even move into this section\dots?}
+    \par (TS: Or even move into this section\dots?) --- TS': Non, or?!}
 We now apply the \code{Domain} heuristic to a Blocks World planning planning.  
 We begin with a basic encoding of the problem:
 \lstinputlisting[numbers=none]{examples/bw.lp}
@@ -357,9 +357,9 @@ For this purpose, we can use the following dynamic heuristic rule:
 _heuristic(move(B,L,T),true,T) :- on(B,L,T).
 \end{lstlisting}
 As before, the rule can be softened using \code{sign} with \code{init} or \code{factor}.
-At the start of the search, the goal's \code{on} atoms are true at the last time instant.
+At the start of the search, the goal's \code{on} atoms are true at the last time step.
 With this rule, the solver decides on a \code{move} atom that makes one of them true.
-Then, some \code{on} atoms are propagated to the previous time instant,
+Then, some \code{on} atoms are propagated to the previous time step,
 and the process is repeated until reaching the first time instant.
 
 We can also choose to promote atoms of the \code{on} predicate.  
@@ -378,9 +378,9 @@ that proved to be very useful in practice (see \cite{gekaotroscwa13a}):
 _heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).
 \end{lstlisting}
 The idea is to make the goal's \code{on} atoms persist backwards, 
-one by one, from the last time instant to the first one.
+one by one, from the last time step to the first one.
 Note that a higher level is given to atoms at earlier time instants.
-First, the solver decides on one of the goal's \code{on} atoms at the last but one time instant,
+First, the solver decides on one of the goal's \code{on} atoms at the last but one time step,
 then it decides to make it persist to the previous situation, and so on.
 Later, it makes persist backwards another \code{on} atom from the goal.
 With this heuristic,
@@ -394,7 +394,7 @@ given that usually the values of \code{on} atoms persist by inertia.
 \subsection{Command line structure-oriented heuristics}
 
 The \code{Domain} heuristic also allows us to modify the heuristic of the solver from the command line.
-For this, as before, the \code{Domain} heuristic is activated with option \code{--heuristic=Domain}, 
+For this, it is also activated with option \code{--heuristic=Domain}, 
 but now the heuristic modifications are specified by option:
 \begin{center}\lstinline{--dom-mod=<mod>[,<pick>]}\end{center}
 where \code{<mod>} ranges from \code{0} to \code{5} and specifies the modifier and the value:
@@ -421,17 +421,17 @@ and \code{<pick>} specifies bit-wisely the atoms to which the modification is ap
 \end{center}
 For example, with option \code{--dom-mod=5,16},
 we apply modifier \code{false} with value \code{1} 
-to the atoms that appear in optimization statements, 
+to atoms appearing in optimization statements, 
 and with option \code{--dom-mod=1,20},
 we apply modifier \code{level} with value \code{1}
-to both the atoms that appear in disjunctions as well as to shown atoms.
+to both atoms appearing in disjunctions as well as shown atoms.
 
 Comparing with programmed heuristics, 
-the command line heuristics do not allow to apply modifiers \code{init} or \code{factor} 
+the command line heuristics do not allow for applying modifiers \code{init} or \code{factor} 
 and cannot represent dynamic heuristics.
-On the other hand, they allow to directly refer to structural components of the program 
+On the other hand, they allow us to directly refer to structural components of the program 
 (strongly connected components, head cycle free components, etc.)
-and they do not require any grounding, 
+and they do not require any additional grounding, 
 which may be important in larger problems.
 
 \comment{JR: Should we say something about how are the programmed and the command line heuristics combined?

@@ -8,7 +8,8 @@
 This section is not yet ready for publishing
 and will be included in one of the forthcoming editions of this guide.
 
-Information on optimization and preference handling can be obtained at the following references.
+Information on optimization %and preference handling 
+can be obtained at the following references.
 
 \begin{itemize}
 \item Optimization \cite{gekakasc11b,gekakasc11c,gekasc11b,ankamasc12a}
@@ -19,19 +20,20 @@ Information on optimization and preference handling can be obtained at the follo
 %\iffalse
 \subsection{Preference Handling with asprin}
 
-\asprin\ provides a general framework for qualitative and quantitative optimization in ASP
-that allows to compute optimal stable models of logic programs with preferences, and     
+\asprin\ provides a general framework for qualitative and quantitative optimization in
+answer set programming
+that allows to compute optimal answer sets of logic programs with preferences, and     
 to easily define new preference types.
-Some preference types (subset, pareto, \dots) are already defined in \asprin's library, 
+Some preference types (subset, pareto\dots) are already defined in \asprin's library, 
 but many more can be defined  simply writing a logic program.  
-For a formal description of asprin, please refer to \cite{brderosc15a}. 
+For a formal description of \asprin\, please refer to \cite{brderosc15a}. 
 \asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
-at \url{https://sourceforge.net/projects/potassco/files/asprin}.\comment{TS: use asprin webpage}
+at \url{http://cs.uni-potsdam.de/asprin}.
 
 %\subsubsection{Tutorial}
 %\begin{itemize}
 %	\item \hyperlink{example}{A Simple Example}
-%	\item \hyperlink{many}{Computing Many Optimal Stable Models}
+%	\item \hyperlink{many}{Computing Many Optimal answer sets}
 %	\item \hyperlink{more}{More Preference Types}
 %	\item \hyperlink{new}{Implementing New Preference Types}
 %\end{itemize}
@@ -46,29 +48,20 @@ at \url{https://sourceforge.net/projects/potassco/files/asprin}.\comment{TS: use
 %  ======================== Basic Case ====================== 
 
 
-\paragraph{A Simple Example}
+\paragraph{A simple example}
 
-Let's start with program  \code{example1.lp}, that we call the base program,  and the  \clingo\  execution: 
+Consider the program
+\attach{examples/base.lp}{\code{base.lp}}, 
+that we call the base program:
+\lstinputlisting[numbers=none]{examples/base.lp}
+The output of the solver looks as follows:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/base.lp}{base.lp} 0}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo \attach{examples/base.lp}{base.lp} \textbackslash \\\mbox{~}| clasp 0}\\
+}
 \begin{lstlisting}[numbers=none]
-
-gr(1..5).
-
-1 { m(1) ; m(2) ; m(3) } 1.   
-
-a(1)    :- m(1).
-b(1..5) :- m(1).
-
-a(1..2) :- m(2).
-b(1)    :- m(2).
-
-a(5)    :- m(3).
-b(2..5) :- m(3). 
-
-#show m/1. #show a/1. #show b/1.
-\end{lstlisting}
-\begin{lstlisting}[numbers=none]
-
-$ clingo example1.lp 0
 ...
 Answer: 1
 m(2) a(1) a(2) b(1) 
@@ -76,26 +69,32 @@ Answer: 2
 m(3) a(5) b(2) b(3) b(4) b(5) 
 Answer: 3
 m(1) a(1) b(1) b(2) b(3) b(4) b(5)
-
+...
 \end{lstlisting}
-We get three stable models, one with $m(1)$, one with $m(2)$ and another with $m(3)$. We call them $M_1$, $M_2$ and $M_3$. 
-Now let's find the stable models of the base program that are subset minimal with respect to predicate $a/1$. 
-We write the following preference specification in \code{preference1.lp}: 
-\begin{lstlisting}[numbers=none]
+We obtain $3$ answer sets, one with $m(1)$, one with $m(2)$ and another with $m(3)$, 
+that we call $M_1$, $M_2$ and $M_3$, respectively.
 
-#preference(p1,subset){                                                                                             
-  a(X) : gr(X)                                                                                                    
-}.
-#optimize(p1).
-\end{lstlisting}
-The first three lines define a preference statement of name $p1$ and type $subset$ that contains one preference element 
-\lstinline{a(X) :- gr(X)}. The body of the preference element has to be formed by domain predicates of the base program.
+We can apply \asprin\ to look for the answer sets of the base program that are subset minimal with respect to predicate $a/1$. 
+We write the following preference specification in  
+\attach{examples/preference1.lp}{\code{preference1.lp}}: 
+\lstinputlisting{examples/preference1.lp}
+Lines~1--3 define a preference statement of name $p1$ and type $subset$ that contains one preference element in Line~2.
+The body of the preference element has to be formed by domain predicates of the base program, in this case $gr(X)$.
 Intuitively, the preference statement defines a preference of type subset over atoms of predicate $a/1$. 
-The last line is an optimize statement that instructs asprin to compute stable models that are optimal with respect to $p1$. 
-We are ready to compute one optimal stable model: 
-\begin{lstlisting}[numbers=none]
+Line~4 contains an optimize statement that instructs \asprin\ to compute answer sets that are optimal with respect to $p1$. 
 
-$ asprin example1.lp preference1.lp asprin.lib
+To compute one optimal answer set, invoke the following command: 
+\marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
+             ought to be located in some directory
+             in the system path.}%
+\comment{JR: I will pretty print all these margin boxes if we decide they stay}
+\begin{lstlisting}[numbers=none,escapechar=\%]
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% asprin.lib
+\end{lstlisting}
+File \code{asprin.lib} is the preference library of \asprin, 
+it is a logic program implementing many preference types.
+Follows the output of \asprin:
+\begin{lstlisting}[numbers=none]
 asprin version 1.0
 Answer: 1
 m(2) a(2) a(1) b(1)
@@ -107,39 +106,39 @@ Models       : 1
   Enumerated : 2
 
 \end{lstlisting}
-File \code{asprin.lib} is the preference library of \asprin\, it is a logic program implementing many preference types.
-In the execution first asprin finds the stable model $M_2$ of the base program. Then it looks for a stable model that is preferred to $M_2$ and finds $M_1$. 
-In the last step \asprin\ looks for a stable model that is preferred to $M_1$,  and given that no one is found this proves the optimality of $M_1$. 
-In total, one optimal model was computed, and two stable models were enumerated. 
+At first \asprin\ finds the answer set $M_2$ of the base program. 
+Then it looks for an answer set that is preferred to $M_2$, and finds $M_1$. 
+In the last step, \asprin\ looks for an answer set that is preferred to $M_1$,  
+and given that no one is found this proves the optimality of $M_1$. 
+In total, one optimal solution was computed, and two answer sets were enumerated. 
 
-If we want to minimize both $a/1$ and $b/1$, we can use the preference specification of \code{preference2.lp}: 
+We can minimize $a/1$ and $b/1$ with the following preference specification:
+%\attach{examples/preference2.lp}{\code{preference2.lp}}: 
+\lstinputlisting[numbers=none]{examples/preference2.lp}
+Then we obtain that $M_2$ is already an optimal answer set: 
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference2.lp}{preference2.lp} \ 
+  asprin.lib}\\
+}
 \begin{lstlisting}[numbers=none]
-
-#preference(p2,subset){                                                                                             
-  a(X) : gr(X);                                                                                                   
-  b(X) : gr(X)                                                                                                    
-}.
-#optimize(p2).
-\end{lstlisting}
-Then we get that $M_2$ is already an optimal stable model: 
-\begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference2.lp asprin.lib
-asprin version 1.0
 Answer: 1
 m(2) a(2) a(1) b(1)
 OPTIMUM FOUND
 
-Models       : 1
-  Enumerated : 1
 \end{lstlisting}
 
-\paragraph{Computing Many Optimal Stable Models}
-As in \clingo, in \asprin\  we can compute $n$ optimal models adding the number $n$ to the command line,  where $0$ is used to compute all optimal models. 
+\paragraph{Computing many optimal answer sets}
+As with \clasp\ and \clingo, 
+in \asprin\ we can compute $n$ optimal models adding the number $n$ to the command line,  
+where $0$ is used to compute all optimal models. 
+For instance, with the following invocation:
+\begin{lstlisting}[numbers=none,escapechar=\%]
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% asprin.lib 0
+\end{lstlisting}
+we obtain:
 \begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference1.lp asprin.lib 0
-asprin version 1.0
 Answer: 1
 m(2) a(2) a(1) b(1)
 Answer: 2
@@ -149,25 +148,25 @@ Answer: 3
 m(3) a(5) b(4) b(3) b(5) b(2)
 OPTIMUM FOUND
 
-Models       : 2
-  Enumerated : 3
-
 \end{lstlisting}
-\asprin\ runs as before for computing one optimal model. Then it searches for a stable model of the base program that is not worse than $M_1$, finds $M_3$ and proves that it is optimal. 
-In the last step, \asprin\ looks for some stable model that is not worse than $M_1$ and $M_3$,  and given that there is none, it finishes. 
-It has enumerated $3$ stable models, $2$ of which are optimal. 
+Here \asprin\ runs as before to compute one optimal solution.
+Then it searches for an answer set of the base program that is not worse than $M_1$, 
+finds $M_3$ and proves that it is optimal. 
+In the last step, \asprin\ looks for some answer set that is not worse than $M_1$ and $M_3$,  
+and given that there is none, it finishes. 
 
-If we add a file \code{c1.lp}: 
+Adding file 
+\attach{examples/c1.lp}{\code{c1.lp}}: 
+\lstinputlisting[numbers=none]{examples/c1.lp}
+we obtain two optimal answer sets more, that contain $c(1)$: 
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference1.lp}{preference1.lp} \ 
+  \attach{examples/c1.lp}{c1.lp} \ 
+  asprin.lib}\\
+}
 \begin{lstlisting}[numbers=none]
-
-{c(1)}.
-#show c/1.
-\end{lstlisting}
-then we get two optimal stable models more, that contain $c(1)$: 
-\begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference1.lp asprin.lib c1.lp 0
-asprin version 1.0
 Answer: 1
 m(2) a(2) a(1) b(1)
 Answer: 2
@@ -183,20 +182,27 @@ Answer: 5
 m(3) a(5) b(4) b(3) b(5) b(2) c(1)
 OPTIMUM FOUND *
 
-Models       : 4
-  Enumerated : 5
-  
 \end{lstlisting}
-When \asprin looks for a stable model that is not worse than $M_1$,  
-first it looks for models that interpret the same way as $M_1$ the atoms that appear in the preference statements. 
-This way it finds the second optimal model, that contains $c(1)$, and prints it followed by the line \lstinline{OPTIMUM FOUND *}.  
+When \asprin\ looks for an answer set that is not worse than $M_1$,  
+first it looks for models that interpret the same way as $M_1$ 
+the atoms that appear in the preference statements. 
+This way it finds the second optimal model, that contains $c(1)$, 
+and prints it followed by the line \lstinline{OPTIMUM FOUND *}.  
 Then it continues searching, finds $M_3$ and the process continues. 
 
-We can project the optimal models on the atoms of the preference statements with option \lstinline{--projection}: 
+We can project the optimal models on the atoms of the preference statements 
+with option \lstinline{--projection}, 
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference1.lp}{preference1.lp} \ 
+  \attach{examples/c1.lp}{c1.lp} \ 
+  asprin.lib \
+  0 --projection}\\
+}
+obtaining the three optimal answer sets we had without 
+\attach{examples/c1.lp}{\code{c1.lp}}: 
 \begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference1.lp asprin.lib c1.lp 0 --projection
-asprin version 1.0
 Answer: 1
 m(2) a(2) a(1) b(1)
 Answer: 2
@@ -206,12 +212,9 @@ Answer: 3
 m(3) a(5) b(4) b(3) b(5) b(2)
 OPTIMUM FOUND
 
-Models       : 2
-  Enumerated : 3
-  
 \end{lstlisting}
 
-\paragraph{More Preference Types}
+\paragraph{More preference types}
 
 The library of \asprin, \code{asprin.lib}, implements the following basic preference types:  
 \begin{itemize}
@@ -221,184 +224,97 @@ The library of \asprin, \code{asprin.lib}, implements the following basic prefer
 	\item  $aso$   (Answer Set Optimization, \cite{brnitr03a})   
 	\item  $poset$ (Qualitative Preferences, \cite{rogima10a})  
 \end{itemize}
-
 % [1] Gerhard Brewka, Ilkka Niemela, Miroslaw Truszczynski: Answer Set Optimization. IJCAI 2003: 867-872. 
 % [2] Emanuele Di Rosa, Enrico Giunchiglia, Marco Maratea: Solving satisfiability problems with preferences. Constraints 15(4): 485-515 (2010). 
-
-For example, we can minimize the cardinality of the atoms of predicate b/1 as follows: 
-\begin{lstlisting}[numbers=none]
-
-#preference(p3,less(cardinality)){                                                                                             
-  b(X) : gr(X)                                                                                                    
-}.
-#optimize(p3).
-\end{lstlisting}
-\begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference3.lp asprin.lib 0
-asprin version 1.0
-Answer: 1
-m(2) a(2) a(1) b(1)
-OPTIMUM FOUND
-
-Models       : 1
-  Enumerated : 1
-  
-\end{lstlisting}
+As an example, we can use the type $less(cardinality)$ to minimize the cardinality of the atoms of predicate b/1: 
+\lstinputlisting[numbers=none]{examples/preference3.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference3.lp}{preference3.lp} \ 
+  asprin.lib}\\
+}
+and we obtain the unique optimal answer set $M_2$.
 
 The library of  \asprin\ implements the following composite preference types,  
-that appeared in \cite{sonpon06a}:
-\begin{itemize}
-	\item  and   
-	\item  not    
-	\item  lexico   
-	\item  pareto  
-\end{itemize}
+that appeared in \cite{sonpon06a}: $and$, $not$, $lexico$ and $pareto$.
+For example, in the following preference specification 
+we apply a $pareto$ preference $p4$ on top of $p1$ and $p3$: 
+\lstinputlisting[numbers=none]{examples/preference4.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference4.lp}{preference4.lp} \ 
+  asprin.lib}\\
+}
+and the optimal answer sets are $M_1$, $M_2$ and $M_3$. 
+We can also apply a lexicographic order $p5$ giving priority to $p1$ over $p3$: 
+\lstinputlisting[numbers=none]{examples/preference5.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference5.lp}{preference5.lp} \ 
+  asprin.lib}\\
+}
+and in this case $M_1$ and $M_3$ are the optimal answer sets.
 
-%They all have appeared in \cite{sonpon06a}. :
-%
-% [3] Tran Cao Son, Enrico Pontelli: Planning with preferences using logic programming. TPLP 6(5): 559-607 (2006). 
-
-As an example, in \code{preference4.lp} we can apply a pareto preference $p4$ on top of $p1$ and $p3$: 
-\begin{lstlisting}[numbers=none]
-
-#preference(p1,subset){                                                                                             
-  a(X) : gr(X)                                                                                                    
-}.
-#preference(p3,less(cardinality)){                                                                                             
-  b(X) : gr(X)                                                                                                    
-}.
-#preference(p4,pareto){
-  name(p1);
-  name(p3)
-}.
-#optimize(p4).
-\end{lstlisting}
-\begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference4.lp asprin.lib 0
-asprin version 1.0
-Answer: 1
-m(2) a(2) a(1) b(1)
-OPTIMUM FOUND
-Answer: 2
-m(3) a(5) b(5) b(4) b(3) b(2)
-OPTIMUM FOUND
-Answer: 3
-m(1) a(1) b(5) b(4) b(3) b(2) b(1)
-OPTIMUM FOUND
-
-Models       : 3
-  Enumerated : 3
-
-\end{lstlisting}
-
-Or in \code{preference5.lp} we apply a lexicographic order $p5$ giving priority to $p1$ over $p3$: 
-\begin{lstlisting}[numbers=none]
-
-#preference(p1,subset){                                                                                             
-  a(X) : gr(X)                                                                                                    
-}.
-#preference(p3,less(cardinality)){                                                                                             
-  b(X) : gr(X)                                                                                                    
-}.
-#preference(p5,lexico){
-  2 :: name(p1);
-  1 :: name(p3)
-}.
-#optimize(p5).
-\end{lstlisting}
-\begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp asprin.lib preference5.lp 0
-asprin version 1.0
-Answer: 1
-m(2) a(2) a(1) b(1)
-Answer: 2
-m(1) a(1) b(5) b(4) b(3) b(2) b(1)
-OPTIMUM FOUND
-Answer: 3
-m(3) a(5) b(5) b(4) b(3) b(2)
-OPTIMUM FOUND
-
-Models       : 2
-  Enumerated : 3
-  
-\end{lstlisting}
-
-\paragraph{Implementing New Preference Types}
+\paragraph{Implementing new preference types}
 
 The parser of \asprin\ translates the preference and optimize statements into gringo rules.  
-With \code{preference1.lp} we get the rules: 
-\begin{lstlisting}[numbers=none]
-
+For example, 
+\attach{examples/preference1.lp}{\code{preference1.lp}} 
+is translated into the following rules:
+\begin{lstlisting}
 preference(p1,subset).
 preference(p1,(1,(X)),1,for(a(X)),()) :- gr(X).
 optimize(p1).
 \end{lstlisting}
-
-The first and third lines are easy to understand. 
-The second line can be read as: in preference statement $p1$, the first element has variables $\{X\}$,  
+Lines~1 and 3 are easy to understand. 
+Line~2 can be read as: in preference statement $p1$, the first element has variables $\{X\}$,  
 and in the first position of the element there is a positive literal $a(X)$  that has an empty list of weights associated. 
 For details about the translation, please have a look at the paper (\cite{brderosc15a}). 
 
-So far we have specified a preference statement of type subset, 
-but for \asprin\ this preference type subset has no predefined meaning. 
+So far we have specified a preference statement of type $subset$, 
+but for \asprin\ this preference type $subset$ has no predefined meaning. 
 This has to be given by a preference program,  ie. a logic program the represents the semantics of the given preference type. 
 Preference programs start with a directive: 
 \begin{lstlisting}[numbers=none]
-
 #program preference(type).
 \end{lstlisting}
 and end at the end of a file, or with a directive:  
 \begin{lstlisting}[numbers=none]
-
 #program base.
 \end{lstlisting}
-that signals the start of a base program. For the subset type, we have the file \code{subset-simple.lp}: 
-\begin{lstlisting}[numbers=none]
-
-#program preference(subset).
-better(P) :- preference(P,subset);
-             not holds(X) : preference(P,_,_,for(X),_), not holds'(X);
-             1 #sum { 1 : not holds(X), holds'(X), preference(P,_,_,for(X),_) }.
-\end{lstlisting}
-Consider that we want to compare two stable models $H$ and $H'$. 
+that signals the start of a base program. 
+For the $subset$ type, we may write file 
+\attach{examples/subset.lp}{\code{subset.lp}}: 
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none]{examples/subset.lp}
+Consider that we want to compare two answer sets $H$ and $H'$. 
 The true atoms in $H$ are represented by facts of predicate $holds/1$,  and the true atoms in $H'$ are represented by facts of predicate $holds'/1$. 
-Intuitively, $better(P)$ is true if $H$ is preferred to $H'$ with respect to a preference statement $P$ of type subset. 
-More formally, $better(P)$ is true if all the atoms of the preference statement that are false in $H'$ are also false in $H$,  
-and at least one of the atoms of the preference statement is false in $H$ and true in $H'$. 
+Intuitively, $better(P)$ is true if $H$ is preferred to $H'$ with respect to a preference statement $P$ of type $subset$. 
+More formally, 
+$better(P)$ is true if there is one atom $X$ of the preference statement that is false in $H$ and true in $H'$, 
+and all the atoms $Y$ of the preference statement that are false in $H'$ are also false in $H$.  
 
-We also have file \code{basic.lp}: 
-\begin{lstlisting}[numbers=none]
+\begin{note}
+Preference elements in \asprin\ allow not just atoms 
+but also boolean formulas, written with connectives \code{\~} for negation, 
+\code{\&} for conjunction and \code{|} for disjunction.
+Please, have a look at \cite{brderosc15a} for more details. 
+\end{note}
 
-#program preference.
-:- not better(P), optimize(P).
-\end{lstlisting}
+To complete the implementation of the preference type we also have file: 
+\attach{examples/basic.lp}{\code{basic.lp}}: 
+\lstinputlisting[numbers=none]{examples/basic.lp}
 where we state that $better(P)$ must hold if $P$ is optimized. 
-Then instead of using the \asprin\ library at \code{asprin.lib} we can use the preference program we have defined: 
-\begin{lstlisting}[numbers=none]
-
-$ ./asprin example1.lp preference1.lp basic.lp subset-simple.lp 0
-asprin version 1.0
-Answer: 1
-m(2) a(2) a(1) b(1)
-Answer: 2
-m(1) a(1) b(4) b(3) b(5) b(2) b(1)
-OPTIMUM FOUND
-Answer: 3
-m(3) a(5) b(4) b(3) b(5) b(2)
-OPTIMUM FOUND
-
-Models       : 2
-  Enumerated : 3
-
+Instead of using the \asprin\ library at \code{asprin.lib}, 
+now we can use the preference program we have defined:
+\begin{lstlisting}[numbers=none,escapechar=\%]
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}%  %\attach{examples/subset.lp}{subset.lp}%  %\attach{examples/basic.lp}{basic.lp}% 0
 \end{lstlisting}
+and we obtain (as before) that $M_1$ and $M_3$ are the optimal answer sets.
 Other new preference types can be easily defined in this way.  
 If you want to do this, having a look at \code{asprin.lib} may be the best point to start. 
-
-\iffalse
-\fi
 
 %%% Local Variables: 
 %%% mode: latex

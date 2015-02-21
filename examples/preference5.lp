@@ -1,8 +1,8 @@
 #preference(p1,subset){                                                                                             
-  a(X) : gr(X)                                                                                                    
+  a(X) : dom(X)                                                                                                    
 }.
 #preference(p3,less(cardinality)){                                                                                             
-  b(X) : gr(X)                                                                                                    
+  b(X) : dom(X)                                                                                                    
 }.
 #preference(p5,lexico){
   2 :: name(p1);

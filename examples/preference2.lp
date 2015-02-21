@@ -1,5 +1,5 @@
 #preference(p2,subset){                                                                                             
-  a(X) : gr(X);                                                                                                   
-  b(X) : gr(X)                                                                                                    
+  a(X) : dom(X);                                                                                                   
+  b(X) : dom(X)                                                                                                    
 }.
 #optimize(p2).

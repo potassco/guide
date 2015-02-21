@@ -16,8 +16,8 @@ can be obtained at the following references.
 \item Video series on \clasp's optimization capacities \url{http://potassco.sourceforge.net/videos.html}
 \end{itemize}
 
-\subsection{Preference Handling with \asprin}
-
+\subsection{Preference Handling with \asprin}\label{sec:asprin}
+\comment{T2J: Add index statements}
 \asprin\ provides a general framework for optimizing qualitative and quantitative preferences in ASP.
 That is, it allows for computing optimal answer sets of logic programs with preferences.
 While \asprin\ comes with a library of predefined preference types 
@@ -30,39 +30,53 @@ For a formal description of \asprin, please consult~\cite{brderosc15a}.
 
 \begin{example}
 Consider the program
-\attach{examples/base.lp}{\code{base.lp}}, 
-that we call the base program:
-\lstinputlisting[numbers=none]{examples/base.lp}
-The output of the solver looks as follows:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo \attach{examples/base.lp}{base.lp} 0}\\
   or alternatively:\\
   \code{\mbox{~}gringo \attach{examples/base.lp}{base.lp} \textbackslash \\\mbox{~}| clasp 0}\\
 }
-\begin{lstlisting}[numbers=none]
-...
-Answer: 1
-m(2) a(1) a(2) b(1) 
-Answer: 2
-m(3) a(5) b(2) b(3) b(4) b(5) 
-Answer: 3
-m(1) a(1) b(1) b(2) b(3) b(4) b(5)
-...
-\end{lstlisting}
-We obtain $3$ answer sets, one with $m(1)$, one with $m(2)$ and another with $m(3)$, 
-that we call $M_1$, $M_2$ and $M_3$, respectively.
+\attach{examples/base.lp}{\code{base.lp}}, 
+that we call the base program:
+%
+\lstinputlisting[numbers=none]{examples/base.lp}
+%
+% The output of the solver looks as follows:
+% \begin{lstlisting}[numbers=none]
+% ...
+% Answer: 1
+% m(2) a(1) a(2) b(1) 
+% Answer: 2
+% m(3) a(5) b(2) b(3) b(4) b(5) 
+% Answer: 3
+% m(1) a(1) b(1) b(2) b(3) b(4) b(5)
+% ...
+% \end{lstlisting}
+We obtain three answer sets, one with \code{m(1)}, \code{m(2)}, and \code{m(3)}, respectively,
+and refer to them as $M_1$, $M_2$, and $M_3$.
 
-We can apply \asprin\ to look for the answer sets of the base program that are subset minimal with respect to predicate $a/1$. 
-We write the following preference specification in  
-\attach{examples/preference1.lp}{\code{preference1.lp}}: 
+We can use \asprin\ to compute the answer sets of the base program that are subset minimal with respect to atoms of predicate $a/1$. 
+This can be done with the following preference specification 
+(available in \attach{examples/preference1.lp}{\code{preference1.lp}}): 
+%
 \lstinputlisting{examples/preference1.lp}
-Lines~1--3 define a preference statement of name $p1$ and type $subset$ that contains one preference element in Line~2.
-The body of the preference element has to be formed by domain predicates of the base program, in this case $gr(X)$.
-Intuitively, the preference statement defines a preference of type subset over atoms of predicate $a/1$. 
-Line~4 contains an optimize statement that instructs \asprin\ to compute answer sets that are optimal with respect to $p1$. 
+%
+Line~1 contains a preference statement of name \code{p1} and type \code{subset} that contains a single preference element.
+The body of the preference element has to be formed by domain predicates, here \code{dom(X)}.\comment{T2J: Only each variable must be bound by a domain predicate, or?}
+Intuitively, the preference statement \code{p1} defines a preference of type \code{subset} over atoms of predicate \code{a/1}. 
+Line~2 contains an optimize statement that instructs \asprin\ to compute answer sets that are optimal with respect to \code{p1}. 
 
-To compute one optimal answer set, invoke the following command: 
+\begin{note}
+Unlike \gringo's native optimization statements and weak constraints (cf.\ Section~\ref{subsec:gringo:optimize}),
+\asprin\ separates the declaration of preferences from the actual optimization directive.
+\eexample
+\end{note}
+
+To compute an answer set of the base program that is optimal with respect to \code{p1}, 
+an implementation of the preference type \code{subset} must be provided.
+This is comprised in \asprin's preference library,
+contained in file \code{asprin.lib}.
+With it, the computation can be performed by the following command:
 \marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
              ought to be located in some directory
              in the system path.}%
@@ -70,9 +84,7 @@ To compute one optimal answer set, invoke the following command:
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% asprin.lib
 \end{lstlisting}
-File \code{asprin.lib} is the preference library of \asprin, 
-it is a logic program implementing many preference types.
-Follows the output of \asprin:
+This command produces the following output:
 \begin{lstlisting}[numbers=none]
 asprin version 1.0
 Answer: 1
@@ -248,7 +260,7 @@ For example,
 is translated into the following rules:
 \begin{lstlisting}
 preference(p1,subset).
-preference(p1,(1,(X)),1,for(a(X)),()) :- gr(X).
+preference(p1,(1,(X)),1,for(a(X)),()) :- dom(X).
 optimize(p1).
 \end{lstlisting}
 Lines~1 and 3 are easy to understand. 
@@ -283,6 +295,7 @@ Preference elements in \asprin\ allow not just atoms
 but also boolean formulas, written with connectives \code{\~} for negation, 
 \code{\&} for conjunction and \code{|} for disjunction.
 Please, have a look at \cite{brderosc15a} for more details. 
+\eexample
 \end{note}
 
 To complete the implementation of the preference type we also have file: 

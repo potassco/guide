@@ -1,4 +1,2 @@
-#preference(p1,subset){                                                                                             
-  a(X) : gr(X)                                                                                                    
-}.
+#preference(p1,subset){ a(X) : dom(X) }.
 #optimize(p1).

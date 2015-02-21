@@ -8,48 +8,27 @@
 This section is not yet ready for publishing
 and will be included in one of the forthcoming editions of this guide.
 
-Information on optimization %and preference handling 
+Some information on multi-objective optimization
 can be obtained at the following references.
 
 \begin{itemize}
 \item Optimization \cite{gekakasc11b,gekakasc11c,gekasc11b,ankamasc12a}
-% \item Preference handling \cite{brderosc14a,brderosc15a}
 \item Video series on \clasp's optimization capacities \url{http://potassco.sourceforge.net/videos.html}
 \end{itemize}
 
-%\iffalse
-\subsection{Preference Handling with asprin}
+\subsection{Preference Handling with \asprin}
 
-\asprin\ provides a general framework for qualitative and quantitative optimization in
-answer set programming
-that allows to compute optimal answer sets of logic programs with preferences, and     
-to easily define new preference types.
-Some preference types (subset, pareto\dots) are already defined in \asprin's library, 
-but many more can be defined  simply writing a logic program.  
-For a formal description of \asprin\, please refer to \cite{brderosc15a}. 
-\asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
-at \url{http://cs.uni-potsdam.de/asprin}.
+\asprin\ provides a general framework for optimizing qualitative and quantitative preferences in ASP.
+That is, it allows for computing optimal answer sets of logic programs with preferences.
+While \asprin\ comes with a library of predefined preference types 
+(\code{subset}, \code{pareto}, etc.),
+it is readily extensible by new customized preference types.
+For a formal description of \asprin, please consult~\cite{brderosc15a}. 
 
-%\subsubsection{Tutorial}
-%\begin{itemize}
-%	\item \hyperlink{example}{A Simple Example}
-%	\item \hyperlink{many}{Computing Many Optimal answer sets}
-%	\item \hyperlink{more}{More Preference Types}
-%	\item \hyperlink{new}{Implementing New Preference Types}
-%\end{itemize}
-% 
-% <p>
-% Some of our experiments can be found <a href="files/asprin_experiments.pdf">here</a>, 
-% now follows a tutorial.
-% </p>
-% 
-% 
+% \asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
+% at \url{http://cs.uni-potsdam.de/asprin}.
 
-%  ======================== Basic Case ====================== 
-
-
-\paragraph{A simple example}
-
+\begin{example}
 Consider the program
 \attach{examples/base.lp}{\code{base.lp}}, 
 that we call the base program:
@@ -128,6 +107,9 @@ m(2) a(2) a(1) b(1)
 OPTIMUM FOUND
 
 \end{lstlisting}
+\eexample
+\end{example}
+
 
 \paragraph{Computing many optimal answer sets}
 As with \clasp\ and \clingo, 

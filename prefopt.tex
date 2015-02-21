@@ -292,7 +292,7 @@ Lines~1 and 3 are easy to understand.
 Line~2 can be read as follows.
 In preference statement \code{p1}, the first element has variables $\{\code{X}\}$,  
 and in the first position of the element there is a positive literal \code{a(X)}  that has an empty list of weights associated. 
-The format is detailed in \cite{brderosc15a}.\comment{T: Shouldn't this be here as well?}
+\DELc{The format is detailed in \cite{brderosc15a}.}{T: Shouldn't this be here as well?}
 
 We use above a preference statement of type \code{subset}, 
 but its meaning is a priori unknown to \asprin.
@@ -305,39 +305,45 @@ and end at the end of a file, or with the directive
 \lstinline{#program base.}
 signaling the start of a base program (cf.~Section~\ref{sec:multi}). 
 
-For example, the type \code{subset},
-can be implemented as follows
+For example, the preference type \code{subset} can be implemented as follows
 (\attach{examples/subset.lp}{\code{subset.lp}}).
 %
 \lstinputlisting[basicstyle=\small\ttfamily,numbers=none]{examples/subset.lp}
 %
 Consider that we want to compare two answer sets $H$ and $H'$. 
 The true atoms in $H$ are represented by facts of predicate \code{holds/1},  and the true atoms in $H'$ are represented by facts of predicate \code{holds'/1}. 
-Intuitively, \code{better(P)} is true if $H$ is preferred to $H'$ with respect to a preference statement $P$ of type \code{subset}. 
+Intuitively, \code{better(P)} is true if $H$ is preferred to $H'$ with respect to a preference statement \code{P} of type \code{subset}. 
 More formally, 
 \code{better(P)} is true if there is one atom \code{X} of the preference statement that is false in $H$ and true in $H'$, 
-and all the atoms \code{Y} of the preference statement that are false in $H'$ are also false in $H$.  
+and all atoms \code{Y} of the preference statement that are false in $H'$ are also false in $H$.  
 
 \begin{note}
-Preference elements in \asprin\ allow not just atoms 
-but also boolean formulas, written with connectives \code{\~} for negation, 
-\code{\&} for conjunction and \code{|} for disjunction.
-Please, have a look at \cite{brderosc15a} for more details. 
+Preference elements in \asprin\ are not restricted to atoms 
+but also Boolean formulas, written with connectives 
+\code{\~} for negation, 
+\code{\&} for conjunction,
+and 
+\code{|} for disjunction.
+\DELc{Please, have a look at \cite{brderosc15a} for more details.}{T: The syntax should be given in the section (see above comments)!\par Also, this
+  should not be in the section how-to-implement}
 \eexample
 \end{note}
 
-To complete the implementation of the preference type we also have file: 
-\attach{examples/basic.lp}{\code{basic.lp}}: 
+In addition, 
+there is a general integrity constraint enforcing optimization with respect to a given optimization statement.
+(\attach{examples/basic.lp}{\code{basic.lp}}):
+%
 \lstinputlisting[numbers=none]{examples/basic.lp}
-where we state that $better(P)$ must hold if $P$ is optimized. 
-Instead of using the \asprin\ library at \code{asprin.lib}, 
-now we can use the preference program we have defined:
+%
+We see that \code{better(P)} must hold whenever \code{P} is optimized. 
+Instead of using \asprin's library, \code{asprin.lib}, 
+we can now use the preference program, we have just defined:
 \begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}%  %\attach{examples/subset.lp}{subset.lp}%  %\attach{examples/basic.lp}{basic.lp}% 0
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
 \end{lstlisting}
-and we obtain (as before) that $M_1$ and $M_3$ are the optimal answer sets.
+As before, we obtain $M_1$ and $M_3$ as optimal answer sets.
 Other new preference types can be easily defined in this way.  
-If you want to do this, having a look at \code{asprin.lib} may be the best point to start. 
+A look at \code{asprin.lib} may give a good starting point. 
 
 %%% Local Variables: 
 %%% mode: latex

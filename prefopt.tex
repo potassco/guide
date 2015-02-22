@@ -28,7 +28,7 @@ For a formal description of \asprin, please consult~\cite{brderosc15a}.
 % \asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
 % at \url{http://cs.uni-potsdam.de/asprin}.
 
-\com{T2J: Where to give a syntax specification?}
+\com{T2J: Where to give the syntax specification?\par Copied last paragraph from AAAI paper\par Please rework and add *real* syntax, eg variables, etc!}
 
 \paragraph{Syntax.}
 \asprin's input language is made up of the following elements: 
@@ -39,101 +39,88 @@ For a formal description of \asprin, please consult~\cite{brderosc15a}.
 
 A \emph{weighted formula} is of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{t}$?::?$t$?
+?$\boldsymbol{t}$?::?$F$?
 \end{lstlisting}
-where each $\boldsymbol{t}$ is a term tuple and $t$ is a either a term representing a Boolean expression or a naming atom.
-We write $t$ whenever $\boldsymbol{t}$ is empty.
-The term
-$t$ is formed from reified atoms using function symbols $\mathtt{neg/2}$, $\mathtt{and/2}$, and $\mathtt{or/2}$.\comment{T: That's what we have at AAAI!}
+where $\boldsymbol{t}$ is a term tuple and $F$ is a either a Boolean expression or a naming atom.
+We drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
+The expression
+$F$ is formed from atoms using function symbols $\mathtt{neg/2}$, $\mathtt{and/2}$, and $\mathtt{or/2}$.\comment{T: That's what we have at AAAI!}
 %
-For expressing composite preferences,
-we use a dedicated unary naming predicate \code{name} that allows us to refer to auxiliary preferences.
-That is, a naming atom, \code{name(s)}, refers to relations associated with a preference statement \code{s} (see below).
+Otherwise, a naming atom of form \code{name(s)}
+refers to the preference associated with statement \code{s} (see below).
+%
+Examples of weighted formulas are 
+``\code{a(X)}'', 
+``\code{C::edge(X,Y,C)}'', 
+``\code{(1,2)::and(a,b)}'', and 
+``\code{42::name(e)}''. 
 
 A \emph{preference element} is of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
-> >||
+?$\boldsymbol{F}_1\;$?>?\,\dots\,?>?$\;\boldsymbol{F}_m$? || ?$F$?
 \end{lstlisting}
-% \begin{equation}\label{eq:preference:element}
-% {\Phi_1>\dots>\Phi_m}\;\|\;\phi
-% \end{equation}
-% where $\phi$ is a non-weighted formula giving the context, and each $\Phi_r$
-% is a set of weighted formulas for $r=1,\dots,m$ and $m\geq 1$.
-% %
-% Intuitively, $r$ gives the rank of the respective set of weighted formulas.
-% Preference elements provide a (possible) structure to a set of weighted formulas
-% by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
-% %
-% For convenience, we may drop the surrounding braces of such sets
-% and omit ``$\|\,\phi$'' if $\phi$ is tautological.
-% Also, we drop ``$>$'' if $m=1$.
-% %
-% Hence
-% $\{a,\neg{b}\}>c$ stands for $\{a,\neg{b}\}>\{c\}\;\|\;\top$. Similarly, $40\!:\!\mathit{sauna}$ in (\ref{eq:costs}) stands for $\{40\!:\!\mathit{sauna}\}\;\|\;\top$.
-% %$a,\neg{b},c$ stands for $\{a,\neg{b},c\}\|\top$, and $\{a,\neg{b}\}>c\;\|\;\neg{d}$ stands for $\{a,\neg{b}\}>\{c\}\;\|\;\neg{d}$.
+where $F$ is a non-weighted formula, and each $\boldsymbol{F}_r$
+is a set of weighted formulas for $r=1,\dots,m$ and $m\geq 1$.
+%
+Intuitively, $r$ gives the rank of the respective set of weighted formulas.
+This is conditioned by $F$; that is, \code{||} is meant to provide a conditional.
+Preference elements provide a (possible) structure to a set of weighted formulas
+by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
+%
+For convenience, we may drop the surrounding braces of such sets
+and omit ``\code{||$\,F$}'' if $F$ is tautological.
+Also, we drop ``\code{>}'' if $m=1$.
+%
+Hence
+\code{\{a,neg(b)\}>c} stands for 
+\code{\{a,neg(b)\}>\{c\} || and(d,neg(d))}. 
+%
+Examples of preference elements are 
+``\code{a(X)}'',  
+``\code{2::name(p)}'', 
+``\code{\{a, b\} > \{c, d\}}'',  and
+``\code{a > b || c}''.
 
-A \emph{preference statement} \code{p} is of the form
+A \emph{preference statement} is of the form
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 #preference(s,t){?${e}_1$?,?$\dots$?,?${e}_n$?}.
 \end{lstlisting}
 %
-% where $s$ and $t$ are ground terms giving the preference name and its type,
-% respectively, and each $e_j$ is a preference element.
-% %for $j=1,\dots,n$.
-% In what follows,
-% we use $id(p)$ to denote $p$'s identifier $s$ and refer to its type by $t_s$.
-% %
-% The preference type determines the set of admissible preference elements.
-% For instance,
-% $\mathit{less(weight)}$ in \eqref{eq:costs} is restricted to weighted literals.
-% %while $\mathit{aso}$ in \eqref{eq:temps} takes general preference elements.
-% %
-% %Analogously,
-% A preference type may or may not require naming atoms,
-% depending on whether it is \emph{composite} or \textit{primitive}.
-% %
-% For instance, %the preference type $\mathit{less(weight)}$ in \eqref{eq:subset} is primitive,
-%  $\mathit{pareto}$ in \eqref{eq:pareto} is composite.
-
-% %As described in the next section, each preference statement $s$ is associated with a strict partial order $\succ_s$.
-% %The relation $\succ_s$ is of the preference type denoted by $t_s$.
-% %Other variations of $\succ_s$ are of no interest when optimizing $s$.
-% %\comment{J: I think at this point the meaning of ``variations''  of $\succ_s$ is not clear to the reader}
-% %
-% %If $s$ is not subject to optimization, it may serve as an auxiliary element
-% %in a composite preference statement.
-% %To this end, some preference types may belong to a preference library, and
-% %provide definitions of the non-strict, equal, and inverse variants of the type at hand.
-% %In such a case, a naming atom $\name(s)$ provides the importing preference statement also with the non-strict, equal, and inverse counterparts of $\succ_s$, namely,
-% %$\succeq_s$, $=_s$, and $\prec_s$, $\preceq_s$.
-% %For instance,
-% %in \eqref{eq:costs}-\eqref{eq:pareto},
-% %the preference relation $\succ_{\mathit{all}}$ relies on the auxiliary relations $\succ_{\mathit{costs}}$ and $\succeq_{\mathit{costs}}$, among others.
-% %On the implementation side, this is reflected by the distinction between a \emph{preference program} and a \emph{preference module}
-% %(see Section~\ref{sec:approach}).
-% %The former is importing preference implementations, while the latter is being imported.
-
-A set of preference statements is accompanied by a single
+where \code{s} and \code{t} are ground terms giving the preference name and its type,
+respectively, and each $e_j$ is a preference element.
+%
+Preference statements are accompanied by a single
 \emph{optimization directive},
 \begin{lstlisting}[numbers=none,escapechar=?]
 #optimize(s).
 \end{lstlisting}
-telling a solver to restrict its reasoning mode to the preference relation declared by \code{s}.
-% %
-% The collection of preference statements in a program has to satisfy certain requirements to be useful. We say a set of preference statements $S$ is
-% \begin{itemize}
-% \item
-% \emph{closed}, if $p\in S$ for some $p$ with $id(p) = s$ whenever $\name(s)$ occurs in $S$, and
-% \item
-% \emph{acyclic}, if the dependency relation induced among preference statements in $S$ by naming atoms is acyclic.
-% \end{itemize}
-% A \emph{preference specification} is a set of preference statements $S$
-% along with a single directive $\#\mathit{optimize}(s)$ such that
-% $S$ is acyclic and closed and, for some $p\in S$, $id(p) = s$.
-% We call $p$ the \emph{primary} preference statement in $S$ and refer to
-% statements in $S\setminus\{p\}$ as \emph{secondary}.
+telling \asprin\ to restrict its reasoning mode to the preference relation declared by \code{s}.
+% 
+A valid {preference specification} is a set of preference statements
+being acyclic and closed wrt naming dependencies
+along with a single optimization directive
+(see \cite{brderosc15a} for details).
 
+Here is an example of a {preference specification} about leisure activities.
+\begin{lstlisting}[escapechar=?]
+#preference(costs,less(weight)){ 40::sauna, 70::dive }.
+#preference(fun,superset){ sauna, dive, hike, neg(bunji) }.
+#preference(temps,aso){dive>sauna||hot, sauna>dive||neg(hot)}.
+#preference(all,pareto){name(costs), name(fun), name(temps)}.
+
+#optimize(all).
+\end{lstlisting}
+The preference statement in Line~1 represents the preference relation \code{costs} of type \code{less(weight)}.
+Intuitively, this relation optimizes the sum of weights of its preference elements, 
+viz.\ \code{40::sauna} and \code{70::dive}.
+This preference type is very similar to the one used by native minimization directives (cf.\ Section~\ref{subsec:gringo:optimize}).
+The preference type \code{superset} provides a set inclusion based relation and the one refereed to as \code{aso}
+amounts to answer set optimization as put forward in~\cite{brnitr03a}.
+These three basic preference relations are combined according to the \code{pareto} principle in Line~4.
+And this combined preference relation is declared subject to optimization in Line~6.
+%
+All four preference types are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.
 
 \begin{example}
 Consider the program
@@ -331,7 +318,8 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 
 \paragraph{More preference types.}
 
-\asprin's preference library, \code{asprin.lib}, implements the following basic preference types:  
+\asprin's preference library, \code{asprin.lib}, implements the following basic preference types:
+\comment{T2J: Fix admissible input (preference elements)}
 \begin{itemize}
 	\item  \code{subset} and \code{superset}   
 	\item  \code{less(cardinality)} and \code{more(cardinality)}   
@@ -353,8 +341,12 @@ we can use the type \code{less(cardinality)} to minimize the cardinality of the 
 This yields the unique optimal answer set $M_2$.
 
 The library of \asprin\ implements furthermore the following composite preference types~\cite{sonpon06a}: 
+\comment{T2J: Fix admissible input (preference elements)}
 \begin{itemize}
-\item \code{and}, \code{not}, \code{lexico}, and \code{pareto}.
+\item \code{and}
+\item \code{not}
+\item \code{lexico}
+\item \code{pareto}
 \end{itemize}
 
 For example, 

@@ -23,7 +23,7 @@ Information on constraint programming with \gringo\ (and \clingcon) can be obtai
 for subsequently solving them with off-the-shelf ASP solvers such as \clasp.
 
 Within \gringo's input language,
-all constraint relations and constraint variables are (currently) preceded by a dollar symbol, ``\var{\$}''.
+all constraint relations and constraint variables are (\textcolor{red}{currently}) preceded by a dollar symbol, ``\var{\$}''.
 In addition, there is a global constraint
 \begin{lstlisting}[numbers=none,escapechar=?]
 #disjoint{?$\boldsymbol{t}_1$?:?$c_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$c_n$?:?$\boldsymbol{L}_n$?}
@@ -36,16 +36,29 @@ The idea is that sets of values labeled with the same term(s) must be disjoint.
 The overall compilation follows the order encoding \cite{tatakiba09a,bageinscsotawe13a} and
 introduces a Boolean variable for each statement `$X\leq k$' where $X$ is a variable over integers and $k$ is an integer bound.
 
-As an example,
-consider the following encoding of the $n$-queens puzzle.
 \marginlabel{To compute both answer sets, invoke:\\
   \code{\mbox{~}clingo \attach{examples/queensC.lp}{queensC.lp} \textbackslash\\
-         \mbox{~} -c n=300}\\
+         \mbox{~} -c n=30}\\
   or alternatively:\\
   \code{\mbox{~}gringo~\attach{examples/queensC.lp}{queensC.lp} \textbackslash\\
+        \mbox{~} -c n=30 | clasp 0}
+}
+For illustration,
+consider the two following encoding of the $n$-queens puzzle.
+In both encodings, the first line fixes the domain of the integer variables 
+\code{\$queen(1)} to \code{\$queen(n)}.
+Line~3 forbids queens on the same columns and the last two lines address queens on the same diagonals.
+%
+\lstinputlisting{examples/queensC.lp}
+\marginlabel{To compute both answer sets, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/queensCa.lp}{queensCa.lp} \textbackslash\\
+         \mbox{~} -c n=300}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo~\attach{examples/queensCa.lp}{queensCa.lp} \textbackslash\\
         \mbox{~} -c n=300 | clasp 0}
 }
-\lstinputlisting{examples/queensC.lp}
+The next encoding uses the global \code{\#disjoint} constraint.
+\lstinputlisting{examples/queensCa.lp}
 
 %%% Local Variables: 
 %%% mode: latex

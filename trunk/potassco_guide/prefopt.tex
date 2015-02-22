@@ -42,16 +42,18 @@ A \emph{weighted formula} is of the form
 ?$\boldsymbol{t}$?::?$t$?
 \end{lstlisting}
 where each $\boldsymbol{t}$ is a term tuple and $t$ is a either a term representing a Boolean expression or a naming atom.
+We write $t$ whenever $\boldsymbol{t}$ is empty.
 The term
 $t$ is formed from reified atoms using function symbols $\mathtt{neg/2}$, $\mathtt{and/2}$, and $\mathtt{or/2}$.\comment{T: That's what we have at AAAI!}
-We write $t$ whenever $\boldsymbol{t}$ is empty.
 %
 For expressing composite preferences,
 we use a dedicated unary naming predicate \code{name} that allows us to refer to auxiliary preferences.
 That is, a naming atom, \code{name(s)}, refers to relations associated with a preference statement \code{s} (see below).
 
-% A \emph{preference element} is of the form%
-% \footnote{Following~\cite{bilawi10a}.}
+A \emph{preference element} is of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+> >||
+\end{lstlisting}
 % \begin{equation}\label{eq:preference:element}
 % {\Phi_1>\dots>\Phi_m}\;\|\;\phi
 % \end{equation}
@@ -70,10 +72,12 @@ That is, a naming atom, \code{name(s)}, refers to relations associated with a pr
 % $\{a,\neg{b}\}>c$ stands for $\{a,\neg{b}\}>\{c\}\;\|\;\top$. Similarly, $40\!:\!\mathit{sauna}$ in (\ref{eq:costs}) stands for $\{40\!:\!\mathit{sauna}\}\;\|\;\top$.
 % %$a,\neg{b},c$ stands for $\{a,\neg{b},c\}\|\top$, and $\{a,\neg{b}\}>c\;\|\;\neg{d}$ stands for $\{a,\neg{b}\}>\{c\}\;\|\;\neg{d}$.
 
-% A \emph{preference statement} $p$ is of the form
-% \begin{equation}\label{eq:preference:statement}
-% \#\pf(s,t)\{e_1,\dots,e_n\}
-% \end{equation}
+A \emph{preference statement} \code{p} is of the form
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+#preference(s,t){?${e}_1$?,?$\dots$?,?${e}_n$?}.
+\end{lstlisting}
+%
 % where $s$ and $t$ are ground terms giving the preference name and its type,
 % respectively, and each $e_j$ is a preference element.
 % %for $j=1,\dots,n$.
@@ -110,12 +114,12 @@ That is, a naming atom, \code{name(s)}, refers to relations associated with a pr
 % %(see Section~\ref{sec:approach}).
 % %The former is importing preference implementations, while the latter is being imported.
 
-% A set of preference statements is accompanied by a single
-% \emph{optimization directive},
-% \(
-% \#\mathit{optimize}(s)
-% \),
-% telling a solver to restrict its reasoning mode to the preference relation declared by $s$.
+A set of preference statements is accompanied by a single
+\emph{optimization directive},
+\begin{lstlisting}[numbers=none,escapechar=?]
+#optimize(s).
+\end{lstlisting}
+telling a solver to restrict its reasoning mode to the preference relation declared by \code{s}.
 % %
 % The collection of preference statements in a program has to satisfy certain requirements to be useful. We say a set of preference statements $S$ is
 % \begin{itemize}

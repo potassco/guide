@@ -413,6 +413,8 @@ Intuitively, \code{better(P)} is true if $H$ is preferred to $H'$ with respect t
 More formally, 
 \code{better(P)} is true if there is one atom \code{X} of the preference statement that is false in $H$ and true in $H'$, 
 and all atoms \code{Y} of the preference statement that are false in $H'$ are also false in $H$.  
+\comment{T2J: This is not self-contained! Must \texttt{holds} be implemented? What is required? On what can one rely? etc
+\par I am not suggesting to give \texttt{holds} etc here, just fix teh interface ;)}
 
 \begin{note}
 Preference elements in \asprin\ are not restricted to atoms 
@@ -422,12 +424,13 @@ but also Boolean formulas, written with connectives
 and 
 \code{|} for disjunction.
 \DELc{Please, have a look at \cite{brderosc15a} for more details.}{T: The syntax should be given in the section (see above comments)!\par Also, this
-  should not be in the section how-to-implement}
+  should not be in the section how-to-implement --- integrate above :)}
 \eexample
 \end{note}
 
+\comment{T2J: Why is this important? See comment on interface :)}
 In addition, 
-there is a general integrity constraint enforcing optimization with respect to a given optimization statement.
+there is a general integrity constraint enforcing optimization with respect to a given optimization statement
 (\attach{examples/basic.lp}{\code{basic.lp}}):
 %
 \lstinputlisting[numbers=none]{examples/basic.lp}

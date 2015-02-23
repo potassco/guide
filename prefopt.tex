@@ -19,7 +19,7 @@ can be obtained at the following references.
 \subsection{Preference Handling with \asprin}\label{sec:asprin}
 \comment{T2J: Add index statements}
 \asprin\ provides a general framework for optimizing qualitative and quantitative preferences in ASP.
-That is, it allows for computing optimal answer sets of logic programs with preferences.
+It allows for computing optimal answer sets of logic programs with preferences.
 While \asprin\ comes with a library of predefined preference types 
 (\code{subset}, \code{pareto}, etc.),
 it is readily extensible by new customized preference types.
@@ -31,11 +31,8 @@ For a formal description of \asprin, please consult~\cite{brderosc15a}.
 \com{T2J: Where to give the syntax specification?\par Copied last paragraph from AAAI paper\par Please rework and add *real* syntax, eg variables, etc!}
 
 \paragraph{Syntax.}
-\asprin's input language is made up of the following elements: 
-% \emph{weighted formulas},
-% \emph{preference elements}, 
-% \emph{preference statements}, and
-% \emph{optimization statements}.
+
+\asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
 A \emph{weighted formula} is of the form
 \begin{lstlisting}[numbers=none,escapechar=?]

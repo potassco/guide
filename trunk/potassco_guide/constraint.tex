@@ -27,25 +27,37 @@ Information on constraint programming with \aspartame\ can be obtained at the fo
 \item \cite{bageinscsotawe13a} describes \aspartame\ and how it allows for solving finite linear CSPs in ASP
 \end{itemize}
 
-\subsection{\gringo's constraint solving capacities}
+\subsection{Constraint Programming with \gringo}
 
-\gringo\ features some \textcolor{red}{experimental} means for expressing finite linear constraint satisfaction problems within ASP's modeling language and
+Grounder \gringo\ features some \textcolor{red}{experimental} means for expressing finite linear constraint satisfaction problems within ASP's modeling language and
 for subsequently solving them with off-the-shelf ASP solvers such as \clasp.
+Such linear constraints are compiled into normal rules following the order encoding \cite{tatakiba09a,bageinscsotawe13a}.
 
-Within \gringo's input language,
-all constraint relations and constraint variables are (\textcolor{red}{currently}) preceded by a dollar symbol, ``\var{\$}''.
-In addition, there is a global constraint
+CSP constraints in gringo are build over \emph{constraint terms}, which have form:
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$c_1$? $* $?$v_1$? $+ ?$\cdots$? $+ ?$c_n$? $* $?$v_n$?
+\end{lstlisting}
+where $n>0$, and each $c_i$ (integer factor) and $v_i$ (name of a constraint variable) are terms.
+If a factor is one, then the ``\code{$c_i$ \$*}'' part can be omitted.
+Similarly, it is possible to just add a factor in which case the ``\code{\$* $v_i$}'' part can be omitted.
+
+\emph{Linear constraints} in \gringo\ are syntactically similar to built-in comparison predicates (cf. Section~\ref{subsec:gringo:comp})
+but relation symbols have to be preceded with a \code{\$} symbol:
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$t_0$? $?$\prec_1$? ?$\cdots$? $?$\prec_{n}$? ?$t_n$?
+\end{lstlisting}
+where $n>0$, each $\prec_i$ is a comparison predicate, and each $t_i$ is a constraint term.
+
+In addition, there is the global \emph{disjoint constraint}:
 \begin{lstlisting}[numbers=none,escapechar=?]
 #disjoint{?$\boldsymbol{t}_1$?:?$c_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$c_n$?:?$\boldsymbol{L}_n$?}
 \end{lstlisting}
 where $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are given as in Section~\ref{subsec:gringo:aggregate},
-and $c_i$ is a value (over a constraint expression).
+and each $c_i$ is a constraint term.
 %
 The idea is that sets of values labeled with the same term(s) must be disjoint.
 
-The overall compilation follows the order encoding \cite{tatakiba09a,bageinscsotawe13a} and
-introduces a Boolean variable for each statement `$X\leq k$' where $X$ is a variable over integers and $k$ is an integer bound.
-
+\begin{example}\label{ex:csp:queens1}
 \marginlabel{To compute both answer sets, invoke:\\
   \code{\mbox{~}clingo \attach{examples/queensC.lp}{queensC.lp} \textbackslash\\
          \mbox{~} -c n=30}\\
@@ -54,12 +66,17 @@ introduces a Boolean variable for each statement `$X\leq k$' where $X$ is a vari
         \mbox{~} -c n=30 | clasp 0}
 }
 For illustration,
-consider the two following encoding of the $n$-queens puzzle.
-In both encodings, the first line fixes the domain of the integer variables 
+consider the following encoding of the $n$-queens puzzle:
+\lstinputlisting{examples/queensC.lp}
+
+The first line fixes the domain of the integer variables
 \code{\$queen(1)} to \code{\$queen(n)}.
 Line~3 forbids queens on the same columns and the last two lines address queens on the same diagonals.
+\end{example}
+
+\begin{example}
+The next encoding uses the global \code{\#disjoint} constraint:
 %
-\lstinputlisting{examples/queensC.lp}
 \marginlabel{To compute both answer sets, invoke:\\
   \code{\mbox{~}clingo \attach{examples/queensCa.lp}{queensCa.lp} \textbackslash\\
          \mbox{~} -c n=300}\\
@@ -67,8 +84,15 @@ Line~3 forbids queens on the same columns and the last two lines address queens 
   \code{\mbox{~}gringo~\attach{examples/queensCa.lp}{queensCa.lp} \textbackslash\\
         \mbox{~} -c n=300 | clasp 0}
 }
-The next encoding uses the global \code{\#disjoint} constraint.
+%
 \lstinputlisting{examples/queensCa.lp}
+\end{example}
+
+\begin{note}
+The \textcolor{red}{current} implementation of constraints in \gringo\ requires 
+that all constraint variables appearing in a program must have finite domains inferable from the grounded program.
+Hence, rules like in Line~1 of Example~\ref{ex:csp:queens1} fixing the domain of a constraint variable have to be added for each constraint variable.
+\end{note}
 
 %%% Local Variables: 
 %%% mode: latex

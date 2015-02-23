@@ -69,11 +69,11 @@ is described by the following facts:%
 % moves(15).
 % \end{lstlisting}
 %
-Note that the ``\code{;}'' in the first line is syntactic sugar
+Note that the `\code{;}' in the first line is syntactic sugar
 (detailed in Section~\ref{subsec:gringo:pool})
 that expands the statement into three facts:
 \code{peg(a).}, \code{peg(b).}, and \code{peg(c).}
-Similarly, ``\code{1..4}'' used in Line~2--4
+Similarly, `\code{1..4}' used in Line~2--4
 refers to an interval (detailed in Section~\ref{subsec:gringo:interval}).
 Here, it abbreviates distinct facts over four values:
 \const{1}, \const{2}, \const{3}, and \const{4}.
@@ -98,7 +98,7 @@ An additional \emph{Display} part allows for projecting
 the output to atoms (unambiguously) characterizing a solution,
 thus, suppressing auxiliary predicates.
 We follow this methodology and
-mark the respective parts via comment lines beginning with ``\code{\%}'' 
+mark the respective parts via comment lines beginning with `\code{\%}' 
 in the following encoding:%
 \marginlabel{You can also save the encoding % to disk
              by clicking this file name: \attach{examples/toh_enc.lp}{\code{toh\char`\_enc.lp}}.\\
@@ -117,17 +117,17 @@ at each point~\var{T} in time (other than~\const{0}),
 exactly one move of a disk~\var{D} to some peg~\var{P}
 must be executed.
 % ``guess'' exactly one move that puts an arbitrary disk to some arbitrary peg.
-The head of the rule (left of~``\code{:-}'')
+The head of the rule (left of~`\code{:-}')
 is a so-called cardinality constraint (see Section~\ref{subsec:gringo:aggregate}).
 It consists of a set of literals,
 expanded using the predicates behind the colon (detailed in Section~\ref{subsec:gringo:condition}),
-along with the guard~``\code{= 1}''.
+along with the guard~`\code{= 1}'.
 The cardinality constraint is satisfied
 if the number of true elements is equal to one as specified by the guard.
 Since the cardinality constraint occurs as the head of a rule,
 it allows for deriving (``guessing'') atoms 
 over the predicate \pred{move}/$3$ to be true.
-In the body (right of~``\code{:-}''),
+In the body (right of~`\code{:-}'),
 we write an assignment (detailed in Section~\ref{subsec:gringo:assign}),
 \code{\var{T}~=~\const{1}..\var{M}},
 % to express that the rule applies 
@@ -287,7 +287,7 @@ first move disk~\const{4} to peg~\const{b},
 second move disk~\const{3} to peg~\const{c}, 
 third move disk~\const{4} to peg~\const{c}, 
 and so on.
-We use ``\code{\char`\\}'' to indicate that
+We use `\code{\char`\\}' to indicate that
 all atoms over \pred{move}/$3$ actually belong to a single line.
 Note that the order in which atoms are printed does not bear any meaning
 (and the same applies to the order in which answer sets are found).
@@ -296,10 +296,10 @@ we find the satisfiability status of the problem,
 which is \code{SATISFIABLE},
 as reported by the solver.\footnote{%
 Other possibilities include \code{UNSATISFIABLE} and \code{UNKNOWN}, the latter in case of an abort.}
-The ``\code{1+}'' in the line starting with ``\code{Models}''%
+The `\code{1+}' in the line starting with `\code{Models}'%
 \marginlabel{The given instance has
              just one solution.
-             In fact, the ``\code{+}'' from ``\code{1+}''
+             In fact, the `\code{+}' from `\code{1+}'
              disappears if you compute all solutions
              by invoking:\\
              \code{\mbox{~}clingo \attach{examples/toh_ins.lp}{toh\char`\_ins.lp} \textbackslash\\
@@ -309,7 +309,7 @@ The ``\code{1+}'' in the line starting with ``\code{Models}''%
                    \mbox{~}\attach{examples/toh_enc.lp}{toh\char`\_enc.lp} | clasp 0}
 }
 tells us that one answer set has been found.\footnote{%
-The ``\code{+}'' indicates that 
+The `\code{+}' indicates that 
 the solver has not exhaustively explored the search space
 (but stopped upon finding an answer set),
 so that further answer sets may exist.}

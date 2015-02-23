@@ -46,7 +46,7 @@ The graph shown in Figure~\ref{fig:graph} is represented by the following set of
 %
 \lstinputlisting{examples/graph.lp}
 %
-Recall from Section~\ref{subsec:lang:gringo} that~``\code{..}'' and~``\code{;}''
+Recall from Section~\ref{subsec:lang:gringo} that~`\code{..}' and~`\code{;}'
 in the head expand to multiple rules, which are facts here.
 Thus, the instance contains six nodes and 17 directed edges.
 
@@ -281,11 +281,11 @@ we know that~\code{11} is the optimum value,
 but there might be further optimal answer sets that have not been computed yet.
 To compute all optimal answer sets,
 we can change \clasp's optimization mode using option
-``\code{--opt-mode=optN}''.
+`\code{--opt-mode=optN}'.
 In this mode, \clasp\ first prints the tentative answer sets where optimality is not yet proven and afterwards prints the optimal answer sets.
 Note that the first optimal answer set is printed twice in this mode.
 To omit tentative answer sets in the output and only print optimal answer sets,
-we can add option ``\code{--quiet=1}''.
+we can add option `\code{--quiet=1}'.
 All the above options work with \clingo\ too.
 
 \marginlabel{%
@@ -390,9 +390,9 @@ for each state transition at step~$\code{t}$.
 The integrity constraint in Line~13--14 is used to test whether moving block~\var{X} to location~\var{Y} is possible at step~\code{t}.
 The first integrity constraint ensures that block~\var{X} cannot be moved if there is another block~\var{A} on top of it.
 Furthermore, the second integrity constraint excludes all moves where the target block~\var{Y} is blocked because it is below some other block~\var{B}.
-Because the number of blocks that can be put on the table is not limited, the condition is only checked if~\var{Y} is a block, viz., ``\code{Y != table}''.
+Because the number of blocks that can be put on the table is not limited, the condition is only checked if~\var{Y} is a block, viz., `\code{Y != table}'.
 Also, this constraint allows for void moves, that is,
-the constraint only eliminates solutions where the block~\var{X} being moved is different from block~\var{B}, viz., ``\code{X != B}''.
+the constraint only eliminates solutions where the block~\var{X} being moved is different from block~\var{B}, viz., `\code{X != B}'.
 The define rule in Line~16 marks the block that is moved via predicate~\const{moved/1}.
 Finally, the define rule in Line~17 propagates a move to the state at step~\code{t}.
 While the rule in Line~18 states
@@ -464,7 +464,7 @@ Sometimes it might be interesting to inspect the grounding of an incremental pro
 This can be achieved using option \code{--lparse-debug=plain}.
 Adding this option, \clingo\ solves as usual
 but additionally prints the grounded rules to the standard error stream.
-The rules are printed in the same format as the text output but preceded with ``\code{\%}''.
+The rules are printed in the same format as the text output but preceded with `\code{\%}'.
 
 % %%% Local Variables: 
 % %%% mode: latex

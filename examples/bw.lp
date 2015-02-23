@@ -2,7 +2,7 @@ time(1..lasttime).
 location(B) :- block(B).
 location(table).
 
-1 { move(B,L,T) : block(B) , location(L) } 1 :- time(T).
+{ move(B,L,T) : block(B) , location(L) } = 1 :- time(T).
 
 on(B,L,T)   :- move(B,L,T).
 non(B,L1,T) :- on(B,L,T), L<L1, location(L1).

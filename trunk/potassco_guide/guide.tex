@@ -40,35 +40,9 @@
 
 % \setcounter{tocdepth}{4}
 
-\author{%
-Martin Gebser \and
-Roland Kaminski \and
-Benjamin Kaufmann \and
-Max Ostrowski \and
-Javier Romero \and
-Torsten Schaub \and
-Sven Thiele}
-
-%  \thanks{\texttt{\{gebser,kaminski,kaufmann,ostrowsk,torsten,sthiele\}@cs.uni-potsdam.de}}}
-\title{%
-	\textbf{\huge A User's Guide to}
-        \\
-	\gringo, \clasp, \textbf{and} \clingo%
-        \thanks{This guide refers to \gringo\ and \clingo\ series 4 as well as \clasp\ series 3.
-                Please make sure that you have corresponding (or later) versions available.}
-        \\[4mm]
-        \large\url{http://potassco.sourceforge.net}
-%Tools \gringo, \clasp, and \clingo\ are available at~\cite{potassco}.} \\[0.0cm]
-%	{\normalsize \textnormal{(version 3.x)}}
-}
-\date{\today}
-
 \begin{document}
 \pagestyle{plain}
-\maketitle
-{\hfill\large\it --- Preliminary Draft ---\hfill}
-
-\input{abstract}
+\input{frontpage}
 \newpage
 \pagestyle{fancy}
 \tableofcontents
@@ -78,15 +52,15 @@ Sven Thiele}
 \include{introduction}
 \include{quickstart}
 \include{language}
-\include{meta}
 \include{multi}
+\include{examples}
+\include{options}
+\include{errors}
+\include{meta}
 \include{heuristic}
 \include{prefopt}
 \include{constraint}
-\include{examples}
-\include{options}
 \include{configuration}
-\include{errors}
 \include{future}
 \newpage
 \appendix

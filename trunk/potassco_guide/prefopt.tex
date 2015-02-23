@@ -47,10 +47,10 @@ Otherwise, a naming atom of form \code{name(s)}
 refers to the preference associated with statement \code{s} (see below).
 %
 Examples of weighted formulas are 
-``\code{a(X)}'', 
-``\code{C::edge(X,Y,C)}'', 
-``\code{(1,2)::and(a,b)}'', and 
-``\code{42::name(e)}''. 
+`\code{a(X)}', 
+`\code{C::edge(X,Y,C)}', 
+`\code{(1,2)::and(a,b)}', and 
+`\code{42::name(e)}'. 
 
 A \emph{preference element} is of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
@@ -65,18 +65,18 @@ Preference elements provide a (possible) structure to a set of weighted formulas
 by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
 %
 For convenience, we may drop the surrounding braces of such sets
-and omit ``\code{||$\,F$}'' if $F$ is tautological.
-Also, we drop ``\code{>}'' if $m=1$.
+and omit `\code{||$\,F$}' if $F$ is tautological.
+Also, we drop `\code{>}' if $m=1$.
 %
 Hence
 \code{\{a,neg(b)\}>c} stands for 
 \code{\{a,neg(b)\}>\{c\} || and(d,neg(d))}. 
 %
 Examples of preference elements are 
-``\code{a(X)}'',  
-``\code{2::name(p)}'', 
-``\code{\{a, b\} > \{c, d\}}'',  and
-``\code{a > b || c}''.
+`\code{a(X)}',  
+`\code{2::name(p)}', 
+`\code{\{a, b\} > \{c, d\}}',  and
+`\code{a > b || c}'.
 
 A \emph{preference statement} is of the form
 %
@@ -160,7 +160,6 @@ Line~2 contains an optimize statement that instructs \asprin\ to compute answer 
 \begin{note}
 Unlike \gringo's native optimization statements and weak constraints (cf.\ Section~\ref{subsec:gringo:optimize}),
 \asprin\ separates the declaration of preferences from the actual optimization directive.
-\eexample
 \end{note}
 
 To compute an answer set of the base program that is optimal with respect to \code{p1}, 
@@ -214,7 +213,6 @@ Answer: 1
 m(2) a(2) a(1) b(1)
 OPTIMUM FOUND
 \end{lstlisting}
-\eexample
 \end{example}
 
 \paragraph{Computing many optimal answer sets.}
@@ -285,7 +283,7 @@ it first looks for models that interpret atoms appearing in the preference state
 in the same way as $M_1$. 
 In this way,
 it finds the second optimal model, that contains $c(1)$, 
-and prints it followed by the line ``\lstinline{OPTIMUM FOUND *}''.  
+and prints it followed by the line `\lstinline{OPTIMUM FOUND *}'.  
 Then, it continues searching, finds $M_3$ and the process continues. 
 
 Finally,
@@ -422,7 +420,6 @@ and
 \code{|} for disjunction.
 \DELc{Please, have a look at \cite{brderosc15a} for more details.}{T: The syntax should be given in the section (see above comments)!\par Also, this
   should not be in the section how-to-implement --- integrate above :)}
-\eexample
 \end{note}
 
 \comment{T2J: Why is this important? See comment on interface :)}

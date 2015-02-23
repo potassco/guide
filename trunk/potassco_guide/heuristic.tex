@@ -50,7 +50,6 @@ and updates its heuristic knowledge about atom \code{a}.
 Then, it has to decide on \code{a}, making it either true or false.
 Following the current heuristic knowledge, 
 the solver makes \code{a} true and returns the answer set \code{\{\_heuristic(a,sign,1),a\}}.
-\eexample
 \end{example}
 
 \begin{note}
@@ -76,7 +75,6 @@ updates its heuristic knowledge,
 decides on atom \code{a} making it false, and 
 finally 
 returns the answer set \mbox{\{ \code{\_heuristic(a,sign,-1)}\}}.
-\eexample
 \end{example}
 
 These two examples illustrate how the heuristic atoms allow for modifying the decisions of the solver,
@@ -108,7 +106,7 @@ because then the atom \code{a}, appearing in the heuristic atom, would not be sh
 \begin{note}
 Printing the heuristic atoms in the output of \clingo\ or \clasp\ may often be a burden.
 To overcome this issue,
-the command line option \code{--out-hide-aux} allows us to suppress printing atoms starting with underscore ``\code{\_}''.
+the command line option \code{--out-hide-aux} allows us to suppress printing atoms starting with underscore `\code{\_}'.
 \end{note}
 
 \paragraph{Level.}
@@ -132,7 +130,6 @@ it decides first on \code{a} (with positive sign) and then \code{b} is propagate
 If we added the fact \code{\_heuristic(b,level,20)}, 
 we would first obtain the answer set containing \code{b} instead of \code{a}.
 This would also be the case if we used \code{\_heuristic(a,level,-10)} instead of \code{\_heuristic(a,level,10)}.
-\eexample
 \end{example}
 
 \begin{note}
@@ -162,7 +159,6 @@ the heuristic fact \code{\_heuristic(c,sign,-1)} is propagated.
 So, when deciding upon \code{c}, it gets assigned to false.  
 If we added the fact \code{\_heuristic(b,level,20)},
 the obtained first answer set would contain \code{b} and \code{c} instead of \code{a}.
-\eexample
 \end{example}
 
 \paragraph{True and false.}
@@ -217,7 +213,6 @@ the \code{sign} value of atom \code{c} is \code{-1}.
 So, when deciding upon \code{c}, it is assigned to false.
 If we added the fact \code{\_heuristic(c,sign,1,30)}, 
 the first answer set would also contain atom \code{c}.
-\eexample
 \end{example}
 
 \begin{note}
@@ -248,7 +243,7 @@ then the heuristic score for atom \code{a} is multiplied by \code{2}.
 \paragraph{Domain choices.}
 
 The \code{Domain} heuristic extends \clasp\ and \clingo's search statistics produced with command line option \code{--stats}.
-After ``\code{Domain:}'', it prints how many decisions where made on atoms appearing inside \code{\_heuristic} atoms.
+After `\code{Domain:}', it prints how many decisions where made on atoms appearing inside \code{\_heuristic} atoms.
 %
 For instance, the statistics obtained in Example \ref{example:dynamic} read as follows.
 \begin{lstlisting}[numbers=none]
@@ -388,7 +383,6 @@ With this heuristic,
 the idea is not to decide on atoms that lead to much propagation (as with \code{move} atoms)
 but rather to make correct decisions, 
 given that usually the values of \code{on} atoms persist by inertia.
-\eexample
 \end{example}
 
 

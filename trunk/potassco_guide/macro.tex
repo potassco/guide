@@ -42,8 +42,8 @@
 % Theorems
 
 \theoremstyle{definition}
-\newtheorem{example}{Example}[section]
-\newcommand{\eexample}[0]{\hfill$\Box$}
+% \newtheorem{example}{Example}[section]
+% \newcommand{\eexample}[0]{\hfill$\Box$}
 
 
 % More formatting
@@ -61,8 +61,15 @@
 %  \fbox{\parbox[t]{1.76\marginparwidth}{\footnotesize #1}}}}
 %\fi
 
-\newtheorem{note}{Remark}[section]
+%\newtheorem{note}{Remark}[section]
 % \newenvironment{Note}{\paragraph{Remark.}}{} % {\noindent\textbf{Remark.\ }}{}
+
+\newcounter{note}[section]
+\newenvironment{note}[1][]{\refstepcounter{note}\par\medskip
+   \noindent \textbf{Note~\thesection.\thenote. #1} \rmfamily}{\hfill$\blacksquare$\medskip}
+\newcounter{example}[section]
+\newenvironment{example}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textbf{Example~\thesection.\theexample. #1} \rmfamily}{\hfill$\blacksquare$\medskip}
 
 % \newcommand{\Comment}[1]{\marginpar{\hspace*{-1.5mm}%
 %   \fbox{\parbox[t]{1.7\marginparwidth}{\footnotesize \underline{COMMENT}\\#1}}}}

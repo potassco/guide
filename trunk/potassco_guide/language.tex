@@ -36,7 +36,6 @@ constructs belonging to the input language of \gringo\ and \clingo.
 \index{Terms!\code{\#sup}}
 \index{Terms!\code{\#inf}}
 
-\comment{T2R: Upgrade tuple definition}
 \begin{figure}
 \railnontermfont{\rmfamily\itshape}%
 \railalias{rusc}{\tt\char95}\railterm{rusc}
@@ -1908,16 +1907,15 @@ A comment until the end of a line is initiated by symbol ``\code{\%}'',
 and a comment within one or over multiple lines is enclosed
 in ``\code{\%*}'' and ``\code{*\%}''.
 As an abstract example, consider:
-\comment{T: Real example code??}
 %
 \begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{logic program}@  %* enclosed comment *%  @\textit{logic program}@
-@\textit{logic program}@  % comment till end of line
-@\textit{logic program}@
+tos(jim).    %* enclosed comment *%  tos(spock).
+tos(bones).  % comment till end of line
+tos(scotty). tos(chekov).
 %*
 comment over multiple lines
 *%
-@\textit{logic program}@
+tos(uhura).  tos(sulu).
 \end{lstlisting}
 
 \paragraph{Show Statements}
@@ -2075,7 +2073,6 @@ the atom \code{q(1)} is still subject to simplification
 and removed from the body of the respective instantiation of the rule in Line~4.
 The idea here is that no matter how \code{q(1)} is supplied externally,
 there can never be an answer set that does not contain \code{q(1)}.
-\comment{T2R: give output?}
 \eexample
 \end{example}
 

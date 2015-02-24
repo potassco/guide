@@ -139,7 +139,7 @@ literals are satisfied, then~$A_0$ must be true.
 On the other hand, an integrity constraint is a rule that filters solution candidates,
 meaning that the literals in its body must not jointly be satisfied.
 
-A set of propositional atoms is called a \emph{model} of a logic program if it satisfies all rules, facts, and integrity constraints.
+A set of (propositional) atoms is called a \emph{model} of a logic program if it satisfies all rules, facts, and integrity constraints.
 Atoms are considered true if and only if they are in the model.
 In ASP, a model is called an \emph{answer set} if every atom in the model has an (acyclic) derivation from the program.
 %
@@ -170,7 +170,7 @@ Although both rules are satisfied,
 \pred{a} relies on~\pred{b}, and vice versa.
 That is, the set including both \pred{a} and~\pred{b} is not an answer set.
 Hence, the empty set is the only answer set of the logic program.
-We say that there is a positive cycle through \pred{a} and~\pred{b}
+We say that there is a \emph{positive cycle} through \pred{a} and~\pred{b}
 subject to minimization.
 \end{example}
 

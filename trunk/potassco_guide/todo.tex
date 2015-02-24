@@ -22,8 +22,49 @@
 % \item quoting of expressions/symbols (double quotes, punctuation)
 \item homogeneous style for schematics in language section
 \item the language section uses very often: ``gringo and the grounding component of clingo''
+\item Vladimir's comments
+\begin{itemize}
+ \item 
+  The symbols \code{\#sup} and \code{\#inf} are new to me, is this a recent addition to the
+  language?  Is it really true that \code{\#sup>f(\#sup)}, but \code{\#inf<f(\#inf)}?
+  The explanation of these symbols at the bottom of page 13 is cryptic, I’m
+  afraid, unless you say there that a total order on variable-free terms is
+  going to be inroduced later.
+ \item
+  It seems that you banished the comparison symbol ==, and I wholeheartedly
+  approve this decision.  But then you need to include = in the list of
+  comparison symbols, instead of relegating it to the section on assignments,
+  isn't that right? Otherwise X+Y=Z*U will not be syntactically correct. 
+  Also, the examples in the middle of page 27, with “=2” in the body, are
+  syntactically incorrect if equalities are not included among comparison
+  symbols.
+ \item
+  The word ``assignment'' is used many times in the draft.  My advice to Roland
+  (which, as, he found reasonable) was to refrain from using it, because it
+  sounds terribly nondeclarative, and because “assignments” are not a special
+  syntactic category now that we don't have == . Instead you can say that
+  comparisons of the form A=B where A or B is a variable are processed in a
+  special way so that the variable becomes safe.  Or something like this. 
+  Similarly with ``assignment aggregates.''
+ \item
+  The discussion of terms in Sec. 3.1.1 gives the impression that Fig. 2 is a
+  complete description of the syntax of terms.  It would be good to say here
+  that the definition of a term will be extended later, when arithmetic
+  operations and intervals are introduced.  In fact, Fig. 2 defines something
+  close to what we call “precomputed” terms in the AG paper.  It may be
+  worthwhile to include this (or similar) name for the class of terms covered
+  by Fig. 2, for the following reason.  The total order that you talk about
+  in Sec. 3.1.7 is not defined actually on all variable-free terms; it is
+  defined on *precomputed* variable free terms.  Once we decided whether f(a)
+  is greater than g(2), we are committed to the same choice regarding f(a)
+  and g(1+1), and regarding g(1..1), right?
+ \item
+  Will the reader understand “cannot span positive cycles” and “induces no
+  positive cycle” in Sec. 3.1.4?  Unfortunately, I don't know what to
+  suggest.
+  
 \end{itemize}
-
+\end{itemize}
 
 %%% Local Variables: 
 %%% mode: latex

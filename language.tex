@@ -19,12 +19,9 @@ In contrast to \gringo\ outputting ground programs,
 \clingo\ returns answer sets.
 
 Usually, logic programs are specified in one or more (text) files whose names are
-% passed via the command line
-provided as arguments
-in an invocation of either \gringo\ or \clingo.
-% We below provide a description of
-In what follows, we describe the
-constructs belonging to the input language of \gringo\ and \clingo.
+provided as arguments in an invocation of either \gringo\ or \clingo.
+In what follows, 
+we describe the constructs belonging to the input language of \gringo\ and \clingo.
 
 \subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
 \index{Terms}
@@ -417,21 +414,11 @@ instead of disjunction, unless the latter is required for complexity reasons.
 \index{Logic Programs!Literals!Double Default Negation}
 \index{Logic Programs!Literals!Head}
 
-\com{JR: I got lost :( 
-             What about something like what is written below?
-             ``They are satisfied whenever their positive counterparts are,
-             but they do not have to be finitely derivable. And then move to the example.''
-         RK: I agree that this was puzzling and tried to fix some problems.
-             Actually, I think it is wrong to say that double negated literals do not need a proof.
-             Because in fact they do.
-             We just can do classical proofs *with* them instead of intuitionistic ones.
-           }
-
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
 They are satisfied whenever their positive counterparts are.
 But unlike (purely) positive literals,
-they do not span positive cycles subject to minimization.
+they do not require a proof by forward chaining over rules from given facts.
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
@@ -1554,7 +1541,6 @@ As an alternative way to express an optimization problem,
 there are optimization statements,
 which provide another way to write weak constraints.
 A minimize constraint of form:
-\comment{JR: No weights here? $w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$ RK: using this would make things really hard to read. The $t_i$ is meant to stand for a term tuple with an optional priority.}
 \[
     \code{\#minimize \{ $\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.}
 \]
@@ -1564,6 +1550,8 @@ represents the following $n$ weak constraints:
     \quad \dots \quad
     \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_n$.~[$\boldsymbol{t}_n$]}
 \]
+Note that each $\boldsymbol{t}_i$ can be preceded by an optional prioritized term $w_i$@$p_i$.
+
 And finally there are maximize constraints.
 Again, these are defined as shortcuts.
 To maximize, the integer weights of the tuples are simply inverted.

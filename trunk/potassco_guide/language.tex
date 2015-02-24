@@ -187,6 +187,9 @@ b :- not a.
 \end{lstlisting}
 %
 Here, the empty set is not a model because both rules are unsatisfied.
+\comment{JR: For me the use of ``models'' and ``answer sets'' here is a bit confusing.
+             Are models answer sets, or classical models? %JR
+             Maybe we could always talk about answer sets (?). }%JR
 However, the sets containing only~\pred{a} or only~\pred{b} are models.
 To see that each of them is an answer set,
 note that~\pred{a} is derived by the rule \code{\pred{a}\,:-\:not\:\pred{b}.}
@@ -495,7 +498,10 @@ They are satisfied whenever their positive counterparts are but not vice versa.
 Unlike (purely) positive literals,
 such literals do require a proof of $A$;
 in other words, they cannot span positive cycles subject to minimization.
-
+\comment{JR: I got lost :( 
+             What about something like what is written below? %JR
+             ``They are satisfied whenever their positive counterparts are, %JR 
+             but they do not have to be finitely derivable. And then move to the example.''}%JR
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
@@ -507,6 +513,7 @@ as well as the additional stable model containing both \pred{a} and \pred{b}.
 This is because neither `\code{not not a}' nor `\code{not not b}' must be (finitely) derivable.
 In fact, in contrast to Example~\ref{ex:as:one},
 the above program induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
+\comment{JR: For me this sounds too complicated: an induced positive cycle subject to minimization.}
 
 Also, there are literals in the head of rules.
 These offer just another way to write integrity constraints,
@@ -826,6 +833,7 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 In Line~1 of Example~\ref{ex:assign}
 are given five facts of the form~`\code{\pred{num}($k$).}'
 over consecutive integers~$k$.
+\comment{JR: Style: maybe move the ``are given'' to the end of the sentence?} 
 For a more compact representation,
 \gringo\ and \clingo\ support integer intervals of the form $i$\code{..}$j$.
 % , where~$i$ and~$j$ are integers.
@@ -833,6 +841,9 @@ Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
 An interval is expanded differently depending on where it occurs.
 In the head of a rule, an interval is expanded conjunctively
+\comment{JR: Style: Add comma? or: 
+             ``In the head of the rule an interval is expanded conjunctively, %JR
+             while in the body it is expanded disjunctively'' } %JR
 and disjunctively in the body of a rule.
 So we could have simply used the fact \code{num(1..5).} to represent the five facts.
 
@@ -893,7 +904,9 @@ Hence, \code{(1)} is not a tuple here but equal to integer \code{1}.}
 \begin{example}\label{ex:pool}
 The following program makes use of pooling.
 It is similar to Example~\ref{ex:int}
-but with the difference that unlike intervals pools have a fixed size:%
+but with the difference that unlike intervals
+\comment{JR: Style: Comma? }
+pools have a fixed size:%
 \marginlabel{%
   The simplified ground program obtained from pools
   can be inspected by invoking:\\
@@ -903,6 +916,7 @@ but with the difference that unlike intervals pools have a fixed size:%
 \lstinputlisting[xrightmargin=-5pt]{examples/pool.lp}
 %
 Because the pools in this rule all occur in the head,
+\comment{JR: ``Because all the pools in this rule occur in the head''?}
 they are expanded conjunctively.
 Furthermore, the two pools expand into the cross product \code{(1..3)$\times$(1..3)},
 resulting in the following set of facts:
@@ -911,7 +925,9 @@ grid(1,1).  grid(1,2).  grid(1,3).
 grid(2,1).  grid(2,2).  grid(2,3).
 grid(3,1).  grid(3,2).  grid(3,3).
 \end{lstlisting}
-Like intervals, pools can also be used in the body of a rule where they are expanded disjunctively:
+Like intervals, pools can also be used in the body of a rule
+\comment{JR: Style: Comma?}
+where they are expanded disjunctively:
 \begin{lstlisting}
 grid(X,Y) :- X=(1;2;3), Y=(1;2;3).
 \end{lstlisting}
@@ -926,7 +942,9 @@ For another example on pooling, featuring non-consecutive elements, see Section~
 \index{Logic Programs!Literals!Conditions}%
 %
 A \emph{conditional literal} is of form $L:\boldsymbol{L}$,
-where $L$ is a literal and $\boldsymbol{L}$ is a tuple of literals, called \textit{condition}.
+where $L$ is a literal and $\boldsymbol{L}$ is a tuple 
+\comment{JR: this ``tuple'' strikes me a bit, then I have the doubt about whether they should go in parentheses}
+of literals, called \textit{condition}.
 As in mathematical set notation,
 we use the symbol~`\code{:}' to formulate conditions.
 Whenever $\boldsymbol{L}$ is empty, we get a regular literal and denote it as usual by $L$.
@@ -1062,14 +1080,18 @@ For further details see~\cite{haliya14a}.
 \index{Aggregates!Weights}
 
 Aggregates are one of the most useful modeling constructs since they allow for forming values from groups of selected items.
-Together with comparisons they allow for expressing conditions over these items.
+\comment{JR: Style: ``they allow to form values''?}
+Together with comparisons
+they allow for expressing conditions over these items.
 For instance, we can express that the sum of a semester's course credits must be at least 20,
 or that the sum of the prizes of my shopping items should not exceed 30 euros.
 
 More formally,
 an aggregate is a function on a set of tuples that are normally subject to conditions.
 By comparing an aggregated value with given values, we can extract a truth value from an aggregate's evaluation,
-thus, obtaining an aggregate atom.
+thus,
+\comment{JR: Style: I would get rid of this comma}
+obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
 
 \paragraph{Body Aggregates}
@@ -1088,10 +1110,12 @@ that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 Finally,
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$
 to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
+\comment{JR: the meaning of ``usually representing arithmetic functions'' is not clear to me}
 Note that one of the \emph{guards} `$s_1\prec_1$' or `$\prec_2 s_2$'%
 (or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to `\code{<=}' (thus interpreting $s_1$ or~$s_2$ as lower and upper bounds),
 respectively.
+\comment{JR: ``respectively'' should go into the parentheses, oder?}
 
 Currently, \gringo\ (and \clingo) support the aggregates
 \code{\#count}
@@ -1110,6 +1134,8 @@ Currently, \gringo\ (and \clingo) support the aggregates
 \index{Aggregates!Maximum, \code{\#max}}%
 (the maximum weight).
 The weight refers to the first element of a term tuple.
+\comment{JR: Maybe the fact that the first element is the weight could be stressed more,
+             but I am not sure about how to do it.}%JR
 Aggregate atoms, as described above, are obtained by writing
 either \code{\#count}, \code{\#sum}, \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
 %
@@ -1125,7 +1151,9 @@ can be expressed as follows.
 
 #sum { 3:bananas; 25:cigars; 10:broomstick } <= 30
 \end{lstlisting}
-Both aggregate atoms can be used like any other atom, possibly preceded by negation, in a body of a rule.
+Both aggregate atoms can be used like any other atom, possibly preceded by negation, in a
+\comment{JR: Style: change ``a'' for ``the''?}
+body of a rule.
 Within both aggregate atoms,
 symbolic atoms like \lstinline{course(ai)} or \lstinline{broomstick} are associated with costs.
 Assuming that \lstinline{course(db)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broomstick} are true,
@@ -1153,6 +1181,8 @@ which hold if both \lstinline{a} and \lstinline{b} are false,
 yielding \lstinline[mathescape]{#count$\{$t;s$\}$ = 2}.
 
 Likewise, the literals of other aggregates are understood as sets.
+\comment{JR: This is a bit confusing to me. Literals of aggregates are understood as sets, 
+             but here I think the point is more that term tuples whose conditions are satisfied are understood as sets.}%JR
 %
 Consider the next two summation aggregates:
 \begin{lstlisting}[numbers=none,escapechar=@]
@@ -1164,6 +1194,7 @@ an atom like \lstinline{cost(1,2,3)} can be used to represent an arc from node \
 If both \lstinline{cost(1,2,3)} and \lstinline{cost(2,3,3)} hold,
 the first sum evaluates to \lstinline{3} while the second yields \lstinline{6}.
 Note that all term tuples, the singular one \lstinline{3} as well as the ternary ones, \lstinline{3,1,2} and \lstinline{3,2,3}, respectively,
+\comment{JR: Style: Delete this respectively?}
 share the same weight, viz.~\lstinline{3}.
 However,
 the set property makes the first aggregate count edges with the same cost only once,
@@ -1190,7 +1221,9 @@ yielding
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
 %
 Unlike with body aggregates, only singular head aggregates are supported.
-
+\comment{JR: I would explain a bit what is a ``singular head aggregate''. 
+             Above the word ``singular'' is used to refer to a term tuple, %JR
+             and I think that's all said so far about it.}%JR
 \begin{note}
 Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint expressed by the
 original head aggregate.
@@ -1278,7 +1311,7 @@ To this end, \gringo\ and \clingo\ allow for using aggregates
 \code{\#sum}, \code{\#min}, \code{\#max}, and \code{\#count} in assignments.
 \index{Aggregates!Assignments}%
 \index{Assignments!Aggregates}%
-For instances, the following rules assign the obtained values to a variable:
+For instance, the following rules assign the obtained values to a variable:
 \begin{lstlisting}[numbers=none]
 sum(X) :- X = #sum   { 2:a; 3:a }.
 min(X) :- X = #min   { 2:a; 3:a }.
@@ -1398,7 +1431,9 @@ because this often leads to problems for larger instances.
 After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
 Regarding contained variables,
-only variable occurrences in the guards give rise to global variables.
+only variable occurrences in the guards 
+\comment{JR: Style: I would write here the symbols $s_1\prec_1$ and $\prec_2 s_2$ to remember what a guard is.}
+give rise to global variables.
 Hence, any variable in an aggregate element must be bound by
 either a positive global occurrence or
 a variable that occurs positively in its condition $\boldsymbol{L_i}$.
@@ -1435,6 +1470,7 @@ subject areas.
 After specifying the above facts,
 the student starts to provide personal constraints on the courses to enroll.
 The first condition is that~\const{3} to~\const{6} courses should be enrolled:
+\comment{JR: Style: this ``should be enrolled'' sounded a bit strange to me, but maybe it's me ;)}
 %
 \lstinputlisting[nolol,firstline=11,lastline=11,firstnumber=9]{examples/aggr.lp}
 %
@@ -1508,12 +1544,15 @@ To express them, we first introduce an auxiliary rule and a fact:
 %
 The rule in Line~13 projects instances of \pred{course}/$3$ to
 \pred{hours}/$2$, thereby, dropping courses' subject areas.
-This is used to not consider the same course multiple times within the following
+This is used to not consider 
+\comment{JR: Style: sounds strange (to me?)}
+the same course multiple times within the following
 integrity constraints:
 \footnote{Alternatively, we could also use \lstinline{course(C,_,H).}}
 %
 \lstinputlisting[nolol,firstline=21,lastline=23,firstnumber=15]{examples/aggr.lp}
 %
+\comment{JR: Style: This change of numbers lost me, although I recovered ;)}
 As Line~15 shows,
 we may use default negation via `\code{not}' in front of aggregate atoms,
 and bounds may be specified in terms of variables.
@@ -1595,7 +1634,9 @@ being associated with a term tuple:
 The priority \code{@$p$} is optional.
 For simplicity, we first consider the non-prioritized case omitting \code{@$p$}.
 Whenever the body of a weak constraint is satisfied,
-it contributes its term tuple (as with aggregates duplicates are ignored) to a cost function.
+it contributes its term tuple (as with aggregates
+\comment{JR: Style: Comma?}
+duplicates are ignored) to a cost function.
 This cost function accumulates the integer weights $w$ of all contributed tuples just like a \#sum aggregate does.
 The semantics of a program with weak constraints is intuitive:
 an answer set is \emph{optimal}
@@ -1615,6 +1656,7 @@ As an alternative way to express an optimization problem,
 there are optimization statements,
 which provide another way to write weak constraints.
 A minimize constraint of form:
+\comment{JR: No weights here? $w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$}
 \[
     \code{\#minimize \{ $\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.}
 \]
@@ -1631,7 +1673,7 @@ Hence, a maximize statement of form:
 \[
     \code{\#maximize \{ $w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_1$@$p_1$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}.}
 \]
-represents the followingg $n$ weak constraints:
+represents the following $n$ weak constraints:
 \[
     \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_1$.~[-$w$@$p$,$\boldsymbol{t}_1$]}
     \quad \dots \quad
@@ -2114,6 +2156,7 @@ or:\\
 The above script grounds (Line 9) the $\code{base}/0$ part (Line 7) as well as the $\code{a}/2$ part with parameters \code{1} and \code{3} (Line 8).
 Note the call to solve in Line 10.
 This is essential to solve the program with \clingo\
+\comment{JR: Style: Comma?}
 and even in \gringo\ some post-processing happens in solve - e.g.,
 printing the symbol table of the \smodels\ format~\cite{lparseManual}.
 \end{example}

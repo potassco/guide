@@ -438,8 +438,8 @@ a :- not not b.
 b :- not not a.
 \end{lstlisting}
 %
-This program has the same stable model as the one in Example~\ref{ex:as:one}
-as well as the additional stable model containing both \pred{a} and \pred{b}.
+This program has the same answer sets as the one in Example~\ref{ex:as:one}
+as well as the additional answer set containing both \pred{a} and \pred{b}.
 Because in contrast to Example~\ref{ex:as:one},
 the above program induces no positive cycle between~\pred{a} and~\pred{b} subject to minimization.
 
@@ -863,7 +863,9 @@ For another example on pooling, featuring non-consecutive elements, see Section~
 %
 A \emph{conditional literal} is of form $L:\boldsymbol{L}$,
 where $L$ is a literal and $\boldsymbol{L}$ is a tuple 
-\comment{JR: this ``tuple'' strikes me a bit, then I have the doubt about whether they should go in parentheses. RK: we could add that we do not write parenthesis}
+\comment{JR: this ``tuple'' strikes me a bit, then I have the doubt about whether they should go in parentheses.\par
+  RK: we could add that we do not write parenthesis\par
+  TS: I agree but shouldn't we do this, where tuples get defined?}
 of literals, called \textit{condition}.
 As in mathematical set notation,
 we use the symbol~`\code{:}' to formulate conditions.
@@ -1000,7 +1002,6 @@ For further details see~\cite{haliya14a}.
 \index{Aggregates!Weights}
 
 Aggregates are one of the most useful modeling constructs since they allow for forming values from groups of selected items.
-\comment{JR: Style: ``they allow to form values''? RK: ``allow to'' does not exist in English}
 Together with comparisons
 they allow for expressing conditions over these items.
 For instance, we can express that the sum of a semester's course credits must be at least 20,
@@ -1010,7 +1011,6 @@ More formally,
 an aggregate is a function on a set of tuples that are normally subject to conditions.
 By comparing an aggregated value with given values, we can extract a truth value from an aggregate's evaluation,
 thus,
-\comment{JR: Style: I would get rid of this comma. RK: The comma is optional. But we have used commas after adverbs modifying a sentence throughout the whole document.}
 obtaining an aggregate atom.
 Aggregate atoms come in two variants depending whether they occur in a rule head or body.
 
@@ -1029,8 +1029,7 @@ that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 %
 Finally,
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$
-to the terms $s_1$ and~$s_2$ (usually representing arithmetic functions), respectively.
-\comment{JR: the meaning of ``usually representing arithmetic functions'' is not clear to me. RK: Agree this part can simply be removed.}
+to the terms $s_1$ and~$s_2$, respectively.
 Note that one of the \emph{guards} `$s_1\prec_1$' or `$\prec_2 s_2$'%
 (or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to `\code{<=}' (thus interpreting~$s_1$ or~$s_2$ as lower and upper bounds, respectively).
@@ -1052,12 +1051,6 @@ Currently, \gringo\ (and \clingo) support the aggregates
 \index{Aggregates!Maximum, \code{\#max}}%
 (the maximum weight).
 The weight refers to the first element of a term tuple.
-\comment{JR: Maybe the fact that the first element is the weight could be stressed more,
-             but I am not sure about how to do it.
-         RK: I think this is okay.
-             Aggregates are complex and thus the section is not that easy to read.
-             That's why we have a lot of examples including some with \#sum aggregates with weights.
-           }%JR
 Aggregate atoms, as described above, are obtained by writing
 either \code{\#count}, \code{\#sum}, \code{\#sum+}, \code{\#min}, or \code{\#max} for $\alpha$.
 %
@@ -1100,10 +1093,7 @@ However, both are different from the aggregates
 which hold if both \lstinline{a} and \lstinline{b} are false,
 yielding \lstinline[mathescape]{#count$\{$t;s$\}$ = 2}.
 
-Likewise, the literals of other aggregates are understood as sets.
-\comment{JR: This is a bit confusing to me. Literals of aggregates are understood as sets, 
-             but here I think the point is more that term tuples whose conditions are satisfied are understood as sets.
-         RK: Agree definitely not literals!}%JR
+Likewise, the elements of other aggregates are understood as sets.
 %
 Consider the next two summation aggregates:
 \begin{lstlisting}[numbers=none,escapechar=@]
@@ -1139,13 +1129,7 @@ The second colon in
 is dropped whenever $\boldsymbol{L_i}$ is empty,
 yielding
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
-%
-Unlike with body aggregates, only singular head aggregates are supported.
-\comment{JR: I would explain a bit what is a ``singular head aggregate''. 
-             Above the word ``singular'' is used to refer to a term tuple, %JR
-             and I think that's all said so far about it.
-         RK: I would simply remove the sentence.
-             The comparison with body aggregates is inadequate anyway.}%JR
+
 \begin{note}
 Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint expressed by the
 original head aggregate.
@@ -1353,9 +1337,7 @@ because this often leads to problems for larger instances.
 After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
 Regarding contained variables,
-only variable occurrences in the guards 
-\comment{JR: Style: I would write here the symbols $s_1\prec_1$ and $\prec_2 s_2$ to remember what a guard is. RK: disagree}
-give rise to global variables.
+only variable occurrences in the guards give rise to global variables.
 Hence, any variable in an aggregate element must be bound by
 either a positive global occurrence or
 a variable that occurs positively in its condition $\boldsymbol{L_i}$.
@@ -1391,8 +1373,7 @@ subject areas.
 
 After specifying the above facts,
 the student starts to provide personal constraints on the courses to enroll.
-The first condition is that~\const{3} to~\const{6} courses should be enrolled:
-\comment{JR: Style: this ``should be enrolled'' sounded a bit strange to me, but maybe it's me ;) RK: strictly speaking one should use have to but I consider this as nitpicking :)}
+The student's first condition is to enrol in~\const{3} to~\const{6} courses.
 %
 \lstinputlisting[nolol,firstline=11,lastline=11,firstnumber=9]{examples/aggr.lp}
 %
@@ -1400,7 +1381,7 @@ Instantiating the above \const{\#count} aggregate
 yields the following ground rule:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
-  \code{\mbox{~}gringo --text \attach{examples/aggr.lp}{aggr.lp}}}
+  \code{gringo~--text~\attach{examples/aggr.lp}{aggr.lp}}}
 %
 \begin{lstlisting}[numbers=none]
 3 <= #count { 0,enroll(1) : enroll(1);
@@ -1466,15 +1447,12 @@ To express them, we first introduce an auxiliary rule and a fact:
 %
 The rule in Line~13 projects instances of \pred{course}/$3$ to
 \pred{hours}/$2$, thereby, dropping courses' subject areas.
-This is used to not consider 
-\comment{JR: Style: sounds strange (to me?) RK: but okay to me}
-the same course multiple times within the following
+This is used to not consider the same course multiple times within the following
 integrity constraints:
 \footnote{Alternatively, we could also use \lstinline{course(C,_,H).}}
 %
 \lstinputlisting[nolol,firstline=21,lastline=23,firstnumber=15]{examples/aggr.lp}
 %
-\comment{JR: Style: This change of numbers lost me, although I recovered ;) RK: good to hear. I would keep everything as is. :)}
 As Line~15 shows,
 we may use default negation via `\code{not}' in front of aggregate atoms,
 and bounds may be specified in terms of variables.

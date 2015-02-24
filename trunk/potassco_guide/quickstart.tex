@@ -94,12 +94,10 @@ i.e., rules containing variables (whose names start with uppercase letters)
 that are independent of a particular instance.
 Typically, an encoding can be logically partitioned
 into a \emph{Generate}, a \emph{Define}, and a \emph{Test} part~\cite{lifschitz02a}.
-An additional \emph{Display} part allows for projecting
-the output to atoms (unambiguously) characterizing a solution,
-thus, suppressing auxiliary predicates.
-\comment{JR: Style note: This looks too complicated to me, 
-             specially because it may be understood that actually some ASP projection is happening. %\comment{JR
-             One could say, f.e. ``allows for showing only some predicates of the program''.} % \comment{JR
+An additional \emph{Display} part allows for restricting
+the output to a distinguished set of atoms,
+and thus, for suppressing auxiliary predicates.
+%
 We follow this methodology and
 mark the respective parts via comment lines beginning with `\code{\%}' 
 in the following encoding:%

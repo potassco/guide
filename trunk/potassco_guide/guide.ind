@@ -36,7 +36,7 @@
 
   \indexspace
 
-  \item Boolean Constants, \hyperpage{21}
+  \item Boolean Constants, \hyperpage{22}
 
   \indexspace
 
@@ -60,7 +60,7 @@
     \subitem Atoms, \hyperpage{17}
       \subsubitem Aggregates, \hyperpage{28}
       \subsubitem Assignments, \hyperpage{24}
-      \subsubitem Boolean Constants, \hyperpage{21}
+      \subsubitem Boolean Constants, \hyperpage{22}
       \subsubitem Comparison Predicates, \hyperpage{23}
       \subsubitem Pooling, \code{;}, \hyperpage{26}
     \subitem Disjunction, \hyperpage{20}
@@ -76,7 +76,7 @@
       \subsubitem Head, \hyperpage{21}
     \subitem Rules, \hyperpage{17}
       \subsubitem Disjunctive, \hyperpage{20}
-    \subitem Safety, \hyperpage{19}, \hyperpage{23--25}, \hyperpage{32}, 
+    \subitem Safety, \hyperpage{19}, \hyperpage{23--26}, \hyperpage{32}, 
 		\hyperpage{36}, \hyperpage{42, 43}
   \item Lua, \hyperpage{37}
 

@@ -416,22 +416,22 @@ instead of disjunction, unless the latter is required for complexity reasons.
 
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
-They are satisfied whenever their positive counterparts are\REPc{.
+They are satisfied whenever their positive counterparts are.
 But unlike (purely) positive literals,
-they do not require an (acyclic) derivation from the program.}%
-{, i.e., $\code{not}~\code{not}~A$ holds as soon as $A$ is considered true.}%
-{MG: What about this?}
+they do not require an (acyclic) derivation from the program;
+it is sufficient that they are true in the model at hand.
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
 b :- not not a.
 \end{lstlisting}
 %
-This program has the same answer sets as the one in Example~\ref{ex:as:one}
+This program has the same answer set as the one in Example~\ref{ex:as:one}
 as well as the additional answer set containing both \pred{a} and \pred{b}.
 This is because neither `\code{not not a}' nor `\code{not not b}' require an acyclic derivation from the program.
 In fact, in contrast to Example~\ref{ex:as:one},
 the above program induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
+Without this, \pred{a} and~\pred{b} can thus be both true or false, just like in classical logic.
 
 Also, there are literals in the head of rules.
 These offer just another way to write integrity constraints,

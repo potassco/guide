@@ -62,7 +62,27 @@
  %  Will the reader understand “cannot span positive cycles” and “induces no
  %  positive cycle” in Sec. 3.1.4?  Unfortunately, I don't know what to
  %  suggest.
-  
+  \end{itemize}
+\item Christoph's comments
+  \begin{itemize}
+  \item 
+    I have one comment regarding the future work section where it says that it
+    is considered to add "support for arbitrary positive loops". Since the
+    second half of the sentence talks about redefining atoms in incremental
+    programs, I was wondering if these two features are meant to be used
+    together, i.e., redefining atoms in a cyclic fashion (which would
+    contradict the outcome of our discussion after Cristina's defense). If not,
+    then it should be clarified which kind of positive loops are meant here
+    since most positive loops are already supported (maybe over aggregates?).
+  \item 
+    Another question concerns Section 3.1.11 (conditional literals), where I
+    was wondering how the rule would be instantiated if person(jane) and
+    person(john) were no fact but derivable atoms. Then meet would only depend
+    on the available atoms whose corresponding person atoms are currently true.
+    Maybe one should give another example which demonstrates this. (My idea
+    would be to use default-negation to derive an intermediate atom if there is
+    a person who is not available, and then use another default-negation to
+    check if this atom is not true.).
 \end{itemize}
 \end{itemize}
 

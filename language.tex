@@ -418,7 +418,7 @@ The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
 They are satisfied whenever their positive counterparts are.
 But unlike (purely) positive literals,
-they do not require a proof by forward chaining over rules from given facts.
+they do not require an (acyclic) derivation from the program.
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
@@ -427,8 +427,9 @@ b :- not not a.
 %
 This program has the same answer sets as the one in Example~\ref{ex:as:one}
 as well as the additional answer set containing both \pred{a} and \pred{b}.
-Because in contrast to Example~\ref{ex:as:one},
-the above program induces no positive cycle between~\pred{a} and~\pred{b} subject to minimization.
+This is because neither `\code{not not a}' nor `\code{not not b}' require an acyclic derivation from the program.
+In fact, in contrast to Example~\ref{ex:as:one},
+the above program induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
 
 Also, there are literals in the head of rules.
 These offer just another way to write integrity constraints,
@@ -754,8 +755,8 @@ For a more compact representation,
 Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
 An interval is expanded differently depending on where it occurs.
-In the head of a rule, an interval is expanded conjunctively.
-While in the body of a rule an interval is expanded disjunctively.
+In the head of a rule, an interval is expanded conjunctively,
+while in the body of a rule, it is expanded disjunctively.
 So we could have simply used the fact \code{num(1..5).} to represent the five facts.
 
 \begin{example}\label{ex:int}
@@ -1053,7 +1054,7 @@ can be expressed as follows.
 
 #sum { 3:bananas; 25:cigars; 10:broomstick } <= 30
 \end{lstlisting}
-Both aggregate atoms can be used like any other atom, possibly preceded by negation, in the body of a rule.
+Both aggregate atoms can be used in the body of a rule like any other atom, possibly preceded by negation.
 Within both aggregate atoms,
 symbolic atoms like \lstinline{course(ai)} or \lstinline{broomstick} are associated with costs.
 Assuming that \lstinline{course(db)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broomstick} are true,

@@ -416,9 +416,11 @@ instead of disjunction, unless the latter is required for complexity reasons.
 
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
-They are satisfied whenever their positive counterparts are.
+They are satisfied whenever their positive counterparts are\REPc{.
 But unlike (purely) positive literals,
-they do not require an (acyclic) derivation from the program.
+they do not require an (acyclic) derivation from the program.}%
+{, i.e., $\code{not}~\code{not}~A$ holds as soon as $A$ is considered true.}%
+{MG: What about this?}
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.

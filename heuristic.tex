@@ -23,7 +23,7 @@ We introduce them below step by step.
 
 \paragraph{Sign.}
 
-The modifier \code{sign} allows for controlling the truth value assigned to variables subject to a choice withing the solver.
+The modifier \code{sign} allows for controlling the truth value assigned to variables subject to a choice within the solver.
 
 The \code{Domain} heuristic associates with each atom an integer \code{sign} value, which by default is $0$.
 When deciding which truth value to assign to an atom during a choice, the atom is assigned to true, if its \code{sign} value is greater than $0$. 
@@ -162,9 +162,9 @@ the obtained first answer set would contain \code{b} and \code{c} instead of \co
 
 \paragraph{True and false.}
 
- The modifiers \code{true} and \code{false} allow us to refer at the same time to the \code{level} and the \code{sign} of an atom.
- Internally,  for the \code{true} and \code{false} heuristic atoms,
- the solver defines new \code{level} and \code{sign} heuristic atoms following these rules:
+The modifiers \code{true} and \code{false} allow us to refer at the same time to the \code{level} and the \code{sign} of an atom.
+Internally,  for the \code{true} and \code{false} heuristic atoms,
+the solver defines new \code{level} and \code{sign} heuristic atoms following these rules:
 \begin{lstlisting}[numbers=none]
 _heuristic(X,level,Y) :- _heuristic(X,true,Y).
 _heuristic(X,sign,1)  :- _heuristic(X,true,Y).
@@ -225,7 +225,7 @@ the level of \code{c} is \code{-10} because $|\code{-10}|>|\code{5}|$.
 \paragraph{Init and factor.}
 
 The modifiers \code{init} and \code{factor} allow for modifying the scores assigned to atoms by the underlying \code{Vsids} heuristic.
-Compared to the \code{level} modifier, 
+Unlike the \code{level} modifier, 
 \code{init} and \code{factor} allow us to bias the search without establishing a strict ranking among the atoms.
 
 With \code{init}, we can add a value to the initial heuristic score of an atom.

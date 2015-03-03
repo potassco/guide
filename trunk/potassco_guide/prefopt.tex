@@ -30,152 +30,9 @@ For a formal description of \asprin, please consult~\cite{brderosc15a}.
 % \asprin\ source code and precompiled binaries for Linux, Mac and Windows are available  
 % at \url{http://cs.uni-potsdam.de/asprin}.
 
-\paragraph{Syntax.}
-
-\asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
-
-A \emph{weighted formula} is of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{t}$?::?$F$?
-\end{lstlisting}
-where $\boldsymbol{t}$ is a term tuple\comment{T2J: Aren't number constants, too?}\footnote{%
-Term tuples in the current \asprin\ implementation cannot contain constants or functions
-but this limitation will be removed in future releases. 
-By now, as a workaround, constants or functions can be represented as follows:
-in the weighted formula, write a variable (e.g., \code{V}) instead of the term tuple (e.g., \code{a(X)}),  
-and in the body (see below) assign the variable to the term tuple (e.g., \code{V = a(X)}).
-}
-and $F$ is a either a Boolean formula or a naming atom.
-We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
-Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),\comment{T2J: Having both \code{-} and \code{\~} is strange\dots What does this mean\dots?}
-using the logical connectives \code{\~} (negation), \code{\&} (conjunction) and \code{|} (disjunction).
-Parentheses can be written as usual,
-and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
-%
-%Otherwise, a 
-Naming atoms of form \code{name(s)}
-refer to the preference associated with preference statement \code{s} (see below).
-%
-Examples of weighted formulas are 
-`\code{a(X)}', 
-`\code{C::edge(X,Y,C)}', 
-`\code{W,(X,Y)::\~{}a(W,X) \& b(Y)}', and 
-`\code{X::name(p(X))}'. 
-
-If $F_1$, \ldots, $F_n$ are weighted formulas, then
-\begin{lstlisting}[numbers=none,escapechar=?]
-{?$F_1$?;?$\dots$?;?$F_m$?}
-\end{lstlisting}
-is a \emph{set of weighted formulas}.  
-We may drop the curly braces if $m=1$.
-
-A \emph{preference element} is of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{F}_1\;$?>?\,\dots\,?>?$\;\boldsymbol{F}_m$? || ?$F$? : ?$B$?
-\end{lstlisting}
-where each $\boldsymbol{F}_r$ is a set of weighted formulas, 
-$F$ is a non-weighted Boolean formula
-and $B$ is a rule body where all literals belong to domain predicates
-(see Page~\pageref{pg:domain}) or built-ins.
-%
-We may drop `\code{>}' if $m=1$, 
-and `\code{||$\,F$}' and `\code{:$\,B$}' whenever $F$ and/or $B$ are empty, respectively.
-%
-Intuitively, $r$ gives the rank of the respective set of weighted formulas.
-This can be made subject to condition $F$ by using the conditional `\code{||}'.
-Preference elements provide a (possible) structure to a set of weighted formulas
-by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
-%
-%Hence
-%\code{\{a(X);b(X) \& c(X))\}>d(X)} stands for 
-%\code{\{a;neg(b)\}>\{c\} || and(d,neg(d))}. 
-%
-Examples of preference elements are 
-`\code{a(X)}',  
-`\code{1::name(p);2::name(q)}', 
-`\code{\{a(X);b(X)\} > \{c(X);d(X)\}}',  and
-`\code{a(X) > b(X) || c(X) : dom(X)}'.
-
-\begin{note}
-Here and below, 
-the rule body $B$ is intended \emph{exclusively} to provide instantiations for the variables appearing in the expressions to its left.  
-Accordingly, the literals of $B$ must be built-ins or belong to domain predicates of the accompanying logic program.
-This ensures that $B$ can be fully evaluated during grounding.
-\end{note}
-
-A \emph{preference statement} is of the form
-%
-\begin{lstlisting}[numbers=none,escapechar=?]
-#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
-\end{lstlisting}
-%
-where \code{s} is a term giving the preference name, 
-\code{t} is a ground term providing the preference type, 
-and each $e_j$ is a preference element.
-The rule body $B$ has the same form and purpose as above.
-%
-%\begin{note}
-That is, the body $B$ of a preference statement is used to instantiate the variables of $s$, $t$ and each $e_i$.
-
-For example, given the logic program 
-\begin{lstlisting}[numbers=none]
-dom(1..2).
-{ a(X,Y) : dom(X), dom(Y)}.
-\end{lstlisting}
-the preference statement 
-\begin{lstlisting}[numbers=none]
-#preference(p(X),subset){ a(X,Y) : dom(Y) } : dom(X).
-\end{lstlisting}
-stands for the following two ground preference statements.
-\begin{lstlisting}[numbers=none]
-#preference(p(1),subset){ a(1,1) ; a(1,2) }.
-#preference(p(2),subset){ a(2,1) ; a(2,2) }.
-\end{lstlisting}
-%\end{note}
-
-Preference statements are accompanied by 
-\emph{optimization directives} such as
-\begin{lstlisting}[numbers=none,escapechar=?]
-#optimize(s) : ?$B$?.
-\end{lstlisting}
-where $B$ is as above, 
-telling \asprin\ to restrict its reasoning mode to the preference relation declared by \code{s}.
-% 
-
-A \emph{preference specification} is a set of preference statements along with an optimization directive.
-% A preference specification 
-It is valid, if after grounding the naming dependencies are acyclic and closed
-and there is a single optimization directive
-(see \cite{brderosc15a} for details).
-% A non ground preference specification is valid
-% if after grounding it (using the accompanying logic program)
-% the resulting ground specification is valid.
-
-The purpose of such a specification is to define the optimal answer sets of an accompanying logic program,
-also called the \emph{base program}.
-
-Here is an example of a {preference specification} about leisure activities (without base program).
-\begin{lstlisting}[escapechar=?]
-#preference(costs,less(weight)){ 40::sauna; 70::dive }.
-#preference(fun,superset){ sauna; dive; hike; ~bunji }.
-#preference(temps,aso){dive>sauna||hot; sauna>dive||~hot}.
-#preference(all,pareto){name(costs); name(fun); name(temps)}.
-
-#optimize(all).
-\end{lstlisting}
-The preference statement in Line~1 represents the preference relation \code{costs} of type \code{less(weight)}.
-Intuitively, this relation optimizes the sum of weights of its preference elements, 
-viz.\ \code{40::sauna} and \code{70::dive}.
-This preference type is very similar to the one used by native minimization directives (cf.\ Section~\ref{subsec:gringo:optimize}).
-The preference type \code{superset} provides a set inclusion based relation and the one refereed to as \code{aso}
-amounts to answer set optimization as put forward in~\cite{brnitr03a}.
-These three basic preference relations are combined according to the \code{pareto} principle in Line~4.
-And this combined preference relation is declared subject to optimization in Line~6.
-%
-All four preference types are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.
 \paragraph{A simple example.} 
-\comment{JR: Maybe add something here?\par T: Why is your detailed example (10.1) not enough ...?}
 \begin{example}
+\label{asprin:example1}
 Consider the following base program.
 \marginlabel{%
   To inspect the output, invoke:\\
@@ -366,9 +223,220 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 % OPTIMUM FOUND
 % \end{lstlisting}
 
-\comment{J: Stopped here\par T: Me too :) --- THANKS!!}
-\paragraph{More preference types.}
+\paragraph{Syntax.}
 
+\asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
+
+A \emph{weighted formula} is of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{t}$?::?$F$?
+\end{lstlisting}
+where $\boldsymbol{t}$ is a term tuple\comment{T2J: Aren't number constants, too?\par JR: I wanted to refer to Figure \ref{fig:terms}, I rephrase :) and add also constraint on pooling and intervals\ldots}\footnote{%
+Term tuples in the current \asprin\ implementation are defined following Figure \ref{fig:terms}, 
+except that \emph{terms} cannot contain \emph{functions} 
+and \emph{simpleterms} cannot contain \emph{constants}. 
+Moreover, neither intervals (Section \label{subsec:gringo:interval}) nor pools  (Section \ref{subsec:gringo:pool})
+are allowed in weighted formulas. 
+These limitations will be removed in future releases. 
+By now, as a workaround, these elements can be represented as follows:
+in the weighted formula, write a variable (e.g., \code{V}) instead of the element (e.g., \code{a(X)}),  
+and in the body (see below) assign the variable to the element (e.g., \code{V = a(X)}).
+}
+and $F$ is a either a Boolean formula or a naming atom.
+We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
+Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),\comment{T2J: Having both \code{-} and \code{\~} is strange\dots What does this mean\dots?\par JR: Agree it is strange, and I don't like it, but I found no better way. My idea was that giving a different meaning to \code{-} inside the preference statements would
+be confusing to the user, so we should use a different symbol for that (and I chose the one used by Theorem Provers). I am happy if you have a better idea :) }
+using the logical connectives \code{\~} (negation), \code{\&} (conjunction) and \code{|} (disjunction).
+Parentheses can be written as usual,
+and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
+%
+%Otherwise, a 
+Naming atoms of form \code{name(s)}
+refer to the preference associated with preference statement \code{s} (see below).
+%
+Examples of weighted formulas are 
+`\code{a(X)}', 
+`\code{C::edge(X,Y,C)}', 
+`\code{W,(X,Y)::\~{}a(W,X) \& b(Y)}', and 
+`\code{X::name(p(X))}'. 
+
+If $F_1$, \ldots, $F_n$ are weighted formulas, then
+\begin{lstlisting}[numbers=none,escapechar=?]
+{?$F_1$?;?$\dots$?;?$F_m$?}
+\end{lstlisting}
+is a \emph{set of weighted formulas}.  
+We may drop the curly braces if $m=1$.
+
+A \emph{preference element} is of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{F}_1\;$?>?\,\dots\,?>?$\;\boldsymbol{F}_m$? || ?$F$? : ?$B$?
+\end{lstlisting}
+where each $\boldsymbol{F}_r$ is a set of weighted formulas, 
+$F$ is a non-weighted Boolean formula
+and $B$ is a rule body where all literals belong to domain predicates
+(see Page~\pageref{pg:domain}) or built-ins.
+%
+We may drop `\code{>}' if $m=1$, 
+and `\code{||$\,F$}' and `\code{:$\,B$}' whenever $F$ and/or $B$ are empty, respectively.
+%
+Intuitively, $r$ gives the rank of the respective set of weighted formulas.
+This can be made subject to condition $F$ by using the conditional `\code{||}'.
+Preference elements provide a (possible) structure to a set of weighted formulas
+by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
+%
+%Hence
+%\code{\{a(X);b(X) \& c(X))\}>d(X)} stands for 
+%\code{\{a;neg(b)\}>\{c\} || and(d,neg(d))}. 
+%
+Examples of preference elements are 
+`\code{a(X)}',  
+`\code{1::name(p);2::name(q)}', 
+`\code{\{a(X);b(X)\} > \{c(X);d(X)\}}',  and
+`\code{a(X) > b(X) || c(X) : dom(X)}'.
+
+\begin{note}
+Here and below, 
+the rule body $B$ is intended \emph{exclusively} to provide instantiations for the variables appearing in the expressions to its left.  
+Accordingly, the literals of $B$ must be built-ins or belong to domain predicates of the accompanying logic program.
+This ensures that $B$ can be fully evaluated during grounding.
+\end{note}
+
+A \emph{preference statement} is of the form
+%
+\begin{lstlisting}[numbers=none,escapechar=?]
+#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
+\end{lstlisting}
+%
+where \code{s} is a term giving the preference name, 
+\code{t} is a ground term providing the preference type, 
+and each $e_j$ is a preference element.
+The rule body $B$ has the same form and purpose as above.
+%
+%\begin{note}
+That is, the body $B$ of a preference statement is used to instantiate the variables of $s$, $t$ and each $e_i$.
+
+For example, given the logic program 
+\begin{lstlisting}[numbers=none]
+dom(1..2).
+{ a(X,Y) : dom(X), dom(Y)}.
+\end{lstlisting}
+the preference statement 
+\begin{lstlisting}[numbers=none]
+#preference(p(X),subset){ a(X,Y) : dom(Y) } : dom(X).
+\end{lstlisting}
+stands for the following two ground preference statements.
+\begin{lstlisting}[numbers=none]
+#preference(p(1),subset){ a(1,1) ; a(1,2) }.
+#preference(p(2),subset){ a(2,1) ; a(2,2) }.
+\end{lstlisting}
+%\end{note}
+
+Preference statements are accompanied by 
+\emph{optimization directives} such as
+\begin{lstlisting}[numbers=none,escapechar=?]
+#optimize(s) : ?$B$?.
+\end{lstlisting}
+where $B$ is as above, 
+telling \asprin\ to restrict its reasoning mode to the preference relation declared by \code{s}.
+% 
+
+A \emph{preference specification} is a set of preference statements along with an optimization directive.
+\comment{JR: In \asprin\ we allow many optimization directives, 
+             but only one ground optimization directive (but we could change this ;)}
+% A preference specification 
+It is valid, if after grounding the naming dependencies are acyclic and closed
+and there is a single optimization directive
+(see \cite{brderosc15a} for details).
+% A non ground preference specification is valid
+% if after grounding it (using the accompanying logic program)
+% the resulting ground specification is valid.
+Whenever these conditions do not hold, \asprin\ reports an error and stops.
+
+The purpose of such a specification is to define the optimal answer sets of an accompanying logic program,
+also called the \emph{base program}.
+
+Here is an example of a {preference specification} about leisure activities (without base program).
+\begin{lstlisting}[escapechar=?]
+#preference(costs,less(weight)){ 40::sauna; 70::dive }.
+#preference(fun,superset){ sauna; dive; hike; ~bunji }.
+#preference(temps,aso){dive>sauna||hot; sauna>dive||~hot}.
+#preference(all,pareto){name(costs); name(fun); name(temps)}.
+
+#optimize(all).
+\end{lstlisting}
+The preference statement in Line~1 represents the preference relation \code{costs} of type \code{less(weight)}.
+Intuitively, this relation optimizes the sum of weights of its preference elements, 
+viz.\ \code{40::sauna} and \code{70::dive}.
+This preference type is very similar to the one used by native minimization directives (cf.\ Section~\ref{subsec:gringo:optimize}).
+The preference type \code{superset} provides a set inclusion based relation and the one refereed to as \code{aso}
+amounts to answer set optimization as put forward in~\cite{brnitr03a}.
+These three basic preference relations are combined according to the \code{pareto} principle in Line~4.
+And this combined preference relation is declared subject to optimization in Line~6.
+%
+All four preference types are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.
+\paragraph{Semantics.}
+A \emph{preference relation} is a strict partial order (i.e., a transitive and irreflexive relation) on answer sets.
+A \emph{preference type} \code{t} is a function mapping a set of ground preference elements
+\code{\{$e_1$;$\ldots$;$e_n$\}} to a preference relation.
+Given that the full generality of preference elements is not always needed,
+we specify for each preference type its \emph{domain}, 
+that consists of the sets of ground preference elements for which the preference type is well defined.
+For example, the preference type \code{subset} is defined as follows: 
+%A set \code{$E=$\{$e_1$;$\ldots$;$e_n$\}} of ground preference elements
+\begin{itemize}
+\item
+the domain of \code{subset}
+consists of the  
+%belongs to the domain of \code{subset} if every $e_i \in E$ is a Boolean formula, and
+sets of ground preference elements \code{$E=$\{$e_1$;$\ldots$;$e_n$\}}
+where every $e_i$ is a Boolean formula, and 
+%\code{\{$e_1$;$\ldots$;$e_n$\}} of ground preference elements 
+%belongs to the domain of \code{subset} if every $e_i \in E$ is a Boolean formula, and
+\item
+%A set \code{\{$e_1$;$\ldots$;$e_n$\}} of ground preference elements 
+%is mapped \code{subset} to the strict partial order: 
+\code{subset} maps every such set $E$ of preference elements to the preference relation defined as: 
+\(
+X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}\subset\{e_i\in E\mid Y\models e_i\}
+\).
+\end{itemize}
+
+We say that a ground preference statement
+\begin{lstlisting}[numbers=none,escapechar=?]
+#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?}.
+\end{lstlisting}
+is \emph{admissible} if \code{\{${e}_1$;$\dots$;${e}_n$\}} belongs to the domain of \code{t}.
+If a ground preference statement is not admissible, \asprin\ reports an error and stops. 
+In Example \ref{asprin:example1}, preference statement  
+\begin{lstlisting}[numbers=none]
+#preference(p1,subset){ a(X) : dom(X) }.
+\end{lstlisting}
+stands for the ground preference statement 
+\begin{lstlisting}[numbers=none]
+#preference(p1,subset){a(1);a(2);a(3);a(4);a(5)}.
+\end{lstlisting}
+which is admissible because \code{a(1)$,\ldots,\,$a(5)} are Boolean formulas. 
+Observe that \code{p1} becomes not admissible if we add to it the preference elements \code{1::a(1)} or \code{name(p2)}.
+
+An admissible preference statement \code{p} declares a preference relation $\succ_{\code{p}}$ on the answer sets of the base program, 
+that is the result of mapping the preference type of \code{p} on the set of its ground preference elements.
+For example, \code{p1} declares the preference relation $\succ_{\code{p1}}$:
+\begin{tabular}{ccl}
+$X \succ_{\code{p1}} Y$ & iff & $\{e\in \{\code{a(1)},\code{a(2)},\code{a(3)},\code{a(4)},\code{a(5)}\} \mid X\models e\}\subset$ \\ 
+                       &      & $\{e\in \{\code{a(1)},\code{a(2)},\code{a(3)},\code{a(4)},\code{a(5)}\} \mid Y\models e\}$
+\end{tabular}
+
+An answer set $X$ is optimal with respect to a preference relation $\succ$
+if there is no other answer set $Y$ such that $Y \succ X$.
+In Example \ref{asprin:example1}, with preference statement \code{p1},
+$M_1$ and $M_3$ are optimal,
+whereas $M_2$ is not optimal because $M_1 \succ_{\code{p1}} M_2$. 
+Given a valid preference specification where all preference statements are admissible, 
+\asprin\ computes answer sets of the base program
+that are optimal with respect to the preference relation 
+defined by the preference statement selected for optimization.
+
+\paragraph{\asprin\ library.}
 \asprin's preference library, \code{asprin.lib}, implements the following basic preference types:
 \comment{T2J: Fix admissible input (preference elements)}
 \begin{itemize}
@@ -378,6 +446,13 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 	\item  \code{aso}   (Answer Set Optimization, \cite{brnitr03a})   
 	\item  \code{poset} (Qualitative Preferences, \cite{rogima10a})  
 \end{itemize}
+
+Type: 
+Valid preference statements.
+Preference Statement + Logic Program -> ground preference statements -> Order on the stable models
+
+
+
 % [1] Gerhard Brewka, Ilkka Niemela, Miroslaw Truszczynski: Answer Set Optimization. IJCAI 2003: 867-872. 
 % [2] Emanuele Di Rosa, Enrico Giunchiglia, Marco Maratea: Solving satisfiability problems with preferences. Constraints 15(4): 485-515 (2010). 
 As another example, 

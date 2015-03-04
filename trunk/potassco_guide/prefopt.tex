@@ -512,31 +512,95 @@ $X \succeq Y$ if for all rules $r \in E$, $v_X(r) \leq v_Y(r)$,
 and $X \succ Y$ if $X \succeq Y$ but $Y \not\succeq X$. 
 \comment{JR: Add Example}
 
-\comment{JR: Stopped here}
-
-As another example,
-we can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}: 
+In \cite{giumar12a}, qualitative preferences are modeled as a strict partially ordered set
+\(
+(S,<)
+\)
+of literals.
+The literals in $S$ represent propositions that are preferably satisfied
+and the strict partial order $<$ on $S$ gives their relative importance.
 %
-\lstinputlisting[numbers=none]{examples/preference3.lp}
-\marginlabel{%
-  To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference3.lp}{preference3.lp} \ 
-  asprin.lib}}
-This yields the unique optimal answer set $M_2$.
+In \asprin\ this is implemented by preference type \code{poset}, 
+that extends the original approach allowing preferences over Boolean formulas.
+The domain of \code{poset} consists of the sets $E$ of ground preference elements of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$F$?.
+\end{lstlisting}
+or 
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$F > F'$?.
+\end{lstlisting}
+where $F$ and $F'$ are Boolean formulas.
+Given a set of ground preference statements $E$, 
+the set $S_E$ is constructed from all Boolean formulas appearing in $E$, 
+and the partial order $>_E$ is defined as the transitive closure of the order 
+specified by the preference elements of the second type. 
+Then, $E$ is mapped to the preference relation where 
+$X \succ Y$ holds if 
+there exists a formula $F \in S_E$ such that $X \models F$ and $Y \not\models F$, 
+and for every formula $F \in S$ such that $Y \models F$ and $X \not\models F$, 
+there is a formula
+$F'\in S$ such that $F'<F$ and $X \models F'$ but $Y \not\models F'$.
+\comment{JR: Add Example}
+
+%As another example,
+%we can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}: 
+%%
+%\lstinputlisting[numbers=none]{examples/preference3.lp}
+%\marginlabel{%
+%  To inspect the output, invoke:\\
+%  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+%  \attach{examples/preference3.lp}{preference3.lp} \ 
+%  asprin.lib}}
+%This yields the unique optimal answer set $M_2$.
 
 The library of \asprin\ implements furthermore the following composite preference types~\cite{sonpon06a}: 
 \comment{T2J: Fix admissible input (preference elements)}
 \begin{itemize}
+\item \code{neg}
 \item \code{and}
-\item \code{not}
-\item \code{lexico}
 \item \code{pareto}
+\item \code{lexico}
 \end{itemize}
+The domains of \code{and} and \code{pareto} are the sets of ground naming atoms
+\begin{lstlisting}[numbers=none,escapechar=?]
+name(s)
+\end{lstlisting}
+whereas for \code{neg} the sets must be singleton, 
+and for \code{lexico} every naming atom is attached with a weight $\textbf{w}$: 
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{w}$?::name(s)
+\end{lstlisting}
+Given a naming atom \code{name(s)}, 
+let $\succeq_{\code{s}}$, $\succ_{\code{s}}$, $=_{\code{s}}$, $\prec_{\code{s}}$, $\preceq_{\code{s}}$ be the 
+non-strict, strict, equal, and inverse preference relations associated with preference statement $\code{s}$.
+Then the mappings for each of the composite preference types are defined as follows:
+%Consider the set of ground preference elements \code{$E=$\{$e_1$;$\ldots$;$e_n$\}}:
+\begin{itemize}
+\item
+\code{neg} maps $E=\code{\{name(s)\}}$ to the preference relation
+\[
+X \succ Y \text{ iff } Y \prec_s X
+\]
+\item 
+\code{and} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
+\[
+X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E}(X\succ_\code{s} Y)
+\]
+\item 
+\code{pareto} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
+\[
+X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E} (X\succeq_\code{s} Y)\wedge\bigvee_{\code{name(s)}\in E} (X\succ_\code{s} Y)
+\]
+\item
+\code{lexico} maps \code{$E=$\{$w_1$::name($s_1$);$\ldots$;$w_n$::name($s_n$)\}} to the preference relation 
+\[
+X \succ Y \text{ iff } \bigvee_{\code{w::name(s)}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::name(s')}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
+\] 
+\end{itemize} 
+\comment{JR: Stopped here}
 
-For example, 
-the following preference specification 
-aggregates the basic preferences \code{p1} and \code{p3}
+For example, the following preference specification aggregates the basic preferences \code{p1} and \code{p3}
 via a \code{pareto} preference, viz.~\code{p4}: 
 %
 \lstinputlisting[numbers=none]{examples/preference4.lp}

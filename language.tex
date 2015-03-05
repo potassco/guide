@@ -8,8 +8,8 @@ Finally, Section~\ref{subsec:lang:clasp} is dedicated to the inputs handled by \
 
 \subsection{Input Language of \gringo\ and \clingo}\label{subsec:lang:gringo}
 
-The tool \gringo~\cite{gescth07a} is a grounder capable of translating
-user-defined logic programs (usually, containing variables) into
+The tool \gringo~\cite{gescth07a} is a grounder capable of transforming
+user-defined logic programs (usually containing variables) into
 equivalent ground (that is, variable-free) programs.
 The output of \gringo\ can be piped into solver \clasp~\cite{gekanesc07a,gekasc09c},
 which then computes answer sets.
@@ -68,7 +68,7 @@ Furthermore, a string is an arbitrary sequence of characters
 enclosed in double quotes (\code{"$\cdot$"}),
 where any occurrences of `\code{\textbackslash}', newline, and double quote
 must be escaped via `\code{\textbackslash\textbackslash}', `\code{\textbackslash n}',
-and `\code{\textbackslash"}' respectively.
+or `\code{\textbackslash"}', respectively.
 While a constant or string represents itself,
 a variable is a placeholder for \emph{all} variable-free terms
 in the language of a logic program.%
@@ -80,7 +80,7 @@ stands for an \emph{anonymous variable} that does not recur anywhere.
 (One can view this as if a new variable name is invented on each
  occurrence of `\var{\char`\_}'.)
 In addition, there are the special constants \const{\#sup} and \const{\#inf}
-representing the largest and smallest element among all variable-free terms, respectively;
+representing the greatest and smallest element among all variable-free terms, respectively;
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 Next, (uninterpreted) \emph{functions} are complex terms composed of a name (like a constant)
 and one or more terms as arguments.
@@ -97,8 +97,9 @@ Tuples may optionally end in a comma `\code{,}'
 for distinguishing one-elementary tuples.
 That is, \code{($t$,)} is a one-elementary tuple,
 while a term of form \code{($t$)} is equivalent to \code{$t$}.
-Thus, \code{(42,)} is a one-elementary tuple, whereas \code{(42)} is not.
-The above quadruple is equivalent to \code{(\const{at},\const{peter},\const{time}(12),X,)}.
+For instance, \code{(42,)} is a one-elementary tuple, whereas \code{(42)} is not,
+and
+the above quadruple is equivalent to \code{(\const{at},\const{peter},\const{time}(12),X,)}.
 
 Rules of the following forms are admitted in a
 \emph{normal logic program} (with integrity constraints):
@@ -171,6 +172,7 @@ We say that there is a \emph{positive cycle} through \pred{a} and~\pred{b}
 subject to minimization.
 \end{example}
 
+\begin{example}\label{ex:as:two}
 Consider the following logic program:
 %
 \begin{lstlisting}[numbers=none]
@@ -194,7 +196,9 @@ the bodies of the rules
 Hence, we have that
 either~\pred{a} or~\pred{b} belongs to
 an answer set of the logic program.
+\end{example}
 
+\begin{example}\label{ex:as:three}
 To illustrate the use of facts and integrity constraints,
 let us augment the previous logic program:
 \begin{lstlisting}[numbers=none]
@@ -218,6 +222,7 @@ of the rule \code{\pred{b}\,:-\:not\:\pred{a}.} is satisfied,
 so that atom~\pred{a} must be false.
 Hence, the set containing \pred{b} and~\pred{c}
 is the only answer set of our logic program.
+\end{example}
 
 In the above examples,
 we used propositional logic programs to exemplify the idea
@@ -417,33 +422,47 @@ instead of disjunction, unless the latter is required for complexity reasons.
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
 They are satisfied whenever their positive counterparts are.
-But unlike (purely) positive literals,
+\REPc{But unlike (purely) positive literals,
 they do not require an (acyclic) derivation from the program;
-it is sufficient that they are true in the model at hand.
+it is sufficient that they are true in the model at hand.}
+{But unlike an atom~$A$,
+$\code{not}~\code{not}~A$ is a negative literal that does not
+presuppose a derivation of~$A$;
+rather, $\code{not}~\code{not}~A$ is assumed to hold if $A$ is true in a model.}
+{M: Directly mentioning that double default negated literals are \emph{negative}
+    is in my opinion the clearest way to explain the difference to atoms.}
+
+\begin{example}\label{ex:double}
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
 b :- not not a.
 \end{lstlisting}
 %
-This program has the same answer set as the one in Example~\ref{ex:as:one}
+This program has an empty answer set, like the program in Example~\ref{ex:as:one},
 as well as the additional answer set containing both \pred{a} and \pred{b}.
-This is because neither `\code{not not a}' nor `\code{not not b}' require an acyclic derivation from the program.
-In fact, in contrast to Example~\ref{ex:as:one},
-the above program induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
-Without this, \pred{a} and~\pred{b} can thus be both true or false, just like in classical logic.
+This is because neither `\code{not not a}' nor `\code{not not b}' requires an acyclic derivation from the program.
+% In fact
+Note that, in contrast to Example~\ref{ex:as:one},
+the above program does not induce
+mutual positive dependencies between~\pred{a} and~\pred{b}.
+% induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
+% Without 
+Given this, \pred{a} and~\pred{b} can thus be both true or false, just like in classical logic.
+\end{example}
 
-Also, there are literals in the head of rules.
-These offer just another way to write integrity constraints,
+Also, negative literals are admitted in the head of rules.
+When disregarding disjunction,
+this offers just another way to write integrity constraints,
 putting the emphasis on the head literal.
 In fact, the rule
 \(\code{not}~A_0\)~\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\)\code{.}
 is equivalent to
-\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n,\code{not}~\code{not}~A_0\)\code{.}
+\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\text{\code{,}}\code{not}~\code{not}~A_0\)\code{.},
 and with double negation in the head, rule
 \(\code{not}~\code{not}~A_0\)~\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\)\code{.}
 is equivalent to
-\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n,\code{not}~A_0\)\code{.}
+\code{:-}~\(L_1\text{\code{,}}\dots\text{\code{,}}L_n\text{\code{,}}\code{not}~A_0\)\code{.}
 
 \begin{example}\label{ex:as:flynn}
 Consider the logic program:
@@ -456,11 +475,11 @@ Consider the logic program:
         \mbox{~}\attach{examples/flynn.lp}{flynn.lp} | clasp 0}
 }
 \lstinputlisting{examples/flynn.lp}
-The possibility that a bird flies is expressed with a double negation here in the first line.
+The possibility that a bird flies is expressed with a double negation in the first line.
 Solutions with flying penguins are filtered out in the second line.
-Like in Example~\ref{ex:flies} there are two answer sets
+Like in Example~\ref{ex:flies} there are two answer sets,
 but without an explicit atom to indicate that a bird does not fly.
-Hence, the answer set where Tweety does not fly contains no atoms over predicate \pred{flies}/$1$.
+Hence, the answer set where tweety does not fly contains no atoms over predicate \pred{flies}/$1$.
 \end{example}
 
 \begin{note}
@@ -494,10 +513,10 @@ Consider the following program:
 \lstinputlisting{examples/bool.lp}
 The first rule uses \code{\#true} in the head.
 Because this rule is a fact, it is trivially satisfied.
-Similarly, the rules in lines~2 and~3 have satisfied heads.
+Similarly, the rules in Line~2 and~3 have satisfied heads.
 The bodies of the last three integrity constraints are false.
 Hence, the constraints do not cause a conflict.
-Note that neither of the rules above derive any atoms.
+Note that neither of the rules above derives any atom.
 Thus, we obtain the empty answer set for the program.
 \end{example}
 See Example~\ref{ex:sort} below for an application of interest.
@@ -559,9 +578,9 @@ using two's complement arithmetic. % of a negative integer.
 
 \begin{note}
 An occurrence of a variable in the scope of an arithmetic function
-only counts as positive in the sense of safety for simple arithmetic terms (cf.\ Page~\pageref{pg:safe}).
+only counts as positive in the sense of safety (cf.\ Page~\pageref{pg:safe}) for simple arithmetic terms.
 Such simple arithmetic terms are terms with exactly one variable occurrence
-composed of the arithmetic functions \code{+}, \code{-} and \code{*}, and integers.
+composed of the arithmetic functions `\code{+}', `\code{-}', `\code{*}', and integers.
 Moreover,
 if multiplication is used, then the constant part must not evaluate to $0$ for the variable occurrence to be considered positive.
 E.g., the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\const{2}*(\var{X}+\const{1})).}
@@ -588,7 +607,8 @@ The built-in predicates to compare terms are
 \code{<=} (less than or equal),
 \code{>} (greater than), and
 \code{>=} (greater than or equal).
-\emph{Comparison literals} over the above \emph{comparison predicates} are used like predicate literals (cf.\ Section~\pageref{subsec:gringo:normal})
+\emph{Comparison literals} over the above \emph{comparison predicates} are used like
+other literals (cf.\ Section~\ref{subsec:gringo:normal})
 but are evaluated during grounding.
 
 \begin{example}\label{ex:arith:pred}

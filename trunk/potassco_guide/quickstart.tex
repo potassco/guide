@@ -19,13 +19,13 @@ sequences of moves being solutions.
 
 In ASP, it is custom to provide a \emph{uniform}
 problem definition~\cite{martru99a,niemela99a,schlipf95a}.
-Following this methodology, we separately provide an instance and
+Following this methodology, we separately specify an instance and
 an encoding (applying to every instance) of the following problem:
 given an initial placement of the disks, a goal situation, and a number~$n$,
 decide whether there is a sequence of $n$~moves 
 that achieves the goal.
-We will see that this problem can elegantly be  
-specified in ASP and
+We will see that this problem can be elegantly  
+described in ASP and
 solved by domain-independent tools like \gringo\ and \clasp.
 % are ready to solve the problem. % reasonably well.
 Such a declarative solution is now exemplified.
@@ -40,7 +40,7 @@ Such a declarative solution is now exemplified.
 We describe the pegs and disks of a Towers of Hanoi puzzle via facts over the predicates
 \pred{peg}/$1$ and \pred{disk}/$1$ (the number denotes the arity of the predicate).
 Disks are numbered by consecutive integers starting at~\const{1},
-where a disk with a lesser number is considered to be bigger than a disk with a greater number.
+where a disk with a smaller number is considered to be bigger than a disk with a greater number.
 The names of the pegs can be arbitrary; in our case, we use \const{a}, \const{b}, and \const{c}. 
 Furthermore, the predicates \pred{init\char`\_on}/$2$ and \pred{goal\char`\_on}/$2$ describe the initial
 and the goal situation, respectively.
@@ -121,10 +121,10 @@ must be executed.
 The head of the rule (left of~`\code{:-}')
 is a so-called cardinality constraint (see Section~\ref{subsec:gringo:aggregate}).
 It consists of a set of literals,
-expanded using the predicates behind the colon (detailed in Section~\ref{subsec:gringo:condition}),
+expanded using the conditions behind the colon (detailed in Section~\ref{subsec:gringo:condition}),
 along with the guard~`\code{= 1}'.
 The cardinality constraint is satisfied
-if the number of true elements is equal to one as specified by the guard.
+if the number of true elements is equal to one, as specified by the guard.
 Since the cardinality constraint occurs as the head of a rule,
 it allows for deriving (``guessing'') atoms 
 over the predicate \pred{move}/$3$ to be true.
@@ -218,7 +218,7 @@ w.r.t.\ the moves in a solution,
 making such knowledge explicit via an integrity constraint
 turns out to improve the solving efficiency.
 
-Finally, the meta-statements (detailed in Section~\ref{subsec:gringo:meta})
+Finally, the meta-statement  (detailed in Section~\ref{subsec:gringo:meta})
 of the Display part in Line~16
 indicates that only atoms over the predicate \pred{move}/$3$ ought to be printed,
 thus suppressing the predicates used to describe an instance as well as
@@ -277,12 +277,12 @@ The following two lines indicate \clingo's state.
 \clingo\ should print immediately that it is reading.
 Once this is done, it prints \code{Solving...} to the command line.
 The Towers of Hanoi instance above is so easy to solve 
-that you will not see the delay.
-But for larger problems it is typically possible to see a delay.
-Lines starting with \code{Answer: }
-indicate that the (output) atoms of an answer set follow in the line below.
-In this example you can see 
-the instances of \pred{move}/$3$ in the order of time points,
+that you will not recognize the delay,
+but for larger problems it can be noticeable.
+The line starting with \code{Answer:}
+indicates that the (output) atoms of an answer set follow in the next line.
+In this example, it contains
+the true instances of \pred{move}/$3$ in the order of time points,
 so that we can easily read off the following solution from them:
 first move disk~\const{4} to peg~\const{b}, 
 second move disk~\const{3} to peg~\const{c}, 
@@ -294,10 +294,10 @@ Note that the order in which atoms are printed does not bear any meaning
 (and the same applies to the order in which answer sets are found).
 Below this solution,
 we find the satisfiability status of the problem,
-which is \code{SATISFIABLE},
-as reported by the solver.\footnote{%
+which is reported as \code{SATISFIABLE}
+by the solver.\footnote{%
 Other possibilities include \code{UNSATISFIABLE} and \code{UNKNOWN}, the latter in case of an abort.}
-The `\code{1+}' in the line starting with `\code{Models}'%
+The `\code{1+}' in the line starting with \code{Models}%
 \marginlabel{The given instance has
              just one solution.
              In fact, the `\code{+}' from `\code{1+}'
@@ -316,11 +316,15 @@ the solver has not exhaustively explored the search space
 so that further answer sets may exist.}
 % indicates that one answer set has been found and the \code{+} that 
 % the whole search space has not yet been explored, so there might be further answer sets.
+\code{Calls} to the solver are of interest in multi-shot solving
+(see Section~\ref{sec:multi}).
 The final lines report statistics including
-total run-time (\code{Time}),
-time spent for solving (\code{Solving}),
-time until the first model was found (\code{1st Model}), and
-time used to prove unsatisfiability%
+total run-time (wall-clock \code{Time} as well as \code{CPU Time}) and
+the amount of time spent on search (\code{Solving}),
+along with the fractions taken to find the first solution (\code{1st Model})
+and to prove unsatisfiability%
+% time until the first model was found (\code{1st Model}), and
+% time used to prove unsatisfiability%
 \footnote{
 No unsatisfiability proof is done here, hence, this time is zero.
 But for example, when enumerating all models, this is the time spent between finding the last model and termination.

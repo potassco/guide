@@ -64,15 +64,15 @@ as arguments to either \gringo\ or \clingo,
 while the output of \gringo\ is typically piped into \clasp.
 Thus, the standard invocation schemes are as follows:
 \begin{lstlisting}[numbers=none]
-gringo  [ options | files ] | clasp [ options | number ]
-clingo  [ options | files | number ]
+gringo [ options | files ] | clasp [ options | number ]
+clingo [ options | files | number ]
 \end{lstlisting}
 A numerical argument provided to either \clasp\ or \clingo\
 determines the maximum number of answer sets to be computed,
 where \code{0} means ``compute all answer sets''.
 By default, only one answer set is computed (if it exists).
 
-\subsection{Outline}
+\subsection{Outline}\label{sec:outline}
 
 This guide introduces the fundamentals of using
 \gringo, \clasp, and \clingo.
@@ -87,10 +87,16 @@ and also as an appetizer of the modeling language of \gringo.
 The main part of this document, Section~\ref{sec:language},
 is dedicated to the input languages of our tools,
 where Section~\ref{subsec:lang:gringo}
-details the joint input language of \gringo\ and \clingo.
-The input language of \clasp\ is discussed only briefly in Section~\ref{subsec:lang:clasp},
-as it matches the numerical output format of \gringo\ and
-is not supposed to be written directly by a user.
+details the joint input language of \gringo\ and \clingo,
+while solver formats supported by \clasp\
+are not supposed to be written directly by a user
+and just briefly described in Section~\ref{subsec:lang:clasp}.
+% The input language of \clasp\ is discussed only briefly in Section~\ref{subsec:lang:clasp},
+% as it matches the numerical output format of \gringo\ and
+% is not supposed to be written directly by a user.
+Then,
+the control capacities of \clingo\ needed for multi-shot solving are detailed in Section~\ref{sec:multi}.
+% This includes a few directives and their interplay with a scripting API.
 For %illustrating the application of our tools,
 further illustration,
 Section~\ref{sec:examples} describes how three well-known example problems
@@ -98,15 +104,29 @@ can be solved with our tools.
 Practical aspects are also in the focus of Section~\ref{sec:options} and~\ref{sec:errorwarn},
 where we elaborate and give some hints on the available command line options
 as well as input-related errors and warnings. % that may be reported.
-The control capacities of \clingo\ needed for multi-shot solving are detailed in Section~\ref{sec:multi}.
-This includes a few directives and their interplay with a scripting API.
-We conclude with a summary in Section~\ref{sec:future}.
+The following sections address adept extensions of the basic modeling language
+and control capacities.
+In particular, Section~\ref{sec:meta} elaborates meta-programming functionalities
+that allow for reinterpreting logic programs by means of ASP.
+Techniques for incorporating domain-specific heuristics into the ASP solving
+process are presented in Section~\ref{sec:heuristic}.
+Section~\ref{sec:prefopt} is dedicated to advanced methods
+for preference handling and optimization.
+Moreover, Section~\ref{sec:constraint} provides concepts developed particularly
+for dealing with multi-valued variables and quantitative constraints.
+In order to tune efficiency,
+Section~\ref{sec:configuration} further introduces principled approaches
+to solver configuration.
+Finally, we conclude with a summary in Section~\ref{sec:future}.
+\comment{M: The outline is extended to all sections, please cross-check!
+            Also, should the draft character of some sections
+            be mentioned here?}
 
 %For a more theoretical background, the interested reader is referred
 %to Appendix~\ref{sec:background} where technical details are covered.
 
 For readers familiar with \lparse~\cite{lparseManual}%
-\footnote{A grounder that constitutes the traditional front end of solver \smodels~\cite{siniso02a}}
+\footnote{A grounder that constitutes the traditional front-end of solver \smodels~\cite{siniso02a}}
 or the \gringo~3 series,
 Appendices~\ref{sec:lparse} and~\ref{sec:gringo:tri}
 % \comment{Appendix not updated yet}

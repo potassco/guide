@@ -42,7 +42,7 @@ and if so, we also describe its meaning.
 An abstract invocation of \gringo\ looks as follows:
 %
 \begin{lstlisting}[numbers=none]
-gringo [ options | filenames ]
+gringo  [ options | files ]
 \end{lstlisting}
 %
 Note that options and filenames do not need to be passed to \gringo\
@@ -69,7 +69,7 @@ This overrides constant definitions in a source file without a warning.
 Output ground program in (human-readable) text format.
 \item[\code{--lparse-rewrite}]~\\
 Can be used in conjunction with the \code{--text} option to print a program in a (human-readable) similar to the \smodels\ format,
-which is passed to the solver.
+which is otherwise passed to the solver.
 \item[\code{--lparse-debug=\{none,plain,lparse,all\}}]~\\
 This option enables additional debugging output to the standard error stream.
 The available arguments are:
@@ -77,7 +77,7 @@ The available arguments are:
   \item[none]  No additional output is printed.
   \item[plain] Prints rules as with~\code{--text} but prefixed with~\code{\%}.
   \item[lparse] Prints rules as with~\code{--text} and~\code{--lparse-rewrite} but prefixed with~\code{\%\%}.
-  \item[all] Combines argument \code{plain} and \code{all}.
+  \item[all] Combines argument \code{plain} and \code{lparse}.
 \end{description}
 
 \item[\code{--warn=[no-]w}]
@@ -95,9 +95,9 @@ The available values for argument \code{w} are:
 \end{description}
 %
 When calling \gringo\ without options,
-it outputs a ground program in \smodels's numerical format,
-input language of various ASP solvers \cite{gekanesc07b,siniso02a,linzha04a}.
-Note that \gringo\ reads from standard input if no files are given.
+it outputs a ground program in \smodels\ format~\cite{lparseManual},
+which is a common input language for propositional ASP solvers. % \cite{gekanesc07b,siniso02a,linzha04a}.
+% Note that \gringo\ reads from standard input if no files are given.
 
 \subsection{\clingo\ Options}\label{subsec:opt:clingo}
 ASP system \clingo\ combines grounder \gringo\ and solver \clasp\
@@ -105,7 +105,7 @@ via an internal interface.
 An abstract invocation of \clingo\ looks as follows:
 %
 \begin{lstlisting}[numbers=none]
-clingo [ number | options | filenames ]
+clingo  [ options | files | number ]
 \end{lstlisting}
 %
 The optional numerical argument allows for specifying the maximum number of answer sets to be computed (\code{0}~standing for all answer sets).
@@ -142,7 +142,7 @@ that can also be used as a SAT, MaxSAT, or PB solver (cf.\ Section~\ref{subsec:l
 An abstract invocation of \clasp\ looks as follows:
 %
 \begin{lstlisting}[numbers=none]
-clasp [ number | options | filename ]
+clasp [ options | files | number ]
 \end{lstlisting}
 %
 As with \clingo\ and \iclingo,
@@ -153,15 +153,15 @@ where \code{0}~stands for all answer sets.
 If neither a filename nor an option that makes \clasp\ exit (see below) is provided,
 \clasp\ reads from the standard input.%
 \footnote{%
- In earlier versions of \clasp\ filenames had to be given via option \code{--file}
- or its short form \code{-f}.}
+ In earlier versions of \clasp, filenames had to be given via option \code{--file}
+ or its short form~\code{-f}.}
 In fact, it is typical to use \clasp\ in a pipe with \gringo\ in the following way:
 \begin{lstlisting}[numbers=none]
-gringo [ ... ] | clasp [ ... ]
+gringo [ options | files ] | clasp [ options | number ]
 \end{lstlisting}
 In such a pipe, \gringo\ instantiates an input program and outputs the ground
-rules in \smodels's numerical format,
-which is then consumed by \clasp\ that computes and outputs answer sets.
+rules in \smodels\ format,
+which is then fed to \clasp\ that computes and outputs answer sets.
 Note that \clasp\ offers plenty of options to configure its behavior.
 In the following, we present only some important options
 and categorize them according to their functionalities.
@@ -230,7 +230,7 @@ the main solving and reasoning strategies of \clasp.
       \item[domRec]   Enable subset enumeration via domain-based recording (cf.\ Section~\ref{sec:heuristic}).
       \item[brave]    Compute the brave consequences (union of all answer sets) of a logic program.
       \item[cautious] Compute the cautious consequences (intersection of all answer sets) of a logic program.
-      \item[auto]     Use bt for enumeration and record for optimization.
+      \item[auto]     Use \code{bt} for enumeration and \code{record} for optimization.
     \end{description}
     Note: The option is only meaningful if \code{--models} is not equal to \code{1}. Furthermore,
     modes \code{brave} and \code{cautious} require \code{--models=0}, which is also the default in that case.
@@ -241,12 +241,12 @@ the main solving and reasoning strategies of \clasp.
       \item[opt]      Compute an optimal model (requires \code{--models=0}).
       \item[enum]     Enumerate models with costs less than or equal to some fixed bound (cf. \code{--opt-bound}).
       \item[optN]     Compute optimum, then enumerate optimal models.
-      \item[ignore]   Ignore any optimize statements during computation.
+      \item[ignore]   Ignore any optimization statements during computation.
     \end{description}
   \item[\code{--opt-bound=\textit{n1}[,\textit{n2},\textit{n3}...]}]~\\
   Initialize objective function(s) to minimize with \code{\textit{n1}[,\textit{n2},\textit{n3}...]}.
   \item[\code{--opt-sat}]~\\
-    Treat problems in DIMACS-cnf format as MaxSAT optimization problems.
+    Treat input in DIMACS-(w)cnf format as MaxSAT optimization problem.
 
   \item[\code{--parallel-mode,-t \textit{n}[,\textit{mode}]}]~\\
     Enable parallel solving with \textit{n} threads~\cite{gekasc12b}, where
@@ -266,7 +266,7 @@ call \clasp\ with option \code{--help=3}.
     \begin{description}[leftmargin=1.6cm,style=nextline,align=right,font=\code]
       \item[frumpy] Use conservative defaults similar to those used in earlier \clasp\ versions.
       \item[jumpy]  Use more aggressive defaults.
-      \item[tweety] Use defaults geared towards general ASP problems.
+      \item[tweety] Use defaults geared towards typical ASP problems.
       \item[trendy] Use defaults geared towards industrial problems.
       \item[crafty] Use defaults geared towards crafted problems.
       \item[handy]  Use defaults geared towards large problems.
@@ -302,7 +302,7 @@ call \clasp\ with option \code{--help=3}.
     or (arbitrary) static variable ordering
     (with argument~\code{None}).
     Finally, argument~\code{Domain} enables
-    our \emph{domain-specific} decision heuristic described in Section~\ref{sec:heuristic}.
+    a \emph{domain-specific} decision heuristic as described in Section~\ref{sec:heuristic}.
   \item[\code{--save-progress[=\textit{n}]}]~\\
     Enable alternative sign heuristic based on cached truth values~\cite{pipdar07a} if available.
     Cache truth values on backjumps $>$ \code{\textit{n}}.
@@ -361,8 +361,8 @@ Let us note that switching the above options can have dramatic effects
 If performance bottlenecks are observed, it is worthwhile to first
 give the different prefabricated default configurations a try (cf.\ \code{--configuration}).
 Furthermore, we suggest trying different heuristics and restart sequences.
-For a brief overview on manual fine-tuning see \cite{gekasc09b}.
-Automatic fine-tuning is the subject of Chapter~\ref{sec:configuration}.
+For a brief overview on manual fine-tuning, see \cite{gekasc09b}.
+Automatic configuration methods are described in Section~\ref{sec:configuration}.
 
 
 %%% Local Variables:

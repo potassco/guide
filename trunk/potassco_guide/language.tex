@@ -795,7 +795,9 @@ In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
 \comment{M2R: I dropped the footnote because I needed quite some consideration
               to figure out that \code{(1;2;3)} should be read as a tuple and
               the footnote be interpreted accordingly.
-              Hence, I think that the footnote is disturbing.}%
+              Hence, I think that the footnote is disturbing.
+         R: The footnote might have been a bit complicated. 
+            I added it because I think it was interesting (and still think so).}%
 \begin{example}\label{ex:pool}
 The following program makes use of pooling.
 It is similar to Example~\ref{ex:int}
@@ -1600,7 +1602,9 @@ Regarding the binding of variables,
 the same restrictions as with arithmetic in Section \ref{subsec:gringo:arith} apply.
 \comment{M: I didn't get what the previous sentence is aiming at.
             In case it's related to Remark~\ref{note:simple},
-            the cross-reference could more specifically point to it.}
+            the cross-reference could more specifically point to it.
+         R: My point is: variable occurrences in the scope of external functions are not considered bound, which is similar to variable occurrences in arithmetics.
+            We can also write it like this if you prefer.}
 \end{example}
 
 \begin{example}

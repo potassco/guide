@@ -422,8 +422,9 @@ instead of disjunction, unless the latter is required for complexity reasons.
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
 They are satisfied whenever their positive counterparts are.
-But unlike (purely) positive literals,
-they are preceded by \code{not} and do thus not require an (acyclic) derivation from the program;
+But like negative literals of form $\code{not}~A$,
+double negated ones are also preceded by \code{not} and 
+do thus not require an (acyclic) derivation from the program;
 it is sufficient that they are true in the model at hand.
 
 %\begin{example}\label{ex:double}

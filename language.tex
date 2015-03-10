@@ -172,7 +172,6 @@ We say that there is a \emph{positive cycle} through \pred{a} and~\pred{b}
 subject to minimization.
 \end{example}
 
-%\begin{example}\label{ex:as:two}
 Consider the following logic program:
 %
 \begin{lstlisting}[numbers=none]
@@ -196,9 +195,7 @@ the bodies of the rules
 Hence, we have that
 either~\pred{a} or~\pred{b} belongs to
 an answer set of the logic program.
-%\end{example}
 
-%\begin{example}\label{ex:as:three}
 To illustrate the use of facts and integrity constraints,
 let us augment the previous logic program:
 \begin{lstlisting}[numbers=none]
@@ -222,7 +219,6 @@ of the rule \code{\pred{b}\,:-\:not\:\pred{a}.} is satisfied,
 so that atom~\pred{a} must be false.
 Hence, the set containing \pred{b} and~\pred{c}
 is the only answer set of our logic program.
-%\end{example}
 
 In the above examples,
 we used propositional logic programs to exemplify the idea
@@ -240,7 +236,7 @@ but it is unsure about whether the yellow bird flies.
 This knowledge is generalized by
 the following schematic rules:
 %
-\lstinputlisting{examples/fly.lp} %[firstnumber=3]
+\lstinputlisting{examples/fly.lp}
 %
 The first rule expresses that it is generally possible that a bird flies,
 unless the contrary, subject to the second rule, is the case.
@@ -339,7 +335,7 @@ Using classical negation,
 we can rewrite the schematic rules in Example~\ref{ex:flies}
 in the following way:
 %
-\lstinputlisting{examples/flycn.lp} % [firstnumber=3]
+\lstinputlisting{examples/flycn.lp}
 %
 Given the individuals \const{tweety} and \const{tux},
 classical negation is reflected by
@@ -372,13 +368,9 @@ Then,
 \code{\pred{flies}(\const{tux})} must unconditionally be true,
 and \code{-\pred{flies}(\const{tux})} is still derived by
 an instance of the third schematic rule.
-% There no longer is any answer set for our new program using classical negation.
-% In fact, answer set candidates that contain both
 Since every answer set candidate containing
 both \code{\pred{flies}(\const{tux})} and \code{-\pred{flies}(\const{tux})}
 triggers
-% \code{\pred{flies}(\const{tux})} and
-% \code{\pred{-flies}(\const{tux})} violate
 the (implicit) integrity constraint in Line~5,
 there is no longer any answer set.
 \end{example}
@@ -427,7 +419,6 @@ double negated ones are also preceded by \code{not} and
 do thus not require an (acyclic) derivation from the program;
 it is sufficient that they are true in the model at hand.
 
-%\begin{example}\label{ex:double}
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
@@ -437,14 +428,10 @@ b :- not not a.
 This program has an empty answer set, like the program in Example~\ref{ex:as:one},
 as well as the additional answer set containing both \pred{a} and \pred{b}.
 This is because neither `\code{not not a}' nor `\code{not not b}' requires an acyclic derivation from the program.
-% In fact
 Note that, in contrast to Example~\ref{ex:as:one},
 the above program does not induce
 mutual positive dependencies between~\pred{a} and~\pred{b}.
-% induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
-% Without 
 Given this, \pred{a} and~\pred{b} can thus be both true or false, just like in classical logic.
-%\end{example}
 
 Also, negative literals are admitted in the head of rules.
 When disregarding disjunction,
@@ -568,7 +555,7 @@ respectively, before arithmetic evaluations.
 Consecutive and non-separative (e.g., before `\code{(}')
 spaces can optionally be dropped.
 The four bitwise functions apply to signed integers,
-using two's complement arithmetic. % of a negative integer.
+using two's complement arithmetic.
 \end{example}
 
 \begin{note}\label{note:simple}
@@ -640,12 +627,8 @@ as illustrated by the following program:%
 %
 Integers are compared in the usual way, constants are ordered lexicographically,
 and functions both structurally and lexicographically.
-% Function symbols are compared first using their arity.
-% If the arity differs, then the name of the function symbol is compared lexicographically.
-% If again the name differs, then arguments are compared component wise.
 Furthermore, all integers are smaller than constants,
 which in turn are smaller than functions.
-%\comment{add \#sup and \#inf?}
 \end{example}
 
 \begin{note}
@@ -722,15 +705,6 @@ we can further check whether the arithmetic evaluation of~\code{\var{X}+\const{1
 occurring as the third argument, coincides with the
 corresponding value given on the right-hand side of~\code{=}.
 %
-% Note the usage of \code{X+1} in the term.
-% \gringo{} does not try to unify any term containing arithmetic
-% but in this example \code{X} occurs also directly as second argument of the argument
-% and can thus be unified with.
-% The term $X+1$ is merely a test that is deferred and checked later.
-% For example, the fourth line is equivalent to:
-% \begin{lstlisting}[firstnumber=6]
-% unifyf(X) :- f(a,X,Y) := F, sym(F), Y == X + 1.
-% \end{lstlisting}%
 \end{example}
 
 \begin{note}
@@ -751,13 +725,6 @@ E.g., the rule  \code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\
 is not accepted by \gringo\ (or the grounding component of \clingo)
 because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 \index{Logic Programs!Safety}%
-%
-% that assignments to some extent can bind variables.
-% Of course cyclic assignments cannot bind variables.
-% For example the rule  is rejected by \gringo{}.
-% Either \code{X} or \code{Y} has to be provided by some positive predicate in this case.
-% Additionally, unification is restricted to ground terms on the right hand side of the assignment,
-% that is, all variables on the right hand side have to be bound by some other predicate.
 \end{note}
 
 \subsubsection{Intervals}\label{subsec:gringo:interval}
@@ -768,7 +735,6 @@ five facts of the form \code{\pred{num}($k$).}
 over consecutive integers~$k$.
 For a more compact representation,
 \gringo\ and \clingo\ support integer intervals of the form $i$\code{..}$j$.
-% , where~$i$ and~$j$ are integers.
 Such an interval, representing each integer~$k$ such that $i\leq k\leq j$,
 is expanded during grounding.
 An interval is expanded differently depending on where it occurs.
@@ -820,7 +786,7 @@ here in \lstinline{size(S)}.
 \index{Logic Programs!Atoms!Pooling, \code{;}}
 
 The token `\code{;}' admits pooling alternative terms
-to be used as arguments of an atom, function, or tuple. % for writing rules more compactly.
+to be used as arguments of an atom, function, or tuple.
 Argument lists written in the form \code{($\dots$,X;Y,$\dots$)} abbreviate multiple options:
 \code{($\dots$,X),\linebreak[1]\:(Y,$\dots$)}.
 Pools are expanded just like intervals, i.e.,
@@ -830,14 +796,6 @@ In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
               to figure out that \code{(1;2;3)} should be read as a tuple and
               the footnote be interpreted accordingly.
               Hence, I think that the footnote is disturbing.}%
-% \footnote{%
-% % This example uses 
-% We make use of the fact that one-elementary tuples
-% must be made explicit by a trailing `\code{,}' (cf.\ Section~\ref{subsec:gringo:normal}).
-% E.g., % the tuple 
-% \code{(1;(1,))} expands into \code{(1)} and \code{(1,)},
-% where \code{(1)} is % not a tuple here but 
-% equal to the integer~\code{1}.}
 \begin{example}\label{ex:pool}
 The following program makes use of pooling.
 It is similar to Example~\ref{ex:int}
@@ -914,7 +872,6 @@ The rules in Line~5 and~6 are instantiated as follows:%
   \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/cond.lp}{cond.lp}}\\
   or alternatively:\\
   \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/cond.lp}{cond.lp}}}
-% %[firstnumber=5]
 \begin{lstlisting}[numbers=none]
 meet :- available(jane), available(john).
 on(mon); on(tue); on(wed); on(thu); on(fri) :- meet.
@@ -1002,7 +959,7 @@ In a logic program, domain predicates can be recognized by observing
 that they are neither subject to negative recursion (through \code{not})
 nor to disjunction or ``choice constructs'' (detailed in Section~\ref{subsec:gringo:aggregate})
 in the head of any rule.
-The domain predicates defined in Example~\ref{ex:sort} are %:
+The domain predicates defined in Example~\ref{ex:sort} are
 \pred{set}/$1$ and \pred{next}/$1$.
 Literals with such conditions expand to arbitrary length disjunctions or conjunctions in the head or body of a rule, respectively.
 Otherwise, conditions give rise to nested implications.
@@ -1081,7 +1038,7 @@ can be expressed as follows.
 #sum { 3 : bananas; 25 : cigars; 10 : broom } <= 30
 \end{lstlisting}
 Both aggregate atoms can be used in the body of a rule like any other atom, possibly preceded by negation.
-Within both aggregate atoms, % symbolic 
+Within both aggregate atoms,
 atoms like \lstinline{course(ai)} or \lstinline{broom} are associated with weights.
 Assuming that \lstinline{course(db)}, \lstinline{course(ai)} as well as \lstinline{bananas} and \lstinline{broom} are true,
 the aggregates inner sets evaluate to \lstinline[mathescape]{$\{$4;6$\}$} and \lstinline[mathescape]{$\{$3;10$\}$}, respectively.
@@ -1103,7 +1060,6 @@ However, both are different from the aggregate
 \begin{lstlisting}[numbers=none,escapechar=@]
 #count { 42 : a; t : not b; s : not b } = 2
 \end{lstlisting}
-% #count {42:a; 42:a; t:not b; s:not b} = 2
 that holds if both \lstinline{a} and \lstinline{b} are false,
 yielding \lstinline[mathescape]{#count$\{$t;s$\}$ = 2}.
 
@@ -1137,8 +1093,8 @@ This is done by appending such atoms (or in general literals) separated by an ad
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$L_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
 \end{lstlisting}
 %
-Here, all $L_i$ are % symbolic 
-literals as introduced in Section~\ref{subsec:gringo:normal}, while all other entities are as described above.
+Here, all $L_i$ are literals as introduced in Section~\ref{subsec:gringo:normal},
+while all other entities are as described above.
 The second colon in
 \lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$:$\boldsymbol{L_i}$}
 is dropped whenever $\boldsymbol{L_i}$ is empty,
@@ -1185,21 +1141,19 @@ For example, the rule
 \begin{lstlisting}[numbers=none]
 { a; b }.
 \end{lstlisting}
-is expanded to % by \gringo\ to
+is expanded to
 \begin{lstlisting}[numbers=none]
 #count { 0,a : a; 0,b : b }.
 \end{lstlisting}
 Here, \gringo\ generates two distinct term tuples \lstinline{0,a} and \lstinline{0,b}.
 With \clingo, we obtain four answer sets representing all sets over \code{a} and \code{b}.
 
-% Same head 
-Recurrences of
-literals yield identical terms, as we see next.
+Recurrences of literals yield identical terms, as we see next.
 The rule
 \begin{lstlisting}[numbers=none]
 { a; a }.
 \end{lstlisting}
-is expanded to % by \gringo\ to
+is expanded to
 \begin{lstlisting}[numbers=none]
 #count { 0,a : a; 0,a : a }.
 \end{lstlisting}
@@ -1212,7 +1166,7 @@ To see this, observe that the integrity constraint
 \begin{lstlisting}[numbers=none]
 :- { a; not b; not not c } > 0.
 \end{lstlisting}
-is expanded to % by \gringo\ to
+is expanded to
 \begin{lstlisting}[numbers=none]
 :- #count { 0,a : a; 1,b : not b; 2,c : not not c } > 0.
 \end{lstlisting}
@@ -1257,7 +1211,7 @@ If~\pred{a} does not hold, we derive
 %
 Here, the special constants \const{\#sup} and \const{\#inf}
 (introduced in Section~\ref{subsec:gringo:normal}),
-obtained by applying \code{\#min} and \code{\#max} to the empty set of weights, % respectively,
+obtained by applying \code{\#min} and \code{\#max} to the empty set of weights,
 indicate the neutral elements of the aggregates.
 %
 These constants can also be used as weights, subject to
@@ -1273,9 +1227,7 @@ because both \code{\#inf <= -1000} and \code{1000 <= \#sup} hold.
 \begin{note}\label{rem:aggr-assign}
 Although it seems convenient to use assignments of aggregates' values,
 this feature should be used with care.
-If the literals of an aggregate belong to domain predicates
-(see Remark~\ref{note:domain})  % (see Page~\pageref{pg:domain}) 
-or built-ins,
+If the literals of an aggregate belong to domain predicates (see Remark~\ref{note:domain}) or built-ins,
 \gringo\ or \clingo\ evaluates the aggregate during grounding, so obtaining
 a unique value to be assigned.
 \index{Aggregates!Assignments!Domain Predicates}%
@@ -1286,8 +1238,6 @@ in which case \gringo\ or \clingo\ unwraps all possible outcomes of the
 aggregate's evaluation.
 The latter can lead to a space blow-up,
 which should be avoided whenever possible.
-% taken into account
-% because this often leads to problems for larger instances.
 For instance, unwrapping the assignment aggregate in
 \begin{lstlisting}[numbers=none]
 { a; b; c }.
@@ -1310,73 +1260,6 @@ provides more specific information than necessary for checking bounds.
 Hence, it is advisable to rather apply comparison predicates to aggregates directly,
 unless an aggregate refers to domain predicates and built-ins only.
 \end{note}
-
-% In particular, if there are multiple occurrences
-% $L\code{=}w_1,\dots,L\code{=}w_k$
-% of a literal~$L$, in combination with \const{\#min} and \const{\#max},
-% it is not the same like having $L\code{=}w_1+\dots+w_k$.
-% To see this, note that the program consisting of the facts:
-% \begin{lstlisting}[numbers=none]
-% 2 #max [a=2].  2 #min [a=2].
-% \end{lstlisting}
-% has $\{\code{a}\}$ as its unique answer set, while there is no answer set for:
-% \begin{lstlisting}[numbers=none]
-% 2 #max [a,a].  2 #min [a,a].
-% \end{lstlisting}
-
-% If literals ought not to be repeated,
-% we can use \const{\#count} instead of \const{\#sum}.
-% Syntactically, \const{\#count} requires curly instead of square
-% brackets, and there must not be any weights within a \const{\#count} aggregate.
-% Regarding semantics,
-% % \begin{equation*}%\label{eq:aggregate:atom}
-% $(
-%   l\,
-%   \const{\#count}
-%   \,
-%   \code{\char`\{}
-%   \,
-%   L_1\code{,}
-%   \dots\code{,}
-%   L_n
-%   \,
-%   \code{\char`\}}
-%   \,
-%   u
-% )$
-% %\end{equation*}
-% reduces to
-% $(
-%   l\,
-%   \const{sum}
-%   \,
-%   \code{[}
-%   \,
-%   L_1\code{=}\const{1}\code{,}
-%   \dots\code{,}
-%   L_m\code{=}\const{1}
-%   \,
-%   \code{]}
-%   \,
-%   u
-% )$,
-% where $\{L_1,\dots,L_m\}=\{L_i \mid 1\leq i\leq n\}$ is obtained by dropping
-% repeated literals.
-% Of course, the use of~$l$ and~$u$ is optional also with \const{\#count}.
-% As an example, note that the next aggregate atoms express the same:
-% \begin{lstlisting}[numbers=none,escapechar=@]
-% 1 #sum   [a=1, not b=1]     1  @\textnormal{and}@
-% 1 #count {a,a, not b,not b} 1@\textnormal{.}@
-% \end{lstlisting}
-% Keyword \const{\#count} can be omitted (like \const{\#sum}),
-% so that the following are synonyms:
-% \begin{lstlisting}[numbers=none,escapechar=@]
-% 1 #count {a, not b} 1  @\textnormal{and}@
-% 1        {a, not b} 1@\textnormal{.}@
-% \end{lstlisting}
-% The last notation is similar to the one of so-called
-% ``cardinality constraints''~\cite{siniso02a,lparseManual},
-% which are aggregate atoms using counting as their operation.
 
 \paragraph{Non-ground Aggregates}
 
@@ -1534,16 +1417,10 @@ Finally, the following rules illustrate the use of aggregates within assignments
 %
 \lstinputlisting[nolol,firstline=25,lastline=26,firstnumber=19]{examples/aggr.lp}
 %
-% Note that similar aggregates have already been used in Line~9 and~15, respectively.
-% In Line~9, the keyword \const{\#count} has been omitted for convenience.
-% Moreover, Line~9 distinguishes eight terms, while Line~18 discerns only five.
-% More importantly,
-The role of aggregates here % in the last two lines 
-is different from before,
+The role of aggregates here is different from before,
 as they now serve to assign an integer to a variable~\var{N}.
-% In this context, bounds are not permitted, and so none are provided in Line~18 and~19.
 The effect of Line~19 and~20,
-which do not follow the recommendation in Remark~\ref{rem:aggr-assign}, % these two lines 
+which do not follow the recommendation in Remark~\ref{rem:aggr-assign},
 is that the student can read off the number of
 courses to enroll and the amount of contact hours per week from instances of
 \pred{courses}/$1$ and \pred{hours}/$1$ belonging to an answer set.%
@@ -1554,19 +1431,11 @@ courses to enroll and the amount of contact hours per week from instances of
   \code{\mbox{~}gringo \attach{examples/aggr.lp}{aggr.lp} | \textbackslash\\
         \mbox{~}clasp 0}}
 %
-In fact, running \clingo\ or \clasp\ shows % the student 
-that a unique
-collection of~\const{5} courses to enroll satisfies all requirements:
+In fact, running \clingo\ or \clasp\ shows
+that a unique collection of~\const{5} courses to enroll satisfies all requirements:
 the courses~\const{1}, \const{2}, \const{4}, \const{5}, and~\const{7},
 amounting to~\const{20} contact hours per week.
 %
-% As mentioned in Section~\ref{subsec:gringo:condition}
-% and done, e.g., in Line~20,
-% multiple literals may be connected via `\code{,}' in order to construct
-% composite conditions within an aggregate.
-% Furthermore, the usage of non-domain predicates within an aggregate
-% together with an assignment (like \pred{enroll}/$1$ in Line~18 and~19 above)
-% is not recommended in general because the space blow-up may be significant.
 \end{example}
 
 \begin{note}
@@ -1608,7 +1477,6 @@ and the safety requirements for the body itself are the same as for integrity co
 
 As an alternative way to express an optimization problem,
 there are optimization statements.
-% which provide another way to write weak constraints.
 A minimize statement of the form
 \[
     \code{\#minimize \{$w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_n$@$p_n$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$\}.}
@@ -1619,11 +1487,7 @@ represents the following $n$ weak constraints:
     \quad \dots \quad
     \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_n$.~[$w_n$@$p_n$,$\boldsymbol{t}_n$]}
 \]
-% Note that each $\boldsymbol{t}_i$ can be preceded by an optional prioritized term $w_i$@$p_i$.
 %
-% And finally there are maximize constraints.
-% Again, these are defined as shortcuts.
-% To maximize, the integer weights of the tuples are simply inverted.
 Moreover, maximize statements can be viewed as minimize statements
 with inverse weights.
 Hence, a maximize statement of the form
@@ -1780,39 +1644,27 @@ To capture constants and functions,
 there are the \code{Id} and \code{Fun} classes, respectively, in both Python and Lua.%
 \footnote{Strictly speaking there are no classes in Lua, the Userdata type together with a metatable is used to emulate classes.}
 Both objects have a function \code{name()} to access the string representation of the constant or the name of the function term, respectively.
-A \code{Fun} object has an additional function \code{args()} returning the table % of arguments and 
-or list of arguments, respectively, in Lua and Python.
-% In Python, 
+A \code{Fun} object has an additional function \code{args()} returning the table or list of arguments, respectively, in Lua and Python.
 Moreover,
-tuples are mapped to Python's tuple data structure and 
-% And because there are no dedicated tuples in Lua, tuple terms are mapped 
-to \code{Fun} objects
+tuples are mapped to Python's tuple data structure and to \code{Fun} objects
 that have an empty name in Lua.
 Finally, the terms \code{\#sup} and \code{\#inf} are mapped to the constants \code{Sup} and \code{Inf}.
 
 To construct terms from within the scripting language,
 the \code{Id} and \code{Fun} classes have a constructor to create objects (in Lua it is a global function).
-% To create an object representing a constant,
-% there is the \code{Id(name)} constructor, which 
-The \code{Id(name)} constructor
-simply takes the string representation of a constant as argument,
-% Similarly, for functions,
-% there is 
-and the \code{Fun(name,args)} constructor additionally takes
-% taking a string representation of the name of the function
-% together with 
-a sequence or table of terms representing the arguments of a function.
-% as arguments.
-Furthermore, % there is 
-the global function \code{Tuple(args)} % , which
-is a shortcut for \code{Fun("",args)}
-to create an object representing a tuple in Lua.
+The \code{Id(name)} constructor simply takes the string representation of a constant as argument,
+and the \code{Fun(name,args)} constructor additionally takes a sequence or table of terms representing the arguments of a function.
+Furthermore,
+the global function \code{Tuple(args)} is a shortcut for \code{Fun("",args)} to create an object representing a tuple in Lua.
 The remaining terms,
 which have equivalents in the scripting languages,
 use the standard constructors or literals available in Lua and Python.
 \comment{M: I didn't get what the previous sentence is aiming at.
             If it doesn't hint at something important, it may be
-            dropped for not disturbing the reader.}
+            dropped for not disturbing the reader.
+         R: It means that there are no gringo functions to create those.
+            For example to build a tuple in python, one can use the tuple constructor: tuple([1,2,3]) or (1,2,3)
+            These constructors are built into the Python language.}
 
 \begin{example}
 This example shows how to inspect and create terms:
@@ -1868,10 +1720,8 @@ In Line~5, we add a function~\code{max}
 that  takes two terms as arguments
 and returns the maximum of both.
 We are using the \code{cmp} function to compare terms here.
-Note that % We cannot use 
-the \code{>} relation 
-% here because it cannot compare objects of different types,
-cannot be applied directly because objects can be of different types,
+Note that the \code{>} relation cannot be applied directly 
+because objects can be of different types,
 e.g., integers and strings.
 The \code{max} function can then be used in a logic program:%
 \marginlabel{%
@@ -1887,7 +1737,6 @@ Calls to \clingo\ are similar.
 \lstinputlisting{examples/cmp.lp}
 %
 The function is called in Line~3 and the result stored in predicate \code{max}/$3$.
-% Note that the maximum of constant \code{a} and integer \code{3} is \code{a}.
 A respective ground fact exhibits that the constant~\code{a} is greater than
 the integer~\code{3}.
 \end{example}
@@ -1895,20 +1744,12 @@ the integer~\code{3}.
 \begin{note}~
 \begin{enumerate}
 \item The grounder assumes that all external functions are deterministic.
-That is, when a function is called multiple times with the same arguments
-during grounding,
-then it should % always 
-return the same values.
-Adding % non-deterministic 
-functions that do not comply with this assumption can lead to undesired results.
-\item If an error occurs during the evaluation of an external function, % then 
+That is, when a function is called multiple times with the same arguments during grounding,
+then it should return the same values.
+Adding functions that do not comply with this assumption can lead to undesired results.
+\item If an error occurs during the evaluation of an external function,
 a warning is printed and the current instance of a rule or condition is dropped.
-\comment{M2R: Please check the reformulation of the previous sentence. Thanks!}
-% substitution is thrown away.
-For example, this happens when % calling 
-the~\code{gcd} function from % in 
-Example~\ref{ex:gcd} is applied to % with 
-non-integer arguments.
+For example, this happens when the~\code{gcd} function from Example~\ref{ex:gcd} is applied to non-integer arguments.
 \end{enumerate}
 \end{note}
 
@@ -1939,7 +1780,6 @@ tos(uhura).  tos(sulu).
 
 \paragraph{Show Statements}
 \index{Meta-Statements!Show Statements, \code{\#show}}%
-% Sometimes, one may be interested only in
 Usually, only a subset of the atoms belonging
 to an answer set characterizes a solution.
 In order to suppress the atoms of ``irrelevant'' predicates from the output
@@ -2038,16 +1878,11 @@ or from interpreting parentheses in functions.
 \paragraph{External Statements}
 \index{Meta-Statements!External Statements, \code{\#external}}%
 External statements are used to declare atoms
-% mark atoms as external.
-% This means that those atoms are not 
 that should not be subject to certain simplifications.
 Namely,
 atoms marked external are not removed from the bodies of rules, conditions, etc.,
 even if they do not appear in the head of any rule.
-% Although this does not affect the semantics of a logic program,
-% we will see an effect in the text output of the example below.
-The main use case 
-is to implement extensions to plain ASP solving,
+The main use case is to implement extensions to plain ASP solving,
 like multi-shot solving detailed in Section~\ref{sec:multi}.
 An \code{\#external} statement has the following form:
 %
@@ -2114,22 +1949,16 @@ To begin a new program part, we write a statement
 \medskip
 \noindent
 %
-where $p$ is the program part name and the parameters $s_i$ are % symbolic 
-constants.
+where $p$ is the program part name and the parameters $s_i$ are constants.
 If $n$ is zero, then the parentheses can be omitted.
-All rules, external statements, and show statements for terms
-% following such a directive
-up to the next \code{\#program} statement or the end of the file belong to the program part $p/n$.
-Rules that are not subject to % a program part 
-any such directive are included in the \code{base}/$0$ part.
+All rules, external statements, and show statements for terms up to the next \code{\#program} statement or the end of the file belong to the program part $p/n$.
+Rules that are not subject to any such directive are included in the \code{base}/$0$ part.
 
 The default behavior of \gringo\ is to ground (and solve in the case of \clingo)
 the \code{base}/$0$ part.
 Using the scripting API (cf.\ Section~\ref{sec:multi}),
 we can ground other parts than \code{base}/$0$ too.
-Occurrences of % symbolic 
-constants that are parameters of a part
-are replaced with ground terms when instantiating the program part.
+Occurrences of constants that are parameters of a part are replaced with ground terms when instantiating the program part.
 
 \begin{example}
 The following example shows how to instantiate program parts:
@@ -2144,7 +1973,7 @@ To inspect the instantiation of program parts, invoke:\\
 \code{%
 \mbox{~}gringo --text \textbackslash\\
 \mbox{~}\attach{examples/part.lp}{part.lp} \attach{examples/part-lua.lp}{part-lua.lp}}\\
-or:\\ % alternatively:\\
+or:\\
 \code{%
 \mbox{~}gringo --text \textbackslash\\
 \mbox{~}\attach{examples/part.lp}{part.lp} \attach{examples/part-py.lp}{part-py.lp}}\\
@@ -2162,7 +1991,6 @@ Calls to \clingo\ are similar.
 In Line~9,
 the script grounds the \code{base}/$0$ part (Line~7)
 as well as the \code{a}/$2$ part with parameters \code{1} and \code{3} (Line~8).
-% Note the call to solve in Line 10. This 
 The call in Line 10 is essential to solve the program with \clingo,
 and even in \gringo\ some post-processing happens, e.g.,
 printing the symbol table of the \smodels\ format~\cite{lparseManual}.
@@ -2170,9 +1998,8 @@ printing the symbol table of the \smodels\ format~\cite{lparseManual}.
 
 \begin{note}
 Program parts are mainly interesting for incremental grounding and solving of logic programs detailed in Section~\ref{sec:multi}.
-For single-shot solving, program parts are not needed, % should not be used.
-but the feature is % merely 
-listed for completeness here.
+For single-shot solving, program parts are not needed,
+but the feature is listed for completeness here.
 \end{note}
 
 \paragraph{Include Statements}
@@ -2229,44 +2056,14 @@ works with either of the following directory layouts:
     \-- include.lp
 \end{lstlisting}
 %
-% Because files are included from the current working directory,
-% the following invocation with the given directory layout works too:
-% \begin{lstlisting}[numbers=none]
-% .
-% |-- bird.lp
-% \-- examples
-%     \-- include.lp
-%
-% clingo examples/include.lp
-% \end{lstlisting}
-%
-% And because files are included relative to the file with the include statement,
-% the following works too:
-% \begin{lstlisting}[numbers=none]
-% .
-% \-- examples
-%     |-- bird.lp
-%     \-- include.lp
-%
-% clingo examples/include.lp
-% \end{lstlisting}
 \end{example}
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
-Solver \clasp~\cite{gekanesc07b} (or `\clingo\code{ --mode=clasp}')
-% can be used to solve ASP, SAT, Maximum Satisfiability (MaxSAT; \cite{liman09a}),
-% and Pseudo-Boolean (PB; \cite{rouman09a}) constraint satisfaction/optimization problems.
-% To this end, \clasp\
-accepts logic programs in \smodels\ format~\cite{lparseManual},
+Solver \clasp~\cite{gekanesc07b} (or `\clingo\code{ --mode=clasp}') accepts logic programs in \smodels\ format~\cite{lparseManual},
 SAT and MaxSAT instances in DIMACS-cnf\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}}
 and DIMACS-wcnf\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}} format,
 and PB problems in OPB/WBO\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}} format.
-% To this end, \clasp\ accepts problems in
-% \smodels\ format~\cite{lparseManual},
-% DIMACS-cnf format\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}},
-% DIMACS-wcnf format\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}},
-% and OPB/WBO format\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}}.
 
 For ASP solving,
 \clasp\ is typically invoked in a pipe reading

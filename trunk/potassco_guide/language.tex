@@ -426,7 +426,7 @@ But unlike (purely) positive literals,
 they are preceded by \code{not} and do thus not require an (acyclic) derivation from the program;
 it is sufficient that they are true in the model at hand.
 
-\begin{example}\label{ex:double}
+%\begin{example}\label{ex:double}
 Consider the logic program:
 \begin{lstlisting}[numbers=none]
 a :- not not b.
@@ -443,7 +443,7 @@ mutual positive dependencies between~\pred{a} and~\pred{b}.
 % induces no positive cycle between~\pred{a} and~\pred{b} that is subject to minimization.
 % Without 
 Given this, \pred{a} and~\pred{b} can thus be both true or false, just like in classical logic.
-\end{example}
+%\end{example}
 
 Also, negative literals are admitted in the head of rules.
 When disregarding disjunction,

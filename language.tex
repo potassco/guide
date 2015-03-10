@@ -829,8 +829,8 @@ to be used as arguments of an atom, function, or tuple. % for writing rules more
 Argument lists written in the form \code{($\dots$,X;Y,$\dots$)} abbreviate multiple options:
 \code{($\dots$,X),\linebreak[1]\:(Y,$\dots$)}.
 Pools are expanded just like intervals, i.e.,
-conjunctively in the head and disjunctively in the body of a rule.%
-In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.
+conjunctively in the head and disjunctively in the body of a rule.
+In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
 \comment{M2R: I dropped the footnote because I needed quite some consideration
               to figure out that \code{(1;2;3)} should be read as a tuple and
               the footnote be interpreted accordingly.
@@ -1962,7 +1962,7 @@ There are three different kinds of such statements:
 \begin{tabular}{rl}
 \textbf{Show atoms:}   & $\code{\#show }p\code{/}n\code{.}$
 \\
-\textbf{Show terms:}   & $\code{\#show }t_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
+\textbf{Show terms:}   & $\code{\#show }t~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
 \\
 \textbf{Show nothing:} & \code{\#show.}
 \end{tabular}
@@ -1974,7 +1974,7 @@ The first~\code{\#show} statement is the most commonly used form.
 Whenever there is at least one statement of this form, all atoms are hidden,
 except for those over predicates~$p/n$ given by the respective~\code{\#show} statements.
 The second form can be used to show arbitrary terms.
-The term~$t_0$ is part of the output if the literals in the condition after the~`\code{:}' hold.
+The term~$t$ is part of the output if the literals in the condition after the~`\code{:}' hold.
 Unlike the previous form,
 this statement does not automatically hide all atoms.
 To hide all atoms in this case and only show selected terms,
@@ -2011,8 +2011,8 @@ where the signatures of the reified atoms are not fixed and \code{holds($\cdot$)
 
 \begin{note}
 The second form of \code{\#show} statements to show terms may contain variables.
-Regarding safety, it behaves similarly to a rule,
-where the term $t_0$ takes the role of the head
+Regarding safety (cf.\ Page~\pageref{pg:safe}), it behaves similar to a rule,
+where the term~$t$ takes the role of the head
 and the condition after the colon the role of the body.
 \index{Logic Programs!Safety}
 \end{note}
@@ -2065,13 +2065,13 @@ An \code{\#external} statement has the following form:
 \par
 \medskip
 \begin{tabular}{l}
-$\code{\#external}~A_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
+$\code{\#external}~A~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
 \end{tabular}
 \par
 \medskip
 \noindent
 %
-Here, $A_0$ is an atom over some predicate and
+Here, $A$ is an atom over some predicate and
 the part following the~`\code{:}' is a condition.
 The condition is instantiated to obtain a set of external atoms.
 Note that the condition is discarded after grounding,
@@ -2106,8 +2106,8 @@ there can never be an answer set that does not contain \code{q(1)}.
 
 \begin{note}
 External statements that contain variables
-have very similar requirements regarding safety as rules.
-The atom $A_0$ takes the role of the head
+have very similar requirements regarding safety as rules (cf.\ Page~\pageref{pg:safe}).
+The atom~$A$ takes the role of the head
 and the condition after the colon the role of the body.
 \index{Logic Programs!Safety}
 \end{note}

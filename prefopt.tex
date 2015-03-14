@@ -316,6 +316,7 @@ The rule body $B$ has the same form and purpose as above.
 That is, the body $B$ of a preference statement is used to instantiate the variables of $s$, $t$ and each $e_i$.
 
 \begin{example}
+\label{asprin:example2}
 Given the logic program 
 \begin{lstlisting}[numbers=none]
 dom(1..2).
@@ -445,21 +446,104 @@ it would not be admissible any more.
 \end{example}
 
 \paragraph{Implementing preference types.}
-
-The parser of \asprin\ translates preference and optimize statements into regular logic programs.  
-For example, 
-\attach{examples/preference1.lp}{\code{preference1.lp}} 
-is translated into the following rules:
+In \asprin, preference statements are translated into rules.
+Let's see first some simple examples.
+\begin{example}
+Recall the preference statement \code{p1} of Example \ref{asprin:example1}:
+%\begin{lstlisting}[numbers=none]
+\lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference1.lp}
+%#preference(p1,subset){ a(X) : dom(X) }.
+%\end{lstlisting}
+This is translated into: %the rules $F_\code{p1}$:
 \begin{lstlisting}
 preference(p1,subset).
 preference(p1,(1,(X)),1,for(a(X)),()) :- dom(X).
-optimize(p1).
 \end{lstlisting}
-Lines~1 and 3 are easy to understand. 
-Line~2 can be read as follows.
-In preference statement \code{p1}, the first element has variables $\{\code{X}\}$,  
-and in the first position of the element there is a positive literal \code{a(X)}  that has an empty list of weights associated. 
-\DELc{The format is detailed in \cite{brderosc15a}.}{T: Shouldn't this be here as well?}
+Line~1 states the name and the type of the preference statement.
+Line~2 can be read as follows:
+in the preference statement \code{p1}, the first element has variables $\{\code{X}\}$,  
+and in the first position of the element there is a Boolean formula \code{a(X)} that has an empty list of weights associated.
+%The reification $F_\code{p2}$ of 
+The translation of 
+\lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference2.lp}
+replaces \code{p1} with \code{p2} in the previous translation, and adds the rule:
+\begin{lstlisting}[numbers=none]
+preference(p2,(2,(X)),1,for(b(X)),()) :- dom(X).
+\end{lstlisting}
+where number \code{2} in \code{(2,(X))} represents that this is the second preference element. 
+\end{example}
+
+\begin{example}
+The preference statement of Example \ref{asprin:example2}: 
+\begin{lstlisting}[numbers=none]
+#preference(p(X),subset){ a(X,Y) : dom(Y) } : dom(X).
+\end{lstlisting}
+is translated into the rules:
+\begin{lstlisting}[numbers=none]
+preference(p(X),subset) :- dom(X).
+preference(p(X),(1,(X,Y)),1,for(a(X,Y)),()) :- dom(Y), dom(X).
+\end{lstlisting}
+Observe how \code{dom(X)} is appended to both rules. 
+\end{example}
+
+In general, a weighted formula \code{$\boldsymbol{t}$::$F$}
+occurring in some set
+\code{$\boldsymbol{F}_i=$\{$F_1$;$\dots$;$F_m$\}}
+of a preference element $e_j$ of the form 
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{F}_1\;$?>?$\,\dots\,$?>?$\;\boldsymbol{F}_n$? || ?$F_0$? : ?$B_j$?
+\end{lstlisting}
+that belongs to a preference statement \code{s} of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
+\end{lstlisting}
+is translated into a rule of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?$\boldsymbol{t}_F$?),?$\boldsymbol{t}$?) :- ?$B_j$?, ?$B$?.
+\end{lstlisting}
+where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
+$\boldsymbol{v}$ is a term tuple containing all the variables appearing in the rule, 
+and $\boldsymbol{t}_F$ is a term representing the Boolean formula $F$ 
+by using function symbols $\code{\_neg/1}$, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
+For example, 
+the formula \code{(\~ a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
+\comment{JR: Change tilde!}
+%
+For representing the condition $F_0$, $i$ is set to $\code{0}$.
+%
+A naming atom \code{name(s)} is represented analogously,
+except that \code{for($\boldsymbol{r}_F$)} is replaced by \code{name(s)}.
+%
+The translation of a preference statement of the form mentioned above 
+comprises the translation of all the weighted formulas appearing in it
+and, in addition, the rule:
+\begin{lstlisting}[numbers=none,escapechar=?]
+preference(s,t) :- ?$B$?.
+\end{lstlisting}
+
+\begin{note}
+All the bodies $B_j$ and $B$ consist of domain predicates or built-ins. 
+%that can always be fully evaluated by the grounder, 
+Hence, after grounding, all the rules generated in the translation become facts.
+\end{note}
+
+\begin{example}
+...
+\end{example}
+
+%Given a preference statement \code{s} and two answer sets $X$ and $Y$,   
+%a preference type determines if $X$ is better than $Y$.
+%To implement this ``better'' relation using a logic program, 
+%we have to allow it to refer to both the preference statement \code{s} and the answer sets $X$ and $Y$.
+%This is achieved via a translation to rules that, after grounding, become facts. 
+
+
+The answer set $X$ is reified with predicate \code{holds/1} into $H_X$.
+For example, \code{$X=$\{a(1)\}} becomes \code{$H_X=$\{holds(a(1))\}}, 
+and \code{$Z$\{a(2),a(3)\}} becomes \code{\{holds(a(2)),holds(a(3))\}}. 
+Similarly, $Y$ is reified with predicate \code{holds'/1}, 
+and \code{\{a(1),a(2),a(3)\}} becomes \code{\{holds'(a(1)),holds'(a(2)),holds'(a(3))\}}. 
+
 
 We use above a preference statement of type \code{subset}, 
 but its meaning is a priori unknown to \asprin.
@@ -486,18 +570,6 @@ and all atoms \code{Y} of the preference statement that are false in $H'$ are al
 \comment{T2J: This is not self-contained! Must \texttt{holds} be implemented? What is required? On what can one rely? etc
 \par I am not suggesting to give \texttt{holds} etc here, just fix teh interface ;)}
 
-\begin{note}
-Preference elements in \asprin\ are not restricted to atoms 
-but also Boolean formulas, written with connectives 
-\code{\~} for negation, 
-\code{\&} for conjunction,
-and 
-\code{|} for disjunction.
-\DELc{Please, have a look at \cite{brderosc15a} for more details.}{T: The syntax should be given in the section (see above comments)!\par Also, this
-  should not be in the section how-to-implement --- integrate above :)}
-\end{note}
-
-\comment{T2J: Why is this important? See comment on interface :)}
 In addition, 
 there is a general integrity constraint enforcing optimization with respect to a given optimization statement
 (\attach{examples/basic.lp}{\code{basic.lp}}):
@@ -513,6 +585,7 @@ asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{pr
 As before, we obtain $M_1$ and $M_3$ as optimal answer sets.
 Other new preference types can be easily defined in this way.  
 A look at \code{asprin.lib} may give a good starting point. 
+
 \paragraph{\asprin\ library.}
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}

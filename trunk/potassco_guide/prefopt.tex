@@ -466,7 +466,7 @@ and in the first position of the element there is a Boolean formula \code{a(X)} 
 %The reification $F_\code{p2}$ of 
 The translation of 
 \lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference2.lp}
-replaces \code{p1} with \code{p2} in the previous translation, and adds the rule:
+replaces \code{p1} with \code{p2} in the previous rules, and adds:
 \begin{lstlisting}[numbers=none]
 preference(p2,(2,(X)),1,for(b(X)),()) :- dom(X).
 \end{lstlisting}
@@ -516,9 +516,17 @@ except that \code{for($\boldsymbol{r}_F$)} is replaced by \code{name(s)}.
 %
 The translation of a preference statement of the form mentioned above 
 comprises the translation of all the weighted formulas appearing in it
-and, in addition, the rule:
+along with the rule:
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(s,t) :- ?$B$?.
+\end{lstlisting}
+Optimize directives are translated similarly:
+\begin{lstlisting}[numbers=none,escapechar=?]
+#optimize(s) : ?$B$?.
+\end{lstlisting}
+becomes:
+\begin{lstlisting}[numbers=none,escapechar=?]
+optimize(s) :- ?$B$?.
 \end{lstlisting}
 
 \begin{note}
@@ -528,14 +536,14 @@ Hence, after grounding, all the rules generated in the translation become facts.
 \end{note}
 
 \begin{example}
-...
-\end{example}
+Consider the following preference statement:
+\begin{lstlisting}[numbers=none,escapechar=?]
+#preference(s,t){
+  ~a(X,Y) > { b(X) ; c(X) } || d(Y) :- dom(X), dom(Y);
+  
 
-%Given a preference statement \code{s} and two answer sets $X$ and $Y$,   
-%a preference type determines if $X$ is better than $Y$.
-%To implement this ``better'' relation using a logic program, 
-%we have to allow it to refer to both the preference statement \code{s} and the answer sets $X$ and $Y$.
-%This is achieved via a translation to rules that, after grounding, become facts. 
+\end{lstlisting}
+\end{example}
 
 
 The answer set $X$ is reified with predicate \code{holds/1} into $H_X$.

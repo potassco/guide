@@ -95,7 +95,7 @@ asprin version 1.0
 Answer: 1
 m(2) a(2) a(1) b(1)
 Answer: 2
-m(1) a(1) b(4) b(3) b(5) b(2) b(1)
+m(1) a(1) b(3) b(2) b(1)
 OPTIMUM FOUND
 
 Models       : 1
@@ -145,10 +145,10 @@ results in the output:
 Answer: 1
 m(2) a(2) a(1) b(1)
 Answer: 2
-m(1) a(1) b(4) b(3) b(5) b(2) b(1)
+m(1) a(1) b(3) b(2) b(1)
 OPTIMUM FOUND
 Answer: 3
-m(3) a(5) b(4) b(3) b(5) b(2)
+m(3) a(3) b(3) b(2)
 OPTIMUM FOUND
 \end{lstlisting}
 %
@@ -177,16 +177,16 @@ yields two additional optimal answer sets, both containing \code{c(1)}:
 Answer: 1
 m(2) a(2) a(1) b(1)
 Answer: 2
-m(1) a(1) b(4) b(3) b(5) b(2) b(1)
+m(1) a(1) b(3) b(2) b(1)
 OPTIMUM FOUND
 Answer: 3
-m(1) a(1) b(4) b(3) b(5) b(2) b(1) c(1)
+m(1) a(1) b(3) b(2) b(1) c(1)
 OPTIMUM FOUND *
 Answer: 4
-m(3) a(5) b(4) b(3) b(5) b(2)
+m(3) a(3) b(3) b(2)
 OPTIMUM FOUND
 Answer: 5
-m(3) a(5) b(4) b(3) b(5) b(2) c(1)
+m(3) a(3) b(3) b(2) c(1)
 OPTIMUM FOUND *
 \end{lstlisting}
 %
@@ -246,7 +246,7 @@ and $F$ is a either a Boolean formula or a naming atom.
 We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
 Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),\comment{T2J: Having both \code{-} and \code{\~} is strange\dots What does this mean\dots?\par JR: Agree it is strange, and I don't like it, but I found no better way. My idea was that giving a different meaning to \code{-} inside the preference statements would
 be confusing to the user, so we should use a different symbol for that (and I chose the one used by Theorem Provers). I am happy if you have a better idea :) }
-using the logical connectives \code{\~} (negation), \code{\&} (conjunction) and \code{|} (disjunction).
+using the logical connectives \code{\texttildelow} (negation), \code{\&} (conjunction) and \code{|} (disjunction).
 Parentheses can be written as usual,
 and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
 %
@@ -257,7 +257,7 @@ refer to the preference associated with preference statement \code{s} (see below
 Examples of weighted formulas are 
 `\code{a(X)}', 
 `\code{C::edge(X,Y,C)}', 
-`\code{W,(X,Y)::\~{}a(W,X) \& b(Y)}', and 
+`\code{W,(X,Y)::\texttildelow a(W,X) \& b(Y)}', and 
 `\code{X::name(p(X))}'. 
 
 If $F_1$, \ldots, $F_n$ are weighted formulas, then
@@ -359,6 +359,7 @@ The purpose of such a specification is to define the optimal answer sets of an a
 also called the \emph{base program}.
 
 \begin{example}
+\label{asprin:example3} 
 Here is %an example of 
 a {preference specification} about leisure activities (without base program).
 \begin{lstlisting}[escapechar=?]
@@ -399,10 +400,10 @@ $X \succ_{\code{p1}} Y$ & iff & $\{e\in \{\code{a(1)},\code{a(2)},\code{a(3)}\} 
 \end{center}
 In Example \ref{asprin:example1}, 
 $M_1\succ_{\code{p1}}M_2$ because \code{\{a(1)\}$\subset$\{a(1),a(2),a(3)\}}, 
-and $M_3\succ_{\code{p1}}M_1$ given that \code{\{a(2),a(3)\}$\subset$\{a(1),a(2),a(3)\}}, 
+and $M_3\succ_{\code{p1}}M_2$ given that \code{\{a(2),a(3)\}$\subset$\{a(1),a(2),a(3)\}}, 
 but  $M_1\not\succ_{\code{p1}}M_3$ as \code{\{a(1)\}$\not\subset$\{a(2),a(3)\}}. 
 \end{example}
-We say that an answer set $X$ of a base program $P$ is \emph{optimal} with respect to a preference relation $\succ$
+We say that an answer set $X$ of a base program $P$ is \emph{optimal} with respect to a preference relation $\succ_\code{s}$
 if there is no other answer set $Y$ of $P$ such that $Y \succ X$.
 In Example \ref{asprin:example1}, 
 %with preference statement \code{p1},
@@ -416,15 +417,14 @@ Hence, in the example it produces $M_1$ and $M_3$.
 
 But, how does a preference statement declare a preference relation?
 This is achieved by the \emph{preference type}, 
-that maps a set $E$ of ground preference elements into a preference relation $\succ_E$.
+that maps a set $E$ of ground preference elements into a preference relation.
 For example, \code{subset} maps $E=\{e_1\code{;}\ldots\code{;}e_n\}$ into:
 \begin{center}
 \(
-X \succ_E Y \text{ iff } \{e_i\in E\mid X\models e_i\}\subset\{e_i\in E\mid Y\models e_i\}
+X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}\subset\{e_i\in E\mid Y\models e_i\}
 \)
 \end{center}
-and when applied to the preference statement \code{p1} in Example \ref{asprin:example1} we obtain $\succ_{\code{p1}}$.
-\comment{JR: Fix subindexes of $E$.}
+and when applied to the preference elements of \code{p1} in Example \ref{asprin:example1} we obtain $\succ_{\code{p1}}$.
 
 The full generality of preference elements is not always needed.
 For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
@@ -446,9 +446,17 @@ it would not be admissible any more.
 \end{example}
 
 \paragraph{Implementing preference types.}
-In \asprin, preference statements are translated into rules.
-Let's see first some simple examples.
+In \asprin, preference types are implemented by logic programs called \emph{preference programs}.
+In a nutshell, a preference type decides if, 
+given a preference statement \code{s}, 
+an answer set $X$ is better than another answer set $Y$.
+To represent that decision by a preference program, 
+the three involved elements \code{s}, $X$ and $Y$ are translated into rules and facts.
+Let's see first some simple translations of preference statements.
+%In \asprin, preference statements are translated into rules.
+%Let's see first some simple examples.
 \begin{example}
+\label{asprin:example1translated}
 Recall the preference statement \code{p1} of Example \ref{asprin:example1}:
 %\begin{lstlisting}[numbers=none]
 \lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference1.lp}
@@ -506,8 +514,7 @@ $\boldsymbol{v}$ is a term tuple containing all the variables appearing in the r
 and $\boldsymbol{t}_F$ is a term representing the Boolean formula $F$ 
 by using function symbols $\code{\_neg/1}$, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
 For example, 
-the formula \code{(\~ a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
-\comment{JR: Change tilde!}
+the formula \code{(\texttildelow a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
 %
 For representing the condition $F_0$, $i$ is set to $\code{0}$.
 %
@@ -536,26 +543,119 @@ Hence, after grounding, all the rules generated in the translation become facts.
 \end{note}
 
 \begin{example}
-Consider the following preference statement:
+\comment{JR: This is a ground preference specification, maybe we could add variables.}
+The preference specification of Example \ref{asprin:example3} is translated into the following rules:
 \begin{lstlisting}[numbers=none,escapechar=?]
-#preference(s,t){
-  ~a(X,Y) > { b(X) ; c(X) } || d(Y) :- dom(X), dom(Y);
-  
+preference(costs, (1, ()), 1, for(sauna), (40)).
+preference(costs, (2, ()), 1, for(dive), (70)).
+preference(costs, less(weight)).
 
+preference(fun, (1, ()), 1, for(sauna), ()).
+preference(fun, (2, ()), 1, for(dive), ()).
+preference(fun, (3, ()), 1, for(hike), ()).
+preference(fun, (4, ()), 1, for(_neg(bunji)), ()).
+preference(fun, superset).
+
+preference(temps, (1, ()), 0, for(hot), ()).
+preference(temps, (1, ()), 1, for(dive), ()).
+preference(temps, (1, ()), 2, for(sauna), ()).
+preference(temps, (2, ()), 0, for(_neg(hot)), ()).
+preference(temps, (2, ()), 1, for(sauna), ()).
+preference(temps, (2, ()), 2, for(dive), ()).
+preference(temps, aso).
+
+preference(all, (1, ()), 1, name(costs), ()).
+preference(all, (2, ()), 1, name(fun), ()).
+preference(all, (3, ()), 1, name(temps), ()).
+preference(all, pareto).
+
+optimize(all).
 \end{lstlisting}
 \end{example}
 
+%At this point, we have a preference statement \code{s} represented as one fact of the form:
+%\begin{lstlisting}[numbers=none,escapechar=?]
+%preference(s,t).
+%\end{lstlisting}
+%and many facts of the form:
+%\begin{lstlisting}[numbers=none,escapechar=?]
+%preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?$\boldsymbol{t}_F$?),?$\boldsymbol{t}$?).
+%\end{lstlisting}
+%We want to decide whether $X$ is better than $Y$.
 
-The answer set $X$ is reified with predicate \code{holds/1} into $H_X$.
-For example, \code{$X=$\{a(1)\}} becomes \code{$H_X=$\{holds(a(1))\}}, 
-and \code{$Z$\{a(2),a(3)\}} becomes \code{\{holds(a(2)),holds(a(3))\}}. 
-Similarly, $Y$ is reified with predicate \code{holds'/1}, 
-and \code{\{a(1),a(2),a(3)\}} becomes \code{\{holds'(a(1)),holds'(a(2)),holds'(a(3))\}}. 
+A preference program implementing a preference type \code{t}
+compares two answer sets $X$ and $Y$
+given a preference statement \code{s} of type \code{t}. %, 
+%deciding if $X$ is better than $Y$.
+To allow for this comparison, 
+\asprin\ 
+provides a fact \code{holds($\boldsymbol{t}_F$)} 
+for every term \code{for($\boldsymbol{t}_F$)} appearing in the translation of \code{s} 
+such that $X$ satisfies the Boolean formula $F$ 
+and, analogously, it provides the fact \code{holds'($\boldsymbol{t}_F$)} if $Y$ satisfies $F$.
 
+\begin{example}
+For the preference statement \code{p1} of Example \ref{asprin:example1}, 
+translated in Example \ref{asprin:example1translated}, \asprin\ provides the following facts. 
+Deciding if $M_1 \succ_\code{p1} M_2$,  
+\code{holds(a(1))}, \code{holds'(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))} are given.
+For testing $M_3 \succ_\code{p1} M_2$, \asprin\ provides 
+\code{holds(a(2))}, \code{holds(a(3))}, \code{holds'(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))}.
+For $M_1 \succ_\code{p1} M_3$, 
+\code{holds(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))} are provided.
+\end{example}
 
-We use above a preference statement of type \code{subset}, 
-but its meaning is a priori unknown to \asprin.
-This is given by a preference program, that is, a logic program representing the semantics of the given preference type. 
+We have seen how \asprin\ provides the translation of the preference statement \code{s} of type \code{t} 
+and the facts of predicates \code{holds/1} and \code{holds'/1} 
+for every pair of answer sets $X$ and $Y$ that may be compared.
+Then the preference program implementing \code{t} has two parts.
+In the first part, we define the predicate \code{better/1} 
+in such a way that \code{better(s)} is true 
+%in the program that consists of the preference program
+%along the translation of the preference statement and the \code{holds/1} and \code{holds'/1} facts 
+iff $X \succ_\code{s} Y$.
+In the second part, we add a constraint stating that 
+%it must not be the case that 
+if \code{s} is optimized then \code{better(s)} must be true. 
+%A preference program $P$ implements a preference type \code{t} if, 
+%given a preference statement \code{s} of type \code{t} and two answer sets $X$ and $Y$, 
+%the program that contains $P$ along with the translation of \code{s} and the corresponding 
+%\code{holds/1} and \code{holds'/1} facts for $X$ and $Y$ has an answer set
+%iff $X \succ_{\code{s}} Y$. 
+
+\begin{example}
+The preference type \code{subset} can be implemented as follows:
+(\attach{examples/subset.lp}{\code{subset.lp}}).
+%
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/subset.lp}
+%
+Consider that we want to compare two answer sets $X$ and $Y$
+for which we have the corresponding \code{holds/1} and \code{holds'/1} facts. 
+%The true atoms in $H$ are represented by facts of predicate \code{holds/1},  and the true atoms in $H'$ are represented by facts of predicate \code{holds'/1}. 
+Intuitively, \code{better(s)} is true if $X$ better than $Y$ with respect to a preference statement \code{s} 
+of type \code{subset}. 
+More formally, 
+\code{better(s)} is true if there is one formula \code{A} appearing in \code{s} that is false in $X$ and true in $Y$, 
+and every formula \code{B} in \code{s} that is false in $Y$ is also false in $X$.  
+
+In addition, 
+the following integrity constraint enforces the optimization with respect to a given optimization directive:
+(\attach{examples/basic.lp}{\code{basic.lp}}):
+%
+\lstinputlisting[numbers=none]{examples/basic.lp}
+%
+It states that \code{better(P)} must hold whenever \code{P} is optimized. 
+Instead of using \asprin's library, \code{asprin.lib}, 
+we can now use the preference program we have just defined:
+\begin{lstlisting}[numbers=none,escapechar=\%]
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
+\end{lstlisting}
+As before, we obtain $M_1$ and $M_3$ as optimal answer sets.
+%Other new preference types can be easily defined in this way.  
+%A look at \code{asprin.lib} may give a good starting point. 
+\end{example}
+
+\begin{note}
 Preference programs start with a directive
 \begin{lstlisting}[numbers=none]
 #program preference(type).
@@ -563,36 +663,57 @@ Preference programs start with a directive
 and end at the end of a file, or with the directive
 \lstinline{#program base.}
 signaling the start of a base program (cf.~Section~\ref{sec:multi}). 
-
-For example, the preference type \code{subset} can be implemented as follows
-(\attach{examples/subset.lp}{\code{subset.lp}}).
-%
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none]{examples/subset.lp}
-%
-Consider that we want to compare two answer sets $H$ and $H'$. 
-The true atoms in $H$ are represented by facts of predicate \code{holds/1},  and the true atoms in $H'$ are represented by facts of predicate \code{holds'/1}. 
-Intuitively, \code{better(P)} is true if $H$ is preferred to $H'$ with respect to a preference statement \code{P} of type \code{subset}. 
-More formally, 
-\code{better(P)} is true if there is one atom \code{X} of the preference statement that is false in $H$ and true in $H'$, 
-and all atoms \code{Y} of the preference statement that are false in $H'$ are also false in $H$.  
-\comment{T2J: This is not self-contained! Must \texttt{holds} be implemented? What is required? On what can one rely? etc
-\par I am not suggesting to give \texttt{holds} etc here, just fix teh interface ;)}
-
-In addition, 
-there is a general integrity constraint enforcing optimization with respect to a given optimization statement
-(\attach{examples/basic.lp}{\code{basic.lp}}):
-%
-\lstinputlisting[numbers=none]{examples/basic.lp}
-%
-We see that \code{better(P)} must hold whenever \code{P} is optimized. 
-Instead of using \asprin's library, \code{asprin.lib}, 
-we can now use the preference program, we have just defined:
-\begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
+For every preference type \code{t} appearing in a preference statement \code{s}, 
+there must be a preference program block starting with:
+\begin{lstlisting}[numbers=none]
+#program preference(t).
 \end{lstlisting}
-As before, we obtain $M_1$ and $M_3$ as optimal answer sets.
-Other new preference types can be easily defined in this way.  
-A look at \code{asprin.lib} may give a good starting point. 
+If there is no such block, \asprin\ prints an error and stops.
+Additionally, ``generic'' preference program blocks starting with the directive: 
+\begin{lstlisting}[numbers=none]
+#program preference.
+\end{lstlisting}
+can also be used. 
+These are intended to provide rules shared by all preference programs.
+\asprin\ loads all the ``generic'' preference programs along with 
+the preference programs for the types appearing in the preference statements of the program.
+\end{note}
+
+\begin{note}
+There are some syntax restrictions to the form of preference programs:
+\begin{itemize}
+\item They may not contain atoms that start with underscore `\_'.
+\item Atoms of predicates \code{preference/2}, \code{preference/5}, 
+      \code{holds/1}, \code{holds'} and \code{optimize/1}
+      may not appear in the head of the rules.
+\end{itemize}
+\end{note}
+
+Recall from the previous section that for each preference type 
+we define a set of admissible preference statements.
+This is defined in \asprin\ in the preference program using predicate \code{\_error}.
+Namely, \code{\_error(X)} has to be true whenever the preference statement is not admissible.
+In this case, \asprin\ stops and prints the error message \code{X}\footnote{
+In the current \asprin\ implementation, 
+the system only stops after finding a first answer set of the base program.}.
+\begin{example}
+The preference program (\attach{examples/subset.lp}{\code{subset.lp}})
+includes the following rules to define the admissibility of \code{subset} preference statements:
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=6,lastline=19]{examples/subset.lp}
+The first rule checks the preference elements that contain naming atoms, 
+the second those that contain weights, 
+and the third one those that contain more than one Boolean formula.
+Function \code{@cat(*args)}, provided by \asprin, simply concatenates the terms that are passed as arguments.
+\end{example}
+
+\begin{note}
+The predicate \code{\_error/1} must be defined using domain predicates, built-ins or the special 
+predicates \code{preference/2}, \code{preference/5} and \code{optimize/1} 
+(but not using \code{holds/1} or \code{holds'/1}).
+%In this way, the predicate may be fully evaluated by the grounder.
+\end{note}
+
+Composite preferences.
 
 \paragraph{\asprin\ library.}
 \asprin's preference library implements the following basic preference types:

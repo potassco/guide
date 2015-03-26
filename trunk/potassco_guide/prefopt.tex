@@ -645,6 +645,9 @@ the following integrity constraint enforces the optimization with respect to a g
 \lstinputlisting[numbers=none]{examples/basic.lp}
 %
 It states that \code{better(P)} must hold whenever \code{P} is optimized. 
+Given that this rule is shared by many preference programs, 
+we include it in a program named simply \code{preference}.
+
 Instead of using \asprin's library, \code{asprin.lib}, 
 we can now use the preference program we have just defined:
 \begin{lstlisting}[numbers=none,escapechar=\%]
@@ -689,9 +692,25 @@ There are some syntax restrictions to the form of preference programs:
 \end{itemize}
 \end{note}
 
+\begin{note}
+\asprin\ relies on the correctness of the preference programs. 
+In other words, 
+if the preference programs implement correctly the corresponding preference types, 
+then \asprin\ will function normally.
+But if they are not correct, the behavior of \asprin\ is undefined.
+\end{note}
+
+\begin{note}
+When using \asprin\ to compute many optimal answer sets the syntax of the preference programs
+is limited to that of stratified logic programs\comment{JR: Add cite}, 
+i.e., in this case the preference programs may neither contain disjunctions 
+nor choice rules or aggregates in the head of the rules.
+\comment{JR: Rephrase.}
+\end{note}
+
 Recall from the previous section that for each preference type 
 we define a set of admissible preference statements.
-This is defined in \asprin\ in the preference program using predicate \code{\_error}.
+This is defined in \asprin\ in the preference program using predicate \code{\_error/1}.
 Namely, \code{\_error(X)} has to be true whenever the preference statement is not admissible.
 In this case, \asprin\ stops and prints the error message \code{X}\footnote{
 In the current \asprin\ implementation, 
@@ -713,7 +732,7 @@ predicates \code{preference/2}, \code{preference/5} and \code{optimize/1}
 %In this way, the predicate may be fully evaluated by the grounder.
 \end{note}
 
-Composite preferences.
+Implementing composite preferences.
 
 \paragraph{\asprin\ library.}
 \asprin's preference library implements the following basic preference types:

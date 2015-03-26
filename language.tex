@@ -792,12 +792,23 @@ Argument lists written in the form \code{($\dots$,X;Y,$\dots$)} abbreviate multi
 Pools are expanded just like intervals, i.e.,
 conjunctively in the head and disjunctively in the body of a rule.
 In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
-\comment{M2R: I dropped the footnote because I needed quite some consideration
-              to figure out that \code{(1;2;3)} should be read as a tuple and
-              the footnote be interpreted accordingly.
-              Hence, I think that the footnote is disturbing.
-         R: The footnote might have been a bit complicated. 
-            I added it because I think it was interesting (and still think so).}%
+\footnote{%
+We make use of the fact that one-elementary tuples
+must be made explicit by a trailing `\code{,}' (cf.\ Section~\ref{subsec:gringo:normal}).
+E.g., \code{(1;1,)} expands into \code{(1)} and \code{(1,)},
+where \code{(1)} is equal to the integer~\code{1}.
+On the other hand, note that the rule
+\code{\pred{p}(\var{X})\,:-\;\var{X}\;=\,(1,2;3,4).}
+is expanded into 
+\code{\pred{p}((1,2)).} and \code{\pred{p}((3,4)).},
+given that \code{(1,2)} and \code{(3,4)} are proper tuples,
+and the same facts are also obtained from
+\code{\pred{p}((1,2;3,4)).}
+Unlike that, \code{\pred{p}(1,2;3,4).} yields
+\code{\pred{p}(1,2).} and \code{\pred{p}(3,4).}
+because `\code{;}' here splits an argument list,
+rather than a tuple.}
+\comment{M2R: Please check footnote. Thanks a lot!}
 \begin{example}\label{ex:pool}
 The following program makes use of pooling.
 It is similar to Example~\ref{ex:int}
@@ -834,16 +845,20 @@ For another example on pooling, featuring non-consecutive elements, see Section~
 \index{Aggregates!Conditions}
 \index{Logic Programs!Literals!Conditions}%
 %
-A \emph{conditional literal} is of form $L:\boldsymbol{L}$,
-where $L$ is a literal and $\boldsymbol{L}$ is a tuple 
-\comment{JR: this ``tuple'' strikes me a bit, then I have the doubt about whether they should go in parentheses.\par
-  RK: we could add that we do not write parenthesis\par
-  TS: I agree but shouldn't we do this, where tuples get defined?\par
-  M: I think that tuple is reserved for terms, and $\boldsymbol{L}$ is a \emph{list} of literals.}
-of literals, called \textit{condition}.
-As in mathematical set notation,
-we use the symbol~`\code{:}' to formulate conditions.
-Whenever $\boldsymbol{L}$ is empty, we get a regular literal and denote it as usual by $L$.
+A \emph{conditional literal} is of the form
+\par
+\medskip
+\begin{tabular}{l}
+$L_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$ % $L:\boldsymbol{L}$
+\end{tabular}
+\par
+\medskip
+\noindent
+%
+where every $L_j$ for $0\leq j\leq n$ is a \emph{literal},
+$L_1\text{\code{,}}\dots\text{\code{,}}L_n$ is called \textit{condition},
+and `\code{:}' resembles mathematical set notation.
+Whenever $n=0$, we get a regular literal and denote it as usual by $L_0$.
 
 For example, the rule
 \begin{lstlisting}[numbers=none]
@@ -852,8 +867,10 @@ a :- b : c.
 yields \code{a} whenever either \code{c} is false (and thus no matter whether \code{b} holds or not) or both \code{b} and \code{c} are true.
 
 \begin{note}
-Logically, $L$ and $\boldsymbol{L}$ act as head and body, respectively,
-which gives the conditional literal $L:\boldsymbol{L}$ the flavor of a nested implication
+Logically, $L_0$ and $L_1\text{\code{,}}\dots\text{\code{,}}L_n$ act as
+head and body, respectively,
+which gives $L_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$ 
+the flavor of a nested implication
 (see~\cite{haliya14a} for details).
 \end{note}
 
@@ -1598,13 +1615,13 @@ Calls to \clingo\ are similar.
 The function is called in Line~3 and the result stored in predicate \code{gcd}/$3$.
 Note that external function calls look like function terms but are preceded by `\code{@}'.
 \index{External Functions!Calling}%
-Regarding the binding of variables,
-the same restrictions as with arithmetic in Section \ref{subsec:gringo:arith} apply.
-\comment{M: I didn't get what the previous sentence is aiming at.
-            In case it's related to Remark~\ref{note:simple},
-            the cross-reference could more specifically point to it.
-         R: My point is: variable occurrences in the scope of external functions are not considered bound, which is similar to variable occurrences in arithmetics.
-            We can also write it like this if you prefer.}
+As with non-simple arithmetic terms
+according to Remark~\ref{note:simple},
+variable occurrences in arguments to external functions
+do not count as positive in the sense of safety (cf.\ Page~\pageref{pg:safe}).
+In Line~3, values for~\var{X} and~\var{Y}
+are thus obtained from \code{\pred{p}(\var{X},\var{Y})}
+in order to apply the \code{gcd} function to them.
 \end{example}
 
 \begin{example}
@@ -1660,15 +1677,6 @@ The \code{Id(name)} constructor simply takes the string representation of a cons
 and the \code{Fun(name,args)} constructor additionally takes a sequence or table of terms representing the arguments of a function.
 Furthermore,
 the global function \code{Tuple(args)} is a shortcut for \code{Fun("",args)} to create an object representing a tuple in Lua.
-The remaining terms,
-which have equivalents in the scripting languages,
-use the standard constructors or literals available in Lua and Python.
-\comment{M: I didn't get what the previous sentence is aiming at.
-            If it doesn't hint at something important, it may be
-            dropped for not disturbing the reader.
-         R: It means that there are no gringo functions to create those.
-            For example to build a tuple in python, one can use the tuple constructor: tuple([1,2,3]) or (1,2,3)
-            These constructors are built into the Python language.}
 
 \begin{example}
 This example shows how to inspect and create terms:

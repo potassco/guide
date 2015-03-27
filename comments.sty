@@ -130,8 +130,8 @@
   \ignorespaces
 }
 % --------------------------------------------------
-\newcommand{\margincomment}[1]{\marginpar{\hspace*{-1.5mm}%
-  \parbox[t]{2.3\marginparwidth}{\raggedright\setlength{\fboxsep}{1pt}\MFONT{#1}\par}}}
+\newcommand{\margincomment}[1]{\marginpar{%
+  \parbox[t]{\marginparwidth}{\raggedright\setlength{\fboxsep}{1pt}\MFONT{#1}\par}}}
 % --------------------------------------------------
 \newcommand{\comment}[1]%
 {%

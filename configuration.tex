@@ -68,16 +68,16 @@ $ python ./src/claspfolio.py --oracle_dir <INSTANCE_DIR>
 Please note that \claspfolio{} minimizes \texttt{<SCORE>}.
 \end{example}
 
-\note{
+\begin{note}
 \claspfolio{} is trained for a runtime cutoff of $600$ seconds. 
 It will most likely perform well for smaller runtime cutoffs 
 but the performance of \claspfolio{} could get worse by using a larger runtime cutoff.
-}
+\end{note}
 
-\note{
+\begin{note}
 \claspfolio{} is trained only on decision problems.
 Therefore, \claspfolio{} does not cover enumeration and optimization related parameters in its selected configurations.
-}
+\end{note}
 
 \subsection{Benchmark-oriented \clasp\ Configuration with \piclasp}
 \label{sec:piclasp}
@@ -148,29 +148,30 @@ which a human will probably never do.
 
 \end{example}
 
-\note{
+\begin{note}
 To improve the performance of \piclasp, 
 we recommend to run \piclasp{} with at least $10$ independent \smac{} runs (option \code{--repetition,-R}).
 More \smac{} runs or a larger configuration budget (option \code{--budget,-B}) should always lead to better results.   
-}
+\end{note}
 
-\note{
+\begin{note}
 Algorithm configuration and hence also \piclasp{} works especially well on homogeneous instance sets (e.g.,~\cite{gejokaobsascsc13a}),
 that is, there is one configuration that performs well on all given instances.
 On heterogeneous instance sets, \piclasp{} will most likely need a lot more \smac{} runs and a larger configuration budget,
 and it will still find only configuration with small performance improvements, 
 since \clasp{}'s default configuration is already optimized to have a robust performance on a large variety of instances.
-}
+\end{note}
 
-\note{
+\begin{note}
 Using \piclasp{}, the performance of \clasp{} on the given instance set will improve.
 However ultimately, the performance of \clasp{} should improve on new (unseen) instances.
 Therefore, we strongly recommend to use another (disjoint) set of instances to assess the performance of the configured \clasp{}.
-}
+\end{note}
 
-\note{
+\begin{note}
 We recommend that \piclasp{} optimizes the performance of \clasp{} on at least $100$ instances.
-On smaller instance sets, the determined configuration may will not perform well on new (unseen) instances.}
+On smaller instance sets, the determined configuration may will not perform well on new (unseen) instances.
+\end{note}
 
 
 %%% Local Variables: 

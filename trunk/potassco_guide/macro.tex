@@ -59,20 +59,15 @@
 % More formatting
 
 \lstset{numbers=left,numberblanklines=false,basicstyle=\ttfamily,xleftmargin=0pt}
-\addtolength{\oddsidemargin}{-0.5\marginparwidth}
 
-% look whether commentssidepar exists
-%\ifx\@commentsidepar\@empty
-\newcommand{\marginlabel}[1]{\marginpar{\hspace*{-1.5mm}%\hspace*{-1.75mm}%
-  \fbox{\parbox[t]{%1.76
-  2.3\marginparwidth}{\footnotesize #1}}}}
-%\else
-%\newcommand{\marginlabel}[1]{\commentsidepar{\hspace*{-1.75mm}%
-%  \fbox{\parbox[t]{1.76\marginparwidth}{\footnotesize #1}}}}
-%\fi
+% Note that the fbox below adds a little spacing to the left and right
+\newlength{\marginlabelsize}
+\setlength{\marginlabelsize}{\marginparwidth}
+\addtolength{\marginlabelsize}{-2\fboxsep}
+\addtolength{\marginlabelsize}{-2\fboxrule}
 
-% \newcommand{\Comment}[1]{\marginpar{\hspace*{-1.5mm}%
-%   \fbox{\parbox[t]{1.7\marginparwidth}{\footnotesize \underline{COMMENT}\\#1}}}}
+\newcommand{\marginlabel}[1]{\marginpar{\fbox{\parbox[t]{\marginlabelsize}{\footnotesize #1}}}}
+
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\codeit}[1]{\code{\textit{#1}}}
 \newcommand{\const}[1]{\texttt{#1}}%{\ensuremath{\mathit{#1}}}

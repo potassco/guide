@@ -62,9 +62,10 @@
 
 % Note that the fbox below adds a little spacing to the left and right
 \newlength{\marginlabelsize}
+\newlength{\emptyfboxwidth}
+\settowidth{\emptyfboxwidth}{\fbox{}}
 \setlength{\marginlabelsize}{\marginparwidth}
-\addtolength{\marginlabelsize}{-2\fboxsep}
-\addtolength{\marginlabelsize}{-2\fboxrule}
+\addtolength{\marginlabelsize}{-\emptyfboxwidth}
 
 \newcommand{\marginlabel}[1]{\marginpar{\fbox{\parbox[t]{\marginlabelsize}{\footnotesize #1}}}}
 

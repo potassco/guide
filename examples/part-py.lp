@@ -3,10 +3,10 @@
 
 
 def main(prg):
-  parts = []
-  parts.append(("base",[]))
-  parts.append(("a",[1,3]))
-  prg.ground(parts)
+  p = []
+  p.append(("base",[]))
+  p.append(("a",[1,3]))
+  prg.ground(p)
   prg.solve()
 
 

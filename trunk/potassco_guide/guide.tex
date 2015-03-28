@@ -3,8 +3,6 @@
 \usepackage[left=3cm,right=5.1cm,heightrounded,marginparwidth=4.3cm,marginparsep=.4cm]{geometry}
 \usepackage{mparhack} % needed to always have the marginpars on the right side
 \usepackage[utf8]{inputenc}
-%\usepackage[english]{babel}
-%\usepackage{a4wide}
 \usepackage{amsthm,amssymb,amsmath}
 \usepackage{helvet,times,courier}
 \usepackage{listings}
@@ -20,29 +18,10 @@
 \usepackage{rail}
 \usepackage{textcomp}
 \usepackage{mathabx}
-\input{macro}
 \usepackage{makeidx}
 \usepackage{enumitem}
+\input{macro}
 \makeindex
-
-\pagestyle{fancy}
-\renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}{}}
-\renewcommand{\subsectionmark}[1]{\markright{\thesubsection\quad #1}{}}
-
-\fancyhf{}
-\fancyhead[R]{\thepage}
-\fancyhead[L]{\textit{\nouppercase{\rightmark}}}
-\headheight13.59999pt
-
-% tweak the size of railroad diagrams
-\setlength\railboxheight{11pt}
-\setlength\railboxskip{16pt}
-\setlength\railnamesep{-2pt}
-\sloppy
-
-% \setcounter{tocdepth}{4}
-
-\def\SVNREVISION{$LastChangedRevision$}
 
 \begin{document}
 \pagestyle{plain}

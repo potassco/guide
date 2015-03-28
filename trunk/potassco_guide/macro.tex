@@ -1,3 +1,11 @@
+% Formatting
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\codeit}[1]{\code{\textit{#1}}}
+\newcommand{\const}[1]{\texttt{#1}}
+\newcommand{\pred}[1]{\texttt{#1}}
+\newcommand{\var}[1]{\texttt{#1}}
+
 % Logic programs
 
 \newcommand{\alt}[1]{\ensuremath{\mathbf{#1}}}
@@ -8,14 +16,7 @@
 \newcommand{\nbody}[1]{\ensuremath{\mathit{body}^-(#1)}}
 \newcommand{\binders}[2]{\ensuremath{\mathit{bind}(#1)}}
 \newcommand{\atom}[1]{\ensuremath{\mathit{atom}(#1)}}
-
 \newcommand{\reduct}[2]{\ensuremath{#1^{#2}}}
-
-% Asprin
-% \newcommand{\pf}[0]{\ensuremath{\mathit{preference}}} % {\ensuremath{p}}
-% \newcommand{\name}[0]{\ensuremath{\mathit{name}}}
-%\newcommand{\cardinality}{card}
-%\newcommand{\lexico}{lex}
 
 % Systems
 
@@ -46,8 +47,9 @@
 \newcommand{\smodelscc}[0]{\sysfont{smodels}$_{\text{\sysfont{cc}}}$}
 \newcommand{\lua}{\sysfont{lua}}
 \newcommand{\python}{\sysfont{python}}
+\renewcommand{\dagger}{**}
 
-% Theorems
+% Environments
 
 \theoremstyle{definition}
 \newtheorem{texample}{Example}[section]
@@ -56,31 +58,9 @@
 \newenvironment{note}{\begin{tnote}}{\hfill$\blacksquare$\end{tnote}}
 \newenvironment{example}{\begin{texample}}{\hfill$\blacksquare$\end{texample}}
 
-% More formatting
+% Listings
 
 \lstset{numbers=left,numberblanklines=false,basicstyle=\ttfamily,xleftmargin=5ex}
-
-% Note that the fbox below adds a little spacing to the left and right
-\newlength{\marginlabelsize}
-\setlength{\marginlabelsize}{\marginparwidth}
-\addtolength{\marginlabelsize}{-2\fboxsep}
-\addtolength{\marginlabelsize}{-2\fboxrule}
-
-\newcommand{\marginlabel}[1]{\marginpar{\fbox{\parbox[t]{\marginlabelsize}{\footnotesize #1}}}}
-
-\newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\codeit}[1]{\code{\textit{#1}}}
-\newcommand{\const}[1]{\texttt{#1}}%{\ensuremath{\mathit{#1}}}
-\newcommand{\pred}[1]{\texttt{#1}}%{\ensuremath{\mathsf{#1}}}
-\newcommand{\var}[1]{\texttt{#1}}%{\ensuremath{\mathit{#1}}}
-
-% \newcommand{\mus}[0]{\raisebox{-1.2pt}{\hspace{-0.4pt}\_\hspace{-0.7pt}\_}\hspace{-0.3pt}}%{\_\hspace{-2pt}\_\hspace{-2pt}\_}
-\renewcommand{\dagger}{**}
-
-% this macro is kinda ugly but the only way I found to workaround warnings
-\def\attach{\textattachfile[color=1 0 0]}
-
-% some language definitions
 
 \lstdefinelanguage{GringoPython}%
   {morekeywords={script,and,break,class,continue,def,del,elif,else,%
@@ -105,6 +85,40 @@
   }%
 
 \lstset{literate={~}{{\raise.17ex\hbox{$\scriptstyle\sim$}}}1}
+
+% Margin Labels
+
+\newlength{\marginlabelsize}
+\setlength{\marginlabelsize}{\marginparwidth}
+\addtolength{\marginlabelsize}{-2\fboxsep}
+\addtolength{\marginlabelsize}{-2\fboxrule}
+
+\newcommand{\marginlabel}[1]{\marginpar{\fbox{\parbox[t]{\marginlabelsize}{\footnotesize #1}}}}
+
+% Headers and Footers
+
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\quad #1}{}}
+\renewcommand{\subsectionmark}[1]{\markright{\thesubsection\quad #1}{}}
+
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\fancyhead[L]{\textit{\nouppercase{\rightmark}}}
+\headheight13.59999pt
+
+% Railroad Diagrams
+
+\setlength\railboxheight{11pt}
+\setlength\railboxskip{16pt}
+\setlength\railnamesep{-2pt}
+\sloppy
+
+% Macros
+
+% this macro is kinda ugly but the only way I found to workaround warnings
+\def\attach{\textattachfile[color=1 0 0]}
+
+\def\SVNREVISION{$LastChangedRevision: 9329 $}
 
 %%% Local Variables: 
 %%% mode: latex

@@ -1876,12 +1876,14 @@ This example is about using the grounder as a simple calculator:
 \lstinputlisting{examples/const.lp}
 %
 Try running this example using the following calls:
+%
 \begin{lstlisting}[numbers=none,escapeinside={\$}{\$}]
- gringo --text $\attach{examples/const.lp}{const.lp}$
- gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6   -c z=6
- gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6+6 -c y=6
- gringo --text $\attach{examples/const.lp}{const.lp}$ -c x="6+6*6"
+gringo --text $\attach{examples/const.lp}{const.lp}$
+gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6   -c z=6
+gringo --text $\attach{examples/const.lp}{const.lp}$ -c x=6+6 -c y=6
+gringo --text $\attach{examples/const.lp}{const.lp}$ -c x="6+6*6"
 \end{lstlisting}
+%
 Note that quotes have to be added to prevent the shell from expanding the `\code{*}' in the last call
 or from interpreting parentheses in functions.
 \end{example}

@@ -2,46 +2,50 @@
 \section{Solver Configuration}
 \label{sec:configuration}
 
-\textit{This section is not yet ready for publishing
-and will be included in one of the forthcoming editions of this guide.}
-
-\clasp{} has more than $80$ performance relevant parameters, partially show in Section~\ref{subsec:opt:clasp}.
-Even if only a discrete subset of all possible parameter configurations is considered,
-\clasp{} has approximately $10^{59}$ parameter configurations.
+\clasp\ has more than $80$ performance relevant parameters, some of which are shown in Section~\ref{subsec:opt:clasp}.
+Even if only a discrete subset of all possible parameter settings is considered,
+this amounts to approximately $10^{59}$ configurations.
 In such a huge configuration space, 
 it is a tedious and time-consuming task 
-to manually determine a well-performing parameter configuration.
-Two complementary ways to automatically address this issue for \clasp{} are 
-the automatic algorithm selection solver \claspfolio{}~\cite{holisc14a} and 
-the automatic algorithm configuration tool \piclasp{}.\marginlabel{
-Both tools are written in \python{} 2.7 and require some external packages -- please see README.}
+to manually determine a well-performing configuration.
+Two complementary ways to automatically address this issue for \clasp\ are 
+the automatic \REPc{algorithm}{configuration}{T2M: I guess that's better in teh context of the guide, or?} selection solver \claspfolio~\cite{holisc14a} and 
+the automatic \DEL{algorithm} configuration tool \piclasp.%
+\marginlabel{Both tools are written in \python~2.7 and require some external packages -- please see README.}
+\comment{T2M: Please include README}
 
 \subsection{Portfolio-Solving with \claspfolio}
 \label{sec:claspfolio}
 
-The use-case of \claspfolio{}\footnote{\url{http://potassco.sourceforge.net\#claspfolio}}~\cite{holisc14a} 
-is to solve a set of heterogeneous instances, that is,
-there is no single well-performing configuration for all instances, 
+The targeted use-case of \claspfolio\ is to solve a set of heterogeneous problem instances.
+In such a case,
+there is no single well-performing configuration for all instances
 but a well-performing configuration has to be selected for each individual instance.
-Therefore, \claspfolio{} should be used either (i) 
-in applications  where you have to solve instances with different characteristics, 
+Therefore, \claspfolio\ should be used either 
+in scenarios involving instances with different characteristics, 
 e.g., due to different encodings, different sizes or changing constraints 
-(see Example~\ref{subsec:example:claspfolio})
-or (ii) to get a first flavor of a well-performing configuration for your (homogeneous) application (see Example~\ref{subsec:example:claspfolio_oralce}). 
+(see Example~\ref{subsec:example:claspfolio}),
+or 
+simply to get a first impression of a well-performing configuration of a (homogeneous) benchmark set (see Example~\ref{subsec:example:claspfolio_oracle}). 
 
-The basic idea of \claspfolio{} consists of using numerical characteristics of instances, so-called instance features, computed by \claspre{}\footnote{\url{http://www.cs.uni-potsdam.de/claspre/}}
+The basic idea of \claspfolio\ consists of using numerical characteristics of instances
 to select a well-performing configuration from a given set of pre-selected configurations
-for given a grounded logic program by using machine learning techniques.
+by using machine learning techniques
+in order to solve a given (ground) logic program at hand.
+These so-called instance features are computed by \claspre. % footnote{\url{http://www.cs.uni-potsdam.de/claspre/}}
+%
 \begin{example}\label{subsec:example:claspfolio}
 Using the $n$-queens puzzle from Example~\ref{ex:csp:queens1}, 
-we compare the performance of the default configuration of \clasp{} 
+we compare the performance of the default configuration of \clasp\ 
 and \claspfolio{}\comment{ML: with clasp2.1, this would be a nice example, but I have to wait for the new claspfolio release to compare against clasp 3.1}
+\comment{T2M: So far, we tried to use example environments only when using a marginpar with downloadable files }
+\comment{T2M: Why use claspfolio as a script and not standalone??}
 \begin{lstlisting}[numbers=none]
-$gringo examples/queensC.lp -c n=60 | clasp
+$ gringo examples/queensC.lp -c n=60 | clasp
 [...]
 Time         : XXXs
 
-$gringo examples/queensC.lp -c n=60 | \
+$ gringo examples/queensC.lp -c n=60 | \
    python ./src/claspfolio.py -I -
 [...]
 Time         : XXXs
@@ -49,10 +53,11 @@ Time         : XXXs
 
 \end{example}
 
-\begin{example}\label{subsec:example:claspfolio_oralce}
-Another way to use \claspfolio{} is to select a configuration for a given set of instances.
-In such a setting, \claspfolio{} will score each configuration on each instance 
+\begin{example}\label{subsec:example:claspfolio_oracle}
+Another way to use \claspfolio\ is to select a configuration for a given set of instances.
+In such a setting, \claspfolio\ scores each configuration on each instance 
 and averages over the scores of each configuration.
+\comment{T2M: Da kommt noch was, oder?}
 \begin{lstlisting}[numbers=none]
 $ python ./src/claspfolio.py --oracle_dir <INSTANCE_DIR>
 % [...]
@@ -63,53 +68,55 @@ $ python ./src/claspfolio.py --oracle_dir <INSTANCE_DIR>
 % Score: 		 <SCORE>
 % ...
 \end{lstlisting}
-
-\claspfolio{} lists all configuration sorted by its performance score -- starting with predicted best-performing configuration.
-Please note that \claspfolio{} minimizes \texttt{<SCORE>}.
+%
+\claspfolio\ lists all configuration sorted by its performance score --- starting with predicted best-performing configuration.
+Please note that \claspfolio\ minimizes \texttt{<SCORE>}.
 \end{example}
 
 \begin{note}
-\claspfolio{} is trained for a runtime cutoff of $600$ seconds. 
+\claspfolio\ is trained for a runtime cutoff of $600$ seconds. 
 It will most likely perform well for smaller runtime cutoffs 
-but the performance of \claspfolio{} could get worse by using a larger runtime cutoff.
+but performance could get worse with larger runtime cutoffs.
 \end{note}
 
 \begin{note}
-\claspfolio{} is trained only on decision problems.
-Therefore, \claspfolio{} does not cover enumeration and optimization related parameters in its selected configurations.
+\claspfolio\ is trained only on decision problems.
+Therefore, \claspfolio\ does not cover enumeration and optimization related parameters in its selected configurations.
 \end{note}
+
+\comment{T2M: Any discussion of options?}
 
 \subsection{Benchmark-oriented \clasp\ Configuration with \piclasp}
 \label{sec:piclasp}
 
-In contrast to \claspfolio{}, 
-\piclasp{}\footnote{\url{http://www.cs.uni-potsdam.de/piclasp}} looks for a well-performing parameter configuration 
-in the complete parameter configuration space of \clasp{}.
-To this end, \piclasp{} optimizes \clasp{}'s configuration with the automatic algorithm configuration framework \smac{}~\cite{huhole11b}.
+In contrast to \claspfolio, 
+\piclasp\footnote{\url{http://www.cs.uni-potsdam.de/piclasp}} looks for a well-performing parameter configuration 
+in the complete parameter configuration space of \clasp.
+To this end, \piclasp\ optimizes \clasp's configuration with the automatic algorithm configuration framework \smac~\cite{huhole11b}.
 In the process of determining a configuration,
-\piclasp{} has to assess the performances of different \clasp{} configurations on different instances. 
-Therefore, \piclasp{} needs a lot more computational ressources in comparison to \claspfolio{}
-but has the advantage by adapting \clasp{} even better to your own application.
+\piclasp\ has to assess the performances of different \clasp\ configurations on different instances. 
+Therefore, \piclasp\ needs a lot more computational ressources in comparison to \claspfolio\
+but has the advantage by adapting \clasp\ even better to your own application.
  
-\piclasp{} has two required parameters:
+\piclasp\ has two required parameters:
 %
 \begin{description}
-  \item[\code{--instances,-I}] a set of grounded instances on which the performance of \clasp{} will be optimized.
+  \item[\code{--instances,-I}] a set of grounded instances on which the performance of \clasp\ will be optimized.
   \item[\code{--cutoff,-c}] defines the runtime cutoff of each run of \clasp. 
-  		We recommend that \clasp{}'s default configuration should solve at least $50\%$ of the given instances with this cutoff.
-  		The runtime of \piclasp{} (i.e., the configuration budget) will be approx. $200$ times this runtime cutoff 
-  		to determine a well-performing configuration of \clasp{}.
+  		We recommend that \clasp's default configuration should solve at least $50\%$ of the given instances with this cutoff.
+  		The runtime of \piclasp\ (i.e., the configuration budget) will be approx. $200$ times this runtime cutoff 
+  		to determine a well-performing configuration of \clasp.
 \end{description} 
 
-To install all required packages of \piclasp{}, please run \code{bash install.sh}. 
-It will locally install \clasp{}, \smac{}, \sysfont{runsolver} and \claspre{}.
+To install all required packages of \piclasp, please run \code{bash install.sh}. 
+It will locally install \clasp, \smac, \sysfont{runsolver} and \claspre.
 
 \begin{example}
-For illustration, consider to use \piclasp{} to determine a well-performing configuration for the $n$-queens puzzle, 
+For illustration, consider to use \piclasp\ to determine a well-performing configuration for the $n$-queens puzzle, 
 you have to provide a directory with the grounded instances, e.g., 
 \code{gringo examples/queensC.lp -c n=60 > <INSTANCE\_DIR>/queens\_60.gr}
 
-Running \piclasp{} on this one instance:
+Running \piclasp\ on this one instance:
 \begin{lstlisting}[numbers=none]
 $python piclasp.py -c 10 -I <INSTANCE_DIR>
 Found 1 instances
@@ -130,8 +137,8 @@ Performance: 1.217000
 --counter-bump=1435 --sign-fix
 \end{lstlisting}
 
-Comparing the performance of \clasp{}'s default configuration
-and the configuration determined by \piclasp{} shows a two-fold speedup.
+Comparing the performance of \clasp's default configuration
+and the configuration determined by \piclasp\ shows a two-fold speedup.
 
 \begin{lstlisting}[numbers=none]
 $ cat queens_60.gr | clasp
@@ -143,33 +150,33 @@ $ cat queens_60.gr | clasp <PICLASP CONFIGURATION>
 Time         : 1.251s
 \end{lstlisting}
 
-Interestingly, the configuration determined by \piclasp{} disabled the variable selection heuristic (\code{--heuristic=None})
+Interestingly, the configuration determined by \piclasp\ disabled the variable selection heuristic (\code{--heuristic=None})
 which a human will probably never do.
 
 \end{example}
 
 \begin{note}
 To improve the performance of \piclasp, 
-we recommend to run \piclasp{} with at least $10$ independent \smac{} runs (option \code{--repetition,-R}).
-More \smac{} runs or a larger configuration budget (option \code{--budget,-B}) should always lead to better results.   
+we recommend to run \piclasp\ with at least $10$ independent \smac\ runs (option \code{--repetition,-R}).
+More \smac\ runs or a larger configuration budget (option \code{--budget,-B}) should always lead to better results.   
 \end{note}
 
 \begin{note}
-Algorithm configuration and hence also \piclasp{} works especially well on homogeneous instance sets (e.g.,~\cite{gejokaobsascsc13a}),
+Algorithm configuration and hence also \piclasp\ works especially well on homogeneous instance sets (e.g.,~\cite{gejokaobsascsc13a}),
 that is, there is one configuration that performs well on all given instances.
-On heterogeneous instance sets, \piclasp{} will most likely need a lot more \smac{} runs and a larger configuration budget,
+On heterogeneous instance sets, \piclasp\ will most likely need a lot more \smac\ runs and a larger configuration budget,
 and it will still find only configuration with small performance improvements, 
-since \clasp{}'s default configuration is already optimized to have a robust performance on a large variety of instances.
+since \clasp's default configuration is already optimized to have a robust performance on a large variety of instances.
 \end{note}
 
 \begin{note}
-Using \piclasp{}, the performance of \clasp{} on the given instance set will improve.
-However ultimately, the performance of \clasp{} should improve on new (unseen) instances.
-Therefore, we strongly recommend to use another (disjoint) set of instances to assess the performance of the configured \clasp{}.
+Using \piclasp, the performance of \clasp\ on the given instance set will improve.
+However ultimately, the performance of \clasp\ should improve on new (unseen) instances.
+Therefore, we strongly recommend to use another (disjoint) set of instances to assess the performance of the configured \clasp.
 \end{note}
 
 \begin{note}
-We recommend that \piclasp{} optimizes the performance of \clasp{} on at least $100$ instances.
+We recommend that \piclasp\ optimizes the performance of \clasp\ on at least $100$ instances.
 On smaller instance sets, the determined configuration may will not perform well on new (unseen) instances.
 \end{note}
 

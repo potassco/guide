@@ -9,7 +9,7 @@ In such a huge configuration space,
 it is a tedious and time-consuming task 
 to manually determine a well-performing configuration.
 Two complementary ways to automatically address this issue for \clasp\ are 
-the automatic \REPc{algorithm}{configuration}{T2M: I guess that's better in teh context of the guide, or?} selection solver \claspfolio~\cite{holisc14a} and 
+the automatic \REPc{algorithm}{configuration}{T2M: I guess that's better in the context of the guide, or?} selection solver \claspfolio~\cite{holisc14a} and 
 the automatic \DEL{algorithm} configuration tool \piclasp.%
 \marginlabel{Both tools are written in \python~2.7 and require some external packages -- please see README.}
 \comment{T2M: Please include README}
@@ -89,36 +89,38 @@ Therefore, \claspfolio\ does not cover enumeration and optimization related para
 \subsection{Benchmark-oriented \clasp\ Configuration with \piclasp}
 \label{sec:piclasp}
 
-In contrast to \claspfolio, 
-\piclasp\footnote{\url{http://www.cs.uni-potsdam.de/piclasp}} looks for a well-performing parameter configuration 
+\piclasp\ % footnote{\url{http://www.cs.uni-potsdam.de/piclasp}}
+allows for identifying a single well-performing parameter configuration 
 in the complete parameter configuration space of \clasp.
 To this end, \piclasp\ optimizes \clasp's configuration with the automatic algorithm configuration framework \smac~\cite{huhole11b}.
 In the process of determining a configuration,
-\piclasp\ has to assess the performances of different \clasp\ configurations on different instances. 
-Therefore, \piclasp\ needs a lot more computational ressources in comparison to \claspfolio\
-but has the advantage by adapting \clasp\ even better to your own application.
+\piclasp\ has to assess the performance of different \clasp\ configurations on different instances. 
+Therefore, \piclasp\ needs a lot more computational ressources than \claspfolio\
+but has the advantage of adapting \clasp\ even better to a given application.
  
 \piclasp\ has two required parameters:
 %
 \begin{description}
-  \item[\code{--instances,-I}] a set of grounded instances on which the performance of \clasp\ will be optimized.
+  \item[\code{--instances,-I}] \comment{T2M: a directory containing??}a set of grounded instances on which the performance of \clasp\ will be optimized.
   \item[\code{--cutoff,-c}] defines the runtime cutoff of each run of \clasp. 
-  		We recommend that \clasp's default configuration should solve at least $50\%$ of the given instances with this cutoff.
+
+  		We recommend that \clasp's default configuration solves at least $50\%$ of the given instances with this cutoff.
   		The runtime of \piclasp\ (i.e., the configuration budget) will be approx. $200$ times this runtime cutoff 
   		to determine a well-performing configuration of \clasp.
 \end{description} 
 
-To install all required packages of \piclasp, please run \code{bash install.sh}. 
-It will locally install \clasp, \smac, \sysfont{runsolver} and \claspre.
+To install all required packages of \piclasp, please run `\code{bash install.sh}'.
+This locally installs \clasp, \smac, \sysfont{runsolver} and \claspre.
 
 \begin{example}
 For illustration, consider to use \piclasp\ to determine a well-performing configuration for the $n$-queens puzzle, 
 you have to provide a directory with the grounded instances, e.g., 
 \code{gringo examples/queensC.lp -c n=60 > <INSTANCE\_DIR>/queens\_60.gr}
 
-Running \piclasp\ on this one instance:
+Running \piclasp\ on this one instance yields the following result.
+\comment{T2M: Why use piclasp as a script and not standalone??}
 \begin{lstlisting}[numbers=none]
-$python piclasp.py -c 10 -I <INSTANCE_DIR>
+$ python piclasp.py -c 10 -I <INSTANCE_DIR>
 Found 1 instances
 [...]
 Result of piclasp:
@@ -151,7 +153,7 @@ Time         : 1.251s
 \end{lstlisting}
 
 Interestingly, the configuration determined by \piclasp\ disabled the variable selection heuristic (\code{--heuristic=None})
-which a human will probably never do.
+which a human would probably never do.
 
 \end{example}
 
@@ -165,19 +167,19 @@ More \smac\ runs or a larger configuration budget (option \code{--budget,-B}) sh
 Algorithm configuration and hence also \piclasp\ works especially well on homogeneous instance sets (e.g.,~\cite{gejokaobsascsc13a}),
 that is, there is one configuration that performs well on all given instances.
 On heterogeneous instance sets, \piclasp\ will most likely need a lot more \smac\ runs and a larger configuration budget,
-and it will still find only configuration with small performance improvements, 
+and it will still find only configurations with small performance improvements, 
 since \clasp's default configuration is already optimized to have a robust performance on a large variety of instances.
 \end{note}
 
 \begin{note}
 Using \piclasp, the performance of \clasp\ on the given instance set will improve.
 However ultimately, the performance of \clasp\ should improve on new (unseen) instances.
-Therefore, we strongly recommend to use another (disjoint) set of instances to assess the performance of the configured \clasp.
+Therefore, we strongly recommend to use another (disjoint) set of instances to assess the performance of the obtained \clasp\ configuration.
 \end{note}
 
 \begin{note}
 We recommend that \piclasp\ optimizes the performance of \clasp\ on at least $100$ instances.
-On smaller instance sets, the determined configuration may will not perform well on new (unseen) instances.
+On smaller instance sets, the determined configuration may not perform well on yet unseen instances.
 \end{note}
 
 

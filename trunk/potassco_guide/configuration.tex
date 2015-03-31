@@ -9,10 +9,9 @@ In such a huge configuration space,
 it is a tedious and time-consuming task 
 to manually determine a well-performing configuration.
 Two complementary ways to automatically address this issue for \clasp\ are 
-the automatic \REPc{algorithm}{configuration}{T2M: I guess that's better in the context of the guide, or?} selection solver \claspfolio~\cite{holisc14a} and 
-the automatic \DEL{algorithm} configuration tool \piclasp.%
+the automatic configuration selection solver \claspfolio~\cite{holisc14a} and 
+the automatic configuration tool \piclasp.%
 \marginlabel{Both tools are written in \python~2.7 and require some external packages -- please see README.}
-\comment{T2M: Please include README}
 
 \subsection{Portfolio-Solving with \claspfolio}
 \label{sec:claspfolio}
@@ -38,8 +37,7 @@ These so-called instance features are computed by \claspre. % footnote{\url{http
 Using the $n$-queens puzzle from Example~\ref{ex:csp:queens1}, 
 we compare the performance of the default configuration of \clasp\ 
 and \claspfolio{}\comment{ML: with clasp2.1, this would be a nice example, but I have to wait for the new claspfolio release to compare against clasp 3.1}
-\comment{T2M: So far, we tried to use example environments only when using a marginpar with downloadable files }
-\comment{T2M: Why use claspfolio as a script and not standalone??}
+\comment{T2M: So far, we tried to use example environments only when using a marginpar with downloadable files.\\ M2T: What would be an alternative?}
 \begin{lstlisting}[numbers=none]
 $ gringo examples/queensC.lp -c n=60 | clasp
 [...]
@@ -57,7 +55,9 @@ Time         : XXXs
 Another way to use \claspfolio\ is to select a configuration for a given set of instances.
 In such a setting, \claspfolio\ scores each configuration on each instance 
 and averages over the scores of each configuration.
-\comment{T2M: Da kommt noch was, oder?}
+Such a robust and well-performing configuration of \clasp\ can than be used without further use of \claspfolio\
+which saves some overhead produced by \claspfolio\ (e.g., computing the instance features).
+
 \begin{lstlisting}[numbers=none]
 $ python ./src/claspfolio.py --oracle_dir <INSTANCE_DIR>
 % [...]
@@ -84,7 +84,14 @@ but performance could get worse with larger runtime cutoffs.
 Therefore, \claspfolio\ does not cover enumeration and optimization related parameters in its selected configurations.
 \end{note}
 
-\comment{T2M: Any discussion of options?}
+\claspfolio\ provides also an interface to retrain machine learning models on other problem instances 
+(e.g., to get an \claspfolio\ for enumeration applications).
+To this end, \claspfolio\ supports the Algorithm Selection Library format\footnote{\url{www.aslib.net}}.
+To determine a well-performing training configuration of \claspfolio,
+we recommend the use of \sysfont{autofolio}~\cite{lihohusc15a}.%\footnote{\url{http://www.cs.uni-potsdam.de/wv/autofolio}}   
+
+\comment{T2M: Any discussion of options?\\
+M2T: No, the normal ASP user has not to consider all options discusses in our autofolio paper since we provide a pretrained \claspfolio.}
 
 \subsection{Benchmark-oriented \clasp\ Configuration with \piclasp}
 \label{sec:piclasp}
@@ -101,7 +108,7 @@ but has the advantage of adapting \clasp\ even better to a given application.
 \piclasp\ has two required parameters:
 %
 \begin{description}
-  \item[\code{--instances,-I}] \comment{T2M: a directory containing??}a set of grounded instances on which the performance of \clasp\ will be optimized.
+  \item[\code{--instances,-I}] a directory containing a set of grounded instances on which the performance of \clasp\ will be optimized.
   \item[\code{--cutoff,-c}] defines the runtime cutoff of each run of \clasp. 
 
   		We recommend that \clasp's default configuration solves at least $50\%$ of the given instances with this cutoff.
@@ -118,7 +125,6 @@ you have to provide a directory with the grounded instances, e.g.,
 \code{gringo examples/queensC.lp -c n=60 > <INSTANCE\_DIR>/queens\_60.gr}
 
 Running \piclasp\ on this one instance yields the following result.
-\comment{T2M: Why use piclasp as a script and not standalone??}
 \begin{lstlisting}[numbers=none]
 $ python piclasp.py -c 10 -I <INSTANCE_DIR>
 Found 1 instances

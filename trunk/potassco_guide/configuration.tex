@@ -22,18 +22,16 @@ there is no single well-performing configuration for all instances
 but a well-performing configuration has to be selected for each individual instance.
 Therefore, \claspfolio\ should be used either 
 in scenarios involving instances with different characteristics, 
-e.g., due to different encodings, different sizes or changing constraints 
-(see Example~\ref{subsec:example:claspfolio}),
+e.g., due to different encodings, different sizes or changing constraints,
 or 
-simply to get a first impression of a well-performing configuration of a (homogeneous) benchmark set (see Example~\ref{subsec:example:claspfolio_oracle}). 
+simply to get a first impression of a well-performing configuration on a (homogeneous) benchmark set. 
 
 The basic idea of \claspfolio\ consists of using numerical characteristics of instances
 to select a well-performing configuration from a given set of pre-selected configurations
 by using machine learning techniques
 in order to solve a given (ground) logic program at hand.
 These so-called instance features are computed by \claspre. % footnote{\url{http://www.cs.uni-potsdam.de/claspre/}}
-%
-\begin{example}\label{subsec:example:claspfolio}
+
 Using the $n$-queens puzzle from Example~\ref{ex:csp:queens1}, 
 we compare the performance of the default configuration of \clasp\ 
 and \claspfolio{}\comment{ML: with clasp2.1, this would be a nice example, but I have to wait for the new claspfolio release to compare against clasp 3.1}
@@ -48,9 +46,6 @@ $ gringo examples/queensC.lp -c n=60 | \
 Time         : XXXs
 \end{lstlisting}
 
-\end{example}
-
-\begin{example}\label{subsec:example:claspfolio_oracle}
 Another way to use \claspfolio\ is to select a configuration for a given set of instances.
 In such a setting, \claspfolio\ scores each configuration on each instance 
 and averages over the scores of each configuration.
@@ -70,7 +65,6 @@ $ python ./src/claspfolio.py --oracle_dir <INSTANCE_DIR>
 %
 \claspfolio\ lists all configuration sorted by its performance score --- starting with predicted best-performing configuration.
 Please note that \claspfolio\ minimizes \texttt{<SCORE>}.
-\end{example}
 
 \begin{note}
 \claspfolio\ is trained for a runtime cutoff of $600$ seconds. 
@@ -98,7 +92,7 @@ in the complete parameter configuration space of \clasp.
 To this end, \piclasp\ optimizes \clasp's configuration with the automatic algorithm configuration framework \smac~\cite{huhole11b}.
 In the process of determining a configuration,
 \piclasp\ has to assess the performance of different \clasp\ configurations on different instances. 
-Therefore, \piclasp\ needs a lot more computational ressources than \claspfolio\
+Therefore, \piclasp\ needs a lot more computational resources than \claspfolio\
 but has the advantage of adapting \clasp\ even better to a given application.
  
 \piclasp\ has two required parameters:
@@ -115,7 +109,6 @@ but has the advantage of adapting \clasp\ even better to a given application.
 To install all required packages of \piclasp, please run `\code{bash install.sh}'.
 This locally installs \clasp, \smac, \sysfont{runsolver} and \claspre.
 
-\begin{example}
 For illustration, consider to use \piclasp\ to determine a well-performing configuration for the $n$-queens puzzle, 
 you have to provide a directory with the grounded instances, e.g., 
 \code{gringo examples/queensC.lp -c n=60 > <INSTANCE\_DIR>/queens\_60.gr}
@@ -157,7 +150,6 @@ Time         : 1.251s
 Interestingly, the configuration determined by \piclasp\ disabled the variable selection heuristic (\code{--heuristic=None})
 which a human would probably never do.
 
-\end{example}
 
 \begin{note}
 To improve the performance of \piclasp, 

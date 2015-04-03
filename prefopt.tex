@@ -466,6 +466,193 @@ If we added the preference elements \code{1::a(1)} or \code{name(p2)},
 the statement would not be admissible any more.
 \end{example}
 
+\paragraph{\asprin\ library.}
+\asprin's preference library implements the following basic preference types:
+\begin{itemize}
+	\item  \code{subset} and \code{superset}   
+	\item  \code{less(cardinality)} and \code{more(cardinality)}   
+	\item  \code{less(weight)} and \code{more(weight)}   
+	\item  \code{aso}   (Answer Set Optimization, \cite{brnitr03a})   
+	\item  \code{poset} (Qualitative Preferences, \cite{rogima10a})  
+\end{itemize}
+
+We have already provided the definition of \code{subset}. 
+For \code{superset}, \code{less(cardinality)} and \code{more(cardinality)}, their domains are the same as for \code{subset}.
+To define their mappings, consider the set of ground preference elements \code{$E=$\{$e_1$;$\ldots$;$e_n$\}}:
+\begin{itemize}
+\item
+\code{superset} maps $E$ to the preference relation
+\[
+X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}\supset\{e_i\in E\mid Y\models e_i\}
+\]
+\item
+\code{less(cardinality)} maps $E$ to the preference relation
+\[
+X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}<\{e_i\in E\mid Y\models e_i\}
+\]
+\item
+\code{more(cardinality)} maps $E$ to the preference relation
+\[
+X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}>\{e_i\in E\mid Y\models e_i\}
+\]
+\end{itemize}
+\comment{JR: Add Example}
+
+Preference types \code{less(weight)} and \code{more(weight)}
+are similar to \code{\#minimize} and \code{\#maximize} statements,
+but they do not allow priorities and 
+instead of applying to literals, they do apply to  Boolean formulas.
+Their domain consists of the sets of ground preference elements 
+%of the form:
+\code{$E=$\{$e_1$;$\ldots$;$e_n$\}} such that every $e_i$ has the form:
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{w}$?,?$\boldsymbol{t}$?::?$F$?
+\end{lstlisting}
+where $\boldsymbol{w}$ and $\boldsymbol{t}$ are term tuples and $F$ is a Boolean formula. 
+To informally describe their mappings, let us
+associate every set of ground preference elements $E$ with an aggregate \code{\#sum$E$}, 
+%extends the aggregates of Section \ref{subsec:gringo:aggregate} allowing 
+handling Boolean formulas in the natural way and 
+using the symbol `\code{::}' instead of `\code{:}'.
+Then, \code{less(weight)} maps $E$ to the preference relation where $X \succ Y$ holds 
+iff the value of \code{\#sum$E$} in $X$ is less than the value of \code{\#sum$E$} in $Y$.
+Similarly, \code{more(weight)} maps $E$ to the preference relation such that $X \succ Y$ holds iff
+the value of \code{\#sum$E$} in $X$ is greater than the value of \code{\#sum$E$} in $Y$.
+\comment{JR: Not quite sure about whether explaining it this way is a good idea\ldots}
+\comment{JR: Add Example}
+
+
+For answer set optimization (\code{aso};~\cite{brnitr03a})
+the domain consists of the sets of ground preference elements 
+\code{$E=$\{$e_1$;$\ldots$;$e_n$\}} such that every $e_i$ has the form:
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$F_1\,$?>?$\,\dots\,$?>?$\,F_m$? || ?$B$?.
+\end{lstlisting}
+where each $F_i$ and $B$ are Boolean formulas.
+Preference elements with this form are called \code{aso} rules.  
+The semantics of \code{aso} is based on satisfaction degrees for \code{aso} rules. % as in \eqref{eq:aso:rule}.
+The satisfaction degree of such a rule $r$ in an answer set $X$, 
+written $v_X(r)$, is 
+$1$ if $X$ does not satisfy the body $B$, %$X \not\models b$ for some $b\in B$, %\cap\mathcal{A}$ 
+%or  if $X \models b$ for some $\naf{b}\in B$, 
+or  if $X$ does not satisfy any $F_i$, 
+and it is $\min\{k \mid X \text{ satisfies } F_k, 1\leq k\leq n\}$ otherwise.
+Then, a set of \code{aso} rules $E$ is mapped to the preference relation defined as follows:
+$X \succeq Y$ if for all rules $r \in E$, $v_X(r) \leq v_Y(r)$, 
+and $X \succ Y$ if $X \succeq Y$ but $Y \not\succeq X$. 
+\comment{JR: Add Example}
+
+In \cite{giumar12a}, qualitative preferences are modeled as a strict partially ordered set
+\(
+(S,<)
+\)
+of literals.
+The literals in $S$ represent propositions that are preferably satisfied
+and the strict partial order $<$ on $S$ gives their relative importance.
+%
+In \asprin\ this is implemented by preference type \code{poset}, 
+that extends the original approach allowing preferences over Boolean formulas.
+The domain of \code{poset} consists of the sets $E$ of ground preference elements of the form
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$F$?.
+\end{lstlisting}
+or 
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$F > F'$?.
+\end{lstlisting}
+where $F$ and $F'$ are Boolean formulas.
+Given a set of ground preference statements $E$, 
+the set $S_E$ is constructed from all Boolean formulas appearing in $E$, 
+and the partial order $>_E$ is defined as the transitive closure of the order 
+specified by the preference elements of the second type. 
+Then, $E$ is mapped to the preference relation where 
+$X \succ Y$ holds if 
+there exists a formula $F \in S_E$ such that $X \models F$ and $Y \not\models F$, 
+and for every formula $F \in S$ such that $Y \models F$ and $X \not\models F$, 
+there is a formula
+$F'\in S$ such that $F'<F$ and $X \models F'$ but $Y \not\models F'$.
+\comment{JR: Add Example}
+
+%As another example,
+%we can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}: 
+%%
+%\lstinputlisting[numbers=none]{examples/preference3.lp}
+%\marginlabel{%
+%  To inspect the output, invoke:\\
+%  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+%  \attach{examples/preference3.lp}{preference3.lp} \ 
+%  asprin.lib}}
+%This yields the unique optimal answer set $X_2$.
+
+The library of \asprin\ implements furthermore the following composite preference types~\cite{sonpon06a}: 
+\comment{T2J: Fix admissible input (preference elements)}
+\begin{itemize}
+\item \code{neg}
+\item \code{and}
+\item \code{pareto}
+\item \code{lexico}
+\end{itemize}
+The domains of \code{and} and \code{pareto} are the sets of ground naming atoms
+\begin{lstlisting}[numbers=none,escapechar=?]
+name(s)
+\end{lstlisting}
+whereas for \code{neg} the sets must be singleton, 
+and for \code{lexico} every naming atom is attached with a weight $\textbf{w}$: 
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{w}$?::name(s)
+\end{lstlisting}
+Given a naming atom \code{name(s)}, 
+let $\succeq_{\code{s}}$, $\succ_{\code{s}}$, $=_{\code{s}}$, $\prec_{\code{s}}$, $\preceq_{\code{s}}$ be the 
+non-strict, strict, equal, and inverse preference relations associated with preference statement $\code{s}$.
+Then the mappings for each of the composite preference types are defined as follows:
+%Consider the set of ground preference elements \code{$E=$\{$e_1$;$\ldots$;$e_n$\}}:
+\begin{itemize}
+\item
+\code{neg} maps $E=\code{\{name(s)\}}$ to the preference relation
+\[
+X \succ Y \text{ iff } Y \prec_s X
+\]
+\item 
+\code{and} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
+\[
+X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E}(X\succ_\code{s} Y)
+\]
+\item 
+\code{pareto} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
+\[
+X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E} (X\succeq_\code{s} Y)\wedge\bigvee_{\code{name(s)}\in E} (X\succ_\code{s} Y)
+\]
+\item
+\code{lexico} maps \code{$E=$\{$w_1$::name($s_1$);$\ldots$;$w_n$::name($s_n$)\}} to the preference relation 
+\[
+X \succ Y \text{ iff } \bigvee_{\code{w::name(s)}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::name(s')}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
+\] 
+\end{itemize} 
+\comment{JR: Stopped here}
+
+For example, the following preference specification aggregates the basic preferences \code{p1} and \code{p3}
+via a \code{pareto} preference, viz.~\code{p4}: 
+%
+\lstinputlisting[numbers=none]{examples/preference4.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference4.lp}{preference4.lp} \ 
+  asprin.lib}}
+%
+This results in the optimal answer sets $X_1$, $X_2$ and $X_3$.
+
+Alternatively,
+we can aggregate \code{p1} over \code{p3}
+via a lexicographic order, \code{p5}:
+\lstinputlisting[numbers=none]{examples/preference5.lp}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference5.lp}{preference5.lp} \ 
+  asprin.lib}}
+In this case, $X_1$ and $X_3$ are the optimal answer sets.
+
 \paragraph{Implementing preference types.}
 In \asprin, preference types are implemented by logic programs called \emph{preference programs}.
 In a nutshell, a preference type decides if, 
@@ -733,217 +920,31 @@ nor choice rules nor aggregates in the rule heads.
 
 Recall from the previous section that we define a set of admissible preference elements for each preference type.
 The respective notion of admissibility is defined in \asprin\ using predicate \code{\_error/1}.
-Thus, \code{\_error(X)} has to be true whenever the preference statement is not admissible.
-In this case, \asprin\ exits and prints the error message \code{X}.\footnote{%
+That is, \code{\_error(X)} is true whenever the preference statement is not admissible.
+In this case, \asprin\ exits and prints the error message bound to \code{X}.\footnote{%
 In the current \asprin\ implementation, 
 the system only exits after finding a first answer set of the base program.}
 For coherence, the corresponding rules are also included in the corresponding preference program.
 \begin{example}
 The preference program (\attach{examples/subset.lp}{\code{subset.lp}})
 includes the following rules to define the admissibility of \code{subset} preference statements:
+%
 \lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=6,lastline=19]{examples/subset.lp}
-The first rule checks the preference elements that contain naming atoms, 
-the second those that contain weights, 
+%
+The first rule checks preference elements containing naming atoms, 
+the second the ones containing weights, 
 and the third one those that contain more than one Boolean formula.
-Function \code{@cat(*args)}, provided by \asprin, simply concatenates the terms that are passed as arguments.
+Function \code{@cat(*args)} is provided by \asprin\ and simply concatenates the terms passed as arguments.
 \end{example}
 
 \begin{note}
 The predicate \code{\_error/1} must be defined using domain predicates, built-ins or the special 
 predicates \code{preference/2}, \code{preference/5} and \code{optimize/1} 
-(but not using \code{holds/1} or \code{holds'/1}).
+(not using \code{holds/1} or \code{holds'/1}).
 %In this way, the predicate may be fully evaluated by the grounder.
 \end{note}
 
-Implementing composite preferences.
-
-\paragraph{\asprin\ library.}
-\asprin's preference library implements the following basic preference types:
-\begin{itemize}
-	\item  \code{subset} and \code{superset}   
-	\item  \code{less(cardinality)} and \code{more(cardinality)}   
-	\item  \code{less(weight)} and \code{more(weight)}   
-	\item  \code{aso}   (Answer Set Optimization, \cite{brnitr03a})   
-	\item  \code{poset} (Qualitative Preferences, \cite{rogima10a})  
-\end{itemize}
-
-We have already provided the definition of \code{subset}. 
-For \code{superset}, \code{less(cardinality)} and \code{more(cardinality)}, their domains are the same as for \code{subset}.
-To define their mappings, consider the set of ground preference elements \code{$E=$\{$e_1$;$\ldots$;$e_n$\}}:
-\begin{itemize}
-\item
-\code{superset} maps $E$ to the preference relation
-\[
-X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}\supset\{e_i\in E\mid Y\models e_i\}
-\]
-\item
-\code{less(cardinality)} maps $E$ to the preference relation
-\[
-X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}<\{e_i\in E\mid Y\models e_i\}
-\]
-\item
-\code{more(cardinality)} maps $E$ to the preference relation
-\[
-X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}>\{e_i\in E\mid Y\models e_i\}
-\]
-\end{itemize}
-\comment{JR: Add Example}
-
-Preference types \code{less(weight)} and \code{more(weight)}
-are similar to \code{\#minimize} and \code{\#maximize} statements,
-but they do not allow priorities and 
-instead of applying to literals, they do apply to  Boolean formulas.
-Their domain consists of the sets of ground preference elements 
-%of the form:
-\code{$E=$\{$e_1$;$\ldots$;$e_n$\}} such that every $e_i$ has the form:
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{w}$?,?$\boldsymbol{t}$?::?$F$?
-\end{lstlisting}
-where $\boldsymbol{w}$ and $\boldsymbol{t}$ are term tuples and $F$ is a Boolean formula. 
-To informally describe their mappings, let us
-associate every set of ground preference elements $E$ with an aggregate \code{\#sum$E$}, 
-%extends the aggregates of Section \ref{subsec:gringo:aggregate} allowing 
-handling Boolean formulas in the natural way and 
-using the symbol `\code{::}' instead of `\code{:}'.
-Then, \code{less(weight)} maps $E$ to the preference relation where $X \succ Y$ holds 
-iff the value of \code{\#sum$E$} in $X$ is less than the value of \code{\#sum$E$} in $Y$.
-Similarly, \code{more(weight)} maps $E$ to the preference relation such that $X \succ Y$ holds iff
-the value of \code{\#sum$E$} in $X$ is greater than the value of \code{\#sum$E$} in $Y$.
-\comment{JR: Not quite sure about whether explaining it this way is a good idea\ldots}
-\comment{JR: Add Example}
-
-
-For answer set optimization (\code{aso};~\cite{brnitr03a})
-the domain consists of the sets of ground preference elements 
-\code{$E=$\{$e_1$;$\ldots$;$e_n$\}} such that every $e_i$ has the form:
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$F_1\,$?>?$\,\dots\,$?>?$\,F_m$? || ?$B$?.
-\end{lstlisting}
-where each $F_i$ and $B$ are Boolean formulas.
-Preference elements with this form are called \code{aso} rules.  
-The semantics of \code{aso} is based on satisfaction degrees for \code{aso} rules. % as in \eqref{eq:aso:rule}.
-The satisfaction degree of such a rule $r$ in an answer set $X$, 
-written $v_X(r)$, is 
-$1$ if $X$ does not satisfy the body $B$, %$X \not\models b$ for some $b\in B$, %\cap\mathcal{A}$ 
-%or  if $X \models b$ for some $\naf{b}\in B$, 
-or  if $X$ does not satisfy any $F_i$, 
-and it is $\min\{k \mid X \text{ satisfies } F_k, 1\leq k\leq n\}$ otherwise.
-Then, a set of \code{aso} rules $E$ is mapped to the preference relation defined as follows:
-$X \succeq Y$ if for all rules $r \in E$, $v_X(r) \leq v_Y(r)$, 
-and $X \succ Y$ if $X \succeq Y$ but $Y \not\succeq X$. 
-\comment{JR: Add Example}
-
-In \cite{giumar12a}, qualitative preferences are modeled as a strict partially ordered set
-\(
-(S,<)
-\)
-of literals.
-The literals in $S$ represent propositions that are preferably satisfied
-and the strict partial order $<$ on $S$ gives their relative importance.
-%
-In \asprin\ this is implemented by preference type \code{poset}, 
-that extends the original approach allowing preferences over Boolean formulas.
-The domain of \code{poset} consists of the sets $E$ of ground preference elements of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$F$?.
-\end{lstlisting}
-or 
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$F > F'$?.
-\end{lstlisting}
-where $F$ and $F'$ are Boolean formulas.
-Given a set of ground preference statements $E$, 
-the set $S_E$ is constructed from all Boolean formulas appearing in $E$, 
-and the partial order $>_E$ is defined as the transitive closure of the order 
-specified by the preference elements of the second type. 
-Then, $E$ is mapped to the preference relation where 
-$X \succ Y$ holds if 
-there exists a formula $F \in S_E$ such that $X \models F$ and $Y \not\models F$, 
-and for every formula $F \in S$ such that $Y \models F$ and $X \not\models F$, 
-there is a formula
-$F'\in S$ such that $F'<F$ and $X \models F'$ but $Y \not\models F'$.
-\comment{JR: Add Example}
-
-%As another example,
-%we can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}: 
-%%
-%\lstinputlisting[numbers=none]{examples/preference3.lp}
-%\marginlabel{%
-%  To inspect the output, invoke:\\
-%  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-%  \attach{examples/preference3.lp}{preference3.lp} \ 
-%  asprin.lib}}
-%This yields the unique optimal answer set $X_2$.
-
-The library of \asprin\ implements furthermore the following composite preference types~\cite{sonpon06a}: 
-\comment{T2J: Fix admissible input (preference elements)}
-\begin{itemize}
-\item \code{neg}
-\item \code{and}
-\item \code{pareto}
-\item \code{lexico}
-\end{itemize}
-The domains of \code{and} and \code{pareto} are the sets of ground naming atoms
-\begin{lstlisting}[numbers=none,escapechar=?]
-name(s)
-\end{lstlisting}
-whereas for \code{neg} the sets must be singleton, 
-and for \code{lexico} every naming atom is attached with a weight $\textbf{w}$: 
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{w}$?::name(s)
-\end{lstlisting}
-Given a naming atom \code{name(s)}, 
-let $\succeq_{\code{s}}$, $\succ_{\code{s}}$, $=_{\code{s}}$, $\prec_{\code{s}}$, $\preceq_{\code{s}}$ be the 
-non-strict, strict, equal, and inverse preference relations associated with preference statement $\code{s}$.
-Then the mappings for each of the composite preference types are defined as follows:
-%Consider the set of ground preference elements \code{$E=$\{$e_1$;$\ldots$;$e_n$\}}:
-\begin{itemize}
-\item
-\code{neg} maps $E=\code{\{name(s)\}}$ to the preference relation
-\[
-X \succ Y \text{ iff } Y \prec_s X
-\]
-\item 
-\code{and} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
-\[
-X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E}(X\succ_\code{s} Y)
-\]
-\item 
-\code{pareto} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
-\[
-X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E} (X\succeq_\code{s} Y)\wedge\bigvee_{\code{name(s)}\in E} (X\succ_\code{s} Y)
-\]
-\item
-\code{lexico} maps \code{$E=$\{$w_1$::name($s_1$);$\ldots$;$w_n$::name($s_n$)\}} to the preference relation 
-\[
-X \succ Y \text{ iff } \bigvee_{\code{w::name(s)}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::name(s')}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
-\] 
-\end{itemize} 
-\comment{JR: Stopped here}
-
-For example, the following preference specification aggregates the basic preferences \code{p1} and \code{p3}
-via a \code{pareto} preference, viz.~\code{p4}: 
-%
-\lstinputlisting[numbers=none]{examples/preference4.lp}
-\marginlabel{%
-  To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference4.lp}{preference4.lp} \ 
-  asprin.lib}}
-%
-This results in the optimal answer sets $X_1$, $X_2$ and $X_3$.
-
-Alternatively,
-we can aggregate \code{p1} over \code{p3}
-via a lexicographic order, \code{p5}:
-\lstinputlisting[numbers=none]{examples/preference5.lp}
-\marginlabel{%
-  To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference5.lp}{preference5.lp} \ 
-  asprin.lib}}
-In this case, $X_1$ and $X_3$ are the optimal answer sets.
-
+\comc{Implementing composite preferences.}{T2R: ??}
 
 
 %%% Local Variables: 

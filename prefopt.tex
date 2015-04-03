@@ -5,7 +5,7 @@
 \subsection{Multi-objective Optimization}
 \label{sec:oprimization}
 
-This section is not yet ready for publishing
+This subsection is not yet ready for publishing
 and will be included in one of the forthcoming editions of this guide.
 
 Some information on multi-objective optimization
@@ -14,6 +14,8 @@ can be obtained at the following references.
 \begin{itemize}
 \item Optimization \cite{gekakasc11b,gekakasc11c,gekasc11b,ankamasc12a}
 \item Video series on \clasp's optimization capacities \url{http://potassco.sourceforge.net/videos.html}
+\item Consult Section~\ref{subsec:gringo:optimize} for language constructs expressing multi-criteria optimization.
+\item Consult Section~\ref{subsec:clasp:solving} and~\ref{subsec:clasp:tune} for relevant \clasp\ options configurating the optimization process.
 \end{itemize}
 
 \subsection{Preference Handling with \asprin}\label{sec:asprin}
@@ -27,7 +29,22 @@ While \asprin\ comes with a library of predefined preference types
 it is readily extensible by new customized preference types.
 For a formal description of \asprin, please consult~\cite{brderosc15a}. 
 
-\paragraph{A simple example.} 
+Similar to common optimization in ASP,
+where objective functions are added to logic programs
+via minimize statements or weak constraints,
+a preference specification is added to a logic program
+to single out the optimal answer sets wrt the given preferences.
+However, as with minimize statements,
+such a specification is not part of the program
+but rather a meta statement referring to its answer sets.
+Hence, preference specifications are directives and thus preceded by \#.
+For clarity, we also refer to the underlying program as the \emph{base program}
+(also in view of distinguishing it from the \emph{preference program},
+implementing the preference specificiation; see below).
+
+To begin with,
+let us consider a simple example providing a holistic view on preference handling with \asprin.
+%
 \begin{example}
 \label{asprin:example1}
 Consider the following base program.
@@ -53,15 +70,16 @@ Consider the following base program.
 % ...
 % \end{lstlisting}
 We obtain three answer sets, one with \code{m(1)}, \code{m(2)}, and \code{m(3)}, respectively,
-and refer to them as $M_1$, $M_2$, and $M_3$.
+and refer to them as $X_1$, $X_2$, and $X_3$.
 
-We can use \asprin\ to compute the answer sets of the base program that are subset minimal with respect to atoms of predicate $a/1$. 
+For a first example,
+we can use \asprin\ to compute the answer sets of the base program that are subset minimal with respect to atoms of predicate $a/1$. 
 This can be done with the following preference specification 
 (available in \attach{examples/preference1.lp}{\code{preference1.lp}}): 
 %
 \lstinputlisting{examples/preference1.lp}
 %
-Line~1 contains a preference statement of name \code{p1} and type \code{subset} that contains a single preference element.
+Line~1 contains a preference statement of name \code{p1} and type \code{subset} that contains a single (non-ground) preference element.
 %The body of the preference element has to be formed by domain predicates, here \code{dom(X)}.
 Intuitively, the preference statement \code{p1} defines a preference of type \code{subset} over atoms of predicate \code{a/1}. 
 Line~2 contains an optimize statement that instructs \asprin\ to compute answer sets that are optimal with respect to \code{p1}. 
@@ -100,18 +118,19 @@ Models       : 1
 
 \end{lstlisting}
 %
-At first, \asprin\ finds the answer set $M_2$ of the base program. 
-Then, it looks for an answer set that is preferred to $M_2$ and it finds $M_1$. 
-In the last step, \asprin\ looks for an answer set that is preferred to $M_1$,  
-and given that none is found the optimality of $M_1$ is established. 
+At first, \asprin\ finds the answer set $X_2$ of the base program. 
+Then, it looks for an answer set that is preferred to $X_2$ and it finds $X_1$. 
+In the last step, \asprin\ looks for an answer set that is preferred to $X_1$,  
+and given that none is found the optimality of $X_1$ is established. 
 In total, two answer sets were enumerated in the computation of an optimal solution.
 
-We can minimize the extension of predicates \code{a/1} and \code{b/1} with the following preference specification.
+Alternatively,
+we can minimize the extension of predicates \code{a/1} and \code{b/1} with the following preference specification.
 %\attach{examples/preference2.lp}{\code{preference2.lp}}: 
 %
 \lstinputlisting[numbers=none]{examples/preference2.lp}
 %
-Now, we obtain that $M_2$ is already an optimal answer set: 
+Now, we obtain that $X_2$ is already an optimal answer set: 
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
@@ -127,9 +146,10 @@ OPTIMUM FOUND
 \paragraph{Computing many optimal answer sets.}
 
 In analogy to \clasp\ and \clingo, 
-\asprin\ allows for computing $n$ optimal models by adding the number $n$ to the command line;
-as well, $0$ is used to compute all optimal models. 
+\asprin\ allows for computing $n$ optimal answer sets by adding the number $n$ to the command line;
+as well, $0$ is used to compute all optimal answer sets. 
 
+\begin{example}
 For instance, the command
 %
 \begin{lstlisting}[numbers=none,escapechar=\%]
@@ -149,18 +169,18 @@ m(3) a(3) b(3) b(2)
 OPTIMUM FOUND
 \end{lstlisting}
 %
-The computation of the first optimal answer set, $M_1$, is the same as above.
-Then, \asprin\ searches for an answer set of the base program that is not worse than $M_1$, 
-finds $M_3$, and proves that it is optimal. 
-In the last step, \asprin\ looks for some answer set that is not worse than $M_1$ and $M_3$,  
+The computation of the first optimal answer set, $X_1$, is the same as above.
+Then, \asprin\ searches for an answer set of the base program that is not worse than $X_1$, 
+finds $X_3$, and proves that it is optimal. 
+In the last step, \asprin\ looks for some answer set that is not worse than $X_1$ and $X_3$,  
 and given that there is none, it terminates. 
 
 Adding the following choice rule 
 (via file \attach{examples/c1.lp}{\code{c1.lp}})
+to the above optimization process
 %
 \lstinputlisting[numbers=none]{examples/c1.lp}
 %
-to the above optimization process
 yields two additional optimal answer sets, both containing \code{c(1)}: 
 %
 \marginlabel{%
@@ -187,17 +207,17 @@ m(3) a(3) b(3) b(2) c(1)
 OPTIMUM FOUND *
 \end{lstlisting}
 %
-When \asprin\ looks for an answer set that is not worse than $M_1$,  
-it first looks for models that interpret atoms appearing in the preference statements
-in the same way as $M_1$. 
+When \asprin\ looks for an answer set that is not worse than $X_1$,  
+it first looks for answer sets that interpret atoms appearing in the preference statements
+in the same way as $X_1$. 
 In this way,
 it finds the second optimal model, that contains $c(1)$, 
 and prints it followed by the line `\lstinline{OPTIMUM FOUND *}'.  
-Then, it continues searching, finds $M_3$ and the process continues. 
+Then, it continues searching, finds $X_3$ and the process continues. 
 
 Finally,
-we can project optimal models on the atoms in preference statements 
-by option \lstinline{--projection}.
+we can project optimal answer sets on the atoms in preference statements 
+by \asprin's option \lstinline{--projection}.
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
@@ -219,6 +239,7 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 % m(3) a(5) b(4) b(3) b(5) b(2)
 % OPTIMUM FOUND
 % \end{lstlisting}
+\end{example}
 
 \paragraph{Syntax.}
 
@@ -241,9 +262,9 @@ and in the body (see below) assign the variable to the element (e.g., \code{V = 
 }
 and $F$ is a either a Boolean formula or a naming atom.
 We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
-Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),\comment{T2J: Having both \code{-} and \code{\~} is strange\dots What does this mean\dots?\par JR: Agree it is strange, and I don't like it, but I found no better way. My idea was that giving a different meaning to \code{-} inside the preference statements would
-be confusing to the user, so we should use a different symbol for that (and I chose the one used by Theorem Provers). I am happy if you have a better idea :) }
-using the logical connectives \code{\texttildelow} (negation), \code{\&} (conjunction) and \code{|} (disjunction).
+Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),
+using the connectives \code{not} (default negation), \code{\&} (conjunction) and \code{|} (disjunction).
+\comment{T: Shall we talk about different negations?}
 Parentheses can be written as usual,
 and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
 %
@@ -252,6 +273,7 @@ Naming atoms of form \code{name(s)}
 refer to the preference associated with preference statement \code{s} (see below).
 %
 Examples of weighted formulas are 
+`\code{42::a}', 
 `\code{a(X)}', 
 `\code{C::edge(X,Y,C)}', 
 `\code{W,(X,Y)::\texttildelow a(W,X) \& b(Y)}', and 
@@ -261,7 +283,7 @@ If $F_1$, \ldots, $F_n$ are weighted formulas, then
 \begin{lstlisting}[numbers=none,escapechar=?]
 {?$F_1$?;?$\dots$?;?$F_m$?}
 \end{lstlisting}
-is a \emph{set of weighted formulas}.  
+is a set of weighted formulas.
 We may drop the curly braces if $m=1$.
 
 A \emph{preference element} is of the form
@@ -286,6 +308,7 @@ by giving a means of conditionalization and a symbolic way of defining pre-order
 %\code{\{a;neg(b)\}>\{c\} || and(d,neg(d))}. 
 %
 Examples of preference elements are 
+`\code{42::a}', 
 `\code{a(X)}',  
 `\code{1::name(p);2::name(q)}', 
 `\code{\{a(X);b(X)\} > \{c(X);d(X)\}}',  and
@@ -294,7 +317,7 @@ Examples of preference elements are
 \begin{note}
 Here and below, 
 the rule body $B$ is intended \emph{exclusively} to provide instantiations for the variables appearing in the expressions to its left.  
-Accordingly, the literals of $B$ must be built-ins or belong to domain predicates of the accompanying logic program.
+Accordingly, the literals in $B$ must be built-ins or belong to domain predicates of the accompanying logic program.
 This ensures that $B$ can be fully evaluated during grounding.
 \end{note}
 
@@ -305,7 +328,7 @@ A \emph{preference statement} is of the form
 \end{lstlisting}
 %
 where \code{s} is a term giving the preference name, 
-\code{t} is a ground term providing the preference type, 
+\code{t} is a \REWc{ground}{T2J: Why?} term providing the preference type, 
 and each $e_j$ is a preference element.
 The rule body $B$ has the same form and purpose as above.
 %
@@ -350,19 +373,21 @@ and there is a single optimization directive
 % A non ground preference specification is valid
 % if after grounding it (using the accompanying logic program)
 % the resulting ground specification is valid.
-Whenever these conditions do not hold, \asprin\ reports an error and stops.
+Whenever these conditions do not hold, \asprin\ reports an error and exits.
+%
+As mentioned,
+the purpose of such a specification is to define the optimal answer sets of an underlying base logic program.
 
-The purpose of such a specification is to define the optimal answer sets of an accompanying logic program,
-also called the \emph{base program}.
-
-\begin{example}
-\label{asprin:example3} 
+\begin{example}\label{asprin:example3}\comment{T2J: Removed `hot'. Changed to -bunji (or take `not bunji')? What do you think?\par PROPAGATE CHANGE!!}
 Here is %an example of 
 a {preference specification} about leisure activities (without base program).
 \begin{lstlisting}[escapechar=?]
 #preference(costs,less(weight)){ 40::sauna; 70::dive }.
-#preference(fun,superset){ sauna; dive; hike; ~bunji }.
-#preference(temps,aso){dive>sauna||hot; sauna>dive||~hot}.
+#preference(fun,superset){ sauna; dive; hike; -bunji }.
+#preference(temps,aso){
+  dive > sauna || temp(C), C > 25; 
+ sauna > dive  || temp(C), C < 15
+}.
 #preference(all,pareto){name(costs); name(fun); name(temps)}.
 
 #optimize(all).
@@ -381,65 +406,64 @@ And this combined preference relation is declared subject to optimization in Lin
 
 \paragraph{Preference relations and preference types.}
 A ground preference statement declares a 
-strict partial order over answer sets\footnote{A strict partial order is a transitive and irreflexive relation.}.
+strict partial order over answer sets.\footnote{A strict partial order is a transitive and irreflexive relation.}
 This order is called a \emph{preference relation}.
 \begin{example}
 The preference statement of Example \ref{asprin:example1} stands for the following ground preference statement:
 \begin{lstlisting}[numbers=none]
 #preference(p1,subset){ a(1); a(2); a(3) }.
 \end{lstlisting}
-declaring the preference relation:
-\begin{center}
-\begin{tabular}{ccl}
-$X \succ_{\code{p1}} Y$ & iff & $\{e\in \{\code{a(1)},\code{a(2)},\code{a(3)}\} \mid X\models e\}\subset$ \\ 
-                       &      & $\{e\in \{\code{a(1)},\code{a(2)},\code{a(3)}\} \mid Y\models e\}$
-\end{tabular}
-\end{center}
+It declares the following preference relation:
+\[
+\begin{array}{cccl}
+X \succ_{\code{p1}} Y & \text{ iff } &         & \{e\in \{\code{a(1)},\code{a(2)},\code{a(3)}\} \mid X\models e\} \\ 
+                      &              & \subset & \{e\in \{\code{a(1)},\code{a(2)},\code{a(3)}\} \mid Y\models e\}
+\end{array}
+\]
 In Example \ref{asprin:example1}, 
-$M_1\succ_{\code{p1}}M_2$ because \code{\{a(1)\}$\subset$\{a(1),a(2),a(3)\}}, 
-and $M_3\succ_{\code{p1}}M_2$ given that \code{\{a(2),a(3)\}$\subset$\{a(1),a(2),a(3)\}}, 
-but  $M_1\not\succ_{\code{p1}}M_3$ as \code{\{a(1)\}$\not\subset$\{a(2),a(3)\}}. 
+we get
+$X_1\succ_{\code{p1}}X_2$ because \code{\{a(1)\}$\;\subset\;$\{a(1),a(2),a(3)\}}
+and $X_3\succ_{\code{p1}}X_2$ given that \code{\{a(2),a(3)\}$\;\subset\;$\{a(1),a(2),a(3)\}};
+however, we have $X_1\not\succ_{\code{p1}}X_3$ since \code{\{a(1)\}$\;\not\subset\;$\{a(2),a(3)\}}. 
 \end{example}
-We say that an answer set $X$ of a base program $P$ is \emph{optimal} with respect to a preference relation $\succ_\code{s}$
+An answer set $X$ of a base program $P$ is \emph{optimal} with respect to a preference relation $\succ$
 if there is no other answer set $Y$ of $P$ such that $Y \succ X$.
 In Example \ref{asprin:example1}, 
 %with preference statement \code{p1},
-$M_1$ and $M_3$ are optimal,
-whereas $M_2$ is not because $M_1 \succ_{\code{p1}} M_2$ and $M_3 \succ_{\code{p1}} M_2$. 
+$X_1$ and $X_3$ are optimal,
+whereas $X_2$ is not because $X_1 \succ_{\code{p1}} X_2$ (and $X_3 \succ_{\code{p1}} X_2$).
 %Given a valid preference specification where all preference statements are admissible, 
 \asprin\ computes answer sets of the base program
 that are optimal with respect to the preference relation 
 defined by the preference statement selected for optimization.
-Hence, in the example it produces $M_1$ and $M_3$.
+Hence, in the example it produces $X_1$ and $X_3$.
 
-But, how does a preference statement declare a preference relation?
-This is achieved by the \emph{preference type}, 
+But how does a preference statement declare a preference relation?
+This is accomplished by the \emph{preference type}
 that maps a set $E$ of ground preference elements into a preference relation.
-For example, \code{subset} maps $E=\{e_1\code{;}\ldots\code{;}e_n\}$ into:
-\begin{center}
-\(
+For example, the type \code{subset} maps $E=\{e_1\code{;}\ldots\code{;}e_n\}$ into
+\[
 X \succ Y \text{ iff } \{e_i\in E\mid X\models e_i\}\subset\{e_i\in E\mid Y\models e_i\}
-\)
-\end{center}
-and when applied to the preference elements of \code{p1} in Example \ref{asprin:example1} we obtain $\succ_{\code{p1}}$.
+\]
+And when applied to the preference elements of \code{p1} in Example \ref{asprin:example1}, we obtain $\succ_{\code{p1}}$.
 
 The full generality of preference elements is not always needed.
 For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
 For this reason, we specify for each preference type its \emph{domain}, 
 i.e., the ground preference elements for which the preference type is well defined.
 Hence, the domain of \code{subset} consists of Boolean formulas.
-Furthermore, we say that a ground preference statement
+Furthermore, a ground preference statement
 \begin{lstlisting}[numbers=none,escapechar=?]
 #preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?}.
 \end{lstlisting}
 is \emph{admissible} if every ${e}_i$ belongs to the domain of \code{t}.
-If a ground preference statement is not admissible, \asprin\ reports an error and stops. 
+If a ground preference statement is not admissible, \asprin\ reports an error and exits. 
 \begin{example}
 In Example \ref{asprin:example1}, the preference statement \code{p1}  
-is admissible because \code{a(1)}, \code{a(2)} and \code{a(3)} are Boolean formulas
+is admissible because \code{a(1)}, \code{a(2)}, and \code{a(3)} are Boolean formulas
 and thus belong to the domain of \code{subset}. 
 If we added the preference elements \code{1::a(1)} or \code{name(p2)}, 
-it would not be admissible any more.
+the statement would not be admissible any more.
 \end{example}
 
 \paragraph{Implementing preference types.}
@@ -448,8 +472,8 @@ In a nutshell, a preference type decides if,
 given a preference statement \code{s}, 
 an answer set $X$ is better than another answer set $Y$.
 To represent that decision by a preference program, 
-the three involved elements \code{s}, $X$ and $Y$ are translated into rules and facts.
-Let's see first some simple translations of preference statements.
+the three involved elements \code{s}, $X$, and $Y$ are translated into facts and rules.
+Let us first look at some simple translations of preference statements.
 %In \asprin, preference statements are translated into rules.
 %Let's see first some simple examples.
 \begin{example}
@@ -467,15 +491,15 @@ preference(p1,(1,(X)),1,for(a(X)),()) :- dom(X).
 Line~1 states the name and the type of the preference statement.
 Line~2 can be read as follows:
 in the preference statement \code{p1}, the first element has variables $\{\code{X}\}$,  
-and in the first position of the element there is a Boolean formula \code{a(X)} that has an empty list of weights associated.
+and in the first position of the element there is a Boolean formula \code{a(X)} that has an empty list of associated weights.
 %The reification $F_\code{p2}$ of 
 The translation of 
 \lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference2.lp}
-replaces \code{p1} with \code{p2} in the previous rules, and adds:
+replaces \code{p1} with \code{p2} in Line~1 and~2, and adds:
 \begin{lstlisting}[numbers=none]
 preference(p2,(2,(X)),1,for(b(X)),()) :- dom(X).
 \end{lstlisting}
-where number \code{2} in \code{(2,(X))} represents that this is the second preference element. 
+Number \code{2} in \code{(2,(X))} tells us that this is the second preference element. 
 \end{example}
 
 \begin{example}
@@ -492,34 +516,36 @@ Observe how \code{dom(X)} is appended to both rules.
 \end{example}
 
 In general, a weighted formula \code{$\boldsymbol{t}$::$F$}
-occurring in some set
-\code{$\boldsymbol{F}_i=$\{$F_1$;$\dots$;$F_m$\}}
+occurs in some set
+\begin{lstlisting}[numbers=none,escapechar=?]
+?$\boldsymbol{F}_i=$?{?$F_1$?;?$\dots$?;?$F_m$?}
+\end{lstlisting}
 of a preference element $e_j$ of the form 
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$\boldsymbol{F}_1\;$?>?$\,\dots\,$?>?$\;\boldsymbol{F}_n$? || ?$F_0$? : ?$B_j$?
 \end{lstlisting}
-that belongs to a preference statement \code{s} of the form
+that belongs itself to a preference statement \code{s} of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
 #preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
 \end{lstlisting}
-is translated into a rule of the form
+Acoordingly, the weighted formula is translated into a rule of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
-preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?$\boldsymbol{t}_F$?),?$\boldsymbol{t}$?) :- ?$B_j$?, ?$B$?.
+preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?) :- ?$B_j$?, ?$B$?.
 \end{lstlisting}
 where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
-$\boldsymbol{v}$ is a term tuple containing all the variables appearing in the rule, 
-and $\boldsymbol{t}_F$ is a term representing the Boolean formula $F$ 
-by using function symbols $\code{\_neg/1}$, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
+$\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule, 
+and ${t}_F$ is a term representing the Boolean formula $F$ 
+by using function symbols \REWc{$\code{\_neg/1}$}{T2R: Now we use '-', or??\par also we need: \textit{not}\par PROPAGE CHANGE}, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
 For example, 
 the formula \code{(\texttildelow a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
 %
 For representing the condition $F_0$, $i$ is set to $\code{0}$.
 %
 A naming atom \code{name(s)} is represented analogously,
-except that \code{for($\boldsymbol{r}_F$)} is replaced by \code{name(s)}.
+except that \code{for(${t}_F$)} is replaced by \code{name(s)}.
 %
 The translation of a preference statement of the form mentioned above 
-comprises the translation of all the weighted formulas appearing in it
+comprises the translation of all weighted formulas appearing in it
 along with the rule:
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(s,t) :- ?$B$?.
@@ -534,13 +560,13 @@ optimize(s) :- ?$B$?.
 \end{lstlisting}
 
 \begin{note}
-All the bodies $B_j$ and $B$ consist of domain predicates or built-ins. 
+All bodies $B_j$ and $B$ consist of domain predicates or built-ins. 
 %that can always be fully evaluated by the grounder, 
-Hence, after grounding, all the rules generated in the translation become facts.
+Hence, after grounding, all rules generated in the translation become facts.
 \end{note}
 
 \begin{example}
-\comment{JR: This is a ground preference specification, maybe we could add variables.}
+\comment{JR: This is a ground preference specification, maybe we could add variables.\par T: See above ;)}
 The preference specification of Example \ref{asprin:example3} is translated into the following rules:
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(costs, (1, ()), 1, for(sauna), (40)).
@@ -576,7 +602,7 @@ optimize(all).
 %\end{lstlisting}
 %and many facts of the form:
 %\begin{lstlisting}[numbers=none,escapechar=?]
-%preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?$\boldsymbol{t}_F$?),?$\boldsymbol{t}$?).
+%preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?).
 %\end{lstlisting}
 %We want to decide whether $X$ is better than $Y$.
 
@@ -585,21 +611,22 @@ compares two answer sets $X$ and $Y$
 given a preference statement \code{s} of type \code{t}. %, 
 %deciding if $X$ is better than $Y$.
 To allow for this comparison, 
-\asprin\ 
-provides a fact \code{holds($\boldsymbol{t}_F$)} 
-for every term \code{for($\boldsymbol{t}_F$)} appearing in the translation of \code{s} 
-such that $X$ satisfies the Boolean formula $F$ 
-and, analogously, it provides the fact \code{holds'($\boldsymbol{t}_F$)} if $Y$ satisfies $F$.
+\asprin\ provides
+for every term \code{for(${t}_F$)} appearing in the translation of \code{s}
+the fact \code{holds(${t}_F$)} 
+whenever $X$ satisfies the Boolean formula $F$.
+Analogously, \asprin\ provides the fact \code{holds'(${t}_F$)}, if $Y$ satisfies $F$.
 
 \begin{example}
 For the preference statement \code{p1} of Example \ref{asprin:example1}, 
 translated in Example \ref{asprin:example1translated}, \asprin\ provides the following facts. 
-Deciding if $M_1 \succ_\code{p1} M_2$,  
-\code{holds(a(1))}, \code{holds'(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))} are given.
-For testing $M_3 \succ_\code{p1} M_2$, \asprin\ provides 
+For deciding whether $X_1 \succ_\code{p1} X_2$ is true,
+\asprin\ adds the facts
+\code{holds(a(1))}, \code{holds'(a(1))}, \code{holds'(a(2))}, and \code{holds'(a(3))}.
+Similarly, for testing $X_3 \succ_\code{p1} X_2$, \asprin\ provides
 \code{holds(a(2))}, \code{holds(a(3))}, \code{holds'(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))}.
-For $M_1 \succ_\code{p1} M_3$, 
-\code{holds(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))} are provided.
+And for $X_1 \succ_\code{p1} X_3$, 
+atoms \code{holds(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))} are established.
 \end{example}
 
 We have seen how \asprin\ provides the translation of the preference statement \code{s} of type \code{t} 
@@ -621,8 +648,8 @@ if \code{s} is optimized then \code{better(s)} must be true.
 %iff $X \succ_{\code{s}} Y$. 
 
 \begin{example}
-The preference type \code{subset} can be implemented as follows:
-(\attach{examples/subset.lp}{\code{subset.lp}}).
+The preference type \code{subset} can be implemented as follows
+(see file \attach{examples/subset.lp}{\code{subset.lp}}).
 %
 \lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/subset.lp}
 %
@@ -637,81 +664,80 @@ and every formula \code{B} in \code{s} that is false in $Y$ is also false in $X$
 
 In addition, 
 the following integrity constraint enforces the optimization with respect to a given optimization directive:
-(\attach{examples/basic.lp}{\code{basic.lp}}):
+(included in file \attach{examples/basic.lp}{\code{basic.lp}}):
 %
 \lstinputlisting[numbers=none]{examples/basic.lp}
 %
-It states that \code{better(P)} must hold whenever \code{P} is optimized. 
+This cardinality constraint makes sure that \code{better(P)} holds whenever \code{P} is optimized. 
 Given that this rule is shared by many preference programs, 
-we include it in a program named simply \code{preference}.
+it is included in a preference-type independant program named \code{preference}.
 
-Instead of using \asprin's library, \code{asprin.lib}, 
-we can now use the preference program we have just defined:
+Instead of using \asprin's library, viz.~\code{asprin.lib}, 
+we can now directly use the above preference program as follows:
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
 \end{lstlisting}
-As before, we obtain $M_1$ and $M_3$ as optimal answer sets.
+As before, we obtain $X_1$ and $X_3$ as optimal answer sets.
 %Other new preference types can be easily defined in this way.  
 %A look at \code{asprin.lib} may give a good starting point. 
 \end{example}
 
 \begin{note}
-Preference programs start with a directive
+Preference programs of type $t$ start with a directive
 \begin{lstlisting}[numbers=none]
-#program preference(type).
+#program preference(t).
 \end{lstlisting}
-and end at the end of a file, or with the directive
-\lstinline{#program base.}
-signaling the start of a base program (cf.~Section~\ref{sec:multi}). 
+and end with another program directive or at the end of a file
+(cf.~Section~\ref{subsec:gringo:meta}).
 For every preference type \code{t} appearing in a preference statement \code{s}, 
 there must be a preference program block starting with:
 \begin{lstlisting}[numbers=none]
 #program preference(t).
 \end{lstlisting}
-If there is no such block, \asprin\ prints an error and stops.
-Additionally, ``generic'' preference program blocks starting with the directive: 
+If there is no such block, \asprin\ prints an error and exits.
+Additionally, ``generic'' preference program blocks starting with the directive
 \begin{lstlisting}[numbers=none]
 #program preference.
 \end{lstlisting}
-can also be used. 
+can be used. 
 These are intended to provide rules shared by all preference programs.
-\asprin\ loads all the ``generic'' preference programs along with 
+\asprin\ loads all ``generic'' preference programs along with 
 the preference programs for the types appearing in the preference statements of the program.
 \end{note}
 
 \begin{note}
 There are some syntax restrictions to the form of preference programs:
 \begin{itemize}
-\item They may not contain atoms that start with underscore `\_'.
+\item They may not contain atoms starting with an underscore `\_'.
 \item Atoms of predicates \code{preference/2}, \code{preference/5}, 
       \code{holds/1}, \code{holds'} and \code{optimize/1}
-      may not appear in the head of the rules.
+      may not appear in the heads of rules.
 \end{itemize}
 \end{note}
 
 \begin{note}
-\asprin\ relies on the correctness of the preference programs. 
+\asprin\ relies on the correctness of preference programs. 
 In other words, 
-if the preference programs implement correctly the corresponding preference types, 
-then \asprin\ will function normally.
-But if they are not correct, the behavior of \asprin\ is undefined.
+if a preference program correctly implements the corresponding preference type,
+then \asprin\ also functions correctly.
+Otherwise, the behavior of \asprin\ is undefined.
 \end{note}
 
 \begin{note}
-When using \asprin\ to compute many optimal answer sets the syntax of the preference programs
-is limited to that of stratified logic programs\comment{JR: Add cite}, 
-i.e., in this case the preference programs may neither contain disjunctions 
-nor choice rules or aggregates in the head of the rules.
+When using \asprin\ to compute many optimal answer sets the syntax of preference programs
+is limited to that of stratified logic programs\comment{JR: Add cite}.
+In this case, preference programs may neither contain disjunctions 
+nor choice rules nor aggregates in the rule heads.
 \comment{JR: Rephrase.}
 \end{note}
 
-Recall from the previous section that for each preference type 
-we define a set of admissible preference statements.
-This is defined in \asprin\ in the preference program using predicate \code{\_error/1}.
-Namely, \code{\_error(X)} has to be true whenever the preference statement is not admissible.
-In this case, \asprin\ stops and prints the error message \code{X}\footnote{
+Recall from the previous section that we define a set of admissible preference elements for each preference type.
+The respective notion of admissibility is defined in \asprin\ using predicate \code{\_error/1}.
+Thus, \code{\_error(X)} has to be true whenever the preference statement is not admissible.
+In this case, \asprin\ exits and prints the error message \code{X}.\footnote{%
 In the current \asprin\ implementation, 
-the system only stops after finding a first answer set of the base program.}.
+the system only exits after finding a first answer set of the base program.}
+For coherence, the corresponding rules are also included in the corresponding preference program.
 \begin{example}
 The preference program (\attach{examples/subset.lp}{\code{subset.lp}})
 includes the following rules to define the admissibility of \code{subset} preference statements:
@@ -847,7 +873,7 @@ $F'\in S$ such that $F'<F$ and $X \models F'$ but $Y \not\models F'$.
 %  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
 %  \attach{examples/preference3.lp}{preference3.lp} \ 
 %  asprin.lib}}
-%This yields the unique optimal answer set $M_2$.
+%This yields the unique optimal answer set $X_2$.
 
 The library of \asprin\ implements furthermore the following composite preference types~\cite{sonpon06a}: 
 \comment{T2J: Fix admissible input (preference elements)}
@@ -905,7 +931,7 @@ via a \code{pareto} preference, viz.~\code{p4}:
   \attach{examples/preference4.lp}{preference4.lp} \ 
   asprin.lib}}
 %
-This results in the optimal answer sets $M_1$, $M_2$ and $M_3$.
+This results in the optimal answer sets $X_1$, $X_2$ and $X_3$.
 
 Alternatively,
 we can aggregate \code{p1} over \code{p3}
@@ -916,7 +942,7 @@ via a lexicographic order, \code{p5}:
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
   \attach{examples/preference5.lp}{preference5.lp} \ 
   asprin.lib}}
-In this case, $M_1$ and $M_3$ are the optimal answer sets.
+In this case, $X_1$ and $X_3$ are the optimal answer sets.
 
 
 

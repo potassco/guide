@@ -40,7 +40,7 @@ but rather a meta statement referring to its answer sets.
 Hence, preference specifications are directives and thus preceded by \#.
 For clarity, we also refer to the underlying program as the \emph{base program}
 (also in view of distinguishing it from the \emph{preference program},
-implementing the preference specificiation; see below).
+implementing the preference specification; see below).
 
 To begin with,
 let us consider a simple example providing a holistic view on preference handling with \asprin.
@@ -729,7 +729,7 @@ that belongs itself to a preference statement \code{s} of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
 #preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
 \end{lstlisting}
-Acoordingly, the weighted formula is translated into a rule of the form
+Accordingly, the weighted formula is translated into a rule of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?) :- ?$B_j$?, ?$B$?.
 \end{lstlisting}
@@ -871,7 +871,7 @@ the following integrity constraint enforces the optimization with respect to a g
 %
 This cardinality constraint makes sure that \code{better(P)} holds whenever \code{P} is optimized. 
 Given that this rule is shared by many preference programs, 
-it is included in a preference-type independant program named \code{preference}.
+it is included in a preference-type independent program named \code{preference}.
 
 Instead of using \asprin's library, viz.~\code{asprin.lib}, 
 we can now directly use the above preference program as follows:

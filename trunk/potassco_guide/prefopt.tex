@@ -249,7 +249,8 @@ A \emph{weighted formula} is of the form
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$\boldsymbol{t}$?::?$F$?
 \end{lstlisting}
-where $\boldsymbol{t}$ is a term tuple\comment{T2J: Aren't number constants, too?\par JR: I wanted to refer to Figure \ref{fig:terms}, I rephrase :) and add also constraint on pooling and intervals\ldots}\footnote{%
+where $\boldsymbol{t}$ is a term tuple
+\footnote{%
 Term tuples in the current \asprin\ implementation are defined following Figure \ref{fig:terms}, 
 except that \emph{terms} cannot contain \emph{functions}, 
 and \emph{simpleterms} cannot contain \emph{constants}. 
@@ -264,7 +265,7 @@ and $F$ is a either a Boolean formula or a naming atom.
 We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
 Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),
 using the connectives \code{not} (default negation), \code{\&} (conjunction) and \code{|} (disjunction).
-\comment{T: Shall we talk about different negations?}
+\comment{T: Shall we talk about different negations?\par J: I would not mess with it... \par J: Do we allow to nest negation? If not, we should mention it. }
 Parentheses can be written as usual,
 and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
 %
@@ -276,7 +277,7 @@ Examples of weighted formulas are
 `\code{42::a}', 
 `\code{a(X)}', 
 `\code{C::edge(X,Y,C)}', 
-`\code{W,(X,Y)::\texttildelow a(W,X) \& b(Y)}', and 
+`\code{W,(X,Y):: not a(W,X) \& b(Y)}', and 
 `\code{X::name(p(X))}'. 
 
 If $F_1$, \ldots, $F_n$ are weighted formulas, then
@@ -321,19 +322,33 @@ Accordingly, the literals in $B$ must be built-ins or belong to domain predicate
 This ensures that $B$ can be fully evaluated during grounding.
 \end{note}
 
-A \emph{preference statement} is of the form
-%
+\begin{note}
+Preference elements are required to be \emph{safe}, 
+i.e., all variables in a preference element must occur in some positive literal 
+in its body or in the body of the preference statement containing it (see below).  
+\end{note} 
+
+A \emph{preference statement} is of the form %
 \begin{lstlisting}[numbers=none,escapechar=?]
 #preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
 \end{lstlisting}
 %
 where \code{s} is a term giving the preference name, 
-\code{t} is a \REWc{ground}{T2J: Why?} term providing the preference type, 
+\code{t} is a \REWc{ground}{T2J: Why? \par
+J: This is for implementation reasons, and may be changed.
+   When parsing, asprin only loads (1) the preference programs whose ``names'' 
+   appear in some preference statement and (2) the preference programs with no types. 
+   This is good for efficiency, so that we can add a big library and ony load what is needed.
+   To implement this, we require that these term types are ground, and in this way we 
+   can compare (before grounding) with  the preference program names.
+} 
+term providing the preference type, 
 and each $e_j$ is a preference element.
 The rule body $B$ has the same form and purpose as above.
 %
 %\begin{note}
 That is, the body $B$ of a preference statement is used to instantiate the variables of $s$, $t$ and each $e_i$.
+For safety, all variables appearing in \code{s} must also appear in a positive literal in $B$.
 
 \begin{example}
 \label{asprin:example2}
@@ -378,28 +393,37 @@ Whenever these conditions do not hold, \asprin\ reports an error and exits.
 As mentioned,
 the purpose of such a specification is to define the optimal answer sets of an underlying base logic program.
 
-\begin{example}\label{asprin:example3}\comment{T2J: Removed `hot'. Changed to -bunji (or take `not bunji')? What do you think?\par PROPAGATE CHANGE!!}
+\begin{example}\label{asprin:example3}\comment{T2J: Removed `hot'. Changed to -bunji (or take `not bunji')? What do you think?\par
+J: I prefer to use ``not'', so we do not mess with strong negation. 
+\par
+J: With \code{temp(C), C > 25} the element was not safe (see above), 
+so I moved back to \code{hot} and added a variable at \code{costs}. Take it as a suggestion :)
+}
 Here is %an example of 
 a {preference specification} about leisure activities (without base program).
 \begin{lstlisting}[escapechar=?]
-#preference(costs,less(weight)){ 40::sauna; 70::dive }.
-#preference(fun,superset){ sauna; dive; hike; -bunji }.
+#preference(costs,less(weight)){ 
+  C :: sauna : cost(sauna,C); 
+  C ::  dive : cost(dive,C) 
+}.
+#preference(fun,superset){ sauna; dive; hike; not bunji }.
 #preference(temps,aso){
-  dive > sauna || temp(C), C > 25; 
- sauna > dive  || temp(C), C < 15
+  dive > sauna ||     hot; 
+ sauna > dive  || not hot
 }.
 #preference(all,pareto){name(costs); name(fun); name(temps)}.
 
 #optimize(all).
 \end{lstlisting}
-The preference statement in Line~1 represents the preference relation \code{costs} of type \code{less(weight)}.
+%The preference statement in Line~1 represents the preference relation \code{costs} of type \code{less(weight)}.
 Intuitively, this relation optimizes the sum of weights of its preference elements, 
-viz.\ \code{40::sauna} and \code{70::dive}.
+viz.\ \code{C::sauna:cost(sauna,C)} and \code{C::dive:cost(dive,C)}.
+Intuitively, this relation optimizes the sum of weights of its preference elements.
 This preference type is very similar to the one used by native minimization directives (cf.\ Section~\ref{subsec:gringo:optimize}).
 The preference type \code{superset} provides a set inclusion based relation and the one refereed to as \code{aso}
 amounts to answer set optimization as put forward in~\cite{brnitr03a}.
-These three basic preference relations are combined according to the \code{pareto} principle in Line~4.
-And this combined preference relation is declared subject to optimization in Line~6.
+These three basic preference relations are combined according to the \code{pareto} principle in Line~10.
+And this combined preference relation is declared subject to optimization in Line~12.
 \end{example}
 %
 %All four preference types are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.
@@ -607,7 +631,7 @@ Preference types \code{and} and \code{pareto} deal with sets of ground naming at
 name(s)
 \end{lstlisting}
 For \code{neg}, these sets must be singleton.
-And for \code{lexico}, each naming atom has an attached weight\comment{T2J: tuple??? just to make sure} $\code{$w$}$: 
+And for \code{lexico}, each naming atom has an attached tuple $\code{$w$}$: 
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?${w}$?::name(s)
 \end{lstlisting}
@@ -733,9 +757,11 @@ preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?)
 where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
 $\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule, 
 and ${t}_F$ is a term representing the Boolean formula $F$ 
-by using function symbols \REWc{$\code{\_neg/1}$}{T2R: Now we use '-', or??\par also we need: \textit{not}\par PROPAGE CHANGE}, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
+by using function symbols \REWc{$\code{\_neg/1}$}{T2R: Now we use '-', or??
+\par J: No, here we can use the same, given that strong negation is handled normally by gringo.
+\par also we need: \textit{not}\par PROPAGE CHANGE \par J: I think what we have is enough now :)}, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
 For example, 
-the formula \code{(\texttildelow a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
+the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
 %
 For representing the condition $F_0$, $i$ is set to $\code{0}$.
 %
@@ -764,7 +790,7 @@ Hence, after grounding, all rules generated in the translation become facts.
 \end{note}
 
 \begin{example}
-\comment{JR: This is a ground preference specification, maybe we could add variables.\par T: See above ;)}
+\comment{JR: This is a ground preference specification, maybe we could add variables.\par T: See above ;) \par J: I will change this later once we agree on the example.}
 The preference specification of Example \ref{asprin:example3} is translated into the following rules:
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(costs, (1, ()), 1, for(sauna), (40)).
@@ -955,7 +981,7 @@ predicates \code{preference/2}, \code{preference/5} and \code{optimize/1}
 %In this way, the predicate may be fully evaluated by the grounder.
 \end{note}
 
-\comc{Implementing composite preferences.}{T2R: ??}
+\comc{Implementing composite preferences.}{T2R: ?? \par J: Now I can go through it :)}
 
 
 %%% Local Variables: 

@@ -2,7 +2,7 @@
 \section{Optimization and Preference Handling}
 \label{sec:prefopt}
 
-\subsection{Multi-objective Optimization}
+\subsection{Multi-objective Optimization with \clasp\ and \clingo}
 \label{sec:oprimization}
 
 This subsection is not yet ready for publishing
@@ -28,6 +28,8 @@ While \asprin\ comes with a library of predefined preference types
 (\code{subset}, \code{pareto}, etc.),
 it is readily extensible by new customized preference types.
 For a formal description of \asprin, please consult~\cite{brderosc15a}. 
+
+\subsubsection{Computing optimal answer sets}
 
 Similar to common optimization in ASP,
 where objective functions are added to logic programs
@@ -143,7 +145,7 @@ OPTIMUM FOUND
 \end{lstlisting}
 \end{example}
 
-\paragraph{Computing many optimal answer sets.}
+\subsubsection{Computing multiple optimal answer sets}
 
 In analogy to \clasp\ and \clingo, 
 \asprin\ allows for computing $n$ optimal answer sets by adding the number $n$ to the command line;
@@ -241,7 +243,7 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 % \end{lstlisting}
 \end{example}
 
-\paragraph{Syntax.}
+\subsubsection{Input language of \asprin}
 
 \asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
@@ -428,7 +430,8 @@ And this combined preference relation is declared subject to optimization in Lin
 %
 %All four preference types are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.
 
-\paragraph{Preference relations and preference types.}
+\subsubsection{Preference relations and preference types}
+
 A ground preference statement declares a 
 strict partial order over answer sets.\footnote{A strict partial order is a transitive and irreflexive relation.}
 This order is called a \emph{preference relation}.
@@ -490,7 +493,8 @@ If we added the preference elements \code{1::a(1)} or \code{name(p2)},
 the statement would not be admissible any more.
 \end{example}
 
-\paragraph{\asprin\ library.}
+\subsubsection{\asprin\ library}
+
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}
 	\item  \code{subset} and \code{superset}   
@@ -687,7 +691,7 @@ via a lexicographic order, \code{p5}:
   asprin.lib}}
 In this case, $X_1$ and $X_3$ are the optimal answer sets.
 
-\paragraph{Implementing preference types.}
+\subsubsection{Implementing preference types}
 
 In \asprin, preference types are implemented by logic programs called \emph{preference programs}.
 In a nutshell, a preference type decides if, 

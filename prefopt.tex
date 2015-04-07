@@ -745,11 +745,9 @@ preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?)
 where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
 $\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule, 
 and ${t}_F$ is a term representing the Boolean formula $F$ 
-by using function symbols \REWc{$\code{\_neg/1}$}{T2R: Now we use '-', or??
-\par J: No, here we can use the same, given that strong negation is handled normally by gringo.
-\par also we need: \textit{not}\par PROPAGE CHANGE \par J: I think what we have is enough now :)\par T: Mmmh, let's discuss :)}, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
+by using function symbols $\code{\_not/1}$, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
 For example, 
-the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
+the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_not(a(X)),b(X)))}. 
 %
 For representing the condition $F_0$, $i$ is set to $\code{0}$.
 %
@@ -778,23 +776,22 @@ Hence, after grounding, all rules generated in the translation become facts.
 \end{note}
 
 \begin{example}
-\comment{JR: This is a ground preference specification, maybe we could add variables.\par T: See above ;) \par J: I will change this later once we agree on the example.\par T: Agreed :)}
 The preference specification of Example \ref{asprin:example3} is translated into the following rules:
 \begin{lstlisting}[numbers=none,escapechar=?]
-preference(costs, (1, ()), 1, for(sauna), (40)).
-preference(costs, (2, ()), 1, for(dive), (70)).
+preference(costs, (1, (C)), 1, for(sauna), (C)).
+preference(costs, (2, (C)), 1, for(dive),  (C)).
 preference(costs, less(weight)).
 
 preference(fun, (1, ()), 1, for(sauna), ()).
 preference(fun, (2, ()), 1, for(dive), ()).
 preference(fun, (3, ()), 1, for(hike), ()).
-preference(fun, (4, ()), 1, for(_neg(bunji)), ()).
+preference(fun, (4, ()), 1, for(_not(bunji)), ()).
 preference(fun, superset).
 
 preference(temps, (1, ()), 0, for(hot), ()).
 preference(temps, (1, ()), 1, for(dive), ()).
 preference(temps, (1, ()), 2, for(sauna), ()).
-preference(temps, (2, ()), 0, for(_neg(hot)), ()).
+preference(temps, (2, ()), 0, for(_not(hot)), ()).
 preference(temps, (2, ()), 1, for(sauna), ()).
 preference(temps, (2, ()), 2, for(dive), ()).
 preference(temps, aso).
@@ -939,7 +936,6 @@ Otherwise, the behavior of \asprin\ is undefined.
 When using \asprin\ to compute many optimal answer sets the syntax of preference programs
 is limited to that of stratified logic programs~\cite{apblwa87a}.
 This excludes preference programs with disjunctions, choices, or aggregates in rule heads.
-\comment{JR: Rephrase. TS: Better?}
 \end{note}
 
 Recall from the previous section that we define a set of admissible preference elements for each preference type.

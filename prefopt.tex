@@ -334,14 +334,8 @@ A \emph{preference statement} is of the form %
 \end{lstlisting}
 %
 where \code{s} is a term giving the preference name, 
-\code{t} is a \REWc{ground}{T2J: Why? \par
-J: This is for implementation reasons, and may be changed.
-   When parsing, asprin only loads (1) the preference programs whose ``names'' 
-   appear in some preference statement and (2) the preference programs with no types. 
-   This is good for efficiency, so that we can add a big library and ony load what is needed.
-   To implement this, we require that these term types are ground, and in this way we 
-   can compare (before grounding) with  the preference program names.
-} 
+\code{t} is a ground\footnote{This is a pragmatic restriction,
+enabling \asprin\ to only include the relevant parts of its library.} 
 term providing the preference type, 
 and each $e_j$ is a preference element.
 The rule body $B$ has the same form and purpose as above.
@@ -944,9 +938,8 @@ Otherwise, the behavior of \asprin\ is undefined.
 \begin{note}
 When using \asprin\ to compute many optimal answer sets the syntax of preference programs
 is limited to that of stratified logic programs~\cite{apblwa87a}.
-In this case, preference programs may neither contain disjunctions 
-nor choice rules nor aggregates in the rule heads.
-\comment{JR: Rephrase.}
+This excludes preference programs with disjunctions, choices, or aggregates in rule heads.
+\comment{JR: Rephrase. TS: Better?}
 \end{note}
 
 Recall from the previous section that we define a set of admissible preference elements for each preference type.

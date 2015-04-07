@@ -511,16 +511,18 @@ X \succ Y \text{ iff } \{e\in E\mid X\models e\}>\{e\in E\mid Y\models e\}
 An example of preference type \code{superset} is given in Line~5 of Example~\ref{asprin:example3}.
 %
 \begin{example}
-We can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}
-in Example~\ref{asprin:example1} as follows.
-%
-\lstinputlisting[numbers=none]{examples/preference3.lp}
 %
 \marginlabel{%
  To inspect the output, invoke:\\
  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
  \attach{examples/preference3.lp}{preference3.lp} \ 
  asprin.lib}}
+%
+We can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}
+in Example~\ref{asprin:example1} as follows.
+%
+\lstinputlisting[numbers=none]{examples/preference3.lp}
+%
 This yields the unique optimal answer set $X_2$.
 \end{example}
 
@@ -637,7 +639,7 @@ that contain \code{a(3)} and are subset minimal as regards instances of \code{b/
 The library of \asprin\ implements furthermore the following composite preference types,
 which amount to the ones defined in~\cite{sonpon06a}: 
 \begin{itemize}
-\item \code{neg}
+\item \code{neg}\comment{T2R: Use 'not' instead\dots?}
 \item \code{and}
 \item \code{pareto}
 \item \code{lexico}

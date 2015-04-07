@@ -1,4 +1,4 @@
-#include <iclingo>.
+#include <incmode>.
 
 #program base.
 % Define
@@ -6,7 +6,7 @@ location(table).
 location(X) :- block(X).
 holds(F,0) :- init(F).
 
-#program transition(t).
+#program step(t).
 % Generate
 { move(X,Y,t) : block(X), location(Y), X != Y } = 1.
 % Test

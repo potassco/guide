@@ -267,11 +267,9 @@ and $F$ is a either a Boolean formula or a naming atom.
 We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
 Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),
 using the connectives \code{not} (default negation), \code{\&} (conjunction) and \code{|} (disjunction).
-\comment{T: Shall we talk about different negations?\par J: I would not mess with it... \par J: Do we allow to nest negation? If not, we should mention it. }
 Parentheses can be written as usual,
 and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
 %
-%Otherwise, a 
 Naming atoms of form \code{name(s)}
 refer to the preference associated with preference statement \code{s} (see below).
 %
@@ -381,11 +379,8 @@ telling \asprin\ to restrict its reasoning mode to the preference relation decla
 % 
 
 A \emph{preference specification} is a set of preference statements along with an optimization directive.
-\comment{JR: In \asprin\ we allow many optimization directives, 
-             but only one ground optimization directive (but we could change this ;)}
-% A preference specification 
-It is valid, if after grounding the naming dependencies are acyclic and closed
-and there is a single optimization directive
+It is valid, if grounding results in acyclic and closed naming dependencies
+along with a single optimization directive
 (see \cite{brderosc15a} for details).
 % A non ground preference specification is valid
 % if after grounding it (using the accompanying logic program)
@@ -395,12 +390,7 @@ Whenever these conditions do not hold, \asprin\ reports an error and exits.
 As mentioned,
 the purpose of such a specification is to define the optimal answer sets of an underlying base logic program.
 
-\begin{example}\label{asprin:example3}\comment{T2J: Removed `hot'. Changed to -bunji (or take `not bunji')? What do you think?\par
-J: I prefer to use ``not'', so we do not mess with strong negation. 
-\par
-J: With \code{temp(C), C > 25} the element was not safe (see above), 
-so I moved back to \code{hot} and added a variable at \code{costs}. Take it as a suggestion :)
-}
+\begin{example}\label{asprin:example3}
 Here is %an example of 
 a {preference specification} about leisure activities (without base program).
 \begin{lstlisting}[escapechar=?]
@@ -763,7 +753,7 @@ $\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule,
 and ${t}_F$ is a term representing the Boolean formula $F$ 
 by using function symbols \REWc{$\code{\_neg/1}$}{T2R: Now we use '-', or??
 \par J: No, here we can use the same, given that strong negation is handled normally by gringo.
-\par also we need: \textit{not}\par PROPAGE CHANGE \par J: I think what we have is enough now :)}, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
+\par also we need: \textit{not}\par PROPAGE CHANGE \par J: I think what we have is enough now :)\par T: Mmmh, let's discuss :)}, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
 For example, 
 the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_neg(a(X)),b(X)))}. 
 %
@@ -794,7 +784,7 @@ Hence, after grounding, all rules generated in the translation become facts.
 \end{note}
 
 \begin{example}
-\comment{JR: This is a ground preference specification, maybe we could add variables.\par T: See above ;) \par J: I will change this later once we agree on the example.}
+\comment{JR: This is a ground preference specification, maybe we could add variables.\par T: See above ;) \par J: I will change this later once we agree on the example.\par T: Agreed :)}
 The preference specification of Example \ref{asprin:example3} is translated into the following rules:
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(costs, (1, ()), 1, for(sauna), (40)).
@@ -953,7 +943,7 @@ Otherwise, the behavior of \asprin\ is undefined.
 
 \begin{note}
 When using \asprin\ to compute many optimal answer sets the syntax of preference programs
-is limited to that of stratified logic programs\comment{JR: Add cite}.
+is limited to that of stratified logic programs~\cite{apblwa87a}.
 In this case, preference programs may neither contain disjunctions 
 nor choice rules nor aggregates in the rule heads.
 \comment{JR: Rephrase.}

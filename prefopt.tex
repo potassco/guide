@@ -563,7 +563,7 @@ X \succ Y
 \]
 \end{itemize}
 
-For illustrating the similarity to optimization statement, \comment{J: Style: statements?}
+For illustrating the similarity to optimization statements,
 consider the following \code{\#minimize} statement from Section~\ref{subsec:tsp:encoding}.
 %
 \lstinputlisting[numbers=none,firstline=2]{examples/min.lp}
@@ -653,17 +653,6 @@ and for every formula $F \in S_E$ such that $Y \models F$ and $X \not\models F$,
 there is a formula
 $F'\in S$ such that $F'<F$ and $X \models F'$ but $Y \not\models F'$.
 The interested reader is referred to~\cite{giumar12a} for full details.
-
-\comment{JR: Add Example \par T: What do you think of this one? 
-\par J: I like it, but I thought relating \code{aso} and \code{poset} through the examples would be a good idea, see above and below ;)}
-As a simple example,
-the next preference statement of type \code{poset} prefers answer sets of the base program in Example~\ref{asprin:example1}
-that contain \code{a(3)} and are subset minimal as regards instances of \code{b/1}.
-\begin{lstlisting}[numbers=none]
-#preference(fewBs,poset){ a(3), not b(X) > b(X) : dom(X) }.
-#optimize(fewBs).
-\end{lstlisting}
-
 %
 \begin{example}
 %
@@ -686,7 +675,7 @@ we obtain three optimal answer sets $X_1$, $X_2$ and $X_3$.
 The library of \asprin\ implements furthermore the following composite preference types,
 which amount to the ones defined in~\cite{sonpon06a}: 
 \begin{itemize}
-\item \code{neg}\comment{T2R: Use 'not' instead\dots?\par R2S ;) not is not a term, \par gringo4 gives an error if you use it}
+\item \code{neg}
 \item \code{and}
 \item \code{pareto}
 \item \code{lexico}

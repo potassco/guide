@@ -224,14 +224,14 @@ Then, it continues searching, finds $X_3$ and the process continues.
 
 Finally,
 we can project optimal answer sets on the atoms in preference statements 
-by \asprin's option \lstinline{--projection}.
+by \asprin's option \lstinline{--project}.
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
   \attach{examples/preference1.lp}{preference1.lp} \ 
   \attach{examples/c1.lp}{c1.lp} \ 
   asprin.lib \
-  0 --projection}\\
+  0 --project}\\
 }
 This yields only the three optimal answer sets not containing \code{c(1)}.
 % \attach{examples/c1.lp}{\code{c1.lp}}:
@@ -715,31 +715,22 @@ X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E} (X\succeq_\code{s} Y)\wed
 \[
 X \succ Y \text{ iff } \bigvee_{\code{w::name(s)}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::name(s')}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
 \] 
-\end{itemize} 
-\comment{JR: Stopped here\par T: Me too BUT moved section behind :)}
+\end{itemize}
 
-For example, the following preference specification aggregates the basic preferences \code{p1} and \code{p3}
-via a \code{pareto} preference, viz.~\code{p4}: 
+\begin{example}
+Consider the following preference specification, where \code{p1} and \code{p3} are defined as before:
 %
-\lstinputlisting[numbers=none]{examples/preference4.lp}
+\lstinputlisting[numbers=none]{examples/cpreference.lp}
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference4.lp}{preference4.lp} \ 
-  asprin.lib}}
+  \attach{examples/cpreference.lp}{cpreference.lp} \ 
+  asprin.lib 0}}
 %
-This results in the optimal answer sets $X_1$, $X_2$ and $X_3$.
-
-Alternatively,
-we can aggregate \code{p1} over \code{p3}
-via a lexicographic order, \code{p5}:
-\lstinputlisting[numbers=none]{examples/preference5.lp}
-\marginlabel{%
-  To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference5.lp}{preference5.lp} \ 
-  asprin.lib}}
-In this case, $X_1$ and $X_3$ are the optimal answer sets.
+Along with the base program of Example \ref{asprin:example1}, \asprin\ produces answer sets $X_2$ and $X_3$. 
+Optimizing \code{p7} or \code{p8}, we obtain the three answer sets $X_1$, $X_2$ and $X_3$, 
+while optimizing \code{p9} we get simply $X_2$.
+\end{example}
 
 \subsubsection{Implementing preference types}
 

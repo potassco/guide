@@ -803,7 +803,7 @@ preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?)
 where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
 $\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule, 
 and ${t}_F$ is a term representing the Boolean formula $F$ 
-by using function symbols $\code{\_not/1}$, $\code{\_and/2}$, and $\code{\_or/2}$ in prefix notation.
+by using function symbols \code{\_not/1}, \code{\_and/2}, and \code{\_or/2} in prefix notation.
 For example, 
 the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_not(a(X)),b(X)))}. 
 %

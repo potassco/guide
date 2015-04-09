@@ -717,7 +717,7 @@ X \succ Y \text{ iff } \bigvee_{\code{w::name(s)}\in E}\!((X\!\succ_\code{s} \!Y
 \] 
 \end{itemize}
 
-\begin{example}
+\begin{example}\label{asprin:composite}
 Consider the following preference specification, where \code{p1} and \code{p3} are defined as before:
 %
 \lstinputlisting[numbers=none]{examples/cpreference.lp}
@@ -730,7 +730,7 @@ Consider the following preference specification, where \code{p1} and \code{p3} a
 Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p6)}, 
 \asprin\ produces answer sets $X_2$ and $X_3$. 
 If instead we optimize over \code{p7} or \code{p8}, we obtain the three answer sets $X_1$, $X_2$ and $X_3$, 
-while optimizing \code{p9} we get only $X_2$.
+while optimizing on \code{p9} we get only $X_2$.
 \end{example}
 
 \subsubsection{Implementing preference types}
@@ -943,6 +943,12 @@ it is included in a preference-type independent program named \code{preference}.
 
 Instead of using \asprin's library, viz.~\code{asprin.lib}, 
 we can now directly use the above preference program as follows:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference1.lp}{preference1.lp} \ 
+  \attach{examples/subset.lp}{subset.lp} \ 
+  \attach{examples/basic.lp}{basic.lp} 0}}
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
 \end{lstlisting}
@@ -950,6 +956,74 @@ As before, we obtain $X_1$ and $X_3$ as optimal answer sets.
 %Other new preference types can be easily defined in this way.  
 %A look at \code{asprin.lib} may give a good starting point. 
 \end{example}
+
+\begin{note}
+\asprin\ relies on the correctness of preference programs. 
+In other words, 
+if a preference program correctly implements the corresponding preference type,
+then \asprin\ also functions correctly.
+Otherwise, the behavior of \asprin\ is undefined.
+\end{note}
+
+For implementing composite preference types 
+we also define predicate \code{better/1},
+but in this case the implementation relies on predicates 
+that must be defined by other preference types.
+%namely, by those preference types related via naming atoms.
+
+\begin{example}
+The preference type \code{pareto} is implemented by the following preference program:
+%
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/pareto.lp}
+%
+The program uses predicates \code{better/1} and \code{bettereq/1},
+representing the relations $\succ$ and $\succeq$, respectively. 
+%of the preference statements named within a \code{pareto} preference statement.
+They must be defined by the implementations of the preference types of the named preference statements.
+To illustrate this, recall the preference statements \code{p1}, \code{p3} and \code{p8} of Example \ref{asprin:composite}, 
+that we put together in the file \code{preference8.lp} along with an optimize statement for \code{p8}:
+%
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/preference8.lp}
+%
+%let's combine via \code{pareto} the previous preference statements \code{p1} and \code{p3} 
+%of type \code{subset} and \code{less(cardinality)}, respectively.
+Given that \code{p8} refers to \code{p1} and \code{p3}, which are of type \code{subset} and \code{less(cardinality)}, 
+the implementations of these preference types must define \code{better/1} and \code{bettereq/1}.
+For \code{subset}, we already have the definition of \code{better/1} from Example \ref{asprin:subset_imp}, 
+so we just have to add to the program \code{preference(subset)} the following rule:
+%
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=6,lastline=7]{examples/subset.lp}
+%
+For \code{less(cardinality)}, the following preference program provides the implementation:
+%
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=8]{examples/less-cardinality.lp}
+%
+Putting all this together, we can compute the optimal answer sets of the program:
+with the following command:
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
+  \attach{examples/preference8.lp}{preference8.lp} \ 
+  \attach{examples/basic.lp}{basic.lp}   \
+  \attach{examples/pareto.lp}{pareto.lp} \ 
+  \attach{examples/subset.lp}{subset.lp} \ 
+  \attach{examples/less-cardinality.lp}{less-cardinality.lp} 0}} 
+\begin{lstlisting}[numbers=none,escapechar=\%]
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference8.lp}{preference8.lp}%  %\attach{examples/basic.lp}{basic.lp}% \
+        %\attach{examples/pareto.lp}{pareto.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/less-cardinality.lp}{less-cardinality.lp}% 0
+\end{lstlisting}
+As in Example \ref{asprin:composite} (optimizing \code{p8}), we obtain $X_1$, $X_2$ and $X_3$.
+\end{example}
+
+\begin{note}
+The correctness of the implementation of a composite preference type relies on the 
+correctness of the implementations of the preference types to which it relates via naming atoms.
+For the preference types that the \asprin\ library implements,
+it provides correct definitions of predicates 
+\code{better/1}, \code{bettereq/1}, \code{eq/1}, \code{worseeq/1}, and \code{worse/1}, 
+representing relations $\succ$, $\succeq$, $=$, $\preceq$, and $\prec$, respectively. 
+\end{note}
+
 
 \begin{note}
 Preference programs of type $t$ start with a directive
@@ -985,14 +1059,6 @@ There are some syntax restrictions to the form of preference programs:
 \end{note}
 
 \begin{note}
-\asprin\ relies on the correctness of preference programs. 
-In other words, 
-if a preference program correctly implements the corresponding preference type,
-then \asprin\ also functions correctly.
-Otherwise, the behavior of \asprin\ is undefined.
-\end{note}
-
-\begin{note}
 When using \asprin\ to compute many optimal answer sets the syntax of preference programs
 is limited to that of stratified logic programs~\cite{apblwa87a}.
 This excludes preference programs with disjunctions, choices, or aggregates in rule heads.
@@ -1024,49 +1090,7 @@ predicates \code{preference/2}, \code{preference/5} and \code{optimize/1}
 %In this way, the predicate may be fully evaluated by the grounder.
 \end{note}
 
-\subsubsection{Implementing composite preference types}
-
-For implementing composite preference types, we also provide a definition for predicate \code{better/1},
-but now the implementation relies on predicates 
-that must be defined by other preference types, 
-namely, by those preference types related via naming atoms.
-
-\begin{example}
-The preference type \code{pareto} is implemented by the following preference program:
-%
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/pareto.lp}
-%
-The definition uses predicates \code{better/1} and \code{bettereq/1}, 
-that must be correctly defined by the corresponding preference types of the named preference statements. 
-For instance, for \code{subset} we already have the definition of \code{better/1} from Example \ref{asprin:subset_imp}, 
-so we could simply extend program \code{\#preference(subset)} with the following rule:
-%
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=6,lastline=7]{examples/subset.lp}
-%
-As another example, \code{less(cardinality)} can be implemented via the following program:
-%
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=9]{examples/less-cardinality.lp}
-%
-Putting all this together, we can compute the optimal answer sets of the program:
-%
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none]{examples/pareto_preference.lp}
-%
-with the following command:
-\begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
-\end{lstlisting}
-As in Example \ref{asprin:composite}, we obtain $X_1$, $X_2$ and $X_3$.
-\end{example}
-
-\begin{note}
-The correctness of the implementation of a composite preference type relies on the 
-implementations of the preference types to which it relates via naming atoms.
-For the preference types implemented in the \asprin\ library, 
-we provide definitions of predicates 
-\code{better/1}, \code{bettereq/1}, \code{eq}, \code{worseeq/1}, and \code{worse/1}, 
-representing the relations $\succ$, $\succeq$, $=$, $\preceq$, and $\prec$, respectively. 
-Note that other predicates could be defined.
-\end{note}
+%\subsubsection{Implementing composite preference types}
 
 %%% Local Variables: 
 %%% mode: latex

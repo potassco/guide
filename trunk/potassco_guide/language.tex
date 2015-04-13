@@ -1381,7 +1381,7 @@ This is used to not consider the same course multiple times within the following
 integrity constraints:%
 \footnote{Alternatively, we could also use \lstinline{course(C,_,H).}}
 %
-\lstinputlisting[nolol,firstline=21,lastline=23,firstnumber=16]{examples/aggr.lp}
+\lstinputlisting[nolol,firstline=21,lastline=23,firstnumber=16,breakatwhitespace,breaklines]{examples/aggr.lp}
 %
 As illustrated in Line~16,
 we may use default negation via `\code{not}' in front of aggregate atoms,
@@ -1390,10 +1390,11 @@ In fact, by instantiating~\var{M} to~\const{20},
 we obtain the following ground instance of the integrity constraint in Line~16:
 %
 \begin{lstlisting}[firstnumber=16,stepnumber=16]
-:- not 18 <= #sum { 5,1 : enroll(1); 4,2 : enroll(2);
-                    6,3 : enroll(3); 3,4 : enroll(4);
-                    4,5 : enroll(5); 2,6 : enroll(6);
-                    4,7 : enroll(7); 5,8 : enroll(8) } <= 20.
+:- not 18 <= #sum {
+        5,1 : enroll(1); 4,2 : enroll(2);
+        6,3 : enroll(3); 3,4 : enroll(4);
+        4,5 : enroll(5); 2,6 : enroll(6);
+        4,7 : enroll(7); 5,8 : enroll(8) } <= 20.
 \end{lstlisting}
 %
 The above integrity constraint states that the \const{\#sum} of contact hours per week

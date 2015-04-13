@@ -23,7 +23,7 @@ max_hours(20).
 :- 6 #max { H,C : enroll(C), hours(C,H) }.
 
 courses(N) :- N = #count { C : enroll(C) }.
-hours(N)   :- N = #sum { H,C : enroll(C), hours(C,H) }.
+hours(N) :- N = #sum { H,C : enroll(C), hours(C,H) }.
 
 
 #show enroll/1.

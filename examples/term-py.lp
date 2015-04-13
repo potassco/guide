@@ -3,7 +3,8 @@
 from gringo import Fun
 
 def g(c, f):
-  r = Fun(c.name(), f)
+  n = c.name()
+  r = Fun(n, f)
   return r
 
 

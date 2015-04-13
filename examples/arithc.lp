@@ -1,4 +1,5 @@
 num(1).  num(2).
+eq (X,Y) :- X   =   Y, num(X), num(Y).
 neq(X,Y) :- X   !=  Y, num(X), num(Y).
 lt (X,Y) :- X   <   Y, num(X), num(Y).
 leq(X,Y) :- X   <=  Y, num(X), num(Y).

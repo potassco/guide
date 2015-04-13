@@ -584,6 +584,7 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
 Grounder \gringo\ and the grounding component of \clingo\
 feature a total order among variable-free terms.
 The built-in predicates to compare terms are
+\code{=} (equal),
 \code{!=} (not equal),
 \code{<} (less than),
 \code{<=} (less than or equal),
@@ -631,62 +632,37 @@ Furthermore, all integers are smaller than constants,
 which in turn are smaller than functions.
 \end{example}
 
-\begin{note}
-An occurrence of a variable in the scope of a built-in comparison literal
-does not count as a positive occurrence in the sense of safety (cf.\ Page~\pageref{pg:safe}),
-i.e.,
-comparison literals are not considered to be positive.
-Note that comparison literals can be preceded by \code{not} or \code{not}~\code{not}.
-In the first case, this is equivalent to using the complementary comparison literal
-(e.g., \code{<} and \code{>=} complement each other).
-In the second case, the prefix has no effect on the meaning of the literal.
-\index{Logic Programs!Safety}%
-\end{note}
+The built-in comparison predicate~`\code{=}' has another interesting use case. 
+Apart from just testing whether a relation between two terms holds,
+it can be used to define shorthands (via unification) for terms.
 
-\subsubsection{Assignments}\label{subsec:gringo:assign}
-\index{Terms!Variables!Assignments}
-\index{Assignments}
-\index{Assignments!Variable Assignment, \code{=}}
-\index{Logic Programs!Atoms!Assignments}
-
-Sometimes  it is desirable to define the value of a variable relative to a term,
-and then reuse the variable as a shorthand.
-The built-in predicate~`\code{=}' unifies
-(while solving simple arithmetic terms; see Remark~\ref{note:simple})
-variables on one side with terms on the other side
-when a respective assignment atom occurs
-in the body of a rule or on the right-hand side of a condition
-(detailed in Section~\ref{subsec:gringo:condition}).
-
-\begin{example}\label{ex:assign}
-The usage of variable assignments is illustrated by the following program:%
+\begin{example}\label{ex:define}
+This usage is illustrated by the following program:%
 \marginlabel{%
-  The simplified ground program obtained from assignments
-  can be inspected by invoking:\\
-  \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/assign.lp}{assign.lp}}\\
+  The simplified ground program can be inspected by invoking:\\
+  \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/define.lp}{define.lp}}\\
   or alternatively:\\
-  \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/assign.lp}{assign.lp}}}
+  \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/define.lp}{define.lp}}}
 %
-\lstinputlisting[lastline=2,belowskip=0pt]{examples/assign.lp}%
-\lstinputlisting[firstline=3,aboveskip=0pt,numbers=none,nolol]{examples/assign.lp}
+\lstinputlisting[lastline=2,belowskip=0pt]{examples/define.lp}%
+\lstinputlisting[firstline=3,aboveskip=0pt,numbers=none,nolol]{examples/define.lp}
 %
-The body of the rule in Line~2 contains four variable assignments,
+The body of the rule in Line~2 defines four comparison predicates over~`\code{=}',
 which directly or indirectly depend on~\var{X} and~\var{Y}.
 The values of~\var{X} and~\var{Y} are obtained via instances of the predicate \pred{num}/$1$.
-The first assignment depends on~\var{X} to provide shortcut~\var{XX}.
-Similarly, the second assignment depends on~\var{Y} to provide shortcut~\var{YY}.
-The third assignment provides variable \var{Y'} because it occurs in a simple arithmetic term
+The first comparison predicate depends on~\var{X} to provide shortcut~\var{XX}.
+Similarly, the second comparison predicate depends on~\var{Y} to provide shortcut~\var{YY}.
+The third comparison predicate provides variable \var{Y'} because it occurs in a simple arithmetic term,
 which is solved during unification.
-The last assignment provides no variables and,
+The last comparison predicate provides no variables and,
 hence, is just a test,
-checking whether its left-hand side equals its right-hand side.
+checking whether its left-hand and right-hand sides are equal.
 \end{example}
 
 \begin{example}\label{ex:unify}
 This example illustrates how to unify with function terms and tuples:
 \marginlabel{%
-  The simplified ground program obtained from unifications
-  can be inspected by invoking:\\
+  The simplified ground program can be inspected by invoking:\\
   \code{\mbox{~}clingo --text \textbackslash \\ \mbox{~}\attach{examples/unify.lp}{unify.lp}}\\
   or alternatively:\\
   \code{\mbox{~}gringo --text \textbackslash \\ \mbox{~}\attach{examples/unify.lp}{unify.lp}}}
@@ -703,34 +679,39 @@ as the second argument in terms on the left-hand sides of~\code{=}.
 With a value for~\var{X} at hand,
 we can further check whether the arithmetic evaluation of~\code{\var{X}+\const{1}},
 occurring as the third argument, coincides with the
-corresponding value given on the right-hand side of~\code{=}.
+corresponding value given on the right-hand side of~`\code{=}'.
 %
 \end{example}
 
 \begin{note}
-If a variable assignment is preceded by \code{not},
-no unification happens.
-Instead, the expression $\code{not}~t_1~\code{=}~t_n$ is equivalent to $t_1~\code{!=}~t_n$.
-Like with comparison literals, the prefix `\code{not~not}' has no effect.
-Unlike with built-in comparison literals,
-an assignment is considered as
-a positive (body) literal in the sense of safety (cf.\ Page~\pageref{pg:safe}),
+Note that comparison literals can be preceded by \code{not} or \code{not}~\code{not}.
+In the first case, this is equivalent to using the complementary comparison literal
+(e.g.,~`\code{<}' and~`\code{>=}' complement each other).
+In the second case, the prefix has no effect on the meaning of the literal.
+
+An occurrence of a variable in the scope of a built-in comparison literal over~`\code{!=}', `\code{<}', `\code{<=}',`\code{>}', or `\code{>=}'
+does not count as a positive occurrence in the sense of safety (cf.\ Page~\pageref{pg:safe}),
+i.e.,
+such comparison literals are not considered to be positive.
+
+Unlike with the built-in comparison literals above,
+comparisons predicates over~`\code{=}' are considered as positive (body) literals in the sense of safety (cf.\ Page~\pageref{pg:safe}),
 so that variables occurring on one side can be instantiated.
-However, this only works when assignments
-can be made directionally, i.e.,
-it must be possible to instantiate one side
-without knowing the values of variables on
-the other side.
-E.g., the rule  \code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\var{X}.}
+However, this only works when unification can be made directionally,
+i.e., it must be possible to instantiate one side without knowing the values of variables on the other side.
+For example, the rule~\code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\var{X}.}
 is not accepted by \gringo\ (or the grounding component of \clingo)
 because values for~\var{X} rely on values for~\var{Y}, and vice versa.
+Only simple arithmetic terms can be unified with (cf.\ Remark~\ref{note:simple}).
+Hence, variable~\var{X} in literal~\code{X*X=8} must be bound by some other positive literal.
+%
 \index{Logic Programs!Safety}%
 \end{note}
 
 \subsubsection{Intervals}\label{subsec:gringo:interval}
 \index{Terms!Intervals}
 
-Line~1 of Example~\ref{ex:assign} contains
+Line~1 of Example~\ref{ex:define} contains
 five facts of the form \code{\pred{num}($k$).}
 over consecutive integers~$k$.
 For a more compact representation,
@@ -755,18 +736,16 @@ Because all intervals in the second rule occur in the rule head,
 they expand conjunctively.
 Furthermore, the two intervals expand into the cross product \code{(1..3)$\times$(1..3)},
 resulting in the following set of facts:
-\begin{lstlisting}[numbers=none]
-grid(1,1).  grid(1,2).  grid(1,3).
-grid(2,1).  grid(2,2).  grid(2,3).
-grid(3,1).  grid(3,2).  grid(3,3).
+\begin{lstlisting}[escapechar=@,firstnumber=2]
+grid(1,1).  grid(1,2).  grid(1,3).@\\@grid(2,1).  grid(2,2).  grid(2,3).@\\@grid(3,1).  grid(3,2).  grid(3,3).
 \end{lstlisting}
 Similarly, intervals can be used in a rule body.
-Typically, this is done in assignments, which expand disjunctively:
+Typically, this is done using comparison literals over `\code{=}', which expand disjunctively:
 \begin{lstlisting}[firstnumber=2]
 grid(X,Y) :- X = 1..S, Y = 1..S, size(S).
 \end{lstlisting}
 This rule expands into the same set of facts as before.
-But intervals in assignments have the advantage that additional constraints can be added.
+But intervals in comparison literals have the advantage that additional constraints can be added.
 For example, one could add the comparison literals \code{X-Y!=0} and \code{X+Y-1!=S}
 to the rule body to exclude the diagonals of the grid.
 \end{example}

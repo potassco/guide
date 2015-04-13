@@ -3,7 +3,8 @@
 Fun = gringo.Fun
 
 function g(c, f)
-  r = Fun(c:name(), f:args())
+  n = c:name()
+  r = Fun(n, f:args())
   return r
 end
 

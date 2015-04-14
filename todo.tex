@@ -30,6 +30,8 @@
   The explanation of these symbols at the bottom of page 13 is cryptic, I’m
   afraid, unless you say there that a total order on variable-free terms is
   going to be inroduced later.
+  \comment{RK: I agree that it is not obvious to the reader why the two symbols are introduced their.
+    But we have a forward reference to the aggregate section where their use is described.}
  \item
   The discussion of terms in Sec. 3.1.1 gives the impression that Fig. 2 is a
   complete description of the syntax of terms.  It would be good to say here
@@ -42,6 +44,11 @@
   defined on *precomputed* variable free terms.  Once we decided whether f(a)
   is greater than g(2), we are committed to the same choice regarding f(a)
   and g(1+1), and regarding g(1..1), right?
+  \comment{RK: I disscussed this with Martin. 
+      When variable-free terms are introduced, they contain neither arithmetics, pools, or intervals.
+      The order among variables is introduced along with comparison literals, 
+      where we mention that terms are compared after evaluating arithmetic functions.
+      Our conclusion was to not introduce auxiliary notions to keep the guide simple.}
  % \item
  %  Will the reader understand “cannot span positive cycles” and “induces no
  %  positive cycle” in Sec. 3.1.4?  Unfortunately, I don't know what to

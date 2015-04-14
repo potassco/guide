@@ -589,7 +589,7 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
 \index{Logic Programs!Atoms!Comparison Predicates}
 
 Grounder \gringo\ and the grounding component of \clingo\
-feature a total order among variable-free terms.
+feature a total order among variable-free terms (without arithmetic functions).
 The built-in predicates to compare terms are
 \code{=} (equal),
 \code{!=} (not equal),
@@ -1221,7 +1221,8 @@ top :- 1000 #max { #sup : a }.
 \end{lstlisting}
 Assuming that atom~\pred{a} holds,
 the atoms~\pred{bot} and~\pred{top} are derived by the above rules
-because both \code{\#inf <= -1000} and \code{1000 <= \#sup} hold.
+because both \code{\#inf <= -1000} and \code{1000 <= \#sup} hold
+(cf.~Section~\ref{subsec:gringo:comp} for details how terms are ordered).
 
 \begin{note}\label{rem:aggr-assign}
 Although it seems convenient to use aggregates together with the `\code{=}'~predicate,

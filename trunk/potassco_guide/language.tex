@@ -23,7 +23,7 @@ provided as arguments in an invocation of either \gringo\ or \clingo.
 In what follows, 
 we describe the constructs belonging to the input language of \gringo\ and \clingo.
 
-\subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
+\subsubsection{Terms}\label{subsec:gringo:terms}
 \index{Terms}
 \index{Terms!Constants}
 \index{Terms!Strings}
@@ -55,6 +55,8 @@ we describe the constructs belonging to the input language of \gringo\ and \clin
 Every (non-propositional) logic program includes \emph{terms},
 mainly to specify the arguments of atoms (see below).
 The grammar for \gringo's (and \clingo's) terms is shown in Figure~\ref{fig:terms}.
+
+% syntax: simple terms
 The basic building blocks are simple terms:
 \emph{integers}, \emph{constants}, \emph{strings}, and \emph{variables}
 as well as the tokens `\var{\char`\_}', \const{\#sup}, and \const{\#inf}.
@@ -69,6 +71,8 @@ enclosed in double quotes (\code{"$\cdot$"}),
 where any occurrences of `\code{\textbackslash}', newline, and double quote
 must be escaped via `\code{\textbackslash\textbackslash}', `\code{\textbackslash n}',
 or `\code{\textbackslash"}', respectively.
+
+% semantics: simple terms
 While a constant or string represents itself,
 a variable is a placeholder for \emph{all} variable-free terms
 in the language of a logic program.%
@@ -76,12 +80,14 @@ in the language of a logic program.%
           constants and function symbols is called \emph{Herbrand universe}.}
 Unlike a variable name whose recurrences within a rule refer to the same variable,
 the token `\var{\char`\_}' (not followed by any letter)
+% Note: currently, there is the hidden feature: not p(_) where _ is *not* an anonymous variable
 stands for an \emph{anonymous variable} that does not recur anywhere.
-(One can view this as if a new variable name is invented on each
- occurrence of `\var{\char`\_}'.)
+(One can view this as if a new variable name is invented on each occurrence of `\var{\char`\_}'.)
 In addition, there are the special constants \const{\#sup} and \const{\#inf}
 representing the greatest and smallest element among all variable-free terms, respectively;
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
+
+% syntax: tuples and functions
 Next, (uninterpreted) \emph{functions} are complex terms composed of a name (like a constant)
 and one or more terms as arguments.
 For instance,
@@ -89,7 +95,8 @@ For instance,
 is a function with three arguments:
 constant \const{peter}, another function \code{\const{time}(12)}
 with an integer argument, and variable~\var{X}.
-Finally, there are \emph{tuples}, which are similar to \emph{functions} but without a name.
+Finally, there are \emph{tuples},
+which are similar to \emph{functions} but without a name.
 Examples for tuples are:
 the empty tuple \code{()} and
 the tuple \code{(\const{at},\const{peter},\const{time}(12),X)} with four elements.
@@ -98,9 +105,9 @@ for distinguishing one-elementary tuples.
 That is, \code{($t$,)} is a one-elementary tuple,
 while a term of form \code{($t$)} is equivalent to \code{$t$}.
 For instance, \code{(42,)} is a one-elementary tuple, whereas \code{(42)} is not,
-and
-the above quadruple is equivalent to \code{(\const{at},\const{peter},\const{time}(12),X,)}.
+and the above quadruple is equivalent to \code{(\const{at},\const{peter},\const{time}(12),X,)}.
 
+\subsubsection{Normal Programs and Integrity Constraints}\label{subsec:gringo:normal}
 Rules of the following forms are admitted in a
 \emph{normal logic program} (with integrity constraints):
 \par
@@ -773,7 +780,7 @@ conjunctively in the head and disjunctively in the body of a rule.
 In fact, the interval \code{1..3} is equivalent to the pool \code{(1;2;3)}.%
 \footnote{%
 We make use of the fact that one-elementary tuples
-must be made explicit by a trailing `\code{,}' (cf.\ Section~\ref{subsec:gringo:normal}).
+must be made explicit by a trailing `\code{,}' (cf.\ Section~\ref{subsec:gringo:terms}).
 E.g., \code{(1;1,)} expands into \code{(1)} and \code{(1,)},
 where \code{(1)} is equal to the integer~\code{1}.
 On the other hand, note that the rule
@@ -990,7 +997,7 @@ The form of an \emph{aggregate atom} occurring in a rule body is as follows:
 \end{lstlisting}
 %
 Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$, forming \emph{aggregate elements}, are non-empty tuples of terms and literals
-(as introduced in Section~\ref{subsec:gringo:normal}), respectively.
+(as introduced in Section~\ref{subsec:gringo:terms}), respectively.
 $\alpha$ is the name of some function that is to be applied to the term tuples $\boldsymbol{t}_i$
 that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 %
@@ -1202,7 +1209,7 @@ If~\pred{a} does not hold, we derive
 \code{\pred{max}(\const{\#inf})}.
 %
 Here, the special constants \const{\#sup} and \const{\#inf}
-(introduced in Section~\ref{subsec:gringo:normal}),
+(introduced in Section~\ref{subsec:gringo:terms}),
 obtained by applying \code{\#min} and \code{\#max} to the empty set of weights,
 indicate the neutral elements of the aggregates.
 %

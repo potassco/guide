@@ -14,8 +14,6 @@ a disk cannot be moved to a peg already containing some disk that is smaller.
 Although there is an efficient algorithm to solve our simple Towers of Hanoi puzzle,
 we do not exploit it and below merely specify conditions for
 sequences of moves being solutions.
-% We ignore that there is an efficient algorithm to solve this problem 
-% and just specify how a solution, in terms of a sequence of moves, has to look.
 
 In ASP, it is custom to provide a \emph{uniform}
 problem definition~\cite{martru99a,niemela99a,schlipf95a}.
@@ -27,7 +25,6 @@ that achieves the goal.
 We will see that this problem can be elegantly  
 described in ASP and
 solved by domain-independent tools like \gringo\ and \clasp.
-% are ready to solve the problem. % reasonably well.
 Such a declarative solution is now exemplified.
 
 \subsection{Problem Instance}
@@ -48,26 +45,14 @@ Their arguments, the number of a disk and the name of a peg,
 determine the location of a disk in the respective situation.
 Finally, the predicate \pred{moves}/$1$ specifies the number of moves 
 in which the goal must be achieved.
-% within which the goal situation has to be reached.
-% Note that the original puzzle had exactly three pegs and a fixed initial and goal situation.
-% With ASP we can easily change this requirement and 
-% the encoding represented in the following works with an arbitrary number of pegs and any initial or goal situation.
 When allowing \const{15} moves,
-the Towers of Hanoi puzzle shown in Figure~\ref{fig:toh_inst} %  depicts a possible instance (the dashed discs mark the goal situation) 
-% corresponding to the ASP program given below.
+the Towers of Hanoi puzzle shown in Figure~\ref{fig:toh_inst}
 is described by the following facts:%
-\marginlabel{You can save this instance locally % to disk
+\marginlabel{You can save this instance locally
              by clicking its file name: \attach{examples/toh_ins.lp}{\code{toh\char`\_ins.lp}}.\\
              Depending on your viewer, a right or double-click should do.}%
 %
 \lstinputlisting{examples/toh_ins.lp}
-% \begin{lstlisting}
-% peg(a;b;c).
-% disk(1..4).
-% init_on(1..4,a).
-% goal_on(1..4,c).
-% moves(15).
-% \end{lstlisting}
 %
 Note that the `\code{;}' in the first line is syntactic sugar
 (detailed in Section~\ref{subsec:gringo:pool})
@@ -77,11 +62,6 @@ Similarly, `\code{1..4}' used in Line~2--4
 refers to an interval (detailed in Section~\ref{subsec:gringo:interval}).
 Here, it abbreviates distinct facts over four values:
 \const{1}, \const{2}, \const{3}, and \const{4}.
-% in the second line some syntactic sugar is used to 
-% create the facts \code{disc(1)}, \code{disc(2)}, \code{disc(3)}, and \code{disc(4)}.
-% Here the term \code{1..4}, an intervall (Section \ref{subsec:gringo:interval}), is successively replaced by \code{1}, \code{2}, \code{3}, and \code{4}.
-% The initial and goal situation is specified in line three and four again using intervall.
-% Finally, in the last line the number of moves to solve the problem is given.
 In summary, the facts in Line~1--5 describe the 
 Towers of Hanoi puzzle in Figure~\ref{fig:toh_inst} along
 with the requirement that the goal ought to be achieved within~\const{15} moves.
@@ -89,7 +69,6 @@ with the requirement that the goal ought to be achieved within~\const{15} moves.
 \subsection{Problem Encoding}
 
 We now proceed by encoding Towers of Hanoi via schematic rules,
-% (Section \ref{subsec:gringo:normal}), 
 i.e., rules containing variables (whose names start with uppercase letters)
 that are independent of a particular instance.
 Typically, an encoding can be logically partitioned
@@ -101,7 +80,7 @@ and thus, for suppressing auxiliary predicates.
 We follow this methodology and
 mark the respective parts via comment lines beginning with `\code{\%}' 
 in the following encoding:%
-\marginlabel{You can also save the encoding % to disk
+\marginlabel{You can also save the encoding
              by clicking this file name: \attach{examples/toh_enc.lp}{\code{toh\char`\_enc.lp}}.\\
              We below explain how to run the saved files in order to
              solve our Towers of Hanoi puzzle.}%
@@ -117,7 +96,6 @@ It expresses that,
 at each point~\var{T} in time (other than~\const{0}),
 exactly one move of a disk~\var{D} to some peg~\var{P}
 must be executed.
-% ``guess'' exactly one move that puts an arbitrary disk to some arbitrary peg.
 The head of the rule (left of~`\code{:-}')
 is a so-called cardinality constraint (see Section~\ref{subsec:gringo:aggregate}).
 It consists of a set of literals,
@@ -131,34 +109,26 @@ over the predicate \pred{move}/$3$ to be true.
 In the body (right of~`\code{:-}'),
 we define (detailed in Section~\ref{subsec:gringo:comp}),
 \code{\var{T}~=~\const{1}..\var{M}},
-% to express that the rule applies 
 to refer to each time point~\var{T}
-from~\const{1} to the maximum time point~\var{M}. % of moves.
+from~\const{1} to the maximum time point~\var{M}.
 We have thus characterized all sequences of~\var{M} moves
 as solution candidates for Towers of Hanoi.
-% Note that at this point we have not constrained the moves.
 Up to now, 
 we have not yet imposed any further conditions, e.g.,
 that a bigger disk must not be moved on top of a smaller one.
-% any disc could be moved to any peg at each time point with out considering any problem constraints.
 
 The Define part in Line~4--9 contains
 rules defining auxiliary predicates, i.e.,
 predicates that provide properties of a solution candidate at hand.
-% which as such do not touch the satisfiability of the problem but are used in the Test part later on.
 (Such properties will be investigated in the Test part described below.)
 The rule in Line 4 simply projects moves to disks and time points.
 The resulting predicate \pred{move}/$2$ can be used whenever the target peg
 is insignificant, so that one of its atoms actually subsumes three possible cases.
 Furthermore,
 the predicate \pred{on}/$3$ captures the state of a Towers of Hanoi puzzle at each time point.
-% Its first two argument give the location of a disc at the time point given by the third argument.
 To this end,
-the rule in Line~5 
-identifies 
-the locations of disks at time point~\const{0}
+the rule in Line~5 identifies the locations of disks at time point~\const{0}
 with the initial state (given in an instance).
-% infers the location of each disc in the initial state (time point 0).
 State transitions are modeled by the rules in Line~6 and~7.
 While the former specifies the direct effect of a move at time point~\var{T}, i.e.,
 the affected disk~\var{D} is relocated to the target peg~\var{P},
@@ -167,38 +137,27 @@ the location of a disk~\var{D}
 carries forward from time point~\var{T} to \code{\var{T}+1}
 if~\var{D} is not moved at~\code{\var{T}+1}.
 Observe the usage of \code{not \pred{moves}(\var{T})} in Line~7,
-which prevents deriving disk locations beyond the maximum time point. %~\var{M}.
-% an infinite number of rules, which would be all useless 
-% because the state no longer changes after the last move.
-% The second rule makes sure that all discs that are not moved stay where they are.
+which prevents deriving disk locations beyond the maximum time point.
 Finally, we define the auxiliary predicate \pred{blocked}/$3$ to
 indicate that a smaller disk, with a number greater than \code{\var{D}-1}, is
 located on a peg~\var{P}.
 The rule in Line~8 derives this condition for time point~\code{\var{T}+1}
-from \code{\pred{on}(\var{D},\var{P},\var{T})}, % and \code{\var{D}-1},
+from \code{\pred{on}(\var{D},\var{P},\var{T})},
 provided that~\var{T} is not the maximum time point.
-% % positions w.r.t. pegs that cannot be moved from.
-% First in Line 8, the position below a disc on some peg is blocked.
-% Second 
 The rule in Line 9 further propagates the status of being blocked
 to all bigger disks on the same peg.
-% , the position directly below a blocked position is blocked.
 Note that we also mark \code{\var{D}-1~=~\const{0}}, not referring to any disk, as blocked,
 which is convenient for eliminating redundant moves
 in the Test part described next.
 
-% Finally, there is the Test part building upon both Generate and Define part 
-% to rule out wrong moves that do not agree with the problem description.
 The Test part consists of the integrity constraints in Line~11--14,
 rules that eliminate unintended solution candidates.
 The first integrity constraint in Line~11 asserts 
 that a disk~\var{D} must not be moved to a peg~\var{P}
 if \code{\var{D}-1} is blocked at time point~\var{T}.
-% , i.e, with some disc on top, cannot be moved.
 This excludes moves putting a bigger disk on top of a smaller one and,
 in view of the definition of \pred{blocked}/$3$,
 also disallows that a disk is put back to its previous location.
-% Note the usage of \code{D-1} here, this way a disc cannot be put back to the same location again.
 Similarly, the integrity constraint in Line 12 
 expresses that a disk~\var{D} cannot be moved at time point~\var{T}
 if it is blocked by some smaller disk on the same peg~\var{P}.
@@ -211,8 +170,6 @@ The final integrity constraint in Line~14
 asserts that, for every disk~\var{D} and time point~\var{T}, 
 there is exactly one peg~\var{P} such that
 \code{\pred{on}(\var{D},\var{P},\var{T})} holds.
-% To make the encoding more efficient, we add a redundant constraint in Line 14,
-% which asserts that each disc at all time points is located on exactly one peg.
 Although this condition is implied by the definition of \pred{on}/$3$ in Line~6 and~7
 w.r.t.\ the moves in a solution,
 making such knowledge explicit via an integrity constraint
@@ -225,9 +182,6 @@ thus suppressing the predicates used to describe an instance as well as
 the auxiliary predicates \pred{move}/$2$, \pred{on}/$3$, and \pred{blocked}/$3$.
 This is for more convenient reading of a solution,
 given that it is fully determined by atoms over \pred{move}/$3$.
-% control which predicates are printed, when a satisfying model
-% for the instance is found.
-% Here we first hide all predicates (Line 15) and then explicitly show only the \code{move}/$3$ predicate (Line 16).
 
 \subsection{Problem Solution}
 
@@ -241,13 +195,10 @@ invoke one of the following commands:%
              \attach{examples/toh_enc.lp}{\code{toh\char`\_enc.lp}}
              (click file name to save)
              should reside in the working directory.}%
-\begin{lstlisting}[numbers=none,escapechar=\%]
-clingo %\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}% %\attach{examples/toh_enc.lp}{toh\char`\_enc.lp}%
-gringo %\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}% %\attach{examples/toh_enc.lp}{toh\char`\_enc.lp}% | clasp
+\begin{lstlisting}[numbers=none,escapechar=&]
+clingo &\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}& &\attach{examples/toh_enc.lp}{toh\char`\_enc.lp}&
+gringo &\attach{examples/toh_ins.lp}{toh\char`\_ins.lp}& &\attach{examples/toh_enc.lp}{toh\char`\_enc.lp}& | clasp
 \end{lstlisting}
-% Note that (depending on your viewer) you can right or double-click on file names marked with a red font 
-% to safe the associated file to disc.
-% This is possible with all examples given in this document.
 
 The output of the solver, \clingo\ in this case, should look somehow like this:
 \begin{lstlisting}[numbers=none]
@@ -314,8 +265,6 @@ The `\code{+}' indicates that
 the solver has not exhaustively explored the search space
 (but stopped upon finding an answer set),
 so that further answer sets may exist.}
-% indicates that one answer set has been found and the \code{+} that 
-% the whole search space has not yet been explored, so there might be further answer sets.
 \code{Calls} to the solver are of interest in multi-shot solving
 (see Section~\ref{sec:multi}).
 The final lines report statistics including
@@ -323,18 +272,10 @@ total run-time (wall-clock \code{Time} as well as \code{CPU Time}) and
 the amount of time spent on search (\code{Solving}),
 along with the fractions taken to find the first solution (\code{1st Model})
 and to prove unsatisfiability%
-% time until the first model was found (\code{1st Model}), and
-% time used to prove unsatisfiability%
 \footnote{
 No unsatisfiability proof is done here, hence, this time is zero.
 But for example, when enumerating all models, this is the time spent between finding the last model and termination.
 } (\code{Unsat}).
-% Following that, there are some time measurements: 
-% Beginning with total computation time, 
-% which is split into 
-% preparation time (grounding), 
-% preprocessing time (\clasp{} has an internal preprocessor that tries to simplify the program), 
-% and solving time (the time needed to find the answer excluding preparation and preprocessing time).
 More information about available options, e.g.,
 to obtain extended statistics output,
 can be found in Section~\ref{sec:options}.
@@ -346,8 +287,6 @@ For solving our Towers of Hanoi puzzle, we first provided facts representing an 
 Although we did not discuss the choice of predicates, an
 appropriate instance representation is already part of the modeling in ASP and
 not always as straightforward as here.
-% If you try to solve some problem and find it cumbersome to specify the appropriate rules,
-% it may be worthwhile to recheck the instance format and alter it to something more appropriate.
 Second, we provided an encoding of the problem applying to any instance.
 The encoding consisted of parts generating solution candidates,
 deriving their essential properties,

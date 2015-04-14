@@ -1175,15 +1175,10 @@ can almost be written in their traditional notation (without keyword, yet differ
 as put forward in the \lparse\ grounder~\cite{lparseManual}.
 \end{note}
 
-\paragraph{Assignment Aggregates}
-Having discussed aggregate atoms,
-let us note that there is a second way to use aggregates:
-the values obtained by evaluating them can be assigned to variables.
-To this end, \gringo\ and \clingo\ allow for using aggregates
-\code{\#count}, \code{\#sum}, \code{\#sum+}, \code{\#min}, and \code{\#max} in assignments.
-\index{Aggregates!Assignments}%
-\index{Assignments!Aggregates}%
-For instance, the following rules assign the obtained values to a variable:
+Having discussed head and body aggregate atoms,
+let us note that there is a second way to use body aggregates:
+they act like positive literals when used together with comparison predicate~`\code{=}'.
+For instance, variable~\var{X} is safe in the following rules:
 \begin{lstlisting}[numbers=none]
 cnt(X) :- X = #count { 2 : a; 3 : a }.
 sum(X) :- X = #sum   { 2 : a; 3 : a }.
@@ -1222,20 +1217,17 @@ the atoms~\pred{bot} and~\pred{top} are derived by the above rules
 because both \code{\#inf <= -1000} and \code{1000 <= \#sup} hold.
 
 \begin{note}\label{rem:aggr-assign}
-Although it seems convenient to use assignments of aggregates' values,
+Although it seems convenient to use aggregates together with the `\code{=}'~predicate,
 this feature should be used with care.
 If the literals of an aggregate belong to domain predicates (see Remark~\ref{note:domain}) or built-ins,
-\gringo\ or \clingo\ evaluates the aggregate during grounding, so obtaining
-a unique value to be assigned.
-\index{Aggregates!Assignments!Domain Predicates}%
-\index{Assignments!Aggregates!Domain Predicates}%
+the aggregate is evaluated during grounding to exactly one value.
 Otherwise, if the literals do not belong to domain predicates,
 the value of an aggregate is not known during grounding,
 in which case \gringo\ or \clingo\ unwraps all possible outcomes of the
 aggregate's evaluation.
 The latter can lead to a space blow-up,
 which should be avoided whenever possible.
-For instance, unwrapping the assignment aggregate in
+For instance, unwrapping the aggregate in
 \begin{lstlisting}[numbers=none]
 { a; b; c }.
 :- #sum { 1 : a; 2 : b; 3 : c } = N, N > 3.
@@ -1251,11 +1243,9 @@ when we use a comparison predicate instead:
 \begin{lstlisting}[numbers=none]
 :- #sum { 1 : a; 2 : b; 3 : c } > 3.
 \end{lstlisting}
-In general, assigning an aggregate value to a variable
-(that is not fixed by any other positive literal)
-provides more specific information than necessary for checking bounds.
-Hence, it is advisable to rather apply comparison predicates to aggregates directly,
-unless an aggregate refers to domain predicates and built-ins only.
+Hence, it is advisable to rather apply comparison predicate~`\code{>}' directly.
+In general, aggregates should only be used to bind variables
+if they refer solely to domain predicates and built-ins.
 \end{note}
 
 \paragraph{Non-ground Aggregates}
@@ -1264,9 +1254,8 @@ After considering the syntax and semantics of ground aggregate atoms,
 we now turn our attention to non-ground aggregates.
 Regarding contained variables,
 only variable occurrences in the guards give rise to global variables.
-Hence, any variable in an aggregate element must be bound by
-either a positive global occurrence or
-a variable that occurs positively in its condition $\boldsymbol{L_i}$.
+Hence, any variable in an aggregate element must be bound by either a positive global occurrence or a variable
+that occurs positively in its condition $\boldsymbol{L_i}$.
 \index{Logic Programs!Safety}
 Variable names in aggregate elements have to be chosen carefully to avoid clashes with global variables.
 Furthermore, pools and intervals in aggregate elements give rise to multiple aggregate elements;
@@ -1411,17 +1400,17 @@ Of course, the last two requirements could also be formulated as follows:
 :- enroll(C), hours(C,H), H >= 6.
 \end{lstlisting}
 
-Finally, the following rules illustrate the use of aggregates within assignments:
+Finally, the following rules illustrate the use of aggregates together with comparison predicate~`\code{=}'.
 %
 \lstinputlisting[nolol,firstline=25,lastline=26,firstnumber=19]{examples/aggr.lp}
 %
 The role of aggregates here is different from before,
-as they now serve to assign an integer to a variable~\var{N}.
+as they now serve to bind an integer to a variable~\var{N}.
 The effect of Line~19 and~20,
 which do not follow the recommendation in Remark~\ref{rem:aggr-assign},
-is that the student can read off the number of
-courses to enroll and the amount of contact hours per week from instances of
-\pred{courses}/$1$ and \pred{hours}/$1$ belonging to an answer set.%
+is that the student can read off the number of courses to enroll and 
+the amount of contact hours per week from instances of \pred{courses}/$1$ and \pred{hours}/$1$
+belonging to an answer set.%
 \marginlabel{%
   To compute the unique answer set of the program, invoke:\\
   \code{\mbox{~}clingo \attach{examples/aggr.lp}{aggr.lp} 0}\\

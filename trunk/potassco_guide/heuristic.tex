@@ -21,7 +21,7 @@ Different types of heuristic information can be controlled with the modifiers
 \code{sign}, \code{level}, \code{true}, \code{false}, \code{init} and \code{factor}.
 We introduce them below step by step.
 
-\paragraph{Sign.}
+\subsubsection{Heuristic modifier \code{sign}}
 
 The modifier \code{sign} allows for controlling the truth value assigned to variables subject to a choice within the solver.
 
@@ -85,7 +85,7 @@ we obtain one without \code{a} and one with \code{a},
 and the same happens with Example \ref{example:nsign}, 
 although in this case the answer sets are computed in opposite order.
 
-\paragraph{Showing heuristic information.}
+\subsubsection{Showing heuristic information}
 
 For the heuristic atoms to take effect, they as well as the atoms to which they refer to
 must be shown in the logic program.\footnote{Note that in \gringo\ all atoms are shown, 
@@ -108,7 +108,7 @@ To overcome this issue,
 the command line option \code{--out-hide-aux} allows us to suppress printing atoms starting with underscore `\code{\_}'.
 \end{note}
 
-\paragraph{Level.}
+\subsubsection{Heuristic modifier \code{level}}
 
 The \code{Domain} heuristic assigns to each atom a \code{level}, and it decides first upon atoms of the highest level.
 The default value for each atom is \code{0},  and both positive and negative integers are valid.
@@ -137,7 +137,7 @@ so when there are many unassigned atoms with the highest level,
 the heuristic decides, among them, on the one with the highest \code{Vsids} score.
 \end{note}
 
-\paragraph{Dynamic heuristic atoms.}
+\subsubsection{Dynamic heuristic modifications}
 
 Heuristic atoms can be used as any other atom within logic programs,
 and they only affect the heuristic of the solver when they are true.
@@ -160,7 +160,7 @@ If we added the fact \code{\_heuristic(b,level,20)},
 the obtained first answer set would contain \code{b} and \code{c} instead of \code{a}.
 \end{example}
 
-\paragraph{True and false.}
+\subsubsection{Heuristic modifiers \code{true} and  \code{false}}
 
 The modifiers \code{true} and \code{false} allow us to refer at the same time to the \code{level} and the \code{sign} of an atom.
 Internally,  for the \code{true} and \code{false} heuristic atoms,
@@ -185,7 +185,7 @@ _heuristic(c,sign,-1) :- not b.
 In this case, the fact \code{\_heuristic(a,true,10)} stands for the previous
 facts \code{\_heuristic(a,level,10)} and \code{heuristic(a,sign,1)}.
 
-\paragraph{Priorities between heuristic atoms.}
+\subsubsection{Priorities among heuristic modifications}
 
 The \code{Domain} heuristic allows for representing priorities between different heuristic atoms that refer to the same atom.
 The priority is optionally represented by a positive integer as a fourth argument.
@@ -222,7 +222,7 @@ if both \code{\_heuristic(c,level,-10)} and \code{\_heuristic(c,level,5)} are tr
 the level of \code{c} is \code{-10} because $|\code{-10}|>|\code{5}|$.
 \end{note}
 
-\paragraph{Init and factor.}
+\subsubsection{Heuristic modifiers \code{init} and \code{factor}}
 
 The modifiers \code{init} and \code{factor} allow for modifying the scores assigned to atoms by the underlying \code{Vsids} heuristic.
 Unlike the \code{level} modifier, 
@@ -239,7 +239,7 @@ that multiplies the heuristic score of an atom by a given value.
 For example, if \code{\_heuristic(a,factor,2)} is true, 
 then the heuristic score for atom \code{a} is multiplied by \code{2}.
 
-\paragraph{Domain choices.}
+\subsubsection{Monitoring \code{domain} choices}
 
 The \code{Domain} heuristic extends \clasp\ and \clingo's search statistics produced with command line option \code{--stats}.
 After `\code{Domain:}', it prints how many decisions where made on atoms appearing inside \code{\_heuristic} atoms.
@@ -426,9 +426,9 @@ On the other hand, they allow us to directly refer to structural components of t
 (strongly connected components, head cycle free components, etc.)
 and they do not require any additional grounding, 
 which may be important in larger problems.
-
-\comment{JR: Should we say something about how are the programmed and the command line heuristics combined?
-\par   TS: Indeed that may be worth pointing out}
+%
+When both methods are combined,
+the atoms modified by the \texttt{\_heuristic} predicate are not affected by the command line heuristics.
 
 %%% Local Variables:
 %%% mode: latex

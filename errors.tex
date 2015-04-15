@@ -1,13 +1,10 @@
-\section{Errors and Warnings}\label{sec:errorwarn}
+\section{Errors, Warnings, and Infos}\label{sec:errorwarn}
 
-\com{RK: cleanup of warnings is on my todo list since quite a while.
-This section does not always describe the current behavior of \gringo\ but the behavior I would like to have.}
-This section explains the most frequent errors and warnings 
-related to inappropriate inputs or command line options that,
-if they occur,
-lead to messages sent to the standard error stream.
-The difference between errors and warnings is that the former involve premature termination,
-while the latter are hints pointing at possibly corrupt input that can still be processed further.
+This section explains the most frequent errors, warnings, and info messages
+related to inappropriate inputs or command line options.
+All messages are printed to the standard error stream.
+Errors lead to premature termination,
+while warnings and info messages provide hints at possibly corrupt input that can still be processed further.
 
 \subsection{Errors}\label{sec:error}
 
@@ -46,7 +43,7 @@ Finally, the third error occurs if the argument~\codeit{Arg} is invalid for opti
 All three error messages include a context~\codeit{Context} in which the option is parsed.
 Often, this is simply the system name 
 but can also be the name of a configuration in a portfolio file
-or the string \code{tester} for errors in options regarding the disjunctive tester.\comment{references to clasps command-line options would be nice}
+or the string \code{tester} for errors in options regarding the disjunctive tester.
 The last line is printed in all three cases.
 It indicates that option \code{--help} can be used to display the available options and their arguments.
 
@@ -139,17 +136,12 @@ There are three errors associated to \code{\#const} statements (cf.~Section~\ref
   @\textit{Constant}@
 ...
 
-@\textit{Location}@: error: evaluation of constant failed:
-  @\textit{Constant}@
-@\textit{Note}@
-...
 \end{lstlisting}
 The strings~\codeit{Constant} provide the affected \code{\#const} statements.
 The first error is printed if the statements rely on each other cyclically.
+Each statement involved in the cycle is printed in the corresponding notes.
 The second error message is printed if a constant is defined more than once.
-Each statement involved in the cycle or redefinition is printed in the corresponding error message.
-The third error occurs if the right hand side of \code{\#const} statement cannot be evaluated.
-This happens for example if it contains an undefined term, which is then indicated in the notes.
+The location of the conflicting definition is printed in the note.
 
 If at least one of the errors above is reported,
 then \gringo\ or \clingo\ terminates after parsing and checking with the error message:
@@ -195,79 +187,15 @@ which possibly leads to unwanted answer sets.
 
 This section describes warnings that may be reported by \gringo\ or \clingo.
 Unlike errors, warnings do not terminate the application 
-but rather hint at possible problems, which should be investigated.
+but rather hint at problems, which should be investigated.
+A program with warnings might lead to unexpected results;
+there are no guarantees regarding the semantics of such programs.
 Most warnings have a similar format as the errors described in Sections~\ref{subsec:error:parselp};
 the only difference is that the location is followed by the string \code{warning}.
 
 \begin{note}
 No more than 20 warnings are printed.
 If this limit is exceeded, you should definitely fix some warnings.
-\end{note}
-
-\subsubsection{Undefined Terms}\label{sec:warn:undefterm}
-This warning may occur within an arithmetic evaluation (cf.~Section~\ref{subsec:gringo:arith})
-or if an error occurs while evaluating an external function (cf.~Section~\ref{subsec:lang:extfun}):
-%
-\begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Location}@: warning: term undefined:
-  @\textit{Term}@
-...
-\end{lstlisting}
-%
-It typically means that either a (symbolic) constant or a compound term (over an uninterpreted function)
-has occurred in the scope of some built-in arithmetic function.
-%
-The string~\codeit{Term} provides the term that failed to evaluate.
-%
-The warning message might be followed by further notes.
-For example, 
-if the evaluation of an external function failed,
-by a trace indicating the location of the error within the source code of the external function.
-%
-Typically, it is simple to fix occurrences of this warning
-- for example, if the term `\code{X/Y}' causes a warning,
-it can be silenced by adding the comparison literal~`\code{Y!=0}' to the body of a rule (or condition).
-We suggest to silence all of these warnings in this manner
-and not simply to disable the warning.
-
-\begin{note}
-Instantiations of rules, \code{\#show} statements, \code{\#external} statements, weak constraints, aggregate elements, and conditional literals
-that contain undefined terms are discarded.
-\end{note}
-
-\subsubsection{Undefined Atoms}\label{sec:warn:undefatm}
-This warning is emitted if an atom appears in the body of a rule or condition
-that is never defined in the head of a rule or external statement:
-\begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Location}@: warning: atom is undefined:
-  @\textit{Atom}@
-\end{lstlisting}
-%
-where \codeit{Atom} is the atom occurrence without a definition.
-Often, this error indicates that a predicate has been misspelled 
-or that an argument has accidentally been omitted.
-
-\subsubsection{Nonmonotone Aggregates}\label{sec:warn:nonmon}
-This warning is emitted if a recursive nonmonotone aggregate is output during grounding:
-\begin{lstlisting}[numbers=none,escapechar=@]
-@\textit{Location}@: warning: recursive nonmonotone aggregate:
-  @\textit{Information}@
-  (applied translation might produce counter-intuitive results)
-\end{lstlisting}
-where \codeit{Information} indicates why the aggregate is nonmontone
-- for example because of negative weights in a \code{\#sum} aggregate.
-Keep in mind that \gringo\ performs a static dependency analysis,
-which is only an approximation of the dependencies of a logic program.
-The aggregate occurrence might actually be non-recursive,
-in which case the warning can be silenced using option \code{-Wno-nonmonotone-aggregate} (cf.~Section~\ref{subsec:opt:gringo}).
-In general, it is a good idea to use non-monotone aggregates only in integrity constraints,
-where the aggregate occurrence is guaranteed to be non-recursive.
-
-\begin{note}
-The \smodels\ format only supports monotone aggregates.
-All aggregates supported by \gringo\ are translated into monotone aggregates.
-This translation might produce counter-intuitive results
-if a nonmonotone aggregate is used recursively~(cf.~\cite{ferlif05a}).
 \end{note}
 
 \subsubsection{File Included Multiple Times}\label{sec:warn:incfile}
@@ -279,8 +207,75 @@ then the following warning is emitted:
   @\textit{Filename}@
 \end{lstlisting}
 
-
 \begin{note}
 Only the first include of a file is considered.
 All additional includes are ignored.
 \end{note}
+
+\subsubsection{Unbounded CSP Variables}\label{sec:warn:unbound}
+In the current implementation, a bound has to be supplied for each CSP variable (cf.~Section~\ref{sec:clingcon}).
+For variables with bounds, the following warning is issued:
+\begin{lstlisting}[numbers=none,escapechar=@]
+warning: unbounded constraint variable:
+  domain of @\textit{Variable} is set to \textit{Domain}
+\end{lstlisting}
+where \code{Variable} is the variable lacking a domain specification
+and \code{Domain} is an (arbitrary) domain chosen for the variable.
+
+\subsection{Infos}\label{subsec:info}
+This section describes information messages
+that may be reported by \gringo\ or \clingo.
+Info messages indicate issues in the input
+that have a well defined semantics
+but are possibly unintended by the user.
+
+An information message is preceded with the string \code{info}.
+
+\begin{note}
+Up to 20 info messages are printed.
+There might me further issues but these will be silently ignored.
+\end{note}
+
+\subsubsection{Undefined Operations}\label{sec:warn:undefterm}
+These may occur within an arithmetic evaluation (cf.~Section~\ref{subsec:gringo:arith})
+or if an error occurs while evaluating an external function (cf.~Section~\ref{subsec:lang:extfun}):
+%
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: info: term undefined:
+  @\textit{Term}@
+...
+\end{lstlisting}
+%
+It typically means that either a (symbolic) constant or a compound term (over an uninterpreted function)
+has occurred in the scope of some built-in arithmetic function.
+%
+The string~\codeit{Term} provides the term that failed to evaluate.
+%
+The message might be followed by further notes.
+For example, 
+if the evaluation of an external function failed,
+by a trace indicating the location of the error within the source code of the external function.
+%
+Typically, it is simple to fix occurrences of this message
+- for example, if the term `\code{X/Y}' causes a message,
+it can be silenced by adding the comparison literal~`\code{Y!=0}' to the body of a rule (or condition).
+We suggest to silence all of these message in this manner
+and not simply to disable the message.
+
+\begin{note}
+Instantiations of rules, \code{\#show} statements, \code{\#external} statements, weak constraints, aggregate elements, and conditional literals
+that contain undefined terms are discarded.
+\end{note}
+
+\subsubsection{Undefined Atoms}\label{sec:warn:undefatm}
+This message is emitted if an atom appears in the body of a rule or condition
+that is never defined in the head of a rule or external statement:
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: info: atom is undefined:
+  @\textit{Atom}@
+\end{lstlisting}
+%
+where \codeit{Atom} is the atom occurrence without a definition.
+Often, this error indicates that a predicate has been misspelled 
+or that an argument has accidentally been omitted.
+

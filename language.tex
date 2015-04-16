@@ -24,14 +24,15 @@ In what follows,
 we describe the constructs belonging to the input language of \gringo\ and \clingo.
 
 \subsubsection{Terms}\label{subsec:gringo:terms}
-\index{Terms}
-\index{Terms!Constants}
-\index{Terms!Strings}
-\index{Terms!Variables}
-\index{Terms!Variables!Anonymous}
-\index{Terms!Functions}
-\index{Terms!\code{\#sup}}
-\index{Terms!\code{\#inf}}
+\index{term}
+\index{term!constant}
+\index{term!string}
+\index{term!variable}
+\index{term!anonymous variable}
+\index{term!function}
+\index{term!integer}
+\index{term!\code{\#sup}}
+\index{term!\code{\#inf}}
 
 \begin{figure}
 \railnontermfont{\rmfamily\itshape}%
@@ -119,22 +120,26 @@ Rules of the following forms are admitted in a
 \\
 \textbf{Integrity Constraint:} & &~\code{:-}~$L_1\code{,}\dots\code{,}L_n$\code{.}
 \end{tabular}
-\index{Logic Programs}
-\index{Logic Programs!Rules}%
-\index{Logic Programs!Facts}%
-\index{Logic Programs!Integrity Constraints}%
+\index{logic program}
+\index{logic program!normal}%
+\index{rule!fact}%
+\index{rule!normal}%
+\index{rule!integrity constraint}%
 \par
 \medskip
 \noindent
 The \emph{head}~$A_0$ of a rule or a fact is an \emph{atom} of the same
 syntactic form as a constant or function.
-\index{Logic Programs!Atoms}%
+\index{atom}%
+\index{atom|seealso{literal}}%
 In the \emph{body} of a rule or an integrity constraint,
 every $L_j$ for $1\leq j\leq n$ is a \emph{literal} of the form $A$ or $\code{not}~A$,
 where $A$ is an atom and
 the connective \code{not} denotes default negation.
-\index{Logic Programs!Literals}%
-\index{Logic Programs!Literals!Default Negation}%
+\index{literal}%
+\index{literal|seealso{atom}}%
+\index{negation|seealso{literal}}%
+\index{negation!default}%
 We say that a literal~$L$ is \emph{positive} if it is an atom,
 and \emph{negative} otherwise.
 While the head atom~$A_0$ of a fact must unconditionally be true,
@@ -298,7 +303,7 @@ such that an equivalent propositional logic program is obtained.
 To this end,
 rules are required to be \emph{safe},
 \label{pg:safe}%
-\index{Logic Programs!Safety}%
+\index{safety}%
 i.e.,
 all variables in a rule must occur in some positive literal
 (a literal not preceded by \code{not}) in the body of the rule.
@@ -317,7 +322,7 @@ This universal meaning still applies when more sophisticated language constructs
 as described in the following, are used.
 
 \subsubsection{Classical Negation}\label{subsec:gringo:negation}
-\index{Logic Programs!Literals!Classical Negation}
+\index{negation!classical}
 
 The connective \code{not} expresses default negation,
 i.e., a literal $\code{not}~A$ is assumed to hold unless atom~$A$ is derived to be true.
@@ -383,7 +388,8 @@ there is no longer any answer set.
 \end{example}
 
 \subsubsection{Disjunction}\label{subsec:gringo:disjunction}
-\index{Logic Programs!Disjunction}
+\index{logic program!disjunctive}
+\index{rule!disjunctive}
 Disjunctive logic programs permit connective~`\code{;}' between atoms in rule heads.%
 \footnote{Note that disjunction in rule heads was not supported by \clasp\ and \clingo\ versions before series~3 and~4, respectively.}
 \par
@@ -393,9 +399,6 @@ Disjunctive logic programs permit connective~`\code{;}' between atoms in rule he
 \\
 \textbf{Fact:} & $A_0\text{\code{;}}\dots\text{\code{;}}A_m$&\code{.}
 \end{tabular}
-\index{Logic Programs}
-\index{Logic Programs!Rules!Disjunctive}%
-\index{Logic Programs!Facts!Disjunctive}%
 \par
 \medskip
 \noindent
@@ -415,8 +418,8 @@ We thus suggest to use ``choice constructs'' (detailed in Section~\ref{subsec:gr
 instead of disjunction, unless the latter is required for complexity reasons.
 
 \subsubsection{Double Negation and Head Literals}\label{subsec:gringo:double}
-\index{Logic Programs!Literals!Double Default Negation}
-\index{Logic Programs!Literals!Head}
+\index{negation!double}
+\index{literal!head}
 
 The input language of \gringo\ also supports double default negated literals,
 written $\code{not}~\code{not}~A$.
@@ -477,8 +480,7 @@ Hence, the answer set where tweety does not fly contains no atoms over predicate
 \end{note}
 
 \subsubsection{Boolean Constants}
-\index{Boolean Constants}
-\index{Logic Programs!Atoms!Boolean Constants}
+\index{atom!Boolean constant}
 %
 Sometimes it is useful to have literals possessing a constant truth value.
 Literals over the two \emph{Boolean constants} \code{\#true} and \code{\#false},
@@ -510,22 +512,21 @@ Thus, we obtain the empty answer set for the program.
 \end{example}
 See Example~\ref{ex:sort} below for an application of interest.
 \subsubsection{Built-in Arithmetic Functions}\label{subsec:gringo:arith}
-\index{Terms!Integers}
-\index{Terms!Arithmetic Functions}
-\index{Arithmetic Functions}
-\index{Arithmetic Functions!Integers}
-\index{Arithmetic Functions!Addition, \code{+}}
-\index{Arithmetic Functions!Subtraction, \code{-}}
-\index{Arithmetic Functions!Unary Minus, \code{-}}
-\index{Arithmetic Functions!Multiplication, \code{*}}
-\index{Arithmetic Functions!Division, \code{/}}
-\index{Arithmetic Functions!Modulo, \code{\textbackslash}}
-\index{Arithmetic Functions!Exponentiation, \code{**}}
-\index{Arithmetic Functions!Absolute Value, \mbox{\textbar$\cdot$\textbar}}
-\index{Arithmetic Functions!Bitwise AND, \code{\&}}
-\index{Arithmetic Functions!Bitwise OR, \code{?}}
-\index{Arithmetic Functions!Bitwise XOR, \code{\^}}
-\index{Arithmetic Functions!Bitwise Complement, \code{\textasciitilde}}
+\index{term!integer}
+\index{term!arithmetic function@\gobblecomma|see{arithmetic function}}
+\index{arithmetic function}
+\index{arithmetic function!addition, \code{+}}
+\index{arithmetic function!subtraction, \code{-}}
+\index{arithmetic function!unary minus, \code{-}}
+\index{arithmetic function!multiplication, \code{*}}
+\index{arithmetic function!division, \code{/}}
+\index{arithmetic function!modulo, \code{\textbackslash}}
+\index{arithmetic function!exponentiation, \code{**}}
+\index{arithmetic function!absolute value, \mbox{\textbar$\cdot$\textbar}}
+\index{arithmetic function!bitwise and, \code{\&}}
+\index{arithmetic function!bitwise or, \code{?}}
+\index{arithmetic function!bitwise xor, \code{\^}}
+\index{arithmetic function!bitwise complement, \code{\textasciitilde}}
 
 Besides integers (constant arithmetic functions),
 written as sequences of the digits \code{0}\dots\code{9}
@@ -575,18 +576,17 @@ if multiplication is used, then the constant part must not evaluate to $0$ for t
 E.g., the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\const{2}*(\var{X}+\const{1})).}
 is considered safe, but
 the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
-\index{Logic Programs!Safety}%
+\index{safety!arithmetic function}
 \end{note}
 
 \subsubsection{Built-in Comparison Predicates}\label{subsec:gringo:comp}
-\index{Comparison Literals}
-\index{Comparison Predicates}
-\index{Comparison Predicates!Inequality, \code{"!=}}
-\index{Comparison Predicates!Less, \code{<}}
-\index{Comparison Predicates!Less or Equal, \code{<=}}
-\index{Comparison Predicates!Greater, \code{>}}
-\index{Comparison Predicates!Greater or Equal, \code{>=}}
-\index{Logic Programs!Atoms!Comparison Predicates}
+\index{comparison predicate}
+\index{comparison predicate!inequality, \code{"!=}}
+\index{comparison predicate!less, \code{<}}
+\index{comparison predicate!less or equal, \code{<=}}
+\index{comparison predicate!greater, \code{>}}
+\index{comparison predicate!greater or equal, \code{>=}}
+\index{atom!comparison predicate@\gobblecomma|see{comparison predicate}}
 
 Grounder \gringo\ (and \clingo)
 feature a total order among variable-free terms (without arithmetic functions).
@@ -712,11 +712,11 @@ because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 Only simple arithmetic terms can be unified with (cf.\ Remark~\ref{note:simple}).
 Hence, variable~\var{X} in literal~\code{X*X=8} must be bound by some other positive literal.
 %
-\index{Logic Programs!Safety}%
+\index{safety!comparison predicate}%
 \end{note}
 
 \subsubsection{Intervals}\label{subsec:gringo:interval}
-\index{Terms!Intervals}
+\index{term!interval}
 
 Line~1 of Example~\ref{ex:define} contains
 five facts of the form \code{\pred{num}($k$).}
@@ -764,12 +764,13 @@ does not count as a positive occurrence
 in the sense of safety (cf.\ Page~\pageref{pg:safe}).
 Hence, such a variable must also have another positive occurrence elsewhere;
 here in \lstinline{size(S)}.
-\index{Logic Programs!Safety}%
+\index{safety!interval}%
 \end{note}
 
 \subsubsection{Pooling}\label{subsec:gringo:pool}
-\index{Terms!Pooling, \code{;}}
-\index{Logic Programs!Atoms!Pooling, \code{;}}
+\index{pooling, \code{;}}
+\index{term!pooling@\gobblecomma|see{pooling}}
+\index{atom!pooling@\gobblecomma|see{pooling}}
 
 The token `\code{;}' admits pooling alternative terms
 to be used as arguments of an atom, function, or tuple.
@@ -827,8 +828,9 @@ As in Example~\ref{ex:int}, additional constraints involving~\code{X} and~\code{
 For another example on pooling, featuring non-consecutive elements, see Section~\ref{subsec:color:instance}.
 
 \subsubsection{Conditions and Conditional Literals}\label{subsec:gringo:condition}
-\index{Aggregates!Conditions}
-\index{Logic Programs!Literals!Conditions}%
+\index{aggregate!condition}
+\index{conditional literal}%
+\index{literal!conditional}%
 %
 A \emph{conditional literal} is of the form
 \par
@@ -955,8 +957,7 @@ making sure that they do not \emph{accidentally} match the names of global varia
 We suggest using \emph{domain predicates}~\cite{lparseManual}
 or built-ins (both used in Line~3  of Example~\ref{ex:sort})
 in conditions.
-\index{Aggregates!Conditions!Domain Predicates}%
-\index{Logic Programs!Literals!Domain Predicates}%
+\index{domain predicate}%
 \label{pg:domain}%
 Literals over such predicates are completely evaluated during grounding.
 In a logic program, domain predicates can be recognized by observing
@@ -972,9 +973,8 @@ For further details see~\cite{haliya14a}.
 \end{note}
 
 \subsubsection{Aggregates}\label{subsec:gringo:aggregate}
-\index{Logic Programs!Atoms!Aggregates}
-\index{Aggregates}
-\index{Aggregates!Weights}
+\index{atom!aggregate@\gobblecomma|see{aggregate}}
+\index{aggregate}
 
 Aggregates are expressive modeling constructs that allow for forming values from groups of selected items.
 Together with comparisons they allow for expressing conditions over these terms.
@@ -990,7 +990,7 @@ Aggregate atoms come in two variants depending on whether they occur in a rule h
 
 \paragraph{Body Aggregates}
 The form of an \emph{aggregate atom} occurring in a rule body is as follows:
-\index{Aggregates!Body}
+\index{aggregate!body}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$\boldsymbol{L}_n$?}?$\prec_2 s_2$?
@@ -1011,19 +1011,19 @@ thus interpreting~$s_1$ and~$s_2$ as lower or upper bound, respectively.
 
 Currently, \gringo\ (and \clingo) support the aggregates
 \code{\#count}
-\index{Aggregates!Count, \code{\#count}}%
+\index{aggregate!count, \code{\#count}}%
 (the number of elements; used for expressing cardinality constraints),
 \code{\#sum}
-\index{Aggregates!Sum, \code{\#sum}}%
+\index{aggregate!sum, \code{\#sum}}%
 (the sum of weights; used for expressing weight constraints),
 \code{\#sum+}
-\index{Aggregates!Sum plus, \code{\#sum+}}%
+\index{aggregate!sum plus, \code{\#sum+}}%
 (the sum of positive weights),
 \code{\#min}
-\index{Aggregates!Minimum, \code{\#min}}%
+\index{aggregate!minimum, \code{\#min}}%
 (the minimum weight), and
 \code{\#max}
-\index{Aggregates!Maximum, \code{\#max}}%
+\index{aggregate!maximum, \code{\#max}}%
 (the maximum weight).
 The weight refers to the first element of a term tuple.
 Aggregate atoms, as described above, are obtained by writing
@@ -1091,7 +1091,7 @@ in this way, the same cost can be accounted for several times.
 \paragraph{Head Aggregates}
 Whenever a rule head is a (single) aggregate atom, the derivable head literals must be distinguished.
 This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples of the aggregate elements:
-\index{Aggregates!Head}
+\index{aggregate!head}
 %
 \begin{lstlisting}[numbers=none,escapechar=?]
 ?$s_1\prec_1\alpha$?{?$\boldsymbol{t}_1$?:?$L_1$?:?$\boldsymbol{L_1}$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$L_n$?:?$\boldsymbol{L_n}$?}?$\prec_2 s_2$?
@@ -1264,7 +1264,7 @@ Regarding contained variables,
 only variable occurrences in the guards give rise to global variables.
 Hence, any variable in an aggregate element must be bound by either a positive global occurrence or a variable
 that occurs positively in its condition $\boldsymbol{L_i}$.
-\index{Logic Programs!Safety}
+\index{safety!aggregate}
 Variable names in aggregate elements have to be chosen carefully to avoid clashes with global variables.
 Furthermore, pools and intervals in aggregate elements give rise to multiple aggregate elements;
 very similar to the disjunctive unpacking of pools and intervals in rules.
@@ -1440,14 +1440,17 @@ This restriction does not exist anymore in \gringo\ and \clingo~4.
 \end{note}
 
 \subsubsection{Optimization}\label{subsec:gringo:optimize}
-\index{Statements!Optimize Statements}
+\index{optimization}
+\index{optimization!weak constraint}
+\index{optimization!minimize, \code{\#minimize}}
+\index{optimization!maximize, \code{\#maximize}}
+
 Optimization statements extend the basic question of
 whether a set of atoms is an answer set to
 whether it is an optimal answer set.
 To support this reasoning mode, \gringo\ and \clingo\ adopt \dlv's weak constraints~\cite{bflnrp00}.
 The form of weak constraints is similar to integrity constraints (cf.~Section \ref{subsec:gringo:normal})
 being associated with a term tuple:
-\index{Statements!Weak Constraints}%
 \[
     \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$L_1$,$\dots$,$L_n$.~[$w$@$p$,$t_1$,$\dots$,$t_n$]}
 \]
@@ -1466,7 +1469,10 @@ we do not just compare two single costs
 but lexicographically compare cost tuples whose elements are ordered by priority (greater is more important).
 Note that a tuple is always associated with a priority;
 if it is omitted, then the priority defaults to zero.
-\index{Logic Programs!Safety}
+\index{meta-statement!optimization@\gobblecomma|see{optimization}}
+\index{safety!weak constraint}
+\index{safety!minimize, \code{\#minimize}}
+\index{safety!maximize, \code{\#maximize}}
 A weak constraint is safe if the variables in its term tuples are bound by the atoms in the body
 and the safety requirements for the body itself are the same as for integrity constraints.
 
@@ -1547,10 +1553,10 @@ to cost~\const{90} per night.
 
 
 \subsubsection{External Functions}\label{subsec:lang:extfun}
-\index{Terms!External Functions}%
-\index{External Functions}%
-\index{Lua}%
-\index{Python}%
+\index{external function}%
+\index{term!external function@\gobblecomma|see{external function}}%
+\index{lua}%
+\index{python}%
 Utilizing the scripting languages Lua or Python\footnote{\url{http://lua.org} and \url{http://python.org}},
 \gringo's input language can be enriched by arbitrary functions.
 We focus on functions that are evaluated during grounding here.
@@ -1589,7 +1595,6 @@ Calls to \clingo\ are similar.
 %
 The function is called in Line~3 and the result stored in predicate \code{gcd}/$3$.
 Note that external function calls look like function terms but are preceded by `\code{@}'.
-\index{External Functions!Calling}%
 As with non-simple arithmetic terms
 according to Remark~\ref{note:simple},
 variable occurrences in arguments to external functions
@@ -1627,7 +1632,6 @@ Calls to \clingo\ are similar.
 The function is called in Line~3 and the result stored in predicate \code{rng}/$3$.
 The values in the table or list returned from a call to \code{\@rng(X,Y)} are then successively inserted.
 In fact, this function behaves exactly like the interval~\code{X..Y}.
-\index{External Functions!Term Insertion}
 
 An interesting use case for returning multiple values is to pull whole
 instances from external sources, like for example a database or some text file not already in fact format.
@@ -1741,13 +1745,13 @@ For example, this happens when the~\code{gcd} function from Example~\ref{ex:gcd}
 \end{note}
 
 \subsubsection{Meta-Statements}\label{subsec:gringo:meta}
-\index{Meta-Statements}
+\index{meta-statement}
 
 After considering the language of logic programs,
 we now introduce features going beyond the contents of a program.
 
 \paragraph{Comments}
-\index{Meta-Statements!Comments}
+\index{meta-statement!comment}
 To annotate the source code of a logic program,
 a logic program file may include comments.
 A comment until the end of a line is initiated by symbol `\code{\%}',
@@ -1766,7 +1770,7 @@ tos(uhura).  tos(sulu).
 \end{lstlisting}
 
 \paragraph{Show Statements}
-\index{Meta-Statements!Show Statements, \code{\#show}}%
+\index{meta-statement!show, \code{\#show}}%
 Usually, only a subset of the atoms belonging
 to an answer set characterizes a solution.
 In order to suppress the atoms of ``irrelevant'' predicates from the output
@@ -1831,11 +1835,11 @@ The second form of \code{\#show} statements to show terms may contain variables.
 Regarding safety (cf.\ Page~\pageref{pg:safe}), it behaves similar to a rule,
 where the term~$t$ takes the role of the head
 and the condition after the colon the role of the body.
-\index{Logic Programs!Safety}
+\index{safety!show, \code{\#show}}
 \end{note}
 
 \paragraph{Const Statements}
-\index{Meta-Statements!Const Statements, \code{\#const}}%
+\index{meta-statement!const, \code{\#const}}%
 Constants appearing in a logic program may actually be placeholders for
 concrete values provided by a user.
 An example of this is given in Section~\ref{subsec:ex:color}.
@@ -1865,7 +1869,7 @@ or from interpreting parentheses in functions.
 \end{example}
 
 \paragraph{External Statements}
-\index{Meta-Statements!External Statements, \code{\#external}}%
+\index{meta-statement!external, \code{\#external}}%
 External statements are used to declare atoms
 that should not be subject to certain simplifications.
 Namely,
@@ -1922,10 +1926,10 @@ External statements that contain variables
 have very similar requirements regarding safety as rules (cf.\ Page~\pageref{pg:safe}).
 The atom~$A$ takes the role of the head
 and the condition after the colon the role of the body.
-\index{Logic Programs!Safety}
+\index{safety!external, \code{\#external}}
 \end{note}
 \paragraph{Program Parts}
-\index{Meta-Statements!Program Parts, \code{\#program}}
+\index{meta-statement!program part, \code{\#program}}
 A logic program can be organized in multiple program parts.
 To begin a new program part, we write a statement
 %

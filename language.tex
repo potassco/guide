@@ -304,7 +304,7 @@ all variables in a rule must occur in some positive literal
 (a literal not preceded by \code{not}) in the body of the rule.
 For instance, the first two schematic rules in Example~\ref{ex:flies}
 are safe because they include \code{\pred{bird}(\var{X})} in their positive bodies.
-This tells \gringo\ (or the grounding component of \clingo)
+This tells \gringo\ (or \clingo)
 that the values to be substituted for~\var{X} are limited to birds.
 
 Up to now, we have introduced terms, facts, (normal) rules, and integrity constraints.
@@ -588,7 +588,7 @@ the rule~\code{\pred{q}(\var{X})\,:-\:\pred{p}(\var{X}+\const{X}).} is not.
 \index{Comparison Predicates!Greater or Equal, \code{>=}}
 \index{Logic Programs!Atoms!Comparison Predicates}
 
-Grounder \gringo\ and the grounding component of \clingo\
+Grounder \gringo\ (and \clingo)
 feature a total order among variable-free terms (without arithmetic functions).
 The built-in predicates to compare terms are
 \code{=} (equal),
@@ -707,7 +707,7 @@ so that variables occurring on one side can be instantiated.
 However, this only works when unification can be made directionally,
 i.e., it must be possible to instantiate one side without knowing the values of variables on the other side.
 For example, the rule~\code{\pred{p}(\var{X})\,:-\:\var{X}\:=\:\var{Y},\:\var{Y}\:=\:\var{X}.}
-is not accepted by \gringo\ (or the grounding component of \clingo)
+is not accepted by \gringo\ (or \clingo)
 because values for~\var{X} rely on values for~\var{Y}, and vice versa.
 Only simple arithmetic terms can be unified with (cf.\ Remark~\ref{note:simple}).
 Hence, variable~\var{X} in literal~\code{X*X=8} must be bound by some other positive literal.
@@ -2056,8 +2056,7 @@ and PB problems in OPB/WBO\footnote{\url{http://www.cril.univ-artois.fr/PB12/for
 
 For ASP solving,
 \clasp\ is typically invoked in a pipe reading
-a logic program output by \gringo\
-or as a component of \clingo:
+a logic program output by \gringo\ (or \clingo):
 %
 \begin{lstlisting}[numbers=none]
 gringo [ options | files ] | clasp [ options | number ]

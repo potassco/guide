@@ -112,9 +112,9 @@ and the above quadruple is equivalent to \code{(\const{at},\const{peter},\const{
 Rules of the following forms are admitted in a
 \emph{normal logic program} (with integrity constraints):
 \begin{align*}
-\textbf{Fact:} & \quad A_0\code{.} \\
-\textbf{Rule:} & \quad A_0\code{:-}~L_1\text{\code{,}}\dots\text{\code{,}}L_n\code{.} \\
-\textbf{Integrity Constraint:} & \quad \phantom{A_0}\code{:-}~L_1\code{,}\dots\code{,}L_n\code{.}
+\textbf{Fact:} & \quad \code{$A_0$.} \\
+\textbf{Rule:} & \quad \code{$A_0$ :- $L_1$,$\dots$,$L_n$.} \\
+\textbf{Integrity Constraint:} & \quad \code{\phantom{$A_0$} :- $L_1$,$\dots$,$L_n$.}
 \end{align*}
 \index{logic program}
 \index{logic program!normal}%
@@ -386,8 +386,8 @@ there is no longer any answer set.
 Disjunctive logic programs permit connective~`\code{;}' between atoms in rule heads.%
 \footnote{Note that disjunction in rule heads was not supported by \clasp\ and \clingo\ versions before series~3 and~4, respectively.}
 \begin{align*}
-\textbf{Rule:} & \quad A_0\code{;}\dots\code{;}A_m~\code{:-}~L_1\code{,}\dots\code{,}L_n\code{.} \\
-\textbf{Fact:} & \quad A_0\code{;}\dots\code{;}A_m\code{.}
+\textbf{Fact:} & \quad \code{$A_0$;\dots;$A_m$.} \\
+\textbf{Rule:} & \quad \code{$A_0$;\dots;$A_m$ :- $L_1$,$\dots$,$L_n$.}
 \end{align*}
 A disjunctive head holds if at least one of its atoms is true.
 Answer sets of a disjunctive logic program satisfy a minimality criterion
@@ -820,10 +820,10 @@ For another example on pooling, featuring non-consecutive elements, see Section~
 \index{literal!conditional}%
 %
 A \emph{conditional literal} is of the form
-\[L_0\code{:}L_1\code{,}\dots\code{,}L_n\]
+\[\code{$L_0$:$L_1$,$\dots$,$L_n$}\]
 %
 where every $L_j$ for $0\leq j\leq n$ is a \emph{literal},
-$L_1\text{\code{,}}\dots\text{\code{,}}L_n$ is called \textit{condition},
+\code{$L_1$,$\dots$,$L_n$} is called \textit{condition},
 and `\code{:}' resembles mathematical set notation.
 Whenever $n=0$, we get a regular literal and denote it as usual by $L_0$.
 
@@ -834,9 +834,9 @@ a :- b : c.
 yields \code{a} whenever either \code{c} is false (and thus no matter whether \code{b} holds or not) or both \code{b} and \code{c} are true.
 
 \begin{note}
-Logically, $L_0$ and $L_1\text{\code{,}}\dots\text{\code{,}}L_n$ act as
+Logically, $L_0$ and \code{$L_1$,$\dots$,$L_n$} act as
 head and body, respectively,
-which gives $L_0~\code{:}~L_1\text{\code{,}}\dots\text{\code{,}}L_n$ 
+which gives \code{$L_0$:$L_1$,$\dots$,$L_n$} 
 the flavor of a nested implication
 (see~\cite{haliya14a} for details).
 \end{note}
@@ -972,7 +972,7 @@ Aggregate atoms come in two variants depending on whether they occur in a rule h
 The form of an \emph{aggregate atom} occurring in a rule body is as follows:
 \index{aggregate!body}
 %
-$$s_1\prec_1\alpha\code{\{}\boldsymbol{t}_1\code{:}\boldsymbol{L}_1\code{;}\dots\code{;}\boldsymbol{t}_n\code{:}\boldsymbol{L}_n\code{\}}\prec_2 s_2$$
+\[\code{$s_1$~$\prec_1$~$\alpha$~\{~$\boldsymbol{t}_1$:$\boldsymbol{L}_1$;$\dots$;$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}~$\prec_2$~$s_2$}\]
 %
 Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$, forming \emph{aggregate elements}, are non-empty tuples of terms and literals
 (as introduced in Section~\ref{subsec:gringo:terms}), respectively.
@@ -982,7 +982,7 @@ that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 Finally,
 the result of applying $\alpha$ is compared by means of the comparison predicates $\prec_1$ and $\prec_2$
 to the terms $s_1$ and~$s_2$, respectively.
-Note that one of the \emph{guards} `$s_1\prec_1$' or `$\prec_2 s_2$'
+Note that one of the \emph{guards} `\code{$s_1$~$\prec_1$}' or `\code{$\prec_2$~$s_2$}'
 (or even both) can be omitted;
 left out comparison predicates $\prec_1$ or $\prec_2$ default to `\code{<=}',
 thus interpreting~$s_1$ and~$s_2$ as lower or upper bound, respectively.
@@ -1048,7 +1048,8 @@ yielding \lstinline[mathescape]{#count$\{$t;s$\}$ = 2}.
 Likewise, the elements of other aggregates are understood as sets.
 %
 Consider the next two summation aggregates:
-\begin{lstlisting}[numbers=none,escapechar=@]
+% FIXME: why is here a line break???
+\begin{lstlisting}[numbers=none]
 #sum { 3     : cost(1,2,3); 3     : cost(2,3,3) } = 3
 #sum { 3,1,2 : cost(1,2,3); 3,2,3 : cost(2,3,3) } = 6
 \end{lstlisting}
@@ -1071,15 +1072,15 @@ Whenever a rule head is a (single) aggregate atom, the derivable head literals m
 This is done by appending such atoms (or in general literals) separated by an additional `:' to the tuples of the aggregate elements:
 \index{aggregate!head}
 %
-\[s_1\prec_1\alpha\code{\{}\boldsymbol{t}_1\code{:}L_1\code{:}\boldsymbol{L_1}\code{;}\dots\code{;}\boldsymbol{t}_n\code{:}L_n\code{:}\boldsymbol{L_n}\code{\}}\prec_2 s_2\]
+\[\code{$s_1$~$\prec_1$~$\alpha$~\{~$\boldsymbol{t}_1$:$L_1$:$\boldsymbol{L_1}$;$\dots$;$\boldsymbol{t}_n$:$L_n$:$\boldsymbol{L_n}$~\}~$\prec_2$~$s_2$}\]
 %
 Here, all $L_i$ are literals as introduced in Section~\ref{subsec:gringo:normal},
 while all other entities are as described above.
 The second colon in
-\lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$:$\boldsymbol{L_i}$}
+\code{$\boldsymbol{t}_i$:$L_i$:$\boldsymbol{L_i}$}
 is dropped whenever $\boldsymbol{L_i}$ is empty,
 yielding
-\lstinline[mathescape]{$\boldsymbol{t}_i$:$L_i$}.
+\code{$\boldsymbol{t}_i$:$L_i$}.
 
 \begin{note}
 Aggregate atoms in the head can be understood as a combination of unrestricted choices with body aggregates enforcing the constraint expressed by the
@@ -1093,23 +1094,23 @@ There are some shorthands that can be used in the syntactic representation of ag
 %
 The expression
 %
-\[s_1 \prec_1 \code{\{}L_1\code{:}\boldsymbol{L_1}\code{;}\dots\code{;}L_n\code{:}\boldsymbol{L_n}\code{\}} \prec_2 s_2\]
+\[\code{$s_1$~$\prec_1$~\{~$L_1$:$\boldsymbol{L_1}$;$\dots$;$L_n$:$\boldsymbol{L_n}$~\}~$\prec_2$~$s_2$}\]
 %
 where all entities are defined as above
 is a shortcut for
 %
-\[s_1 \prec_1 \code{\#count\{}\boldsymbol{t}_1\code{:}L_1\code{:}\boldsymbol{L_1}\code{;}\dots\code{;}\boldsymbol{t}_n\code{:}L_n\code{:}\boldsymbol{L_n} \code{\}}\prec_2 s_2\]
+\[\code{$s_1$~$\prec_1$~\#count \{ $\boldsymbol{t}_1$:$L_1$:$\boldsymbol{L_1}$;$\dots$;$\boldsymbol{t}_n$:$L_n$:$\boldsymbol{L_n}$~\}~$\prec_2$~$s_2$}\]
 %
 if it appears in the head of a rule, and
 it is a shortcut for
 %
-\[s_1 \prec_1 \code{\#count} \code{\{}\boldsymbol{t}_1\code{:}L_1\code{,}\boldsymbol{L_1}\code{;}\dots\code{;}\boldsymbol{t}_n\code{:}L_n\code{,}\boldsymbol{L_n}\code{\}}\prec_2 s_2\]
+\[\code{$s_1$~$\prec_1$~\#count~\{~$\boldsymbol{t}_1$:$L_1$,$\boldsymbol{L_1}$;$\dots$;$\boldsymbol{t}_n$:$L_n$,$\boldsymbol{L_n}$~\}~$\prec_2$~$s_2$}\]
 %
 if it appears in the body of a rule.
-In both cases, all $\boldsymbol{t}_i$ are pairwisely distinct term tuples generated by \gringo\
+In both cases, all $\boldsymbol{t}_i$ are pairwise distinct term tuples generated by \gringo\
 whenever the distinguished (head) literals $L_i$ are different.
 %
-Just like with aggregates, the guards~`$s_1\prec_1$' and~`$\prec_2 s_2$' are optional, and the symbols `$\prec_1$' and `$\prec_2$' default to `\code{<=}' if omitted.
+Just like with aggregates, the guards~`\code{$s_1$~$\prec_1$}' and~`\code{$\prec_2$~$s_2$}' are optional, and the symbols `$\prec_1$' and `$\prec_2$' default to `\code{<=}' if omitted.
 
 For example, the rule
 \begin{lstlisting}[numbers=none]
@@ -1450,26 +1451,26 @@ As an alternative way to express an optimization problem,
 there are optimization statements.
 A minimize statement of the form
 \[
-    \code{\#minimize \{$w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_n$@$p_n$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$\}.}
+    \code{\#minimize~\{~$w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_n$@$p_n$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$~\}.}
 \]
 represents the following $n$ weak constraints:
 \[
-    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_1$.~[$w_1$@$p_1$,$\boldsymbol{t}_1$]}
+    \code{:\Sim~$\boldsymbol{L}_1$.~[$w_1$@$p_1$,$\boldsymbol{t}_1$]}
     \quad \dots \quad
-    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_n$.~[$w_n$@$p_n$,$\boldsymbol{t}_n$]}
+    \code{:\Sim~$\boldsymbol{L}_n$.~[$w_n$@$p_n$,$\boldsymbol{t}_n$]}
 \]
 %
 Moreover, maximize statements can be viewed as minimize statements
 with inverse weights.
 Hence, a maximize statement of the form
 \[
-    \code{\#maximize \{$w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_n$@$p_n$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$\}.}
+    \code{\#maximize~\{~$w_1$@$p_1$,$\boldsymbol{t}_1$:$\boldsymbol{L}_1$,$\dots$,$w_n$@$p_n$,$\boldsymbol{t}_n$:$\boldsymbol{L}_n$~\}.}
 \]
 represents the following $n$ weak constraints:
 \[
-    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_1$.~[-$w_1$@$p_1$,$\boldsymbol{t}_1$]}
+    \code{:\Sim~$\boldsymbol{L}_1$.~[-$w_1$@$p_1$,$\boldsymbol{t}_1$]}
     \quad \dots \quad
-    \code{:{\raise.17ex\hbox{$\scriptstyle\sim$}}~$\boldsymbol{L}_n$.~[-$w_n$@$p_n$,$\boldsymbol{t}_n$]}
+    \code{:\Sim~$\boldsymbol{L}_n$.~[-$w_n$@$p_n$,$\boldsymbol{t}_n$]}
 \]
 As with weak constraints, the priorities `\code{@$p_i$}' are optional
 and default to zero.
@@ -1749,8 +1750,8 @@ the \code{\#show} directive can be used.
 There are three different kinds of such statements:
 %
 \begin{align*}
-   \textbf{Show atoms:}   & \quad \code{\#show }p\code{/}n\code{.} \\
-   \textbf{Show terms:}   & \quad \code{\#show }t\code{:}L_1\text{\code{,}}\dots\text{\code{,}}L_n\code{.} \\
+   \textbf{Show atoms:}   & \quad \code{\#show~$p$/$n$.} \\
+   \textbf{Show terms:}   & \quad \code{\#show~$t$:$L_1$,$\dots$,$L_n$.} \\
    \textbf{Show nothing:} & \quad \code{\#show.}
 \end{align*}
 %
@@ -1842,7 +1843,7 @@ The main use case is to implement extensions to plain ASP solving,
 like multi-shot solving detailed in Section~\ref{sec:multi}.
 An \code{\#external} statement has the following form:
 %
-\[\code{\#external}~A\code{:}L_1\code{,}\dots\code{,}L_n\code{.}\]
+\[\code{\#external~$A$:$L_1$,$\dots$,$L_n$.}\]
 %
 Here, $A$ is an atom over some predicate and
 the part following the~`\code{:}' is a condition.

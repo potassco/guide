@@ -32,18 +32,25 @@ by using machine learning techniques
 in order to solve a given (ground) logic program at hand.
 These so-called instance features are computed by \claspre. % footnote{\url{http://www.cs.uni-potsdam.de/claspre/}}
 
-Using the $n$-queens puzzle from Example~\ref{ex:csp:queens1}, 
-we compare the performance of the default configuration of \clasp\ 
-and \claspfolio{}\comment{ML: with clasp2.1, this would be a nice example, but I have to wait for the new claspfolio release to compare against clasp 3.1}
+For illustration,
+consider to use \claspfolio\ to solve an instance of the ricochet robots problem~\cite{gejokaobsascsc13a},
+i.e., \code{examples/ricochet\_robots.lp.gz}.
+To invoke \claspfolio, we have simply to pass the instance via stdin 
+and tell \claspfolio\ to read from sdtin (\sysfont{-I -}).
 \begin{lstlisting}[numbers=none]
-$ gringo examples/queensC.lp -c n=60 | clasp
-[...]
-Time         : XXXs
-
-$ gringo examples/queensC.lp -c n=60 | \
+$ zcat examples/ricochet_robots.lp.gz | \
    python ./src/claspfolio.py -I -
 [...]
-Time         : XXXs
+Time         : 3.288s
+\end{lstlisting}
+
+Comparing the performance of \clasp's default configuration
+and the configuration selected by \claspfolio\ shows a $9.1$-fold speedup.
+
+\begin{lstlisting}[numbers=none]
+$ zcat examples/ricochet_robots.lp.gz | clasp
+[...]
+Time         : 30.080s
 \end{lstlisting}
 
 Another way to use \claspfolio\ is to select a configuration for a given set of instances.
@@ -109,47 +116,48 @@ but has the advantage of adapting \clasp\ even better to a given application.
 To install all required packages of \piclasp, please run `\code{bash install.sh}'.
 This locally installs \clasp, \smac, \sysfont{runsolver} and \claspre.
 
-For illustration, consider to use \piclasp\ to determine a well-performing configuration for the $n$-queens puzzle, 
-you have to provide a directory with the grounded instances, e.g., 
-\code{gringo examples/queensC.lp -c n=60 > <INSTANCE\_DIR>/queens\_60.gr}
+For illustration, consider to use \piclasp\ to determine a well-performing configuration again for the ricochet robots problem, 
+you have to provide a directory with the grounded instances, e.g., a directory with \code{examples/ricochet\_robots.lp.gz}
 
-Running \piclasp\ on this one instance yields the following result.
+Running \piclasp\ with a budget of $3300$ seconds (\code{-b 3300}) 
+and a runtime cutoff of $33$ seconds per \clasp\ run
+on this one instance yields the following result.
 \begin{lstlisting}[numbers=none]
-$ python piclasp.py -c 10 -I <INSTANCE_DIR>
+$ python piclasp.py -b 3300 -c 33 -I <INSTANCE_DIR>
 Found 1 instances
 [...]
 Result of piclasp:
-Performance: 1.217000
---learn-explicit --no-gamma --sat-prepro=0 --trans-ext=all
---backprop --eq=2 --sign-def=1 --del-max=1601416487
---strengthen=local,0 --loops=no --init-watches=2
---heuristic=None --score-other=0 --del-cfl=F,198
---restarts=L,705,4 --partial-check=50 --del-estimate=2
---del-grow=1.4787,36.1154 --update-act --del-glue=6,0
---update-lbd=1 --reverse-arcs=0 --deletion=basic,38,1
---rand-freq=0.05 --otfs=2 --del-on-restart=29 
---contraction=6 --counter-restarts=22 
---del-init=25.0434,57,20840 --local-restarts 
---lookahead=no --save-progress=2
---counter-bump=1435 --sign-fix
+Performance: 0.094000
+--backprop --eq=0 --no-gamma --trans-ext=all
+--sat-prepro=0 --init-watches=2
+--heuristic=Domain --score-other=1
+--sign-def=0 --rand-freq=0.05
+--strengthen=local,1 --lookahead=no
+--otfs=2 --reverse-arcs=3 --dom-mod=5,0
+--save-progress=129 --restarts=no
+--partial-check=50 --score-res=1
+--update-lbd=0 --deletion=no
+--loops=common --del-grow=0
+--init-moms --contraction=no
 \end{lstlisting}
 
 Comparing the performance of \clasp's default configuration
-and the configuration determined by \piclasp\ shows a two-fold speedup.
+and the configuration determined by \piclasp\ shows a $295$-fold speedup.
 
 \begin{lstlisting}[numbers=none]
-$ cat queens_60.gr | clasp
+$ zcat examples/ricochet_robots.lp.gz | clasp
 [...]
-Time         : 2.780s
+Time         : 30.080s
 
-$ cat queens_60.gr | clasp <PICLASP CONFIGURATION>
+$ zcat examples/ricochet_robots.lp.gz | \
+  clasp <PICLASP CONFIGURATION>
 [...]
-Time         : 1.251s
+Time         : 0.102s
 \end{lstlisting}
 
-Interestingly, the configuration determined by \piclasp\ disabled the variable selection heuristic (\code{--heuristic=None})
-which a human would probably never do.
-
+Interestingly, the configuration determined by \piclasp\ changes nearly all parameters of \clasp.
+However, we do not know which of these changes (resp. which combination) 
+is necessary for the performance improvement.
 
 \begin{note}
 To improve the performance of \piclasp, 
@@ -172,7 +180,8 @@ Therefore, we strongly recommend to use another (disjoint) set of instances to a
 \end{note}
 
 \begin{note}
-We recommend that \piclasp\ optimizes the performance of \clasp\ on at least $100$ instances.
+We recommend that \piclasp\ optimizes the performance of \clasp\ on at least $100$ instances 
+(in contrast to our mini example above).
 On smaller instance sets, the determined configuration may not perform well on yet unseen instances.
 \end{note}
 

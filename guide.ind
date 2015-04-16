@@ -1,15 +1,15 @@
 \begin{theindex}
 
   \item aggregate, \hyperpage{30}
-    \subitem average, \code{\#avg}, \hyperpage{107}
+    \subitem average, \code{\#avg}, \hyperpage{108}
     \subitem body, \hyperpage{31}
     \subitem condition, \hyperpage{28}
     \subitem count, \code{\#count}, \hyperpage{31}
-    \subitem even, \code{\#even}, \hyperpage{107}
+    \subitem even, \code{\#even}, \hyperpage{108}
     \subitem head, \hyperpage{32}
     \subitem maximum, \code{\#max}, \hyperpage{31}
     \subitem minimum, \code{\#min}, \hyperpage{31}
-    \subitem odd, \code{\#odd}, \hyperpage{107}
+    \subitem odd, \code{\#odd}, \hyperpage{108}
     \subitem sum plus, \code{\#sum+}, \hyperpage{31}
     \subitem sum, \code{\#sum}, \hyperpage{31}
   \item arithmetic function, \hyperpage{24}
@@ -81,8 +81,8 @@
   \indexspace
 
   \item Optimization
-    \subitem Optimization Directives, \hyperpage{82}
-    \subitem Preference Statements, \hyperpage{82}
+    \subitem Optimization Directives, \hyperpage{83}
+    \subitem Preference Statements, \hyperpage{83}
   \item optimization, \hyperpage{37}
     \subitem maximize, \code{\#maximize}, \hyperpage{37}
     \subitem minimize, \code{\#minimize}, \hyperpage{37}

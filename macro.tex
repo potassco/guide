@@ -1,3 +1,7 @@
+% Colors
+
+\definecolor{potcolor}{RGB}{0,62,90}
+
 % Formatting
 
 \newcommand{\code}[1]{\texttt{#1}}
@@ -113,10 +117,14 @@
 \setlength\railnamesep{-2pt}
 \sloppy
 
-% Macros
+% Other
 
 % this macro is kinda ugly but the only way I found to workaround warnings
 \def\attach{\textattachfile[color=1 0 0]}
+
+\makeatletter
+\newcommand{\gobblecomma}[1]{\@gobble{#1}\ignorespaces}
+\makeatother
 
 \def\SVNREVISION{$LastChangedRevision: 9329 $}
 

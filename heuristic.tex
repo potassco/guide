@@ -3,9 +3,11 @@
 \label{sec:heuristic}
 \comment{T2J: Add index statements}
 
+\comment{C: What kind of heuristic is that? What does this do? (an introduction seems missing to me)}
 \clasp\ and \clingo\ provide means for incorporating domain-specific heuristics into ASP solving.
 This allows for modifying the heuristic of the solver from within a logic program or from the command line.
 A formal description can be found in \cite{gekaotroscwa13a}.
+\comment{C: What framework? What kind of framework is implemented as a heuristic?}
 The framework is implemented as a new heuristic, named \code{Domain},
 that extends the \code{Vsids} heuristics of \clasp\ 
 and can be activated using option \code{--heuristic=Domain}
@@ -86,7 +88,9 @@ and the same happens with Example \ref{example:nsign},
 although in this case the answer sets are computed in opposite order.
 
 \subsubsection{Showing heuristic information}
+\comment{C: Expected section for next modifier. Please consider changing the structure}
 
+\comment{C: Is there a reason for this?}
 For the heuristic atoms to take effect, they as well as the atoms to which they refer to
 must be shown in the logic program.\footnote{Note that in \gringo\ all atoms are shown, 
   unless \code{\#show} statements appear in the program.}
@@ -106,6 +110,7 @@ because then the atom \code{a}, appearing in the heuristic atom, would not be sh
 Printing the heuristic atoms in the output of \clingo\ or \clasp\ may often be a burden.
 To overcome this issue,
 the command line option \code{--out-hide-aux} allows us to suppress printing atoms starting with underscore `\code{\_}'.
+\comment{C: Does hiding mean that they will not take effect?}
 \end{note}
 
 \subsubsection{Heuristic modifier \code{level}}

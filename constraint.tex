@@ -33,25 +33,19 @@ Grounder \gringo\ features some \textcolor{red}{experimental} means for expressi
 The linear constraints are compiled into normal rules following the order encoding \cite{tatakiba09a,bageinscsotawe13a}.
 Hence, off-the-shelf ASP solvers like \clasp\ can be used to solve such problems.
 
-CSP constraints in gringo are build over \emph{constraint terms}, which have form:
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$c_1$? $* $?$v_1$? $+ ?$\cdots$? $+ ?$c_n$? $* $?$v_n$?
-\end{lstlisting}
+CSP constraints in gringo are build over \emph{constraint terms}, which have form
+\[\code{$c_1$~\$*~\$$v_1$~\$+~$\cdots$~\$+~$c_n$~\$*~\$$v_n$}\]
 where $n>0$, and each $c_i$ (integer factor) and $v_i$ (name of a constraint variable) are terms.
 If a factor is one, then the `\code{$c_i$ \$*}' part can be omitted.
 Similarly, it is possible to just add a factor in which case the `\code{\$* $v_i$}' part can be omitted.
 
 \emph{Linear constraints} in \gringo\ are syntactically similar to built-in comparison predicates (cf. Section~\ref{subsec:gringo:comp})
-but relation symbols have to be preceded with a \code{\$} symbol:
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$t_0$? $?$\prec_1$? ?$\cdots$? $?$\prec_{n}$? ?$t_n$?
-\end{lstlisting}
+but relation symbols have to be preceded with a \code{\$} symbol
+\[\code{$t_0$~\$$\prec_1$~$\cdots$~\$$\prec_{n}$~$t_n$}\]
 where $n>0$, each $\prec_i$ is a comparison predicate, and each $t_i$ is a constraint term.
 
 In addition, there is the global \emph{disjoint constraint}:
-\begin{lstlisting}[numbers=none,escapechar=?]
-#disjoint{?$\boldsymbol{t}_1$?:?$c_1$?:?$\boldsymbol{L}_1$?;?\,\dots\,?;?$\boldsymbol{t}_n$?:?$c_n$?:?$\boldsymbol{L}_n$?}
-\end{lstlisting}
+\[\code{\#disjoint~\{~$\boldsymbol{t}_1$:$c_1$:$\boldsymbol{L}_1$;$\dots$;$\boldsymbol{t}_n$:$c_n$:$\boldsymbol{L}_n$~\}}\]
 where $n\geq 0$, $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are given as in Section~\ref{subsec:gringo:aggregate},
 and each $c_i$ is a constraint term.
 %

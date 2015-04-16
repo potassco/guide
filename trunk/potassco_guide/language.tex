@@ -385,16 +385,10 @@ there is no longer any answer set.
 \index{rule!disjunctive}
 Disjunctive logic programs permit connective~`\code{;}' between atoms in rule heads.%
 \footnote{Note that disjunction in rule heads was not supported by \clasp\ and \clingo\ versions before series~3 and~4, respectively.}
-\par
-\medskip
-\begin{tabular}{rl@{}l}\label{eq:disjunctive:rule}
-\textbf{Rule:} & $A_0\text{\code{;}}\dots\text{\code{;}}A_m$&~\code{:-}~$L_1\text{\code{,}}\dots\text{\code{,}}L_n$\code{.}
-\\
-\textbf{Fact:} & $A_0\text{\code{;}}\dots\text{\code{;}}A_m$&\code{.}
-\end{tabular}
-\par
-\medskip
-\noindent
+\begin{align*}
+\textbf{Rule:} & \quad A_0\code{;}\dots\code{;}A_m~\code{:-}~L_1\code{,}\dots\code{,}L_n\code{.} \\
+\textbf{Fact:} & \quad A_0\code{;}\dots\code{;}A_m\code{.}
+\end{align*}
 A disjunctive head holds if at least one of its atoms is true.
 Answer sets of a disjunctive logic program satisfy a minimality criterion
 that we do not detail here

@@ -1,13 +1,12 @@
 
 \section{Heuristic-driven Solving}
 \label{sec:heuristic}
-\comment{T2J: Add index statements}
+\comment{Add index statements}
 
-\comment{C: What kind of heuristic is that? What does this do? (an introduction seems missing to me)}
 \clasp\ and \clingo\ provide means for incorporating domain-specific heuristics into ASP solving.
 This allows for modifying the heuristic of the solver from within a logic program or from the command line.
 A formal description can be found in \cite{gekaotroscwa13a}.
-\comment{C: What framework? What kind of framework is implemented as a heuristic?}
+
 The framework is implemented as a new heuristic, named \code{Domain},
 that extends the \code{Vsids} heuristics of \clasp\ 
 and can be activated using option \code{--heuristic=Domain}

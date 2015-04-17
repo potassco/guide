@@ -358,23 +358,23 @@ it becomes obsolete by a static analysis exhibiting that
 \const{tux} does surely not fly.}
 %
 \begin{lstlisting}[firstnumber=4]
-:- flies(tweety), -flies(tweety).
-:- flies(tux),    -flies(tux).
+:- fly(tweety), -fly(tweety).
+:- fly(tux),    -fly(tux).
 \end{lstlisting}
 There are still two answer sets,
-containing \code{-\pred{flies}(\const{tux})} and
-either \code{\pred{flies}(\const{tweety})} or \code{-\pred{flies}(\const{tweety})}.
+containing \code{-\pred{fly}(\const{tux})} and
+either \code{\pred{fly}(\const{tweety})} or \code{-\pred{fly}(\const{tweety})}.
 
 Now assume that we add the following fact to the program:
 \begin{lstlisting}[numbers=none]
-flies(tux).
+fly(tux).
 \end{lstlisting}
 Then,
-\code{\pred{flies}(\const{tux})} must unconditionally be true,
-and \code{-\pred{flies}(\const{tux})} is still derived by
+\code{\pred{fly}(\const{tux})} must unconditionally be true,
+and \code{-\pred{fly}(\const{tux})} is still derived by
 an instance of the third schematic rule.
 Since every answer set candidate containing
-both \code{\pred{flies}(\const{tux})} and \code{-\pred{flies}(\const{tux})}
+both \code{\pred{fly}(\const{tux})} and \code{-\pred{fly}(\const{tux})}
 triggers
 the (implicit) integrity constraint in Line~5,
 there is no longer any answer set.
@@ -458,7 +458,7 @@ The possibility that a bird flies is expressed with a double negation in the fir
 Solutions with flying penguins are filtered out in the second line.
 Like in Example~\ref{ex:flies} there are two answer sets,
 but without an explicit atom to indicate that a bird does not fly.
-Hence, the answer set where tweety does not fly contains no atoms over predicate \pred{flies}/$1$.
+Hence, the answer set where tweety does not fly contains no atoms over predicate \pred{fly}/$1$.
 \end{example}
 
 \begin{note}
@@ -1048,10 +1048,10 @@ yielding \lstinline[mathescape]{#count$\{$t;s$\}$ = 2}.
 Likewise, the elements of other aggregates are understood as sets.
 %
 Consider the next two summation aggregates:
-% FIXME: why is here a line break???
 \begin{lstlisting}[numbers=none]
-#sum { 3     : cost(1,2,3); 3     : cost(2,3,3) } = 3
-#sum { 3,1,2 : cost(1,2,3); 3,2,3 : cost(2,3,3) } = 6
+#sum { 3 : cost(1,2,3); 3 : cost(2,3,3) } = 3
+#sum { 3,1,2 : cost(1,2,3);
+       3,2,3 : cost(2,3,3) } = 6
 \end{lstlisting}
 As done in Section~\ref{subsec:tsp:instance},
 an atom like \lstinline{cost(1,2,3)} can be used to represent an arc from node \lstinline{1} to \lstinline{2} with cost \lstinline{3}.
@@ -1143,7 +1143,9 @@ To see this, observe that the integrity constraint
 \end{lstlisting}
 is expanded to
 \begin{lstlisting}[numbers=none]
-:- #count { 0,a : a; 1,b : not b; 2,c : not not c } > 0.
+:- #count { 0,a : a; 
+            1,b : not b;
+            2,c : not not c } > 0.
 \end{lstlisting}
 
 \begin{note}
@@ -1249,7 +1251,7 @@ wants to enroll for a number of courses at the beginning of a new term.
 In the university calendar, eight courses are found eligible,
 and they are represented by the following facts:
 %
-\lstinputlisting[xrightmargin=-20pt,lastline=8,basicstyle=\ttfamily\small]{examples/aggr.lp}
+\lstinputlisting[xrightmargin=-20pt,lastline=8]{examples/aggr.lp}
 %
 In an instance of \const{course}/$3$,
 the first argument is a number identifying one of the eight courses,
@@ -1482,26 +1484,25 @@ The hotels are identified via numbers assigned in descending order of stars.
 Of course, the more stars a hotel has, the more it costs per night.
 As ancillary information, we know that hotel~\const{4} is located
 on a main street, which is why we expect its rooms to be noisy.
-This knowledge is specified in Line~1--5 of the following program:
+This knowledge is specified in Line~1--7 of the following program:
 %
 \lstinputlisting[xrightmargin=-35pt]{examples/opt.lp}
 %
-Line~6--8 contribute optimization statements in inverse order of significance,
+Line~8--9 contribute optimization statements in inverse order of significance,
 according to which we want to choose the best hotel to book.
-The most significant optimization statement in Line~8 states that
+The most significant optimization statement in Line~10 states that
 avoiding noise is our main priority.
-The secondary optimization criterion in Line~7 consists of
-minimizing the cost per star.
-Finally, the third optimization statement in Line~6 specifies that we want
-to maximize the number of stars among hotels that are otherwise indistinguishable.
-The optimization statements in Line~6--8 are instantiated as follows:%
+The secondary optimization criterion in Line~9 consists of minimizing the cost per star.
+Finally, the third optimization statement in Line~8 specifies
+that we want to maximize the number of stars among hotels that are otherwise indistinguishable.
+The optimization statements in Line~8--10 are instantiated as follows:%
 \marginlabel{%
   The full ground program is obtained by invoking:\\
   \code{\mbox{~}clingo --text \attach{examples/opt.lp}{opt.lp}}\\
   or alternatively:\\
   \code{\mbox{~}gringo --text \attach{examples/opt.lp}{opt.lp}}}
 %
-\begin{lstlisting}[firstnumber=6,breakindent=0pt,escapechar=&]
+\begin{lstlisting}[firstnumber=8,breakindent=0pt,escapechar=&]
 :~ hotel(1). [-5@1,1]&\\&:~ hotel(2). [-4@1,2]&\\&:~ hotel(3). [-3@1,3]&\\&:~ hotel(4). [-3@1,4]&\\&:~ hotel(5). [-2@1,5]
 :~ hotel(1). [34@2,1]&\\&:~ hotel(2). [35@2,2]&\\&:~ hotel(3). [30@2,3]&\\&:~ hotel(4). [25@2,4]&\\&:~ hotel(5). [30@2,5]
 :~ noisy. [ 1@3 ]
@@ -1514,12 +1515,11 @@ If we now use \clasp\ or \clingo\ to compute an optimal answer set,%
   \code{\mbox{~}gringo \attach{examples/opt.lp}{opt.lp} | \textbackslash\\
         \mbox{~}clasp 0}}
 we find that hotel~\const{4} is not eligible because it implies \pred{noisy}.
-Thus, hotel~\const{3} and~\const{5} remain as optimal w.r.t.\ the second most
-significant optimization statement in Line~7.
-This tie is broken via the least significant optimization statement in Line~6
+Thus, hotel~\const{3} and~\const{5} remain as optimal
+w.r.t.\ the second most significant optimization statement in Line~9.
+This tie is broken via the least significant optimization statement in Line~8
 because hotel~\const{3} has one star more than hotel~\const{5}.
-We thus decide to book hotel~\const{3} offering~\const{3} stars
-to cost~\const{90} per night.
+We thus decide to book hotel~\const{3} offering~\const{3} stars to cost~\const{90} per night.
 \end{example}
 
 

@@ -1,2 +1,2 @@
-    flies(X) :- bird(X), not not flies(X).
-not flies(X) :- penguin(X).
+    fly(X) :- bird(X), not not fly(X).
+not fly(X) :- penguin(X).

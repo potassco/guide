@@ -1,3 +1,3 @@
-    flies(X) :- bird(X), not neg_flies(X).
-neg_flies(X) :- bird(X), not     flies(X).
-neg_flies(X) :- penguin(X).
+    fly(X) :- bird(X), not neg_fly(X).
+neg_fly(X) :- bird(X), not     fly(X).
+neg_fly(X) :- penguin(X).

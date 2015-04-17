@@ -1,3 +1,3 @@
-    flies(tweety) :- not neg_flies(tweety).
-neg_flies(tweety) :- not     flies(tweety).
-neg_flies(tux).
+    fly(tweety) :- not neg_fly(tweety).
+neg_fly(tweety) :- not     fly(tweety).
+neg_fly(tux).

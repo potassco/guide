@@ -261,23 +261,25 @@ Restarts    : 0
 The line about \code{Choices} tells us that two decisions were made 
 and that both where made on atoms contained in \code{\_heuristic} atoms.
 
-\begin{example}
+%\begin{example}
+\subsubsection{Heuristics for Blocks World Planning}
 \label{example:blocks:world:heuristic}
-\comment{JR: This should be made coherent with the Incremental Solving Section, 
-             where Blocks World also appears.}
-We now apply the \code{Domain} heuristic to a Blocks World planning planning.  
-We begin with a basic encoding of the problem:
-\lstinputlisting[numbers=none]{examples/bw.lp}
-and one instance:
-\lstinputlisting[numbers=none]{examples/bw_ins.lp}
+We now apply the \code{Domain} heuristic to Blocks World Planning.  
+For simplicity, we adapt the encoding of Section \ref{subsec:block:encoding} 
+for one-shot solving\footnote{Heuristics may also be applied in the incremental setting of 
+Section \ref{subsec:block:encoding}, but we introduce them this way for clarity.}: 
+\lstinputlisting[numbers=none]{examples/blocks-heuristic.lp}
+Constant \code{lasttime} bounds the plan length, and we assume it is provided by command line (for example, with option \code{-c lasttime=3}).
+%fixes the maximum and one instance:
+%\lstinputlisting[numbers=none]{examples/bw_ins.lp}
 %
 %If we execute:
 %\begin{lstlisting}[numbers=none]
 %$ gringo bw.lp ins | clasp \end{lstlisting}
 %\clasp\ will run with \code{vsids} heuristic. Now we can try to improve the performance of the system programming the heuristic.
-In this encoding, once all the values for predicate \code{move} are given,
-the values of \code{on} and \code{non} are determined and may be propagated by the solver.
-This suggests that deciding only on \code{move} may be a good strategy.
+In this encoding, once all the values for predicate \code{move/3} are given,
+the values of \code{moved/2} and \code{holds/2} are determined and may be propagated by the solver.
+This suggests that deciding only on \code{move/3} may be a good strategy.
 We can do that with the \code{Domain} heuristic 
 adding the following heuristic rule:
 
@@ -285,11 +287,11 @@ adding the following heuristic rule:
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
 _heuristic(move(B,L,T),level,1) :- block(B),location(L),time(T).
 \end{lstlisting}
-Given that the level of \code{move} is higher,  the solver 
+Given that the level of \code{move/3} is higher,  the solver 
 decides first on atoms of that predicate,
 and the values of the other predicates are propagated.
 
-We may prefer to soften the heuristic modification to simply bias the search  towards the \code{move} predicate,
+We may prefer to soften the heuristic modification to simply bias the search  towards the \code{move/3} predicate,
 without establishing a strict preference towards it.  
 For that, we can use, for example, the rule
 %\begin{lstlisting}[numbers=none]
@@ -302,13 +304,13 @@ or
 _heuristic(move(B,L,T),factor,2) :- block(B),location(L),time(T).
 \end{lstlisting}
 or the combination of both.  
-The first rule adds \code{2} to the initial score of \code{move} atoms,
-while the second multiplies the heuristic score of \code{move} by \code{2}.
+The first rule adds \code{2} to the initial score of \code{move/3} atoms,
+while the second multiplies the heuristic score of \code{move/3} by \code{2}.
 
-Whenever we decide on making a \code{move} atom true,  
-the other \code{move} atoms for the same \code{time} are determined to be false,
+Whenever we decide on making a \code{move/3} atom true,  
+the other \code{move/3} atoms for the same \code{time/1} are determined to be false,
 and can be propagated by the solver. 
-So, deciding on true \code{move} atoms may be a good idea.
+So, deciding on true \code{move/3} atoms may be a good idea.
 For that, we can either use the \code{true} modifier to express a strict preference
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
@@ -327,9 +329,9 @@ _heuristic(move(B,L,T),factor,2) :- block(B),location(L),time(T).
 _heuristic(move(B,L,T),sign,  1) :- block(B),location(L),time(T).
 \end{lstlisting}
 
-So far, we have given the same heuristic values to all \code{move} atoms,
+So far, we have given the same heuristic values to all \code{move/3} atoms,
 but other options may be interesting. 
-For example, we may prefer to decide first on earlier \code{move} atoms,
+For example, we may prefer to decide first on earlier \code{move/3} atoms,
 so that the solver performs a forward search. 
 This can be represented with the following rule:
 %\begin{lstlisting}[numbers=none]
@@ -338,53 +340,56 @@ _heuristic(move(B,L,T),true,lasttime-T+1) :-
                              block(B), location(L), time(T).
 \end{lstlisting}
 For \code{lasttime=3},
-the rule ranks \code{move} atoms at time \code{1} at level \code{3},
+the rule ranks \code{move/3} atoms at time \code{1} at level \code{3},
 those at time \code{2} at level \code{2}, and 
 those at time \code{3} at level \code{1},
 while always assigning a positive \code{sign}.  
 In this manner, 
-the solver decides first on setting a \code{move} atom at time \code{1} to true, 
+the solver decides first on setting a \code{move/3} atom at time \code{1} to true, 
 then one at time \code{2}, and so on.
 
-Another strategy is to perform a backwards search on \code{move} from the last to the
+Another strategy is to perform a backwards search on \code{move/3} from the last to the
 first time instant, directed by the goals. 
 For this purpose, we can use the following dynamic heuristic rule: 
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),true,T) :- on(B,L,T).
+_heuristic(move(B,L,T),true,T) :- holds(on(B,L),T).
 \end{lstlisting}
 As before, the rule can be softened using \code{sign} with \code{init} or \code{factor}.
-At the start of the search, the goal's \code{on} atoms are true at the last time step.
-With this rule, the solver decides on a \code{move} atom that makes one of them true.
-Then, some \code{on} atoms are propagated to the previous time step,
+At the start of the search, the goal's \code{holds/2} atoms are true at the last time step.
+With this rule, the solver decides on a \code{move/3} atom that makes one of them true.
+Then, some \code{holds/2} atoms are propagated to the previous time step,
 and the process is repeated until reaching the first time instant.
 
-We can also choose to promote atoms of the \code{on} predicate.  
+We can also choose to promote atoms of the \code{holds/2} predicate.  
 For example, this can be achieved with any of the  following rules.
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(on(B,L,T),level,1)  :- block(B),location(L),time(T).
-_heuristic(on(B,L,T),init,2)   :- block(B),location(L),time(T).
-_heuristic(on(B,L,T),factor,3) :- block(B),location(L),time(T).
+_heuristic(holds(on(B,L),T),level,1)  :- 
+                            block(B),location(L),time(T).
+_heuristic(holds(on(B,L),T),init,2)   :- 
+                            block(B),location(L),time(T).
+_heuristic(holds(on(B,L),T),factor,3) :- 
+                            block(B),location(L),time(T).
 \end{lstlisting}
 
 Another interesting alternative is the following heuristic rule,  
 that proved to be very useful in practice (see \cite{gekaotroscwa13a}):
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(on(B,L,T-1),true, lasttime-T+1) :- on(B,L,T).
+_heuristic(holds(on(B,L),T-1),true, lasttime-T+1) :- holds(on(B,L),T).
 \end{lstlisting}
-The idea is to make the goal's \code{on} atoms persist backwards, 
+The idea is to make the goal's \code{holds/2} atoms persist backwards, 
 one by one, from the last time step to the first one.
 Note that a higher level is given to atoms at earlier time instants.
-First, the solver decides on one of the goal's \code{on} atoms at the last but one time step,
+First, the solver decides on one of the goal's \code{holds/2} atoms at the last but one time step,
 then it decides to make it persist to the previous situation, and so on.
-Later, it makes persist backwards another \code{on} atom from the goal.
+Later, it makes persist backwards another \code{holds/2} atom from the goal.
 With this heuristic,
-the idea is not to decide on atoms that lead to much propagation (as with \code{move} atoms)
+the idea is not to decide on atoms that lead to much propagation (as with \code{move/3} atoms)
 but rather to make correct decisions, 
-given that usually the values of \code{on} atoms persist by inertia.
-\end{example}
+given that usually the values of \code{holds/2} atoms persist by inertia.
+%\end{example}
 
 
 \subsection{Command Line Structure-oriented Heuristics}
@@ -393,45 +398,75 @@ The \code{Domain} heuristic also allows us to modify the heuristic of the solver
 For this, it is also activated with option \code{--heuristic=Domain}, 
 but now the heuristic modifications are specified by option:
 \begin{center}\lstinline{--dom-mod=<mod>[,<pick>]}\end{center}
-where \code{<mod>} ranges from \code{0} to \code{5} and specifies the modifier and the value:
+where $\texttt{<mod>}$ ranges from \texttt{0} to \texttt{5} and specifies the modifier:
 \begin{center}
-\begin{tabular}{clc|clc}
-\code{<mod>} & Modifier         & Value       & \code{<mod>} & Modifier     & Value\\
-\hline 
-\code{0}     & No   &                               & \code{1}     & \code{level} & \code{1}\\
-\code{2}     & \code{sign}      & \code{ 1}                      & \code{3}     & \code{true}  & \code{1}\\
-\code{4}     & \code{sign}      & \code{-1}                     & \code{5}     & \code{false} & \code{1}
+\begin{tabular}{cl|cl}
+\texttt{<mod>} & Modifier                    & \texttt{<mod>} & Modifier     \\
+\hline
+\texttt{0}     & None                        & \texttt{1}     & \texttt{level}\\
+\texttt{2}     & \texttt{sign} (positive)    & \texttt{3}     & \texttt{true} \\
+\texttt{4}     & \texttt{sign} (negative)    & \texttt{5}     & \texttt{false}
 \end{tabular}
 \end{center}
-and \code{<pick>} specifies bit-wisely the atoms to which the modification is applied:
-\comment{JR2BK: Please check, I am not sure if that's right}
+$\texttt{<pick>}$ specifies bit-wisely the atoms to which the modification is applied:
 \begin{center}
 \begin{tabular}{rcl}
-\code{0}  & & All atoms\\
-\code{1}  & & Atoms that belong to strongly connected components\\
-\code{2}  & & Atoms that belong to head cycle free components\\
-\code{4}  & & Atoms that appear in disjunctions\\
-\code{8}  & & Atoms that appear in optimization statements\\
-\code{16} & & Atoms that are shown
+\texttt{0}  & & Atoms only\\
+\texttt{1}  & & Atoms that belong to strongly connected components \\
+\texttt{2}  & & Atoms that belong to head cycle components \\ %~\cite{gekasc13a}\\
+\texttt{4}  & & Atoms that appear in disjunctions\\
+\texttt{8}  & & Atoms that appear in optimization statements\\
+\texttt{16} & & Atoms that are shown
 \end{tabular}
 \end{center}
-For example, with option \code{--dom-mod=5,16},
-we apply modifier \code{false} with value \code{1} 
-to atoms appearing in optimization statements, 
-and with option \code{--dom-mod=1,20},
-we apply modifier \code{level} with value \code{1}
-to both atoms appearing in disjunctions as well as shown atoms.
+Whenever \texttt{<mod>} equals \texttt{1}, \texttt{3} or \texttt{5},
+the level of the selected atoms depends on \texttt{<pick>}.
+For example, with option \texttt{--dom-mod=2,8},
+we apply a positive \texttt{sign} to atoms appearing in optimization statements,
+and with option \texttt{--dom-mod=1,20},
+we apply modifier \texttt{level} to both atoms appearing in disjunctions as well as shown atoms.
+In this case, atoms satisfying both conditions
+are assigned a higher level than those that are only shown,
+and these get a higher level than those only appearing in optimization statements.
 
-Compared to programmed heuristics, 
-the command line heuristics do not allow for applying modifiers \code{init} or \code{factor} 
+Compared to programmed heuristics,
+the command line heuristics do not allow for applying modifiers \texttt{init} or \texttt{factor}
 and cannot represent dynamic heuristics.
-On the other hand, they allow us to directly refer to structural components of the program 
-(strongly connected components, head cycle free components, etc.)
-and they do not require any additional grounding, 
-which may be important in larger problems.
+On the other hand, they allow us to directly refer to structural components of the program
+and do not require any additional grounding.
 %
 When both methods are combined,
 the atoms modified by the \texttt{\_heuristic} predicate are not affected by the command line heuristics.
+
+\subsection{Computing Minimal Answer Sets with Heuristics}\comment{J2T: Do we want this also here? I would keep it, but up to you :)}
+
+Apart from boosting solver performance,
+domain specific heuristics can be used for computing inclusion minimal answer sets
+\cite{cacacale96a,rogima10a}.
+This can be achieved by assigning \texttt{false} with value \texttt{1} to shown atoms. % whenever they are subject to a choice in \clasp.
+\begin{example}
+Consider the following program:
+\begin{lstlisting}[numbers=none]
+1 {a(1..3)}.  a(2) :- a(3).  a(3) :- a(2).  {b(1)}.  
+#show a/1.
+\end{lstlisting}
+Both the command line option `\texttt{--dom-mod=5,16}' as well as the addition of the heuristic fact
+`\lstinline{_heuristic(a(1..3),false,1).}'
+guarantee that the first answer set produced is inclusion minimal wrt.\ the atoms of predicate \texttt{a/1}.
+Moreover, both allow for enumerating all inclusion minimal solutions in conjunction with option \texttt{--enum-mod=domRec}.
+In our example, we obtain the answer sets
+\(
+\{\texttt{a(1)}\}
+\)
+and
+\(
+\{\texttt{a(2)},\ \texttt{a(3)}\}
+\).
+Note that in this case solutions are projected on shown atoms.
+\end{example}
+It is worth mentioning that the enumeration mode \texttt{domRec} relies on solution recording and is thus prone to an exponential blow-up in space.
+In practice, however, this often turns out to be superior to enumerating inclusion minimal model via disjunctive logic programs,
+which is guaranteed to run in polynomial space.
 
 %%% Local Variables:
 %%% mode: latex

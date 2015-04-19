@@ -24,9 +24,6 @@ can be obtained at the following references.
 \end{itemize}
 
 \subsection{Preference Handling with \asprin}\label{sec:asprin}
-\comment{Add index statements}
-\index{Optimization!Preference Statements}%
-\index{Optimization!Optimization Directives}%
 \asprin\ provides a general framework for optimizing qualitative and quantitative preferences in ASP.
 It allows for computing optimal answer sets of logic programs with preferences.
 While \asprin\ comes with a library of predefined preference types 
@@ -94,7 +91,7 @@ This can be done with the following preference specification
 Line~1 contains a preference statement of name \code{p1} and type \code{subset} that contains a single (non-ground) preference element.
 %The body of the preference element has to be formed by domain predicates, here \code{dom(X)}.
 Intuitively, the preference statement \code{p1} defines a preference of type \code{subset} over atoms of predicate \code{a/1}. 
-Line~2 contains an optimize statement that instructs \asprin\ to compute answer sets that are optimal with respect to \code{p1}. 
+Line~2 contains an optimization directive that instructs \asprin\ to compute answer sets that are optimal with respect to \code{p1}. 
 
 \begin{note}\label{asprin:note}
 Unlike \gringo's native optimization statements and weak constraints (cf.\ Section~\ref{subsec:gringo:optimize}),
@@ -254,6 +251,11 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 \end{example}
 
 \subsubsection{Input language of \asprin}
+\index{optimization!preference specification}%
+\index{optimization!preference specification!preference statement}%
+\index{optimization!preference specification!weighted formula}%
+\index{optimization!preference specification!preference element}%
+\index{optimization!optimization directive}%
 
 \asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
@@ -332,6 +334,8 @@ Accordingly, the literals in $B$ must be built-ins or belong to domain predicate
 This ensures that $B$ can be fully evaluated during grounding.
 \end{note}
 
+
+\index{safety!preference statement}
 \begin{note}
 Preference elements are required to be \emph{safe}, 
 i.e., all variables in a preference element must occur in some positive literal 
@@ -425,7 +429,7 @@ All four preference types in Example~\ref{asprin:example3} are predefined in \as
 
 
 \subsubsection{Preference relations and preference types}
-
+\index{optimization!preference type}
 A ground preference statement declares a 
 strict partial order over answer sets.\footnote{A strict partial order is a transitive and irreflexive relation.}
 This order is called a \emph{preference relation}.
@@ -488,6 +492,14 @@ the statement would not be admissible any more.
 \end{example}
 
 \subsubsection{\asprin\ library}
+\index{optimization!preference type!\code{subset}}
+\index{optimization!preference type!\code{superset}}
+\index{optimization!preference type!\code{less(cardinality)}}
+\index{optimization!preference type!\code{more(cardinality)}}
+\index{optimization!preference type!\code{less(weight)}}
+\index{optimization!preference type!\code{more(weight)}}
+\index{optimization!preference type!\code{aso}}
+\index{optimization!preference type!\code{poset}}
 
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}
@@ -677,6 +689,10 @@ With the base program in Example~\ref{asprin:example1},
 we obtain three optimal answer sets $X_1$, $X_2$ and $X_3$.  
 \end{example} %
 
+\index{optimization!preference type!\code{neg}}
+\index{optimization!preference type!\code{and}}
+\index{optimization!preference type!\code{pareto}}
+\index{optimization!preference type!\code{lexico}}
 The library of \asprin\ implements furthermore the following composite preference types,
 which amount to the ones defined in~\cite{sonpon06a}: 
 \begin{itemize}
@@ -740,6 +756,7 @@ while optimizing on \code{p9} we get only $X_2$.
 
 \subsubsection{Implementing preference types}
 
+\index{optimization!preference program}
 In \asprin, preference types are implemented by logic programs called \emph{preference programs}.
 In a nutshell, a preference type decides if, 
 given a preference statement \code{s}, 
@@ -823,7 +840,7 @@ along with the rule:
 \begin{lstlisting}[numbers=none,escapechar=?]
 preference(s,t) :- ?$B$?.
 \end{lstlisting}
-Optimize directives are translated similarly:
+Optimization directives are translated similarly:
 \begin{lstlisting}[numbers=none,escapechar=?]
 #optimize(s) : ?$B$?.
 \end{lstlisting}
@@ -986,7 +1003,7 @@ representing the relations $\succ$ and $\succeq$, respectively.
 %of the preference statements named within a \code{pareto} preference statement.
 They must be defined by the implementations of the preference types of the named preference statements.
 To illustrate this, recall the preference statements \code{p1}, \code{p3} and \code{p8} of Example \ref{asprin:composite}, 
-that we put together in the file \code{preference8.lp} along with an optimize statement for \code{p8}:
+that we put together in the file \code{preference8.lp} along with an optimization directive for \code{p8}:
 %
 \lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/preference8.lp}
 %

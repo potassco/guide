@@ -1,8 +1,6 @@
 
 \section{Heuristic-driven Solving}
 \label{sec:heuristic}
-\comment{Add index statements}
-
 \clasp\ and \clingo\ provide means for incorporating domain-specific heuristics into ASP solving.
 This allows for modifying the heuristic of the solver from within a logic program or from the command line.
 A formal description can be found in \cite{gekaotroscwa13a}.
@@ -16,6 +14,7 @@ we first describe how to modify the solver's heuristic from within a logic progr
 and then we explain how to apply modifications from the command line.
 
 \subsection{Heuristic Programming}
+\index{heuristic predicate}
 
 Heuristic information is represented within a logic program my means of the dedicated predicate \code{\_heuristic}.
 Different types of heuristic information can be controlled with the modifiers 
@@ -23,7 +22,7 @@ Different types of heuristic information can be controlled with the modifiers
 We introduce them below step by step.
 
 \subsubsection{Heuristic modifier \code{sign}}
-
+\index{heuristic predicate!\code{sign}}
 The modifier \code{sign} allows for controlling the truth value assigned to variables subject to a choice within the solver.
 
 The \code{Domain} heuristic associates with each atom an integer \code{sign} value, which by default is $0$.
@@ -42,7 +41,7 @@ Consider the following program:
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo \attach{examples/psign.lp}{psign.lp} \textbackslash\\\mbox{~}--heuristic=Domain}\\
   or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/psign.lp}{psign.lp} \textbackslash\\\mbox{~}| clasp \textbackslash\\\mbox{~}--heuristic=Domain}\\
+  \code{\mbox{~}gringo \attach{examples/psign.lp}{psign.lp} \textbackslash\\\mbox{~}| clasp\mbox{~~~~~~~~~}\textbackslash\\\mbox{~}--heuristic=Domain}\\
 }
 At the start of the search, 
 the solver propagates the heuristic atom 
@@ -66,7 +65,7 @@ and thus asserts that when deciding upon \code{a} it should be set to false:
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo \attach{examples/nsign.lp}{nsign.lp} \textbackslash\\\mbox{~}--heuristic=Domain}\\
   or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/nsign.lp}{nsign.lp} \textbackslash\\\mbox{~}| clasp \textbackslash\\\mbox{~}--heuristic=Domain}\\
+  \code{\mbox{~}gringo \attach{examples/nsign.lp}{nsign.lp} \textbackslash\\\mbox{~}| clasp\mbox{~~~~~~~~} \textbackslash\\\mbox{~}--heuristic=Domain}\\
 }
 As above,
 the solver starts with propagating the heuristic fact,
@@ -87,7 +86,6 @@ and the same happens with Example \ref{example:nsign},
 although in this case the answer sets are computed in opposite order.
 
 \subsubsection{Showing heuristic information}
-\comment{C: Expected section for next modifier. Please consider changing the structure}
 
 For the heuristic atoms to take effect, they as well as the atoms to which they refer to
 must be shown in the logic program.\footnote{Note that in \gringo\ all atoms are shown, 
@@ -112,6 +110,7 @@ the command line option \code{--out-hide-aux} allows us to suppress printing ato
 \end{note}
 
 \subsubsection{Heuristic modifier \code{level}}
+\index{heuristic predicate!\code{level}}
 
 The \code{Domain} heuristic assigns to each atom a \code{level}, and it decides first upon atoms of the highest level.
 The default value for each atom is \code{0},  and both positive and negative integers are valid.
@@ -124,7 +123,7 @@ level \code{10} is assigned to atom \code{a}:
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo \attach{examples/level.lp}{level.lp} \textbackslash \\\mbox{~}--heuristic=Domain} \\
   or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/level.lp}{level.lp} \textbackslash \\\mbox{~}| clasp \textbackslash\\\mbox{~}--heuristic=Domain}\\
+  \code{\mbox{~}gringo \attach{examples/level.lp}{level.lp} \textbackslash \\\mbox{~}| clasp\mbox{~~~~~~~~} \textbackslash\\\mbox{~}--heuristic=Domain}\\
 }
 The first obtained answer set contains \code{a} along with all three heuristic atoms.
 The solver propagates the heuristic facts, and given that the level of \code{a} is greater than that of \code{b},
@@ -152,7 +151,7 @@ In the next program, the heuristic atoms for \code{c} depend on \code{b}:
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo \attach{examples/dynamic.lp}{dynamic.lp} \textbackslash\\ \mbox{~}--heuristic=Domain}\\
   or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/dynamic.lp}{dynamic.lp} \textbackslash\\ \mbox{~}| clasp \textbackslash\\ \mbox{~}--heuristic=Domain}\\
+  \code{\mbox{~}gringo \attach{examples/dynamic.lp}{dynamic.lp} \textbackslash\\ \mbox{~}| clasp\mbox{~~~~~~~~~~} \textbackslash\\ \mbox{~}--heuristic=Domain}\\
 }
 The first obtained answer set contains \code{a} and \code{\_heuristic(c,sign,-1)} along with the three heuristic atoms given as facts.
 At first, the solver proceeds as in Example \ref{example:level}.
@@ -164,6 +163,8 @@ the obtained first answer set would contain \code{b} and \code{c} instead of \co
 \end{example}
 
 \subsubsection{Heuristic modifiers \code{true} and  \code{false}}
+\index{heuristic predicate!\code{true}}
+\index{heuristic predicate!\code{false}}
 
 The modifiers \code{true} and \code{false} allow us to refer at the same time to the \code{level} and the \code{sign} of an atom.
 Internally,  for the \code{true} and \code{false} heuristic atoms,
@@ -204,7 +205,7 @@ Consider the following program:
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo \attach{examples/priority.lp}{priority.lp} \textbackslash\\ \mbox{~}--heuristic=Domain}\\
   or alternatively:\\
-  \code{\mbox{~}gringo \attach{examples/priority.lp}{priority.lp} \textbackslash\\ \mbox{~}| clasp \textbackslash\\ \mbox{~}--heuristic=Domain}\\
+  \code{\mbox{~}gringo \attach{examples/priority.lp}{priority.lp} \textbackslash\\ \mbox{~}| clasp\mbox{~~~~~~~~~~~} \textbackslash\\ \mbox{~}--heuristic=Domain}\\
 }
 The first obtained answer set contains \code{a} and \code{\_heuristic(c,sign,-1,20)} along with the three heuristic atoms given as facts.
 First the solver proceeds as in Example \ref{example:level}. 
@@ -226,6 +227,8 @@ the level of \code{c} is \code{-10} because $|\code{-10}|>|\code{5}|$.
 \end{note}
 
 \subsubsection{Heuristic modifiers \code{init} and \code{factor}}
+\index{heuristic predicate!\code{init}}
+\index{heuristic predicate!\code{factor}}
 
 The modifiers \code{init} and \code{factor} allow for modifying the scores assigned to atoms by the underlying \code{Vsids} heuristic.
 Unlike the \code{level} modifier, 
@@ -443,7 +446,7 @@ the atoms modified by the \texttt{\_heuristic} predicate are not affected by the
 Apart from boosting solver performance,
 domain specific heuristics can be used for computing inclusion minimal answer sets
 \cite{cacacale96a,rogima10a}.
-This can be achieved by assigning \texttt{false} with value \texttt{1} to shown atoms. % whenever they are subject to a choice in \clasp.
+This can be achieved by assigning \texttt{false} with value \texttt{1} to the atoms to minimize. %shown atoms. % whenever they are subject to a choice in \clasp.
 \begin{example}
 Consider the following program:
 \begin{lstlisting}[numbers=none]

@@ -90,12 +90,28 @@
 
   \indexspace
 
-  \item Optimization
-    \subitem Optimization Directives, \hyperpage{84}
-    \subitem Preference Statements, \hyperpage{84}
   \item optimization, \hyperpage{37}
     \subitem maximize, \code{\#maximize}, \hyperpage{37}
     \subitem minimize, \code{\#minimize}, \hyperpage{37}
+    \subitem optimization directive, \hyperpage{87}
+    \subitem preference program, \hyperpage{95}
+    \subitem preference specification, \hyperpage{87}
+      \subsubitem preference element, \hyperpage{87}
+      \subsubitem preference statement, \hyperpage{87}
+      \subsubitem weighted formula, \hyperpage{87}
+    \subitem preference type, \hyperpage{90}
+      \subsubitem \code{and}, \hyperpage{93}
+      \subsubitem \code{aso}, \hyperpage{91}
+      \subsubitem \code{less(cardinality)}, \hyperpage{91}
+      \subsubitem \code{less(weight)}, \hyperpage{91}
+      \subsubitem \code{lexico}, \hyperpage{93}
+      \subsubitem \code{more(cardinality)}, \hyperpage{91}
+      \subsubitem \code{more(weiht)}, \hyperpage{91}
+      \subsubitem \code{neg}, \hyperpage{93}
+      \subsubitem \code{pareto}, \hyperpage{93}
+      \subsubitem \code{poset}, \hyperpage{91}
+      \subsubitem \code{subset}, \hyperpage{91}
+      \subsubitem \code{superset}, \hyperpage{91}
     \subitem weak constraint, \hyperpage{37}
 
   \indexspace
@@ -121,6 +137,7 @@
     \subitem interval, \hyperpage{27}
     \subitem maximize, \code{\#maximize}, \hyperpage{38}
     \subitem minimize, \code{\#minimize}, \hyperpage{38}
+    \subitem preference statement, \hyperpage{88}
     \subitem show, \code{\#show}, \hyperpage{44}
     \subitem weak constraint, \hyperpage{38}
 

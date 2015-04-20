@@ -441,11 +441,11 @@ and do not require any additional grounding.
 When both methods are combined,
 the atoms modified by the \texttt{\_heuristic} predicate are not affected by the command line heuristics.
 
-\subsection{Computing Minimal Answer Sets with Heuristics}\comment{J2T: Do we want this also here? I would keep it, but up to you :)}
+\subsection{Computing Subset Minimal Answer Sets with Heuristics}
 
 Apart from boosting solver performance,
-domain specific heuristics can be used for computing inclusion minimal answer sets
-\cite{cacacale96a,rogima10a}.
+domain specific heuristics can also be used for computing subset minimal answer sets
+(cf.\ \cite{cacacale96a,rogima10a}).
 This can be achieved by assigning \texttt{false} with value \texttt{1} to the atoms to minimize. %shown atoms. % whenever they are subject to a choice in \clasp.
 \begin{example}
 Consider the following program:
@@ -455,8 +455,8 @@ Consider the following program:
 \end{lstlisting}
 Both the command line option `\texttt{--dom-mod=5,16}' as well as the addition of the heuristic fact
 `\lstinline{_heuristic(a(1..3),false,1).}'
-guarantee that the first answer set produced is inclusion minimal wrt.\ the atoms of predicate \texttt{a/1}.
-Moreover, both allow for enumerating all inclusion minimal solutions in conjunction with option \texttt{--enum-mod=domRec}.
+guarantee that the first answer set produced is subset minimal with respect to the atoms of predicate \texttt{a/1}.
+Moreover, both allow for enumerating all subset minimal solutions in conjunction with option \texttt{--enum-mod=domRec}.
 In our example, we obtain the answer sets
 \(
 \{\texttt{a(1)}\}
@@ -468,7 +468,7 @@ and
 Note that in this case solutions are projected on shown atoms.
 \end{example}
 It is worth mentioning that the enumeration mode \texttt{domRec} relies on solution recording and is thus prone to an exponential blow-up in space.
-In practice, however, this often turns out to be superior to enumerating inclusion minimal model via disjunctive logic programs,
+In practice, however, this often turns out to be superior to enumerating subset minimal model via disjunctive logic programs,
 which is guaranteed to run in polynomial space.
 
 %%% Local Variables:

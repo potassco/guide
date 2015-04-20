@@ -106,7 +106,7 @@
       \subsubitem \code{less(weight)}, \hyperpage{91}
       \subsubitem \code{lexico}, \hyperpage{93}
       \subsubitem \code{more(cardinality)}, \hyperpage{91}
-      \subsubitem \code{more(weiht)}, \hyperpage{91}
+      \subsubitem \code{more(weight)}, \hyperpage{91}
       \subsubitem \code{neg}, \hyperpage{93}
       \subsubitem \code{pareto}, \hyperpage{93}
       \subsubitem \code{poset}, \hyperpage{91}

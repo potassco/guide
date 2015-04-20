@@ -99,24 +99,25 @@
       \subsubitem preference element, \hyperpage{87}
       \subsubitem preference statement, \hyperpage{87}
       \subsubitem weighted formula, \hyperpage{87}
-    \subitem preference type, \hyperpage{90}
-      \subsubitem \code{and}, \hyperpage{93}
-      \subsubitem \code{aso}, \hyperpage{91}
-      \subsubitem \code{less(cardinality)}, \hyperpage{91}
-      \subsubitem \code{less(weight)}, \hyperpage{91}
-      \subsubitem \code{lexico}, \hyperpage{93}
-      \subsubitem \code{more(cardinality)}, \hyperpage{91}
-      \subsubitem \code{more(weight)}, \hyperpage{91}
-      \subsubitem \code{neg}, \hyperpage{93}
-      \subsubitem \code{pareto}, \hyperpage{93}
-      \subsubitem \code{poset}, \hyperpage{91}
-      \subsubitem \code{subset}, \hyperpage{91}
-      \subsubitem \code{superset}, \hyperpage{91}
+    \subitem \gobblecomma, \hyperindexformat{\see{preference type}}{90}
     \subitem weak constraint, \hyperpage{37}
 
   \indexspace
 
   \item pooling, \code{;}, \hyperpage{28}
+  \item preference type, \hyperpage{90}
+    \subitem \code{and}, \hyperpage{93}
+    \subitem \code{aso}, \hyperpage{91}
+    \subitem \code{less(cardinality)}, \hyperpage{91}
+    \subitem \code{less(weight)}, \hyperpage{91}
+    \subitem \code{lexico}, \hyperpage{93}
+    \subitem \code{more(cardinality)}, \hyperpage{91}
+    \subitem \code{more(weight)}, \hyperpage{91}
+    \subitem \code{neg}, \hyperpage{93}
+    \subitem \code{pareto}, \hyperpage{93}
+    \subitem \code{poset}, \hyperpage{91}
+    \subitem \code{subset}, \hyperpage{91}
+    \subitem \code{superset}, \hyperpage{91}
   \item python, \hyperpage{39}
 
   \indexspace

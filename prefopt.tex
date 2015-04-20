@@ -107,7 +107,6 @@ With it, the computation can be performed by the following command:
 \marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
              ought to be located in some directory
              in the system path.}%
-\comment{JR: I will pretty print all these margin boxes if we decide they stay}
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% asprin.lib
 \end{lstlisting}
@@ -142,9 +141,9 @@ we can minimize the extension of predicates \code{a/1} and \code{b/1} with the f
 Now, we obtain that $X_2$ is already an optimal answer set: 
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference2.lp}{preference2.lp} \ 
-  asprin.lib}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference2.lp}{preference2.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib}}
 \begin{lstlisting}[numbers=none]
 Answer: 1
 m(2) a(2) a(1) b(1)
@@ -194,10 +193,10 @@ yields two additional optimal answer sets, both containing \code{c(1)}:
 %
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference1.lp}{preference1.lp} \ 
-  \attach{examples/c1.lp}{c1.lp} \ 
-  asprin.lib}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference1.lp}{preference1.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}\attach{examples/c1.lp}{c1.lp}\mbox{~~~~~~~~~~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib 0}}
 %
 \begin{lstlisting}[numbers=none]
 Answer: 1
@@ -229,11 +228,11 @@ we can project optimal answer sets on the atoms in preference statements
 by \asprin's option \lstinline{--project}.
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference1.lp}{preference1.lp} \ 
-  \attach{examples/c1.lp}{c1.lp} \ 
-  asprin.lib \
-  0 --project}\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference1.lp}{preference1.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}\attach{examples/c1.lp}{c1.lp}\mbox{~~~~~~~~~~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib 0\mbox{~~~~~}\textbackslash \ 
+  \mbox{~~~}--project}\\
 }
 This yields only the three optimal answer sets not containing \code{c(1)}.
 % \attach{examples/c1.lp}{\code{c1.lp}}:
@@ -260,9 +259,7 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 \asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
 A \emph{weighted formula} is of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{t}$?::?$F$?
-\end{lstlisting}
+\[\boldsymbol{t}\code{::}F\]
 where $\boldsymbol{t}$ is a term tuple
 \footnote{%
 Term tuples in the current \asprin\ implementation are defined following Figure \ref{fig:terms}, 
@@ -293,16 +290,14 @@ Examples of weighted formulas are
 `\code{X::name(p(X))}'. 
 
 If $F_1$, \ldots, $F_n$ are weighted formulas, then
-\begin{lstlisting}[numbers=none,escapechar=?]
-{?$F_1$?;?$\dots$?;?$F_m$?}
-\end{lstlisting}
+\[
+\code{\{}F_1\code{;}\dots\code{;}F_m\code{\}}
+\]
 is a set of weighted formulas.
 We may drop the curly braces if $m=1$.
 
 A \emph{preference element} is of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{F}_1\;$?>?\,\dots\,?>?$\;\boldsymbol{F}_m$? || ?$F$? : ?$B$?
-\end{lstlisting}
+\[\boldsymbol{F}_1\;>\,\dots\,>\;\boldsymbol{F}_m\code{ || }F\code{ : }\!\!\!\! B\]
 where each $\boldsymbol{F}_r$ is a set of weighted formulas, 
 $F$ is a non-weighted Boolean formula
 and $B$ is a rule body where all literals belong to domain predicates
@@ -343,9 +338,7 @@ in its body or in the body of the preference statement containing it (see below)
 \end{note} 
 
 A \emph{preference statement} is of the form %
-\begin{lstlisting}[numbers=none,escapechar=?]
-#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
-\end{lstlisting}
+\[\code{\#preference(s,t)\{}e_1\code{;}\dots\code{;}e_n\code{\} : }\!\!\!\!B\code{.}\]
 %
 where \code{s} is a term giving the preference name, 
 \code{t} is a ground\footnote{This is a pragmatic restriction,
@@ -379,9 +372,7 @@ stands for the following two ground preference statements:
 
 Preference statements are accompanied by 
 \emph{optimization directives} such as
-\begin{lstlisting}[numbers=none,escapechar=?]
-#optimize(s) : ?$B$?.
-\end{lstlisting}
+\[\code{\#optimize(s) : }\!\!\!\!B\code{.}\]
 where $B$ is as above, 
 telling \asprin\ to restrict its reasoning mode to the preference relation declared by \code{s}.
 % 
@@ -429,7 +420,8 @@ All four preference types in Example~\ref{asprin:example3} are predefined in \as
 
 
 \subsubsection{Preference relations and preference types}
-\index{optimization!preference type}
+\index{preference type}
+\index{optimization!preference type@\gobblecomma|see{preference type}}
 A ground preference statement declares a 
 strict partial order over answer sets.\footnote{A strict partial order is a transitive and irreflexive relation.}
 This order is called a \emph{preference relation}.
@@ -478,9 +470,7 @@ For this reason, we specify for each preference type its \emph{domain},
 i.e., the ground preference elements for which the preference type is well defined.
 Hence, the domain of \code{subset} consists of Boolean formulas.
 Furthermore, a ground preference statement
-\begin{lstlisting}[numbers=none,escapechar=?]
-#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?}.
-\end{lstlisting}
+\[\code{\#preference(s,t)\{}e_1\code{;}\dots\code{;}e_n\code{\}.}\]
 is \emph{admissible} if every ${e}_i$ belongs to the domain of \code{t}.
 If a ground preference statement is not admissible, \asprin\ reports an error and exits. 
 \begin{example}
@@ -492,14 +482,14 @@ the statement would not be admissible any more.
 \end{example}
 
 \subsubsection{\asprin\ library}
-\index{optimization!preference type!\code{subset}}
-\index{optimization!preference type!\code{superset}}
-\index{optimization!preference type!\code{less(cardinality)}}
-\index{optimization!preference type!\code{more(cardinality)}}
-\index{optimization!preference type!\code{less(weight)}}
-\index{optimization!preference type!\code{more(weight)}}
-\index{optimization!preference type!\code{aso}}
-\index{optimization!preference type!\code{poset}}
+\index{preference type!\code{subset}}
+\index{preference type!\code{superset}}
+\index{preference type!\code{less(cardinality)}}
+\index{preference type!\code{more(cardinality)}}
+\index{preference type!\code{less(weight)}}
+\index{preference type!\code{more(weight)}}
+\index{preference type!\code{aso}}
+\index{preference type!\code{poset}}
 
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}
@@ -537,9 +527,9 @@ An example of preference type \code{superset} is given in Line~5 of Example~\ref
 %
 \marginlabel{%
  To inspect the output, invoke:\\
- \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
- \attach{examples/preference3.lp}{preference3.lp} \ 
- asprin.lib}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference3.lp}{preference3.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib}}
 %
 We can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}
 in Example~\ref{asprin:example1} as follows.
@@ -553,9 +543,7 @@ Preference types \code{less(weight)} and \code{more(weight)}
 are similar to \code{\#minimize} and \code{\#maximize} statements.
 However, they do not comprise priorities but apply to general Boolean formulas.
 Their common domain consists of sets of ground preference elements of the form:
-\begin{lstlisting}[numbers=none,escapechar=?]
-?${w}$?,?$\boldsymbol{t}$?::?$F$?
-\end{lstlisting}
+\[w\code{,}\boldsymbol{t}\code{::}F\]
 Here, ${w}$ is an integer, $\boldsymbol{t}$ a term tuple, and $F$ a Boolean formula. 
 %
 Their meaning is defined with respect to a set $E$ of ground preference elements:
@@ -599,9 +587,7 @@ Another example of preference type \code{\code{less(weight)}} is given in Lines~
 
 The preference type~\code{aso} implements answer set optimization~\cite{brnitr03a} and relies upon
 ground preference elements of the form:
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$F_1\,$?>?$\,\dots\,$?>?$\,F_m$? || ?$B$?.
-\end{lstlisting}
+\[ F_1 \, \code{>} \, \dots \, \code{>} \, F_m \code{ || }B\code{.}\]
 where each $F_i$ and $B$ are Boolean formulas.
 Preference elements of this form are called \code{aso} rules.  
 The semantics of \code{aso} is based on satisfaction degrees.
@@ -622,9 +608,9 @@ See~\cite{brnitr03a} for a more detailed introduction.
 %
 \marginlabel{%
  To inspect the output, invoke:\\
- \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
- \attach{examples/preference4.lp}{preference4.lp} \ 
- asprin.lib}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference4.lp}{preference4.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib}}
 %
 The following preference statement of type \code{aso} expresses a preference 
 for atoms of predicate \code{a/1} over atoms of predicate \code{b/1}.
@@ -642,21 +628,17 @@ Another example of preference type \code{aso} is given in Lines~6-9 of Example~\
 The preference type \code{poset} implements the approach to qualitative preferences put forward in~\cite{giumar12a}.
 Such preferences are modeled as a strict partially ordered set
 \(
-(S,<)
+(S,>)
 \)
 of literals.
 The literals in $S$ represent propositions that are preferably satisfied
-and the strict partial order $<$ on $S$ gives their relative importance.
+and the strict partial order $>$ on $S$ gives their relative importance.
 %
 The \asprin\ implementation of \code{poset} extends the original approach by allowing preferences over Boolean formulas.
 The domain of \code{poset} consists of the sets $E$ of ground preference elements of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$F$?.
-\end{lstlisting}
+\[F\code{.}\]
 or 
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$F > F'$?.
-\end{lstlisting}
+\[F \, \code{>} \, F'\code{.}\]
 where $F$ and $F'$ are Boolean formulas.
 %
 To give a glimpse of the formal underpinnings,
@@ -668,16 +650,14 @@ Then, $X \succ Y$ holds if
 there is some formula $F \in S_E$ such that $X \models F$ and $Y \not\models F$, 
 and for every formula $F \in S_E$ such that $Y \models F$ and $X \not\models F$, 
 there is a formula
-$F'\in S$ such that $F'<F$ and $X \models F'$ but $Y \not\models F'$.
-The interested reader is referred to~\cite{giumar12a} for full details.
-%
+$F'\in S$ such that $F'>F$ and $X \models F'$ but $Y \not\models F'$.  The interested reader is referred to~\cite{giumar12a} for full details.  %
 \begin{example}
 %
 \marginlabel{%
  To inspect the output, invoke:\\
- \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
- \attach{examples/preference5.lp}{preference5.lp} \ 
- asprin.lib}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference5.lp}{preference5.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib}}
 %
 We apply the preference type \code{poset} to the preference statement of Example \ref{asprin:asoexample}:
 %
@@ -689,10 +669,10 @@ With the base program in Example~\ref{asprin:example1},
 we obtain three optimal answer sets $X_1$, $X_2$ and $X_3$.  
 \end{example} %
 
-\index{optimization!preference type!\code{neg}}
-\index{optimization!preference type!\code{and}}
-\index{optimization!preference type!\code{pareto}}
-\index{optimization!preference type!\code{lexico}}
+\index{preference type!\code{neg}}
+\index{preference type!\code{and}}
+\index{preference type!\code{pareto}}
+\index{preference type!\code{lexico}}
 The library of \asprin\ implements furthermore the following composite preference types,
 which amount to the ones defined in~\cite{sonpon06a}: 
 \begin{itemize}
@@ -702,15 +682,10 @@ which amount to the ones defined in~\cite{sonpon06a}:
 \item \code{lexico}
 \end{itemize}
 Preference types \code{and} and \code{pareto} deal with sets of ground naming atoms
-\begin{lstlisting}[numbers=none,escapechar=?]
-name(s)
-\end{lstlisting}
+\[\code{name(s)}\]
 For \code{neg}, these sets must be singleton.
 And for \code{lexico}, each naming atom has an attached tuple $\code{$w$}$: 
-\begin{lstlisting}[numbers=none,escapechar=?]
-?${w}$?::name(s)
-\end{lstlisting}
-
+\[w\code{::name(s)}\]
 Given a naming atom \code{name(s)}, 
 let $\succ_{\code{s}}$, $\succeq_{\code{s}}$, $=_{\code{s}}$, $\preceq_{\code{s}}$, $\prec_{\code{s}}$ be the 
 strict, non-strict, equal, and inverse preference relations associated with preference statement $\code{s}$.
@@ -744,9 +719,9 @@ Consider the following preference specification, where \code{p1} and \code{p3} a
 \lstinputlisting[numbers=none]{examples/cpreference.lp}
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/cpreference.lp}{cpreference.lp} \ 
-  asprin.lib 0}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/cpreference.lp}{cpreference.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}asprin.lib 0}}
 %
 Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p6)}, 
 \asprin\ produces answer sets $X_2$ and $X_3$. 
@@ -807,21 +782,13 @@ Observe how \code{dom(X)} is appended to both rules.
 
 In general, a weighted formula \code{$\boldsymbol{t}$::$F$}
 occurs in some set
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{F}_i=$?{?$F_1$?;?$\dots$?;?$F_m$?}
-\end{lstlisting}
+\[\boldsymbol{F}_i=\code{\{}F_1\code{;}\dots\code{;}F_m\code{\}}\]
 of a preference element $e_j$ of the form 
-\begin{lstlisting}[numbers=none,escapechar=?]
-?$\boldsymbol{F}_1\;$?>?$\,\dots\,$?>?$\;\boldsymbol{F}_n$? || ?$F_0$? : ?$B_j$?
-\end{lstlisting}
+\[\boldsymbol{F}_1\;>\,\dots\,>\;\boldsymbol{F}_n\code{ || }F_0\code{ : }\!\!\!\! B_j\]
 that belongs itself to a preference statement \code{s} of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-#preference(s,t){?${e}_1$?;?$\dots$?;?${e}_n$?} : ?$B$?.
-\end{lstlisting}
+\[\code{\#preference(s,t)\{}e_1\code{;}\dots\code{;}e_o\code{\} : }\!\!\!\!B\code{.}\]
 Accordingly, the weighted formula is translated into a rule of the form
-\begin{lstlisting}[numbers=none,escapechar=?]
-preference(s,(?$j$?,?$\boldsymbol{v}$?),?$i$?,for(?${t}_F$?),?$\boldsymbol{t}$?) :- ?$B_j$?, ?$B$?.
-\end{lstlisting}
+\[\code{preference(s,(}j\code{,}\boldsymbol{v}\code{),}i\code{,for(}t_F\code{),}\boldsymbol{t}\code{) :- }B_j\code{, }B\code{.}\]
 where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
 $\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule, 
 and ${t}_F$ is a term representing the Boolean formula $F$ 
@@ -837,17 +804,11 @@ except that \code{for(${t}_F$)} is replaced by \code{name(s)}.
 The translation of a preference statement of the form mentioned above 
 comprises the translation of all weighted formulas appearing in it
 along with the rule:
-\begin{lstlisting}[numbers=none,escapechar=?]
-preference(s,t) :- ?$B$?.
-\end{lstlisting}
+\[\code{preference(s,t) :- }B\code{.}\]
 Optimization directives are translated similarly:
-\begin{lstlisting}[numbers=none,escapechar=?]
-#optimize(s) : ?$B$?.
-\end{lstlisting}
+\[\code{\#optimize(s) : }B\code{.}\]
 becomes:
-\begin{lstlisting}[numbers=none,escapechar=?]
-optimize(s) :- ?$B$?.
-\end{lstlisting}
+\[\code{optimize(s) :- }B\code{.}\]
 
 \begin{note}
 All bodies $B_j$ and $B$ consist of domain predicates or built-ins. 
@@ -967,10 +928,10 @@ Instead of using \asprin's library, viz.~\code{asprin.lib},
 we can now directly use the above preference program as follows:
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference1.lp}{preference1.lp} \ 
-  \attach{examples/subset.lp}{subset.lp} \ 
-  \attach{examples/basic.lp}{basic.lp} 0}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference1.lp}{preference1.lp}\mbox{~~~}\textbackslash \ 
+  \mbox{~~~}\attach{examples/subset.lp}{subset.lp}\mbox{~~~~~~~~}\textbackslash \ 
+  \mbox{~~~}\attach{examples/basic.lp}{basic.lp} 0}}
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
 \end{lstlisting}
@@ -1024,15 +985,15 @@ Putting all this together, we can compute the optimal answer sets of the program
 with the following command:
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \
-  \attach{examples/preference8.lp}{preference8.lp} \ 
-  \attach{examples/basic.lp}{basic.lp}   \
-  \attach{examples/pareto.lp}{pareto.lp} \ 
-  \attach{examples/subset.lp}{subset.lp} \ 
-  \attach{examples/less-cardinality.lp}{less-cardinality.lp} 0}} 
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\ %\textbackslash \
+  \mbox{~~}\attach{examples/preference8.lp}{preference8.lp}\mbox{~~~~}\ %\textbackslash \ 
+  \mbox{~~}\attach{examples/basic.lp}{basic.lp}\mbox{~~~~~~~~~~}\ %\textbackslash \ 
+  \mbox{~~}\attach{examples/subset.lp}{subset.lp}\mbox{~~~~~~~~~}\ %\textbackslash \ 
+  \mbox{~~}\attach{examples/less-cardinality.lp}{less-cardinality.lp}\
+  \mbox{~~}\attach{examples/pareto.lp}{pareto.lp} 0}}
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference8.lp}{preference8.lp}%  %\attach{examples/basic.lp}{basic.lp}% \
-        %\attach{examples/pareto.lp}{pareto.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/less-cardinality.lp}{less-cardinality.lp}% 0
+       %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/less-cardinality.lp}{less-cardinality.lp}% %\attach{examples/pareto.lp}{pareto.lp}% 0
 \end{lstlisting}
 As in Example \ref{asprin:composite} (optimizing \code{p8}), we obtain $X_1$, $X_2$ and $X_3$.
 \end{example}

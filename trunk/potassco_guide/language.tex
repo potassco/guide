@@ -85,7 +85,9 @@ the token `\var{\char`\_}' (not followed by any letter)
 stands for an \emph{anonymous variable} that does not recur anywhere.
 (One can view this as if a new variable name is invented on each occurrence of `\var{\char`\_}'.)
 In addition, there are the special constants \const{\#sup} and \const{\#inf}
-representing the greatest and smallest element among all variable-free terms, respectively;
+representing the greatest and smallest element among all variable-free terms%
+\footnote{Their is a total order defined on variable-free terms; for details see Section~\ref{subsec:gringo:comp}.}
+, respectively;
 we illustrate their use in Section~\ref{subsec:gringo:aggregate}.
 
 % syntax: tuples and functions

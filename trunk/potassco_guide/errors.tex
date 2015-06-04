@@ -276,6 +276,17 @@ that is never defined in the head of a rule or external statement:
 \end{lstlisting}
 %
 where \codeit{Atom} is the atom occurrence without a definition.
-Often, this error indicates that a predicate has been misspelled 
+Often, this message indicates that a predicate has been misspelled 
 or that an argument has accidentally been omitted.
+
+\subsubsection{Global Variables in Tuples of Aggregate Elements}\label{sec:warn:global}
+This message is emitted if a variable occurs globally in a tuple of an aggregate element:
+\begin{lstlisting}[numbers=none,escapechar=@]
+@\textit{Location}@: info: global variable occurs in tuple of @\textbackslash@
+                aggregate element:
+  @\textit{Variable}@
+\end{lstlisting}
+where \codeit{Variable} is the variable that occurs globally.
+Typically, this message occurs if a there is a name clash between a global and a local variable
+because in most situations it should not be necessary to put global variables into the tuples of aggregate elements.
 

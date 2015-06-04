@@ -80,17 +80,18 @@ The available arguments are:
   \item[all] Combines argument \code{plain} and \code{lparse}.
 \end{description}
 
-\item[\code{--warn=[no-]w}]
+\item[\code{--warn,-W [no-]w}]
 This option can be used to enable and disable warnings.
 To disable a warning, the argument has to prefixed with \code{no-}.
 To enable or disable multiple warnings, this option can be passed multiple times with different arguments.
 By default all warnings are enabled.
 The available values for argument \code{w} are:
 \begin{description}[leftmargin=6cm,style=nextline,align=right,font=\code]
-  \item[file-included]            See Section~\ref{sec:warn:incfile}.
-  \item[variable-unbounded]       See Section~\ref{sec:warn:unbound}.
-  \item[operation-undefined]      See Section~\ref{sec:warn:undefterm}.
-  \item[atom-undefined]           See Section~\ref{sec:warn:undefatm}.
+  \item[file-included]       See Section~\ref{sec:warn:incfile}.
+  \item[variable-unbounded]  See Section~\ref{sec:warn:unbound}.
+  \item[operation-undefined] See Section~\ref{sec:warn:undefterm}.
+  \item[atom-undefined]      See Section~\ref{sec:warn:undefatm}.
+  \item[global-variable]     See Section~\ref{sec:warn:global}.
 \end{description}
 \end{description}
 %

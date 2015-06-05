@@ -1433,7 +1433,7 @@ The priority `\code{@$p$}' is optional.
 For simplicity, we first consider the non-prioritized case omitting `\code{@$p$}'.
 Whenever the body of a weak constraint is satisfied,
 it contributes its term tuple (as with aggregates, each tuple is included at most once) to a cost function.
-This cost function accumulates the integer weights $w$ of all contributed tuples just like a \const{\#sum} aggregate does.
+This cost function accumulates the integer weights $w$ of all contributed tuples just like a \const{\#sum} aggregate does (cf.~Section~\ref{subsec:gringo:aggregate}).
 The semantics of a program with weak constraints is intuitive:
 an answer set is \emph{optimal}
 if the obtained cost is minimal among all answer sets of the given program.

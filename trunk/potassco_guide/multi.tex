@@ -11,6 +11,101 @@ Information on multi-shot solving with \clingo\ can be obtained at the following
 \item API reference \url{http://potassco.sourceforge.net/gringo.html}
 \end{itemize}
 
+\subsection{Incremental Solving}
+\label{sec:isolving}
+
+\begin{itemize}
+\item \lstinline{#step}
+\item \lstinline{#check}
+  \begin{itemize}
+  \item starts at 0
+  \item has external \lstinline{query/1}
+  \end{itemize}
+\end{itemize}
+
+\begin{lstlisting}[caption={\lstinline{gringo/examples/clingo/iclingo/incmode-py.lp}}]
+#script (python) 
+
+import gringo
+
+def get(val, default):
+    return val if val != None else default
+
+def main(prg):
+    imin   = get(prg.get_const("imin"), 1)
+    imax   = prg.get_const("imax")
+    istop  = get(prg.get_const("istop"), "SAT")
+
+    step, ret = 0, gringo.SolveResult.UNKNOWN
+    while ((imax is None or step < imax) and
+           (step == 0   or step < imin or (
+              (istop == "SAT"     and ret != gringo.SolveResult.SAT) or
+              (istop == "UNSAT"   and ret != gringo.SolveResult.UNSAT) or 
+              (istop == "UNKNOWN" and ret != gringo.SolveResult.UNKNOWN)))):
+        parts = []
+        parts.append(("check", [step]))
+        if step > 0:
+            prg.release_external(gringo.Fun("query", [step-1]))
+            parts.append(("step", [step]))
+            prg.cleanup_domains()
+        else:
+            parts.append(("base", []))
+        prg.ground(parts)
+        prg.assign_external(gringo.Fun("query", [step]), True)
+        ret, step = prg.solve(), step+1
+#end.
+
+#program check(t).
+#external query(t).
+\end{lstlisting}
+
+\begin{lstlisting}[caption={\lstinline{gringo/examples/clingo/iclingo/incmode-lua.lp}}]
+#script (lua) 
+
+function get(val, default)
+    if val ~= nil then 
+        return val 
+    else 
+        return default 
+    end
+end
+
+function main(prg)
+    local imin   = get(prg:get_const("imin"), 0)
+    local imax   = prg:get_const("imax")
+    local istop  = get(prg:get_const("istop"), "SAT")
+
+    local step, ret = 0, gringo.SolveResult.UNKNOWN
+    while (imax == nil or step < imax) and
+          (step == 0   or step < imin or (
+              (istop == "SAT"     and ret ~= gringo.SolveResult.SAT) or
+              (istop == "UNSAT"   and ret ~= gringo.SolveResult.UNSAT) or 
+              (istop == "UNKNOWN" and ret ~= gringo.SolveResult.UNKNOWN))) do
+        local parts = {}
+        table.insert(parts, {"check", {step}})
+        if step > 0 then
+            prg:release_external(gringo.Fun("query", {step-1}))
+            table.insert(parts, {"step", {step}})
+            prg:cleanup_domains()
+        else
+            table.insert(parts, {"base", {}})
+        end
+        prg:ground(parts)
+        prg:assign_external(gringo.Fun("query", {step}), true)
+        ret, step = prg:solve(), step+1
+    end
+end
+
+#end.
+
+#program check(t).
+#external query(t).
+\end{lstlisting}
+
+\begin{lstlisting}
+#include <incmode>.
+\end{lstlisting}
+
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "guide"

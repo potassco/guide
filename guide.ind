@@ -1,15 +1,15 @@
 \begin{theindex}
 
   \item aggregate, \hyperpage{30}
-    \subitem average, \code{\#avg}, \hyperpage{109}
+    \subitem average, \code{\#avg}, \hyperpage{112}
     \subitem body, \hyperpage{31}
     \subitem condition, \hyperpage{28}
     \subitem count, \code{\#count}, \hyperpage{31}
-    \subitem even, \code{\#even}, \hyperpage{109}
+    \subitem even, \code{\#even}, \hyperpage{112}
     \subitem head, \hyperpage{32}
     \subitem maximum, \code{\#max}, \hyperpage{31}
     \subitem minimum, \code{\#min}, \hyperpage{31}
-    \subitem odd, \code{\#odd}, \hyperpage{109}
+    \subitem odd, \code{\#odd}, \hyperpage{112}
     \subitem sum plus, \code{\#sum+}, \hyperpage{31}
     \subitem sum, \code{\#sum}, \hyperpage{31}
   \item arithmetic function, \hyperpage{24}
@@ -53,13 +53,13 @@
 
   \indexspace
 
-  \item heuristic predicate, \hyperpage{75}
-    \subitem \code{factor}, \hyperpage{79}
-    \subitem \code{false}, \hyperpage{77}
-    \subitem \code{init}, \hyperpage{79}
-    \subitem \code{level}, \hyperpage{76}
-    \subitem \code{sign}, \hyperpage{75}
-    \subitem \code{true}, \hyperpage{77}
+  \item heuristic predicate, \hyperpage{78}
+    \subitem \code{factor}, \hyperpage{82}
+    \subitem \code{false}, \hyperpage{80}
+    \subitem \code{init}, \hyperpage{82}
+    \subitem \code{level}, \hyperpage{79}
+    \subitem \code{sign}, \hyperpage{78}
+    \subitem \code{true}, \hyperpage{80}
 
   \indexspace
 
@@ -93,31 +93,31 @@
   \item optimization, \hyperpage{37}
     \subitem maximize, \code{\#maximize}, \hyperpage{37}
     \subitem minimize, \code{\#minimize}, \hyperpage{37}
-    \subitem optimization directive, \hyperpage{87}
-    \subitem preference program, \hyperpage{95}
-    \subitem preference specification, \hyperpage{87}
-      \subsubitem preference element, \hyperpage{87}
-      \subsubitem preference statement, \hyperpage{87}
-      \subsubitem weighted formula, \hyperpage{87}
-    \subitem \gobblecomma, \hyperindexformat{\see{preference type}}{90}
+    \subitem optimization directive, \hyperpage{90}
+    \subitem preference program, \hyperpage{98}
+    \subitem preference specification, \hyperpage{90}
+      \subsubitem preference element, \hyperpage{90}
+      \subsubitem preference statement, \hyperpage{90}
+      \subsubitem weighted formula, \hyperpage{90}
+    \subitem \gobblecomma, \hyperindexformat{\see{preference type}}{93}
     \subitem weak constraint, \hyperpage{37}
 
   \indexspace
 
   \item pooling, \code{;}, \hyperpage{28}
-  \item preference type, \hyperpage{90}
-    \subitem \code{and}, \hyperpage{93}
-    \subitem \code{aso}, \hyperpage{91}
-    \subitem \code{less(cardinality)}, \hyperpage{91}
-    \subitem \code{less(weight)}, \hyperpage{91}
-    \subitem \code{lexico}, \hyperpage{93}
-    \subitem \code{more(cardinality)}, \hyperpage{91}
-    \subitem \code{more(weight)}, \hyperpage{91}
-    \subitem \code{neg}, \hyperpage{93}
-    \subitem \code{pareto}, \hyperpage{93}
-    \subitem \code{poset}, \hyperpage{91}
-    \subitem \code{subset}, \hyperpage{91}
-    \subitem \code{superset}, \hyperpage{91}
+  \item preference type, \hyperpage{93}
+    \subitem \code{and}, \hyperpage{96}
+    \subitem \code{aso}, \hyperpage{94}
+    \subitem \code{less(cardinality)}, \hyperpage{94}
+    \subitem \code{less(weight)}, \hyperpage{94}
+    \subitem \code{lexico}, \hyperpage{96}
+    \subitem \code{more(cardinality)}, \hyperpage{94}
+    \subitem \code{more(weight)}, \hyperpage{94}
+    \subitem \code{neg}, \hyperpage{96}
+    \subitem \code{pareto}, \hyperpage{96}
+    \subitem \code{poset}, \hyperpage{94}
+    \subitem \code{subset}, \hyperpage{94}
+    \subitem \code{superset}, \hyperpage{94}
   \item python, \hyperpage{39}
 
   \indexspace
@@ -138,7 +138,7 @@
     \subitem interval, \hyperpage{27}
     \subitem maximize, \code{\#maximize}, \hyperpage{38}
     \subitem minimize, \code{\#minimize}, \hyperpage{38}
-    \subitem preference statement, \hyperpage{88}
+    \subitem preference statement, \hyperpage{91}
     \subitem show, \code{\#show}, \hyperpage{44}
     \subitem weak constraint, \hyperpage{38}
 

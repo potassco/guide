@@ -29,9 +29,10 @@ It allows for computing optimal answer sets of logic programs with preferences.
 While \asprin\ comes with a library of predefined preference types 
 (\code{subset}, \code{pareto}, etc.),
 it is readily extensible by new customized preference types.
-For a formal description of \asprin, please consult~\cite{brderosc15a}. 
+For a formal description of \asprin, please consult~\cite{brderosc15a}.
+\comment{JR: To be updated with the journal} 
 
-The following description conforms with \asprin~1.1.
+The following description conforms with \asprin~3.0.%1.1.
 
 \subsubsection{Computing optimal answer sets}
 
@@ -79,9 +80,11 @@ and refer to them as $X_1$, $X_2$, and $X_3$.
 
 \begin{note}
 Base programs are \gringo\ and \clingo\ programs as specified in Section \ref{subsec:lang:gringo}, 
-except that atoms names may not start with the underscore symbol `\code{\char`\_}' 
-and weak constraint and minimize and maximize statements are not allowed.
+except that %atoms names may not start with the underscore symbol `\code{\char`\_}' 
+%and 
+weak constraint and minimize and maximize statements are not allowed.
 \end{note}
+\comment{JR2JR: Anything else?}
 
 For a first example,
 we can use \asprin\ to compute the answer sets of the base program that are subset minimal with respect to atoms of predicate $a/1$. 
@@ -103,29 +106,36 @@ Unlike \gringo's native optimization statements and weak constraints (cf.\ Secti
 To compute an answer set of the base program that is optimal with respect to \code{p1}, 
 an implementation of the preference type \code{subset} must be provided.
 This is comprised in \asprin's preference library,
-contained in file \code{asprin.lib}.
-With it, the computation can be performed by the following command:
+contained in file \code{asprin.lib},
+which is automatically loaded by the system unless option \code{--no-asprin-lib} is issued.
+The computation can then be performed by the following command:
 %
-\marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
+%\marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
+%             ought to be located in some directory
+%             in the system path.}%
+\marginlabel{\clingo\ Python module must be importable, and the related files \code{asprin} and \code{asprin.lib}
              ought to be located in some directory
              in the system path.}%
 \begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% asprin.lib
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% 
 \end{lstlisting}
 %
-This command produces the following output:
+The output should look like this:
+%This command produces the following output:
 %
 \begin{lstlisting}[numbers=none]
-asprin version 1.0
+asprin version 3.0.0
+Reading from base.lp ...
+Solving...
 Answer: 1
-m(2) a(2) a(1) b(1)
+m(2) a(1) a(2) b(1)
 Answer: 2
-m(1) a(1) b(3) b(2) b(1)
+m(1) a(1) b(1) b(2) b(3)
 OPTIMUM FOUND
 
-Models       : 1
-  Enumerated : 2
-
+Models       : 2+
+  Optimum    : yes
+...
 \end{lstlisting}
 %
 At first, \asprin\ finds the answer set $X_2$ of the base program. 
@@ -144,8 +154,7 @@ Now, we obtain that $X_2$ is already an optimal answer set:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference2.lp}{preference2.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib}}
+  \mbox{~~~}\attach{examples/preference2.lp}{preference2.lp}}}
 \begin{lstlisting}[numbers=none]
 Answer: 1
 m(2) a(2) a(1) b(1)
@@ -163,7 +172,7 @@ as well, $0$ is used to compute all optimal answer sets.
 For instance, the command
 %
 \begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% asprin.lib 0
+asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% 0
 \end{lstlisting}
 %
 results in the output:
@@ -197,8 +206,8 @@ yields two additional optimal answer sets, both containing \code{c(1)}:
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
   \mbox{~~~}\attach{examples/preference1.lp}{preference1.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}\attach{examples/c1.lp}{c1.lp}\mbox{~~~~~~~~~~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib 0}}
+  \mbox{~~~}\attach{examples/c1.lp}{c1.lp} 0}} %\mbox{~~~~~~~~~~~~}\textbackslash \ 
+%  \mbox{~~~}asprin.lib 0}}
 %
 \begin{lstlisting}[numbers=none]
 Answer: 1
@@ -221,7 +230,7 @@ When \asprin\ looks for an answer set that is not worse than $X_1$,
 it first looks for answer sets that interpret atoms appearing in the preference statements
 in the same way as $X_1$. 
 In this way,
-it finds the second optimal model, that contains $c(1)$, 
+it finds the second optimal model, that contains \code{c(1)}, 
 and prints it followed by the line `\lstinline{OPTIMUM FOUND *}'.  
 Then, it continues searching, finds $X_3$ and the process continues. 
 
@@ -232,10 +241,10 @@ by \asprin's option \lstinline{--project}.
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
   \mbox{~~~}\attach{examples/preference1.lp}{preference1.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}\attach{examples/c1.lp}{c1.lp}\mbox{~~~~~~~~~~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib 0\mbox{~~~~~}\textbackslash \ 
-  \mbox{~~~}--project}\\
-}
+  \mbox{~~~}\attach{examples/c1.lp}{c1.lp} 0 --project}}%\mbox{~~~~~~~~~~~~}\textbackslash \ 
+%  \mbox{~~~}asprin.lib 0\mbox{~~~~~}\textbackslash \ 
+%  \mbox{~~~}--project}\\
+%}
 This yields only the three optimal answer sets not containing \code{c(1)}.
 % \attach{examples/c1.lp}{\code{c1.lp}}:
 %
@@ -260,57 +269,51 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 
 \asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
-A \emph{weighted formula} is of the form
-\[\boldsymbol{t}\code{::}F\]
-where $\boldsymbol{t}$ is a term tuple
-\footnote{%
-Term tuples in the current \asprin\ implementation are defined following Figure \ref{fig:terms}, 
-except that \emph{terms} cannot contain \emph{functions}, 
-and \emph{simpleterms} cannot contain \emph{constants}. 
-Moreover, neither intervals (Section \ref{subsec:gringo:interval}) nor pools  (Section \ref{subsec:gringo:pool})
-are allowed in weighted formulas. 
-These limitations will be removed in future releases. 
-By now, as a workaround, these elements can be represented as follows:
-in the weighted formula, write a variable (e.g., \code{V}) instead of the prohibited element (e.g., \code{a(X)}),  
-and in the body (see below) assign the variable to the element (e.g., \code{V = a(X)}).
-}
-and $F$ is a either a Boolean formula or a naming atom.
-We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
+A \emph{weighted body} has form
+\[\boldsymbol{t}\code{::}B\]
+where $\boldsymbol{t}$ is a term tuple,
+and $B$ is a either a body of Boolean formulas
+\[F_1, \ldots, F_n\]
+or a naming atom.
+We may drop \code{::} and simply write $B$ whenever $\boldsymbol{t}$ is empty.
+If $B$ is missing\footnote{Note that empty weighted bodies are not allowed},
+we interpret is as the Boolean constant \code{\#true}.
 Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),
 using the connectives \code{not} (default negation), \code{\&} (conjunction) and \code{|} (disjunction).
-Parentheses can be written as usual,
+Parentheses can be written as usual\footnote{Except that they are not allowed around atoms.},
 and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
 %
-Naming atoms of form \code{name(s)}
+Naming atoms of form \code{**s}, where \code{s} is a term,
 refer to the preference associated with preference statement \code{s} (see below).
 %
-Examples of weighted formulas are 
+Examples of weighted bodies are 
 `\code{42::a}', 
-`\code{a(X)}', 
-`\code{C::edge(X,Y,C)}', 
-`\code{W,(X,Y):: not a(W,X) \& b(Y)}', and 
-`\code{X::name(p(X))}'. 
+`\code{a(X), b(X)}', 
+`\code{C::edge(X,Y), cost(X,Y,C)}', 
+`\code{W,(X,Y)::not a(W,X) | b(Y)}', and 
+`\code{X::**p(X)}'. 
 
-If $F_1$, \ldots, $F_n$ are weighted formulas, then
+If $B_1$, \ldots, $B_n$ are weighted bodies, then
 \[
-\code{\{}F_1\code{;}\dots\code{;}F_m\code{\}}
+\code{\{}B_1\code{;}\dots\code{;}B_m\code{\}}
 \]
-is a set of weighted formulas.
+is a set of weighted bodies.
 We may drop the curly braces if $m=1$.
 
 A \emph{preference element} is of the form
-\[\boldsymbol{F}_1\;>\,\dots\,>\;\boldsymbol{F}_m\code{ || }F\code{ : }\!\!\!\! B\]
-where each $\boldsymbol{F}_r$ is a set of weighted formulas, 
-$F$ is a non-weighted Boolean formula
+%\[\boldsymbol{B}_1\; \gg \,\dots\, \gg \;\boldsymbol{B}_m\code{ || }\boldsymbol{B}\code{ : }\!\!\!\! B\]
+\[\boldsymbol{B}_1\; >> \,\dots\, >> \;\boldsymbol{B}_m\code{ || }\boldsymbol{B}\code{ : }\!\!\!\! B\]
+\comment{JR: Too many Bs?, maybe rename the weighted bodies?}
+where each $\boldsymbol{B}_r$ and $\boldsymbol{B}$ is a set of weighted bodies, 
 and $B$ is a rule body where all literals belong to domain predicates
 (see Page~\pageref{pg:domain}) or built-ins.
 %
-We may drop `\code{>}' if $m=1$, 
-and `\code{||$\,F$}' and `\code{:$\,B$}' whenever $F$ and/or $B$ are empty, respectively.
+We may drop `\code{>>}' if $m=1$, 
+and `\code{||$\,F$}' and `\code{:$\,B$}' whenever $\boldsymbol{B}$ and/or $B$ are empty, respectively.
 %
-Intuitively, $r$ gives the rank of the respective set of weighted formulas.
-This can be made subject to condition $F$ by using the conditional `\code{||}'.
-Preference elements provide a (possible) structure to a set of weighted formulas
+Intuitively, $r$ gives the rank of the respective set of weighted bodies.
+This can be made subject to condition $\boldsymbol{B}$ by using the conditional `\code{||}'.
+Preference elements provide a (possible) structure to a set of weighted bodies
 by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
 %
 %Hence
@@ -319,10 +322,10 @@ by giving a means of conditionalization and a symbolic way of defining pre-order
 %
 Examples of preference elements are 
 `\code{42::a}', 
-`\code{a(X)}',  
-`\code{1::name(p);2::name(q)}', 
-`\code{\{a(X);b(X)\} > \{c(X);d(X)\}}',  and
-`\code{a(X) > b(X) || c(X) : dom(X)}'.
+`\code{a(X), b(X):c(X)}',  
+`\code{X::**p(X)}', 
+`\code{\{a(X);b(X)\} >> \{c(X);d(X)\}}',  and
+`\code{a(X) >> b(X) || c(X) : dom(X)}'.
 
 \begin{note}
 Here and below, 
@@ -331,27 +334,55 @@ Accordingly, the literals in $B$ must be built-ins or belong to domain predicate
 This ensures that $B$ can be fully evaluated during grounding.
 \end{note}
 
+\begin{note}\label{asprin:nobody}
+If the body $B$ of a preference element $e$ is empty,
+\asprin\ automatically replaces it with a body 
+providing the domains of the atoms appearing in $e$,
+consisting of new atoms $\code{dom(}a\code{)}$ 
+for every atom with variables $a$ in $e$, 
+and new atoms $\code{pref\_dom(}s\code{)}$ 
+for every naming atom with variables $\code{**}s$ in $e$.
+%
+For example, 
+`\code{X::**p(X)}' becomes
+`\code{X::**p(X) : pref\_dom(p(X))}', and 
+`\code{\{a(X);b(X)\} >> \{c(X);d(X)\}}' becomes
+`\code{\{a(X);b(X)\} >> \{c(X);d(X)\}:dom(a(X)),dom(b(X)),dom(c(X)),dom(d(X))}'.
+%
+For defining those atoms, 
+\asprin\ extends the base program with facts 
+$\code{dom(}a_{gr}\code{).}$ for every ground instace $a_{gr}$ of $a$ obtained by \clingo\
+after grounding the base program.
+%
+And similarly, \asprin\ adds facts  
+$\code{pref\_dom(}s_{gr}\code{).}$
+for every ground instance $s_{gr}$ of $s$ obtained by \clingo\
+while grounding the preference specification.
+\end{note}
+\comment{JR: Move out of the note? }
 
 \index{safety!preference statement}
 \begin{note}
 Preference elements are required to be \emph{safe}, 
 i.e., all variables in a preference element must occur in some positive literal 
 in its body or in the body of the preference statement containing it (see below).  
+%
+Note that preference elements whose body is missing are always safe, 
+due to the new body automatically added by \asprin\ 
+(see previous Remark \ref{asprin:nobody}).
 \end{note} 
 
 A \emph{preference statement} is of the form %
 \[\code{\#preference(s,t)\{}e_1\code{;}\dots\code{;}e_n\code{\} : }\!\!\!\!B\code{.}\]
 %
 where \code{s} is a term giving the preference name, 
-\code{t} is a ground\footnote{This is a pragmatic restriction,
-enabling \asprin\ to only include the relevant parts of its library.} 
-term providing the preference type, 
+\code{t} is a  term providing the preference type, 
 and each $e_j$ is a preference element.
 The rule body $B$ has the same form and purpose as above.
 %
 %\begin{note}
 That is, the body $B$ of a preference statement is used to instantiate the variables of $s$, $t$ and each $e_i$.
-For safety, all variables appearing in \code{s} must also appear in a positive literal in $B$.
+For safety, all variables appearing in \code{s} and \code{t} must also appear in a positive literal in $B$.
 
 \begin{example}
 \label{asprin:example2}
@@ -400,10 +431,10 @@ Consider a preference specification about leisure activities (without base progr
 }.
 #preference(fun,superset){ sauna; dive; hike; not bunji }.
 #preference(temps,aso){
-  dive > sauna ||     hot; 
- sauna > dive  || not hot
+  dive >> sauna ||     hot; 
+ sauna >> dive  || not hot
 }.
-#preference(all,pareto){name(costs); name(fun); name(temps)}.
+#preference(all,pareto){**costs; **fun; **temps}.
 
 #optimize(all).
 \end{lstlisting}
@@ -420,6 +451,7 @@ And this combined preference relation is declared subject to optimization in Lin
 All four preference types in Example~\ref{asprin:example3} are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.  
 \end{note}
 
+\comment{JR: STOPPED HERE, I'll continue once we are happy with the previous part.}
 
 \subsubsection{Preference relations and preference types}
 \index{preference type}
@@ -467,6 +499,7 @@ X \succ Y \text{ iff } \{e\in E\mid X\models e\}\subset\{e\in E\mid Y\models e\}
 And when applied to the preference elements of \code{p1} in Example \ref{asprin:example1}, we obtain $\succ_{\code{p1}}$.
 
 The full generality of preference elements is not always needed.
+\comment{JR: move Boolean formulas to bodies of Boolean formulas? Let's decide first if we stay with those names  }
 For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
 For this reason, we specify for each preference type its \emph{domain}, 
 i.e., the ground preference elements for which the preference type is well defined.

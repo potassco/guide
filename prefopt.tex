@@ -30,7 +30,7 @@ While \asprin\ comes with a library of predefined preference types
 (\code{subset}, \code{pareto}, etc.),
 it is readily extensible by new customized preference types.
 For a formal description of \asprin, please consult~\cite{brderosc15a}.
-\comment{JR: To be updated with the journal} 
+%\comment{JR: To be updated with the journal} 
 
 The following description conforms with \asprin~3.0.%1.1.
 
@@ -84,7 +84,6 @@ except that %atoms names may not start with the underscore symbol `\code{\char`\
 %and 
 weak constraint and minimize and maximize statements are not allowed.
 \end{note}
-\comment{JR2JR: Anything else?}
 
 For a first example,
 we can use \asprin\ to compute the answer sets of the base program that are subset minimal with respect to atoms of predicate $a/1$. 
@@ -106,16 +105,19 @@ Unlike \gringo's native optimization statements and weak constraints (cf.\ Secti
 To compute an answer set of the base program that is optimal with respect to \code{p1}, 
 an implementation of the preference type \code{subset} must be provided.
 This is comprised in \asprin's preference library,
-contained in file \code{asprin.lib},
+contained in the file \code{asprin\_lib.lp},
 which is automatically loaded by the system unless option \code{--no-asprin-lib} is issued.
 The computation can then be performed by the following command:
 %
 %\marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
 %             ought to be located in some directory
 %             in the system path.}%
-\marginlabel{\clingo\ Python module must be importable, and the related files \code{asprin} and \code{asprin.lib}
-             ought to be located in some directory
-             in the system path.}%
+\marginlabel{\clingo\ Python module must be importable via the environment variable \code{PYTHONPATH}, 
+             and the related file \code{asprin} 
+             ought to be located in some directory in the system path.
+             The file \code{asprin\_lib.lp} is first looked up in the current directory.
+             If it is not found there, then it is looked up in the root directory of the distribution, 
+             i.e., in the directory of the main file \code{asprin.py}.}%
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% 
 \end{lstlisting}
@@ -269,50 +271,51 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 
 \asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
-A \emph{weighted body} has form
-\[\boldsymbol{t}\code{::}B\]
+A \emph{weighted formula} is of the form
+\[\boldsymbol{t}\code{::}F\]
 where $\boldsymbol{t}$ is a term tuple,
-and $B$ is a either a body of Boolean formulas
-\[F_1, \ldots, F_n\]
+and $F$ is a either a Boolean formula
 or a naming atom.
-We may drop \code{::} and simply write $B$ whenever $\boldsymbol{t}$ is empty.
-If $B$ is missing\footnote{Note that empty weighted bodies are not allowed},
+We may drop \code{::} and simply write $F$ whenever $\boldsymbol{t}$ is empty.
+If $F$ is missing\footnote{Note that empty weighted formulas are not allowed.},
 we interpret is as the Boolean constant \code{\#true}.
 Boolean formulas are formed from atoms, possibly preceded by classical negation (`\code{-}'),
 using the connectives \code{not} (default negation), \code{\&} (conjunction) and \code{|} (disjunction).
 Parentheses can be written as usual\footnote{Except that they are not allowed around atoms.},
 and when omitted, negation has precedence over conjunction, and conjunction over disjunction.
 %
+Furthermore, if $F$ is a conjunction of the form $F_1 \code{\&} \ldots \code{\&} F_n$, 
+it can also we written using the body notation $F_1\code{,} \ldots\code{,} F_n$.
+%
 Naming atoms of form \code{**s}, where \code{s} is a term,
 refer to the preference associated with preference statement \code{s} (see below).
 %
-Examples of weighted bodies are 
+Examples of weighted formulas are 
 `\code{42::a}', 
-`\code{a(X), b(X)}', 
+`\code{a(X) \& b(X)}', 
 `\code{C::edge(X,Y), cost(X,Y,C)}', 
 `\code{W,(X,Y)::not a(W,X) | b(Y)}', and 
 `\code{X::**p(X)}'. 
 
-If $B_1$, \ldots, $B_n$ are weighted bodies, then
+If $F_1$, \ldots, $F_n$ are weighted formulas, then
 \[
-\code{\{}B_1\code{;}\dots\code{;}B_m\code{\}}
+\code{\{}F_1\code{;}\dots\code{;}F_m\code{\}}
 \]
-is a set of weighted bodies.
+is a set of weighted formulas.
 We may drop the curly braces if $m=1$.
 
 A \emph{preference element} is of the form
 %\[\boldsymbol{B}_1\; \gg \,\dots\, \gg \;\boldsymbol{B}_m\code{ || }\boldsymbol{B}\code{ : }\!\!\!\! B\]
-\[\boldsymbol{B}_1\; >> \,\dots\, >> \;\boldsymbol{B}_m\code{ || }\boldsymbol{B}\code{ : }\!\!\!\! B\]
-\comment{JR: Too many Bs?, maybe rename the weighted bodies?}
-where each $\boldsymbol{B}_r$ and $\boldsymbol{B}$ is a set of weighted bodies, 
+\[\boldsymbol{F}_1\; >> \,\dots\, >> \;\boldsymbol{F}_m\code{ || }\boldsymbol{F}\code{ : }\!\!\!\! B\]
+where each $\boldsymbol{F}_r$ and $\boldsymbol{F}$ is a set of weighted bodies, 
 and $B$ is a rule body where all literals belong to domain predicates
 (see Page~\pageref{pg:domain}) or built-ins.
 %
 We may drop `\code{>>}' if $m=1$, 
-and `\code{||$\,F$}' and `\code{:$\,B$}' whenever $\boldsymbol{B}$ and/or $B$ are empty, respectively.
+and `\code{||$\, \boldsymbol{F}$}' and `\code{:$\,B$}' whenever $\boldsymbol{F}$ and/or $B$ are empty, respectively.
 %
 Intuitively, $r$ gives the rank of the respective set of weighted bodies.
-This can be made subject to condition $\boldsymbol{B}$ by using the conditional `\code{||}'.
+This can be made subject to condition $\boldsymbol{F}$ by using the conditional `\code{||}'.
 Preference elements provide a (possible) structure to a set of weighted bodies
 by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
 %
@@ -354,12 +357,11 @@ For defining those atoms,
 $\code{dom(}a_{gr}\code{).}$ for every ground instace $a_{gr}$ of $a$ obtained by \clingo\
 after grounding the base program.
 %
-And similarly, \asprin\ adds facts  
+Similarly, \asprin\ adds facts  
 $\code{pref\_dom(}s_{gr}\code{).}$
 for every ground instance $s_{gr}$ of $s$ obtained by \clingo\
 while grounding the preference specification.
 \end{note}
-\comment{JR: Move out of the note? }
 
 \index{safety!preference statement}
 \begin{note}
@@ -417,10 +419,29 @@ along with a single optimization directive
 % A non ground preference specification is valid
 % if after grounding it (using the accompanying logic program)
 % the resulting ground specification is valid.
-Whenever these conditions do not hold, \asprin\ reports an error and exits.
+If a preference specification is not valid, \asprin\ reports an error and exits.
 %
-As mentioned,
+As mentioned before,
 the purpose of such a specification is to define the optimal answer sets of an underlying base logic program.
+
+When grounding results in no optimization directive, 
+\asprin\ prints a warning and computes (possibly non optimal) stable models of the base program.
+%
+Additionally, \asprin\ allows \clingo\ minimize and maximize statements 
+(cf. Section \ref{subsec:gringo:optimize}) instead of a preference specification.
+%
+In this case, using \asprin's library, the system computes optimal stable models
+following the semantics of \clingo.%
+\footnote{%
+More in detail, the minimize and maximize statements 
+are translated into preference statements of type \code{clingo\_minimize}.
+%
+This type is implemented in \asprin's library according to the semantics of \clingo.
+%
+Hence, using the library, the system computes \clingo\ optimal stable models.
+%
+However, it is possible to provide a different implementation of the type \code{clingo\_minimize} (see below), 
+thereby providing different semantics to \clingo\ minimize and maximize statements.}
 
 \begin{example}\label{asprin:example3}
 Consider a preference specification about leisure activities (without base program).
@@ -959,7 +980,7 @@ This cardinality constraint makes sure that \code{better(P)} holds whenever \cod
 Given that this rule is shared by many preference programs, 
 it is included in a preference-type independent program named \code{preference}.
 
-Instead of using \asprin's library, viz.~\code{asprin.lib}, 
+Instead of using \asprin's library, viz.~\code{asprin\_lib.lp}, 
 we can now directly use the above preference program as follows:
 \marginlabel{%
   To inspect the output, invoke:\\

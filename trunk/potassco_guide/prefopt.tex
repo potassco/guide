@@ -441,7 +441,7 @@ This type is implemented in \asprin's library according to the semantics of \cli
 Hence, using the library, the system computes \clingo\ optimal stable models.
 %
 However, it is possible to provide a different implementation of the type \code{clingo\_minimize} (see below), 
-thereby providing different semantics to \clingo\ minimize and maximize statements.}
+thereby providing new semantics to minimize and maximize statements.}
 
 \begin{example}\label{asprin:example3}
 Consider a preference specification about leisure activities (without base program).
@@ -472,7 +472,6 @@ And this combined preference relation is declared subject to optimization in Lin
 All four preference types in Example~\ref{asprin:example3} are predefined in \asprin's preference library and take different syntactic restrictions of preference elements as arguments.  
 \end{note}
 
-\comment{JR: STOPPED HERE, I'll continue once we are happy with the previous part.}
 
 \subsubsection{Preference relations and preference types}
 \index{preference type}
@@ -520,7 +519,7 @@ X \succ Y \text{ iff } \{e\in E\mid X\models e\}\subset\{e\in E\mid Y\models e\}
 And when applied to the preference elements of \code{p1} in Example \ref{asprin:example1}, we obtain $\succ_{\code{p1}}$.
 
 The full generality of preference elements is not always needed.
-\comment{JR: move Boolean formulas to bodies of Boolean formulas? Let's decide first if we stay with those names  }
+%
 For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
 For this reason, we specify for each preference type its \emph{domain}, 
 i.e., the ground preference elements for which the preference type is well defined.
@@ -533,7 +532,7 @@ If a ground preference statement is not admissible, \asprin\ reports an error an
 In Example \ref{asprin:example1}, the preference statement \code{p1}  
 is admissible because \code{a(1)}, \code{a(2)}, and \code{a(3)} are Boolean formulas
 and thus belong to the domain of \code{subset}. 
-If we added the preference elements \code{1::a(1)} or \code{name(p2)}, 
+If we added the preference elements \code{1::a(1)} or \code{**p2}, 
 the statement would not be admissible any more.
 \end{example}
 
@@ -546,7 +545,7 @@ the statement would not be admissible any more.
 \index{preference type!\code{more(weight)}}
 \index{preference type!\code{aso}}
 \index{preference type!\code{poset}}
-
+\comment{JR: Add maxmin and minmax}
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}
 	\item  \code{subset} and \code{superset}   
@@ -584,8 +583,7 @@ An example of preference type \code{superset} is given in Line~5 of Example~\ref
 \marginlabel{%
  To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference3.lp}{preference3.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib}}
+  \mbox{~~~}\attach{examples/preference3.lp}{preference3.lp}}}
 %
 We can use the type \code{less(cardinality)} to minimize the cardinality of the atoms of predicate \code{b/1}
 in Example~\ref{asprin:example1} as follows:
@@ -633,7 +631,7 @@ With preference type \code{less(weight)},
 this can be expressed as follows.
 \begin{lstlisting}[numbers=none]
 #preference(myminimize,less(weight))
-          { C,(X,Y) :: cycle(X,Y) : cost(X,Y,C) }.
+          { C,X,Y :: cycle(X,Y), cost(X,Y,C) }.
 #optimize(myminimize).
 \end{lstlisting}
 The similarity between  preference type \code{more(weight)} and \code{\#maximize} statements is analogous.
@@ -665,8 +663,7 @@ See~\cite{brnitr03a} for a more detailed introduction.
 \marginlabel{%
  To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference4.lp}{preference4.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib}}
+  \mbox{~~~}\attach{examples/preference4.lp}{preference4.lp}}}
 %
 The following preference statement of type \code{aso} expresses a preference 
 for atoms of predicate \code{a/1} over atoms of predicate \code{b/1}.
@@ -712,8 +709,7 @@ $F'\in S$ such that $F'>F$ and $X \models F'$ but $Y \not\models F'$.  The inter
 \marginlabel{%
  To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference5.lp}{preference5.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib}}
+  \mbox{~~~}\attach{examples/preference5.lp}{preference5.lp}}}
 %
 We apply the preference type \code{poset} to the preference statement of Example \ref{asprin:asoexample}:
 %
@@ -738,34 +734,34 @@ which amount to the ones defined in~\cite{sonpon06a}:
 \item \code{lexico}
 \end{itemize}
 Preference types \code{and} and \code{pareto} deal with sets of ground naming atoms
-\[\code{name(s)}\]
+\[\code{**s}\]
 For \code{neg}, these sets must be singleton.
 And for \code{lexico}, each naming atom has an attached tuple $\code{$w$}$: 
-\[w\code{::name(s)}\]
-Given a naming atom \code{name(s)}, 
+\[w\code{::**s}\]
+Given a naming atom \code{**s}, 
 let $\succ_{\code{s}}$, $\succeq_{\code{s}}$, $=_{\code{s}}$, $\preceq_{\code{s}}$, $\prec_{\code{s}}$ be the 
 strict, non-strict, equal, and inverse preference relations associated with preference statement $\code{s}$.
 Then, the semantics of each composite preference type is defined as follows:
 \begin{itemize}
 \item
-\code{neg} maps $E=\code{\{name(s)\}}$ to the preference relation
+\code{neg} maps $E=\code{\{**s\}}$ to the preference relation
 \[
 X \succ Y \text{ iff } Y \prec_s X
 \]
 \item 
-\code{and} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
+\code{and} maps \code{$E=$\{**$s_1$;$\ldots$;**$s_n$\}} to the preference relation 
 \[
-X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E}(X\succ_\code{s} Y)
+X \succ Y \text{ iff } \bigwedge_{\code{**s}\in E}(X\succ_\code{s} Y)
 \]
 \item 
-\code{pareto} maps \code{$E=$\{name($s_1$);$\ldots$;name($s_n$)\}} to the preference relation 
+\code{pareto} maps \code{$E=$\{**$s_1$;$\ldots$;**$s_n$\}} to the preference relation 
 \[
-X \succ Y \text{ iff } \bigwedge_{\code{name(s)}\in E} (X\succeq_\code{s} Y)\wedge\bigvee_{\code{name(s)}\in E} (X\succ_\code{s} Y)
+X \succ Y \text{ iff } \bigwedge_{\code{**s}\in E} (X\succeq_\code{s} Y)\wedge\bigvee_{\code{**s}\in E} (X\succ_\code{s} Y)
 \]
 \item
-\code{lexico} maps \code{$E=$\{$w_1$::name($s_1$);$\ldots$;$w_n$::name($s_n$)\}} to the preference relation 
+\code{lexico} maps \code{$E=$\{$w_1$::**$s_1$;$\ldots$;$w_n$::**$s_n$\}} to the preference relation 
 \[
-X \succ Y \text{ iff } \bigvee_{\code{w::name(s)}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::name(s')}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
+X \succ Y \text{ iff } \bigvee_{\code{w::**s}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::**s'}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
 \] 
 \end{itemize}
 
@@ -775,9 +771,9 @@ Consider the following preference specification, where \code{p1} and \code{p3} a
 \lstinputlisting[numbers=none]{examples/cpreference.lp}
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/cpreference.lp}{cpreference.lp}\mbox{~~~}\textbackslash \ 
-  \mbox{~~~}asprin.lib 0}}
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~}\textbackslash \
+  \mbox{~~~}\attach{examples/cpreference.lp}{cpreference.lp}\mbox{~}\textbackslash\
+  \mbox{~~~}\attach{examples/optimize_p6.lp}{optimize\_p6.lp}\mbox{~}0}}
 %
 Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p6)}, 
 \asprin\ produces answer sets $X_2$ and $X_3$. 
@@ -804,23 +800,26 @@ Recall the preference statement \code{p1} of Example \ref{asprin:example1}:
 \lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference1.lp}
 %#preference(p1,subset){ a(X) : dom(X) }.
 %\end{lstlisting}
-This is translated into: %the rules $F_\code{p1}$:
+This is translated into:\footnote{% %the rules $F_\code{p1}$:
+Using option \code{--print-programs}, \asprin\ prints the result of the translation.}
 \begin{lstlisting}
 preference(p1,subset).
-preference(p1,(1,(X)),1,for(a(X)),()) :- dom(X).
+preference(p1,(1,1,(X)),1,for(atom(a(X))),()) :- dom(X).
 \end{lstlisting}
 Line~1 states the name and the type of the preference statement.
 Line~2 can be read as follows:
-in the preference statement \code{p1}, the first element has variables $\{\code{X}\}$,  
+the preference statement \code{p1},
+appearing as the first preference statement of the program,
+in the first element has variables $\{\code{X}\}$,
 and in the first position of the element there is a Boolean formula \code{a(X)} that has an empty list of associated weights.
 %The reification $F_\code{p2}$ of 
 The translation of 
 \lstinputlisting[numbers=none,firstline=1,lastline=1]{examples/preference2.lp}
 replaces \code{p1} with \code{p2} in Line~1 and~2, and adds:
 \begin{lstlisting}[numbers=none]
-preference(p2,(2,(X)),1,for(b(X)),()) :- dom(X).
+preference(p2,(1,2,(X)),1,for(atom(b(X))),()) :- dom(X).
 \end{lstlisting}
-Number \code{2} in \code{(2,(X))} tells us that this is the second preference element. 
+Number \code{2} in \code{(1,2,(X))} tells us that this is the second preference element. 
 \end{example}
 
 \begin{example}
@@ -831,7 +830,8 @@ The preference statement of Example \ref{asprin:example2}:
 is translated into the rules:
 \begin{lstlisting}[numbers=none]
 preference(p(X),subset) :- dom(X).
-preference(p(X),(1,(X,Y)),1,for(a(X,Y)),()) :- dom(Y), dom(X).
+preference(p(X),(1,1,(Y,X)),1,for(atom(a(X,Y))),()) :-
+                           dom(Y), dom(X).
 \end{lstlisting}
 Observe how \code{dom(X)} is appended to both rules. 
 \end{example}
@@ -840,21 +840,22 @@ In general, a weighted formula \code{$\boldsymbol{t}$::$F$}
 occurs in some set
 \[\boldsymbol{F}_i=\code{\{}F_1\code{;}\dots\code{;}F_m\code{\}}\]
 of a preference element $e_j$ of the form 
-\[\boldsymbol{F}_1\;>\,\dots\,>\;\boldsymbol{F}_n\code{ || }F_0\code{ : }\!\!\!\! B_j\]
+\[\boldsymbol{F}_1\;>\,\dots\,>\;\boldsymbol{F}_n\code{ || }\boldsymbol{F_0}\code{ : }\!\!\!\! B_j\]
 that belongs itself to a preference statement \code{s} of the form
 \[\code{\#preference(s,t)\{}e_1\code{;}\dots\code{;}e_o\code{\} : }\!\!\!\!B\code{.}\]
+appearing as the $k$-th preference statement of the program.
 Accordingly, the weighted formula is translated into a rule of the form
-\[\code{preference(s,(}j\code{,}\boldsymbol{v}\code{),}i\code{,for(}t_F\code{),}\boldsymbol{t}\code{) :- }B_j\code{, }B\code{.}\]
+\[\code{preference(s,(}k\code{,}j\code{,}\boldsymbol{v}\code{),}i\code{,for(}t_F\code{),}\boldsymbol{t}\code{) :- }B_j\code{, }B\code{.}\]
 where $i$ and $j$ are the indexes of $\boldsymbol{F}_i$ and $e_j$, respectively, 
 $\boldsymbol{v}$ is a term tuple containing all variables appearing in the rule, 
 and ${t}_F$ is a term representing the Boolean formula $F$ 
-by using function symbols \code{\_not/1}, \code{\_and/2}, and \code{\_or/2} in prefix notation.
+by using function symbols \code{atom/1}, \code{neg/1}, \code{and/2}, and \code{or/2} in prefix notation.
 For example, 
-the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{\_and(c(X),\_or(\_not(a(X)),b(X)))}. 
+the formula \code{(not a(X) | b(X)) \& c(X)} is translated into \code{and(atom(c(X)),or(not(atom(a(X))),atom(b(X))))}. 
 %
 For representing the condition $F_0$, $i$ is set to $\code{0}$.
 %
-A naming atom \code{name(s)} is represented analogously,
+A naming atom \code{**s} is represented analogously,
 except that \code{for(${t}_F$)} is replaced by \code{name(s)}.
 %
 The translation of a preference statement of the form mentioned above 
@@ -875,32 +876,34 @@ Hence, after grounding, all rules generated in the translation become facts.
 \begin{example}
 The preference specification of Example \ref{asprin:example3} is translated into the following rules:
 \begin{lstlisting}[numbers=none,escapechar=?]
-preference(costs, (1, (C)), 1, for(sauna), (C))  
-                              :-  cost(sauna,C).
-preference(costs, (2, (C)), 1, for(dive),  (C))
-                               :-  cost(dive,C).
+
 preference(costs, less(weight)).
+preference(costs, (1,1,(C)), 1, for(atom(sauna)), (C))
+                                      :- cost(sauna,C).
+preference(costs, (1,2,(C)), 1, for(atom(dive)), (C))
+                                      :- cost(dive,C).
 
-preference(fun, (1, ()), 1, for(sauna), ()).
-preference(fun, (2, ()), 1, for(dive), ()).
-preference(fun, (3, ()), 1, for(hike), ()).
-preference(fun, (4, ()), 1, for(_not(bunji)), ()).
 preference(fun, superset).
+preference(fun, (2,1,()), 1, for(atom(sauna)), ()).
+preference(fun, (2,2,()), 1, for(atom(dive)), ()).
+preference(fun, (2,3,()), 1, for(atom(hike)), ()).
+preference(fun, (2,4,()), 1, for(neg(atom(bunji))), ()).
 
-preference(temps, (1, ()), 0, for(hot), ()).
-preference(temps, (1, ()), 1, for(dive), ()).
-preference(temps, (1, ()), 2, for(sauna), ()).
-preference(temps, (2, ()), 0, for(_not(hot)), ()).
-preference(temps, (2, ()), 1, for(sauna), ()).
-preference(temps, (2, ()), 2, for(dive), ()).
 preference(temps, aso).
+preference(temps, (3,1,()), 1, for(atom(dive)), ()).
+preference(temps, (3,1,()), 2, for(atom(sauna)), ()).
+preference(temps, (3,1,()), 0, for(atom(hot)), ()).
+preference(temps, (3,2,()), 1, for(atom(sauna)), ()).
+preference(temps, (3,2,()), 2, for(atom(dive)), ()).
+preference(temps, (3,2,()), 0, for(neg(atom(hot))), ()).
 
-preference(all, (1, ()), 1, name(costs), ()).
-preference(all, (2, ()), 1, name(fun), ()).
-preference(all, (3, ()), 1, name(temps), ()).
 preference(all, pareto).
+preference(all, (4,1,()), 1, name(costs), ()).
+preference(all, (4,2,()), 1, name(fun), ()).
+preference(all, (4,3,()), 1, name(temps), ()).
 
 optimize(all).
+
 \end{lstlisting}
 \end{example}
 
@@ -930,11 +933,11 @@ For the preference statement \code{p1} of Example \ref{asprin:example1},
 translated in Example \ref{asprin:example1translated}, \asprin\ provides the following facts. 
 For deciding whether $X_1 \succ_\code{p1} X_2$ is true,
 \asprin\ adds the facts
-\code{holds(a(1))}, \code{holds'(a(1))}, \code{holds'(a(2))}, and \code{holds'(a(3))}.
+\code{holds(atom(a(1)))}, \code{holds'(atom(a(1)))}, \code{holds'(atom(a(2)))}, and \code{holds'(atom(a(3)))}.
 Similarly, for testing $X_3 \succ_\code{p1} X_2$, \asprin\ provides
-\code{holds(a(2))}, \code{holds(a(3))}, \code{holds'(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))}.
+\code{holds(atom(a(2)))}, \code{holds(atom(a(3)))}, \code{holds'(atom(a(1)))}, \code{holds'(atom(a(2)))} and \code{holds'(atom(a(3)))}.
 And for $X_1 \succ_\code{p1} X_3$, 
-atoms \code{holds(a(1))}, \code{holds'(a(2))} and \code{holds'(a(3))} are established.
+atoms \code{holds(atom(a(1)))}, \code{holds'(atom(a(2)))} and \code{holds'(atom(a(3)))} are established.
 \end{example}
 
 We have seen how \asprin\ provides the translation of the preference statement \code{s} of type \code{t} 
@@ -984,12 +987,15 @@ Instead of using \asprin's library, viz.~\code{asprin\_lib.lp},
 we can now directly use the above preference program as follows:
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \code{\mbox{~}asprin \
+  \mbox{~~~}\mbox{--no-asprin-lib}\mbox{~~}\textbackslash \
+  \mbox{~~~}\attach{examples/base.lp}{base.lp} \mbox{~~~~~~~~~}\textbackslash \
   \mbox{~~~}\attach{examples/preference1.lp}{preference1.lp}\mbox{~~~}\textbackslash \ 
   \mbox{~~~}\attach{examples/subset.lp}{subset.lp}\mbox{~~~~~~~~}\textbackslash \ 
   \mbox{~~~}\attach{examples/basic.lp}{basic.lp} 0}}
 \begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
+asprin --no-asprin-lib \
+       %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/basic.lp}{basic.lp}% 0
 \end{lstlisting}
 As before, we obtain $X_1$ and $X_3$ as optimal answer sets.
 %Other new preference types can be easily defined in this way.  
@@ -1041,14 +1047,17 @@ Putting all this together, we can compute the optimal answer sets of the program
 with the following command:
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\ %\textbackslash \
+  \code{\mbox{~}asprin \
+  \mbox{~~}--no-asprin-lib\mbox{~~~~} \
+  \mbox{~~}\attach{examples/base.lp}{base.lp} \mbox{~~~~}\ %\textbackslash \
   \mbox{~~}\attach{examples/preference8.lp}{preference8.lp}\mbox{~~~~}\ %\textbackslash \ 
   \mbox{~~}\attach{examples/basic.lp}{basic.lp}\mbox{~~~~~~~~~~}\ %\textbackslash \ 
   \mbox{~~}\attach{examples/subset.lp}{subset.lp}\mbox{~~~~~~~~~}\ %\textbackslash \ 
   \mbox{~~}\attach{examples/less-cardinality.lp}{less-cardinality.lp}\
   \mbox{~~}\attach{examples/pareto.lp}{pareto.lp} 0}}
 \begin{lstlisting}[numbers=none,escapechar=\%]
-asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference8.lp}{preference8.lp}%  %\attach{examples/basic.lp}{basic.lp}% \
+asprin --no-asprin-lib                         \
+       %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference8.lp}{preference8.lp}%  %\attach{examples/basic.lp}{basic.lp}%        \
        %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/less-cardinality.lp}{less-cardinality.lp}% %\attach{examples/pareto.lp}{pareto.lp}% 0
 \end{lstlisting}
 As in Example \ref{asprin:composite} (optimizing \code{p8}), we obtain $X_1$, $X_2$ and $X_3$.
@@ -1088,13 +1097,14 @@ the preference programs for the types appearing in the preference statements of 
 \end{note}
 
 \begin{note}
-There are some syntax restrictions to the form of preference programs:
-\begin{itemize}
-\item They may not contain atoms starting with an underscore `\_'.
-\item Atoms of predicates \code{preference/2}, \code{preference/5}, 
-      \code{holds/1}, \code{holds'} and \code{optimize/1}
+There is a syntax restriction to the form of preference programs:
+%\begin{itemize}
+%\item They may not contain atoms starting with an underscore `\_'.
+%\item 
+      atoms of predicates \code{preference/2}, \code{preference/5}, 
+      \code{holds/1}, \code{holds'/1} and \code{optimize/1}
       may not appear in the heads of rules.
-\end{itemize}
+%\end{itemize}
 \end{note}
 
 \begin{note}
@@ -1104,26 +1114,23 @@ This excludes preference programs with disjunctions, choices, or aggregates in r
 \end{note}
 
 Recall from the previous section that we define a set of admissible preference elements for each preference type.
-The respective notion of admissibility is defined in \asprin\ using predicate \code{\_error/1}.
-That is, \code{\_error(X)} is true whenever the preference statement is not admissible.
-In this case, \asprin\ exits and prints the error message bound to \code{X}.\footnote{%
-In the current \asprin\ implementation, 
-the system only exits after finding a first answer set of the base program.}
+The respective notion of admissibility is defined in \asprin\ using predicate \code{error/1}.
+That is, \code{error(X)} is true whenever the preference statement is not admissible.
+In this case, \asprin\ exits and prints the error message bound to \code{X}.
 For coherence, the corresponding rules are also included in the corresponding preference program.
 \begin{example}
 The preference program (\attach{examples/subset.lp}{\code{subset.lp}})
 includes the following rules to define the admissibility of \code{subset} preference statements:
 %
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=20,lastline=33]{examples/subset.lp}
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=20,lastline=49]{examples/subset.lp}
 %
 The first rule checks preference elements containing naming atoms, 
 the second the ones containing weights, 
-and the third one those that contain more than one Boolean formula.
-Function \code{@cat(*args)} is provided by \asprin\ and simply concatenates the terms passed as arguments.
+and the last three those that contain more than one Boolean formula.
 \end{example}
 
 \begin{note}
-The predicate \code{\_error/1} must be defined using domain predicates, built-ins or the special 
+The predicate \code{error/1} must be defined using domain predicates, built-ins or the special 
 predicates \code{preference/2}, \code{preference/5} and \code{optimize/1} 
 (not using \code{holds/1} or \code{holds'/1}).
 %In this way, the predicate may be fully evaluated by the grounder.

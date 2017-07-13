@@ -17,17 +17,34 @@ worse(S) :- preference(S,subset),
 
 unc(P) :- preference(P,subset), not bettereq(P), not worseeq(P).
 
-_error(M) :- 
-  M = @cat("subset: 'name(",X,")' is not allowed."), 
-  preference(S,subset), 
-  preference(S,(N,_),_,name(X),_).
+error(("preference:",P,
+       ": error: preference specification error, type '",
+       "subset",
+       "' does not allow naming atoms.")) :- 
+  preference(P,subset), preference(P,_,_,name(_),_).
 
-_error(M) :- 
-  M = @cat("subset: weight '",W,"' is not allowed."),
-  preference(S,subset), 
-  preference(S,(N,_),_,X,W), W != ().
+error(("preference:",P,
+       ": error: preference specification error, type '",
+       "subset",
+       "' does not allow weights.")) :- 
+  preference(P,subset), preference(P,_,_,_,W), W != ().
 
-_error(M) :- 
-  M = @cat("subset: element '",X,"' is not allowed."),
-  preference(S,subset), 
-  preference(S,(N,_),R,for(X),_), R != 1.
+error(("preference:",P,
+       ": error: preference specification error, type '",
+       "subset",
+       "' does not allow using >>.")) :- 
+  preference(P,subset), preference(P,_,R,_,_), R > 1.
+
+error(("preference:",P,
+       ": error: preference specification error, type '",
+       "subset",
+       "' does not allow sets.")) :- 
+  preference(P,subset), 
+  preference(P,E,S,X,_), preference(P,E,S,Y,_), X > Y.
+
+error(("preference:",P,
+       ": error: preference specification error, type '",
+       "subset",
+       "' does not allow using '||'.")) :-
+  preference(P,subset), preference(P,_,0,_,_).
+

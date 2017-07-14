@@ -601,7 +601,7 @@ are similar to \code{\#minimize} and \code{\#maximize} statements.
 However, they do not comprise priorities but apply to general Boolean formulas.
 Their common domain consists of sets of ground preference elements of the form:
 \[w\code{,}\boldsymbol{t}\code{::}F\]
-Here, ${w}$ is an integer, $\boldsymbol{t}$ a sequence of comma-separated terms, and $F$ a Boolean formula.
+Here, ${w}$ is an integer, $\boldsymbol{t}$ a term tuple, and $F$ a Boolean formula.
 %
 We may drop `\code{,}' when $\boldsymbol{t}$ is empty.
 %
@@ -655,7 +655,7 @@ or to maximize their minimum value with \code{maxmin}.
 Their common domain consists of sets of ground preference elements of the form:
 \[s\code{,}w\code{,}\boldsymbol{t}\code{::}F\]
 where $s$ is a term, ${w}$ an integer, 
-$\boldsymbol{t}$ a sequence of comma-separated terms, and $F$ a Boolean formula.
+$\boldsymbol{t}$ a term tuple, and $F$ a Boolean formula.
 %
 As before, we may drop `\code{,}' when $\boldsymbol{t}$ is empty.
 %

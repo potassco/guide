@@ -30,7 +30,6 @@ While \asprin\ comes with a library of predefined preference types
 (\code{subset}, \code{pareto}, etc.),
 it is readily extensible by new customized preference types.
 For a formal description of \asprin, please consult~\cite{brderosc15a}.
-%\comment{JR: To be updated with the journal} 
 
 The following description conforms with \asprin~3.0.%1.1.
 
@@ -423,7 +422,8 @@ If a preference specification is not valid, \asprin\ reports an error and exits.
 %
 As mentioned before,
 the purpose of such a specification is to define the optimal answer sets of an underlying base logic program.
-
+%
+\begin{note}\label{asprin:noopt}
 When grounding results in no optimization directive, 
 \asprin\ prints a warning and computes (possibly non optimal) stable models of the base program.
 %
@@ -442,6 +442,7 @@ Hence, using the library, the system computes \clingo\ optimal stable models.
 %
 However, it is possible to provide a different implementation of the type \code{clingo\_minimize} (see below), 
 thereby providing new semantics to minimize and maximize statements.}
+\end{note}
 
 \begin{example}\label{asprin:example3}
 Consider a preference specification about leisure activities (without base program).
@@ -543,14 +544,16 @@ the statement would not be admissible any more.
 \index{preference type!\code{more(cardinality)}}
 \index{preference type!\code{less(weight)}}
 \index{preference type!\code{more(weight)}}
+\index{preference type!\code{minmax}}
+\index{preference type!\code{maxmin}}
 \index{preference type!\code{aso}}
 \index{preference type!\code{poset}}
-\comment{JR: Add maxmin and minmax}
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}
 	\item  \code{subset} and \code{superset}   
 	\item  \code{less(cardinality)} and \code{more(cardinality)}   
 	\item  \code{less(weight)} and \code{more(weight)}   
+	\item  \code{minmax} and \code{maxmin}   
 	\item  \code{aso}   (Answer Set Optimization, \cite{brnitr03a})   
 	\item  \code{poset} (Qualitative Preferences, \cite{rogima10a})  
 \end{itemize}
@@ -598,7 +601,9 @@ are similar to \code{\#minimize} and \code{\#maximize} statements.
 However, they do not comprise priorities but apply to general Boolean formulas.
 Their common domain consists of sets of ground preference elements of the form:
 \[w\code{,}\boldsymbol{t}\code{::}F\]
-Here, ${w}$ is an integer, $\boldsymbol{t}$ a term tuple, and $F$ a Boolean formula. 
+Here, ${w}$ is an integer, $\boldsymbol{t}$ a sequence of comma-separated terms, and $F$ a Boolean formula.
+%
+We may drop `\code{,}' when $\boldsymbol{t}$ is empty.
 %
 Their meaning is defined with respect to a set $E$ of ground preference elements:
 \begin{itemize}
@@ -635,14 +640,81 @@ this can be expressed as follows.
 #optimize(myminimize).
 \end{lstlisting}
 The similarity between  preference type \code{more(weight)} and \code{\#maximize} statements is analogous.
-Recall also Remark~\ref{asprin:note} from above.
+Recall also Remarks~\ref{asprin:note} and \ref{asprin:noopt} from above.
 %
 Another example of preference type \code{\code{less(weight)}} is given in Lines~1-4 of Example~\ref{asprin:example3}.
 
+Preference types \code{minmax} and \code{maxmin} are 
+closely related to \code{less(weight)} and \code{more(weight)}, 
+respectively.
+%
+The idea is to have a set of sums, 
+and to minimize the maximum value of all sums with \code{minmax}, 
+or to maximize their minimum value with \code{maxmin}.
+%
+Their common domain consists of sets of ground preference elements of the form:
+\[s\code{,}w\code{,}\boldsymbol{t}\code{::}F\]
+where $s$ is a term, ${w}$ an integer, 
+$\boldsymbol{t}$ a sequence of comma-separated terms, and $F$ a Boolean formula.
+%
+As before, we may drop `\code{,}' when $\boldsymbol{t}$ is empty.
+%
+The terms $s$ name different sums,
+whose value is specified by the rest of the element 
+`$w\code{,}\boldsymbol{t}\code{::}F$'
+(similar to \code{less(weight)} and \code{more(weight)}).
+%
+For a set $E$ of ground preference elements, 
+the value of sum $s$ in $X$ is:
+\[
+v(s,X)=\sum_{(w,\boldsymbol{t})\in
+\{w,\boldsymbol{t}\mid s,w,\boldsymbol{t}\mathtt{::}F\in E, X\models F\}}w
+\]
+Then:
+\begin{itemize}
+\item
+\code{minmax} maps $E$ to the preference relation%
+\[
+X \succ Y \text{ if } 
+\max \{ v(s,X) \mid s \ \text{is a sum of } E \} < 
+\max \{ v(s,Y) \mid s \ \text{is a sum of } E \} 
+\]
+\item
+\code{maxmin} maps $E$ to the preference relation%
+\[
+X \succ Y \text{ if } 
+\min \{ v(s,X) \mid s \ \text{is a sum of } E \} > 
+\min \{ v(s,Y) \mid s \ \text{is a sum of } E \} 
+\]
+\end{itemize}
+\begin{example}\label{asprin:minmaxexample}
+%
+\marginlabel{%
+ To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference4.lp}{preference4.lp}}}
+%
+The following preference statement 
+expresses a preference for 
+minimizing the maximum number of atoms of the predicates \code{a/1} and \code{b/1}:
+%
+\lstinputlisting[numbers=none]{examples/preference4.lp}
+%
+%The statement says that 
+%for every \code{X} of \code{dom/1}, 
+%if \code{a(X)} is true or \code{b(X)} is false, 
+%this is preferred to the conjunction of \code{a(X)} being false and \code{b(X)} being true.  
+Together with the base program in Example~\ref{asprin:example1}, this yields optimal answer sets $X_2$ and $X_3$.
+%
+Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain also $X_1$.
+\end{example} %
+
+
+
 The preference type~\code{aso} implements answer set optimization~\cite{brnitr03a} and relies upon
 ground preference elements of the form:
-\[ F_1 \, \code{>} \, \dots \, \code{>} \, F_m \code{ || }B\code{.}\]
-where each $F_i$ and $B$ are Boolean formulas.
+\[ F_1 \, \code{>>} \, \dots \, \code{>>} \, F_m \code{ || }F\]
+where each $F_i$ and $F$ are Boolean formulas.
 Preference elements of this form are called \code{aso} rules.  
 The semantics of \code{aso} is based on satisfaction degrees.
 In a nutshell,
@@ -663,12 +735,12 @@ See~\cite{brnitr03a} for a more detailed introduction.
 \marginlabel{%
  To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference4.lp}{preference4.lp}}}
+  \mbox{~~~}\attach{examples/preference5.lp}{preference5.lp}}}
 %
 The following preference statement of type \code{aso} expresses a preference 
 for atoms of predicate \code{a/1} over atoms of predicate \code{b/1}.
 %
-\lstinputlisting[numbers=none]{examples/preference4.lp}
+\lstinputlisting[numbers=none]{examples/preference5.lp}
 %
 %The statement says that 
 %for every \code{X} of \code{dom/1}, 
@@ -691,7 +763,7 @@ The \asprin\ implementation of \code{poset} extends the original approach by all
 The domain of \code{poset} consists of the sets $E$ of ground preference elements of the form
 \[F\code{.}\]
 or 
-\[F \, \code{>} \, F'\code{.}\]
+\[F \, \code{>>} \, F'\code{.}\]
 where $F$ and $F'$ are Boolean formulas.
 %
 To give a glimpse of the formal underpinnings,
@@ -703,17 +775,17 @@ Then, $X \succ Y$ holds if
 there is some formula $F \in S_E$ such that $X \models F$ and $Y \not\models F$, 
 and for every formula $F \in S_E$ such that $Y \models F$ and $X \not\models F$, 
 there is a formula
-$F'\in S$ such that $F'>F$ and $X \models F'$ but $Y \not\models F'$.  The interested reader is referred to~\cite{giumar12a} for full details.  %
+$F'\in S$ such that $F'>_{E}F$ and $X \models F'$ but $Y \not\models F'$.  The interested reader is referred to~\cite{giumar12a} for full details.  %
 \begin{example}
 %
 \marginlabel{%
  To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference5.lp}{preference5.lp}}}
+  \mbox{~~~}\attach{examples/preference6.lp}{preference6.lp}}}
 %
 We apply the preference type \code{poset} to the preference statement of Example \ref{asprin:asoexample}:
 %
-\lstinputlisting[numbers=none]{examples/preference5.lp}
+\lstinputlisting[numbers=none]{examples/preference6.lp}
 %
 This expresses a preference for the truth of both \code{a/1} and \code{b/1}, 
 preferring \code{a/1} over \code{b/1}.
@@ -761,24 +833,24 @@ X \succ Y \text{ iff } \bigwedge_{\code{**s}\in E} (X\succeq_\code{s} Y)\wedge\b
 \item
 \code{lexico} maps \code{$E=$\{$w_1$::**$s_1$;$\ldots$;$w_n$::**$s_n$\}} to the preference relation 
 \[
-X \succ Y \text{ iff } \bigvee_{\code{w::**s}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::**s'}\in E,\code{v}<\code{w}}(X =_{\code{s'}} Y)\!)
+X \succ Y \text{ iff } \bigvee_{\code{w::**s}\in E}\!((X\!\succ_\code{s} \!Y)\!\wedge\!\bigwedge_{\code{v::**s'}\in E,\code{v}>\code{w}}(X =_{\code{s'}} Y)\!)
 \] 
 \end{itemize}
 
 \begin{example}\label{asprin:composite}
 Consider the following preference specification, where \code{p1} and \code{p3} are defined as before:
 %
-\lstinputlisting[numbers=none]{examples/cpreference.lp}
+\lstinputlisting[numbers=none]{examples/preference7.lp}
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~}\textbackslash \
-  \mbox{~~~}\attach{examples/cpreference.lp}{cpreference.lp}\mbox{~}\textbackslash\
-  \mbox{~~~}\attach{examples/optimize_p6.lp}{optimize\_p6.lp}\mbox{~}0}}
+  \mbox{~~~}\attach{examples/preference7.lp}{preference7.lp}\mbox{~}\textbackslash\
+  \mbox{~~~}\attach{examples/optimize_p7.lp}{optimize\_p7.lp}\mbox{~}0}}
 %
-Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p6)}, 
+Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p7)}, 
 \asprin\ produces answer sets $X_2$ and $X_3$. 
-If instead we optimize over \code{p7} or \code{p8}, we obtain the three answer sets $X_1$, $X_2$ and $X_3$, 
-while optimizing on \code{p9} we get only $X_2$.
+If instead we optimize over \code{p8} or \code{p9}, we obtain the three answer sets $X_1$, $X_2$ and $X_3$, 
+while optimizing on \code{p10} we get only $X_2$.
 \end{example}
 
 \subsubsection{Implementing preference types}
@@ -1026,13 +1098,13 @@ representing the relations $\succ$ and $\succeq$, respectively.
 %of the preference statements named within a \code{pareto} preference statement.
 They must be defined by the implementations of the preference types of the named preference statements.
 To illustrate this, recall the preference statements \code{p1}, \code{p3} and \code{p8} of Example \ref{asprin:composite}, 
-that we put together in the file \code{preference8.lp} along with an optimization directive for \code{p8}:
+that we put together in the file \code{preference8.lp} along with an optimization directive for \code{p9}:
 %
 \lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/preference8.lp}
 %
 %let's combine via \code{pareto} the previous preference statements \code{p1} and \code{p3} 
 %of type \code{subset} and \code{less(cardinality)}, respectively.
-Given that \code{p8} refers to \code{p1} and \code{p3}, which are of type \code{subset} and \code{less(cardinality)}, 
+Given that \code{p9} refers to \code{p1} and \code{p3}, which are of type \code{subset} and \code{less(cardinality)}, 
 the implementations of these preference types must define \code{better/1} and \code{bettereq/1}.
 For \code{subset}, we already have the definition of \code{better/1} from Example \ref{asprin:subset_imp}, 
 so we just have to add to the program \code{preference(subset)} the following rule:
@@ -1060,7 +1132,7 @@ asprin --no-asprin-lib                         \
        %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference8.lp}{preference8.lp}%  %\attach{examples/basic.lp}{basic.lp}%        \
        %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/less-cardinality.lp}{less-cardinality.lp}% %\attach{examples/pareto.lp}{pareto.lp}% 0
 \end{lstlisting}
-As in Example \ref{asprin:composite} (optimizing \code{p8}), we obtain $X_1$, $X_2$ and $X_3$.
+As in Example \ref{asprin:composite} (optimizing \code{p9}), we obtain $X_1$, $X_2$ and $X_3$.
 \end{example}
 
 \begin{note}

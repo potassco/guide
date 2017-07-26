@@ -1,7 +1,7 @@
-_heuristic(b,sign,1).
-_heuristic(a,true,10).
-{a,b}.
+#heuristic b. [ 1,sign]
+#heuristic a. [10,true]
+{a;b}.
 :- a, b.
 {c}.
-_heuristic(c,sign,1, 10).
-_heuristic(c,sign,-1,20) :- not b.
+#heuristic c.         [ 1@10,sign]
+#heuristic c : not b. [-1@20,sign]

@@ -1,5 +1,5 @@
-_heuristic(a,sign,1).
-_heuristic(b,sign,1).
-_heuristic(a,level,10).
-{a,b}.
+#heuristic a. [ 1, sign]
+#heuristic b. [ 1, sign]
+#heuristic a. [10,level]
+{a;b}.
 :- a, b.

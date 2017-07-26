@@ -439,7 +439,8 @@ wihch is implemented in \asprin's library according to the semantics of \clingo.
 %
 Hence, using the library, the system computes \clingo\ optimal stable models.
 %
-However, it is possible to provide a different implementation of the type \code{clingo\_minimize} (see below), 
+However, it is possible to provide a different implementation of the type \code{clingo\_minimize} 
+(see Section \ref{asprin:implement}), 
 thereby providing new semantics to minimize and maximize statements.}
 \end{note}
 
@@ -852,7 +853,7 @@ If instead we optimize over \code{p8} or \code{p9}, we obtain the three answer s
 while optimizing on \code{p10} we get only $X_2$.
 \end{example}
 
-\subsubsection{Implementing preference types}
+\subsubsection{Implementing preference types}\label{asprin:implement}
 
 \index{optimization!preference program}
 In \asprin, preference types are implemented by logic programs called \emph{preference programs}.
@@ -1168,14 +1169,32 @@ the preference programs for the types appearing in the preference statements of 
 \end{note}
 
 \begin{note}
-There is a syntax restriction to the form of preference programs:
-%\begin{itemize}
+There are some restrictions to the form of preference programs: 
+%The syntax of preference programs is restricted so that 
+\begin{itemize}
 %\item They may not contain atoms starting with an underscore `\_'.
-%\item 
-      atoms of predicates \code{preference/2}, \code{preference/5}, 
-      \code{holds/1}, \code{holds'/1} and \code{optimize/1}
-      may not appear in the heads of rules.
-%\end{itemize}
+\item 
+atoms of predicates \code{preference/2}, \code{preference/5}, 
+\code{holds/1}, \code{holds'/1} and \code{optimize/1}
+may not appear in the heads of rules.%
+% TODO
+% Mention also edge directives (when they appear in the guide)
+\item
+heuristic directives (see Section \ref{sec:heuristic}) for predicate \code{holds'/1} are not allowed, 
+and for \code{holds/1} they are only allowed if the body consists of domain predicates or built-ins.
+\end{itemize}
+\end{note}
+
+\begin{note}
+Command line option 
+\code{--const} (cf.\ Section~\ref{subsec:opt:gringo}) 
+and
+constant statements (cf.\ Page~\pageref{subset:gringo:meta:const})
+appearing in the base program
+affect only the base program.
+%
+Similarly, 
+constant statements appearing in preference programs affect only preference programs.
 \end{note}
 
 \begin{note}

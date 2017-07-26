@@ -374,7 +374,7 @@ This can be represented with the following rule:
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
 #heuristic move(B,L,T) : block(B), location(L), time(T). 
-                        [lasttime-T+1,true]
+                         [lasttime-T+1,true]
 \end{lstlisting}
 For \code{lasttime=3},
 the rule ranks \code{move/3} atoms at time \code{1} at level \code{3},
@@ -403,11 +403,11 @@ For example, this can be achieved with any of the following directives.
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
 #heuristic holds(on(B,L),T) : block(B),location(L),time(T).
-                             [1,level]
+                              [1,level]
 #heuristic holds(on(B,L),T) : block(B),location(L),time(T).
-                             [2,init]
+                              [2,init]
 #heuristic holds(on(B,L),T) : block(B),location(L),time(T).
-                             [3,factor]
+                              [3,factor]
 \end{lstlisting}
 
 Another interesting alternative is the following heuristic directive,  
@@ -415,7 +415,7 @@ that proved to be very useful in practice (see \cite{gekaotroscwa13a}):
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
 #heuristic holds(on(B,L),T-1) : holds(on(B,L),T). 
-                               [lasttime-T+1,true] 
+                                [lasttime-T+1,true] 
 \end{lstlisting}
 The idea is to make the goal's \code{holds/2} atoms persist backwards, 
 one by one, from the last time step to the first one.

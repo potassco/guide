@@ -1,2 +1,2 @@
-_heuristic(a,sign,-1).
+#heuristic a. [-1,sign]
 {a}.

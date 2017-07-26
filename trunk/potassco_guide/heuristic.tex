@@ -16,10 +16,14 @@ and finally we show how to compute subset minimal answer sets with heuristics.
 
 \subsection{Heuristic Programming}
 \index{heuristic predicate}
-
-Heuristic information is represented within a logic program my means of the dedicated predicate \code{\_heuristic}.
-Different types of heuristic information can be controlled with the modifiers 
-\code{sign}, \code{level}, \code{true}, \code{false}, \code{init} and \code{factor}.
+Heuristic information is represented within a logic program my means of heuristic directives of the form
+\[\code{\#heuristic }A\code{ : }B\code{. [}w\code{@}p\code{,}m\code{]}\]
+where $A$ is an atom, $B$ a rule body, and $w$, $p$ and $m$ are terms.
+%
+The priority `\code{@$p$}' is optional.
+%
+Different types of heuristic information can be controlled using the modifiers 
+\code{sign}, \code{level}, \code{true}, \code{false}, \code{init} and \code{factor} for $m$.
 We introduce them below step by step.
 
 \subsubsection{Heuristic modifier \code{sign}}
@@ -31,7 +35,11 @@ When deciding which truth value to assign to an atom during a choice, the atom i
 If the \code{sign} value is less than 0, it is assigned to false.
 And if it is $0$, the sign is determined by the default sign heuristic.
 
-In order to associate a positive sign with atom \code{a}, we can use the heuristic atom \code{\_heuristic(a,sign,1)}. 
+In order to associate a positive sign with atom \code{a}, 
+we can use the following heuristic directive:
+\begin{lstlisting}[numbers=none]
+#heuristic a. [1,sign] 
+\end{lstlisting}
 This associates a positive \code{sign} with \code{a} and 
 tells the solver that upon deciding the atom \code{a}, it should be set to true.
 \begin{example}
@@ -45,21 +53,23 @@ Consider the following program:
   \code{\mbox{~}gringo \attach{examples/psign.lp}{psign.lp} \textbackslash\\\mbox{~}| clasp\mbox{~~~~~~~~~}\textbackslash\\\mbox{~}--heuristic=Domain}\\
 }
 At the start of the search, 
-the solver propagates the heuristic atom 
-and updates its heuristic knowledge about atom \code{a}.
+the solver %propagates the heuristic atom 
+updates its heuristic knowledge about atom \code{a} assigning to it 
+the \code{sign} value \code{1}.
 Then, it has to decide on \code{a}, making it either true or false.
 Following the current heuristic knowledge, 
-the solver makes \code{a} true and returns the answer set \code{\{\_heuristic(a,sign,1),a\}}.
+the solver makes \code{a} true and returns the answer set 
+\mbox{\{\code{a}\}}.
 \end{example}
 
 \begin{note}
-The result would be the same if in the heuristic fact we used instead of $1$ any positive integer.
+The result would be the same if in the heuristic directive we used any positive integer instead of \code{1}.
 \end{note}
 
 \begin{example}
 \label{example:nsign}
 In the next program,
-the \code{\_heuristic} fact gives \code{a} a negative sign 
+the \code{\#heuristic} directive gives \code{a} a negative sign 
 and thus asserts that when deciding upon \code{a} it should be set to false:
 \lstinputlisting[numbers=none]{examples/nsign.lp}
 \marginlabel{%
@@ -69,46 +79,22 @@ and thus asserts that when deciding upon \code{a} it should be set to false:
   \code{\mbox{~}gringo \attach{examples/nsign.lp}{nsign.lp} \textbackslash\\\mbox{~}| clasp\mbox{~~~~~~~~} \textbackslash\\\mbox{~}--heuristic=Domain}\\
 }
 As above,
-the solver starts with propagating the heuristic fact,
-then
-updates its heuristic knowledge,
-decides on atom \code{a} making it false, and 
+the solver starts %with propagating the heuristic fact,
+%then
+updating its heuristic knowledge,
+then decides on atom \code{a} making it false, and 
 finally 
-returns the answer set \mbox{\{ \code{\_heuristic(a,sign,-1)}\}}.
+returns the empty answer set.% \mbox{\{ \code{\_heuristic(a,sign,-1)}\}}.
 \end{example}
 
-These two examples illustrate how the heuristic atoms allow for modifying the decisions of the solver,
+These two examples illustrate how the heuristic directives allow for modifying the decisions of the solver,
 leading to either finding first the answer set with \code{a} or the one without it.
-However, as long as heuristic atoms appear only in the head of rules,
-the program's overall answer sets remain the same (modulo heuristic atoms).
+However, %as long as heuristic atoms appear only in the head of rules,
+the program's overall answer sets remain the same. % (modulo heuristic atoms).
 For example, if we ask for all answer sets in Example \ref{example:psign},
 we obtain one without \code{a} and one with \code{a},
 and the same happens with Example \ref{example:nsign}, 
 although in this case the answer sets are computed in opposite order.
-
-\subsubsection{Showing heuristic information}
-
-For the heuristic atoms to take effect, they as well as the atoms to which they refer to
-must be shown in the logic program.\footnote{Note that in \gringo\ all atoms are shown, 
-  unless \code{\#show} statements appear in the program.}
-For example, if we add to Example \ref{example:nsign} the line:
-\begin{lstlisting}[numbers=none]
-#show a/0.
-\end{lstlisting}
-then the heuristic atom is not shown, 
-and the solver operates as if it would normally do with the \code{Vsids} heuristic. 
-The same would happen if instead we only added:
-\begin{lstlisting}[numbers=none]
-#show _heuristic/3.
-\end{lstlisting}
-because then the atom \code{a}, appearing in the heuristic atom, would not be shown.
-
-\begin{note}
-Printing heuristic atoms in the output of \clingo\ or \clasp\ may often be a burden.
-To overcome this issue,
-the command line option \code{--out-hide-aux} allows us to suppress printing atoms starting with underscore `\code{\_}'
-(without altering their effect).
-\end{note}
 
 \subsubsection{Heuristic modifier \code{level}}
 \index{heuristic predicate!\code{level}}
@@ -126,12 +112,16 @@ level \code{10} is assigned to atom \code{a}:
   or alternatively:\\
   \code{\mbox{~}gringo \attach{examples/level.lp}{level.lp} \textbackslash \\\mbox{~}| clasp\mbox{~~~~~~~~} \textbackslash\\\mbox{~}--heuristic=Domain}\\
 }
-The first obtained answer set contains \code{a} along with all three heuristic atoms.
-The solver propagates the heuristic facts, and given that the level of \code{a} is greater than that of \code{b},
+The first obtained answer set is \mbox{\{\code{a}\}}.
+The solver starts updating its heuristic knowledge, 
+and given that the level of \code{a} is greater than that of \code{b},
 it decides first on \code{a} (with positive sign) and then \code{b} is propagated to false.
-If we added the fact \code{\_heuristic(b,level,20)}, 
+If we added the directive
+\begin{lstlisting}[numbers=none]
+#heuristic b. [20,level] 
+\end{lstlisting}
 we would first obtain the answer set containing \code{b} instead of \code{a}.
-This would also be the case if we used \code{\_heuristic(a,level,-10)} instead of \code{\_heuristic(a,level,10)}.
+This would also be the case if we replaced \code{10} by \code{-10} in the third heuristic directive.
 \end{example}
 
 \begin{note}
@@ -142,11 +132,13 @@ the heuristic decides, among them, on the one with the highest \code{Vsids} scor
 
 \subsubsection{Dynamic heuristic modifications}
 
-Heuristic atoms can be used as any other atom within logic programs,
-and they only affect the heuristic of the solver when they are true.
+Heuristic directives only affect the solver when their bodies are true.
+%
+This allows representing dynamic heuristic modifications.
+%
 \begin{example}
 \label{example:dynamic}
-In the next program, the heuristic atoms for \code{c} depend on \code{b}:
+In the next program, the heuristic directive for \code{c} depends on \code{b}:
 \lstinputlisting[numbers=none]{examples/dynamic.lp}
 \marginlabel{%
   To inspect the output, invoke:\\
@@ -154,49 +146,73 @@ In the next program, the heuristic atoms for \code{c} depend on \code{b}:
   or alternatively:\\
   \code{\mbox{~}gringo \attach{examples/dynamic.lp}{dynamic.lp} \textbackslash\\ \mbox{~}| clasp\mbox{~~~~~~~~~~} \textbackslash\\ \mbox{~}--heuristic=Domain}\\
 }
-The first obtained answer set contains \code{a} and \code{\_heuristic(c,sign,-1)} along with the three heuristic atoms given as facts.
+The first obtained answer set is \mbox{\{\code{a}\}}.
 At first, the solver proceeds as in Example \ref{example:level}.
-Then, after propagating \code{b} to false,  
-the heuristic fact \code{\_heuristic(c,sign,-1)} is propagated.
-So, when deciding upon \code{c}, it gets assigned to false.  
-If we added the fact \code{\_heuristic(b,level,20)},
-the obtained first answer set would contain \code{b} and \code{c} instead of \code{a}.
+Then, after propagating \code{b} to false,
+the heuristic knowledge is updated assigning the \code{sign} value \code{-1} to \code{c}.
+So, when deciding upon \code{c}, it gets assigned to false.
+If we added the directive 
+\begin{lstlisting}[numbers=none]
+#heuristic b. [20,level]
+\end{lstlisting}
+the first answer set would contain \code{b} and \code{c} instead of \code{a}.
 \end{example}
 
 \subsubsection{Heuristic modifiers \code{true} and  \code{false}}
 \index{heuristic predicate!\code{true}}
 \index{heuristic predicate!\code{false}}
 
-The modifiers \code{true} and \code{false} allow us to refer at the same time to the \code{level} and the \code{sign} of an atom.
-Internally,  for the \code{true} and \code{false} heuristic atoms,
-the solver defines new \code{level} and \code{sign} heuristic atoms following these rules:
-\begin{lstlisting}[numbers=none]
-_heuristic(X,level,Y) :- _heuristic(X,true,Y).
-_heuristic(X,sign,1)  :- _heuristic(X,true,Y).
-_heuristic(X,level,Y) :- _heuristic(X,false,Y).
-_heuristic(X,sign,-1) :- _heuristic(X,false,Y).
-\end{lstlisting}
+The modifiers \code{true} and \code{false} allow us 
+to refer at the same time to the \code{level} and the \code{sign} of an atom.
+Internally, a heuristic directive with the form 
+\[\code{\#heuristic }A\code{ : }B\code{. [}w\code{@}p\code{,}\code{true]}\]
+becomes
+\begin{align*}
+\code{\#heuristic }A\code{ : }B\code{. [}&w\code{@}p\code{,}\code{level]}\\
+\code{\#heuristic }A\code{ : }B\code{. [}&\code{1}\code{@}p\code{,}\code{sign]}
+\end{align*}
+and 
+\[\code{\#heuristic }A\code{ : }B\code{. [}w\code{@}p\code{,}\code{false]}\]
+becomes
+\begin{align*}
+\code{\#heuristic }A\code{ : }B\code{. [}&w\code{@}p\code{,}\code{level]}\\
+\code{\#heuristic }A\code{ : }B\code{. [}&\code{-1}\code{@}p\code{,}\code{sign]}
+\end{align*}
+%
 For instance, the program of Example \ref{example:dynamic}
 can be rewritten as:
 \begin{lstlisting}[numbers=none]
-_heuristic(b,sign,1).
-_heuristic(a,true,10).
-{a,b}.
+#heuristic b. [ 1,sign]
+#heuristic a. [10,true]
+{a;b}.
 :- a, b.
 {c}.
-_heuristic(c,sign,1)  :- b.
-_heuristic(c,sign,-1) :- not b.
+#heuristic c :     b. [ 1,sign]
+#heuristic c : not b. [-1,sign]
 \end{lstlisting}
-In this case, the fact \code{\_heuristic(a,true,10)} stands for the previous
-facts \code{\_heuristic(a,level,10)} and \code{heuristic(a,sign,1)}.
+In this case, the directive 
+\begin{lstlisting}[numbers=none]
+#heuristic a. [10,true]
+\end{lstlisting}
+stands for the previous
+\begin{lstlisting}[numbers=none]
+#heuristic a. [ 1, sign]
+#heuristic a. [10,level]
+\end{lstlisting}
 
 \subsubsection{Priorities among heuristic modifications}
 
-The \code{Domain} heuristic allows for representing priorities between different heuristic atoms that refer to the same atom.
-The priority is optionally represented by a positive integer as a fourth argument.
+The \code{Domain} heuristic allows for representing priorities
+between different heuristic directives that refer to the same atom.
+The priority is optionally represented by a positive integer $p$ in `\code{@$p$}'.
 The higher the integer, the higher the priority of the heuristic atom.
-For example, \code{\_heuristic(c,sign,1,10)} and \code{\_heuristic(c,sign,-1,20)} are valid heuristic atoms.
-If both are true, then the sign assigned to \code{c} is \code{-1} (because priority \code{20} overrules \code{10}).  
+For example, the following are valid heuristic directives:
+\begin{lstlisting}[numbers=none]
+#heuristic c. [ 1@10,sign]
+#heuristic c. [-1@20,sign]
+\end{lstlisting}
+With both, the \code{sign} assigned to \code{c} is \code{-1} 
+(because priority \code{20} overrules \code{10}).  
 
 \begin{example}
 \label{example:priority}
@@ -208,22 +224,29 @@ Consider the following program:
   or alternatively:\\
   \code{\mbox{~}gringo \attach{examples/priority.lp}{priority.lp} \textbackslash\\ \mbox{~}| clasp\mbox{~~~~~~~~~~~} \textbackslash\\ \mbox{~}--heuristic=Domain}\\
 }
-The first obtained answer set contains \code{a} and \code{\_heuristic(c,sign,-1,20)} along with the three heuristic atoms given as facts.
+The first obtained answer set is \mbox{\{\code{a}\}}.
 First the solver proceeds as in Example \ref{example:level}. 
 Then, after setting \code{b} to false by propagation, 
-the heuristic atom \code{\_heuristic(c,sign,-1,20)} is propagated.
+the heuristic knowledge about \code{c} is updated.
 Given that priority \code{20} is greater than \code{10},
 the \code{sign} value of atom \code{c} is \code{-1}.
 So, when deciding upon \code{c}, it is assigned to false.
-If we added the fact \code{\_heuristic(c,sign,1,30)}, 
+If we added the directive
+\begin{lstlisting}[numbers=none]
+#heuristic c. [1@30,sign]
+\end{lstlisting}
 the first answer set would also contain atom \code{c}.
 \end{example}
 
 \begin{note}
-Whenever we only use ternary \code{\_heuristic} atoms, 
-the assigned priority is the absolute value of the modifiers' values.
+Whenever we do not explicitly state a priority,
+the assigned priority is the absolute value of the modifiers' value.
 For example, 
-if both \code{\_heuristic(c,level,-10)} and \code{\_heuristic(c,level,5)} are true,
+with these directives
+\begin{lstlisting}[numbers=none]
+#heuristic c. [-10,level]
+#heuristic c. [  5,level]
+\end{lstlisting}
 the level of \code{c} is \code{-10} because $|\code{-10}|>|\code{5}|$.
 \end{note}
 
@@ -236,34 +259,43 @@ Unlike the \code{level} modifier,
 \code{init} and \code{factor} allow us to bias the search without establishing a strict ranking among the atoms.
 
 With \code{init}, we can add a value to the initial heuristic score of an atom.
-For example, if \code{\_heuristic(a,init,2)} is true, then a value of \code{2} is added to
+For example, with
+\begin{lstlisting}[numbers=none]
+#heuristic a. [2,init]
+\end{lstlisting}
+a value of \code{2} is added to
 the initial score that the heuristic assigns to atom \code{a}.
 Note that as the search proceeds, the initial score of an atom decays, 
 so \code{init} only affects the beginning of the search.
 
 To bias the whole search, we can use the \code{factor} modifier
 that multiplies the heuristic score of an atom by a given value.
-For example, if \code{\_heuristic(a,factor,2)} is true, 
-then the heuristic score for atom \code{a} is multiplied by \code{2}.
+For example, with 
+\begin{lstlisting}[numbers=none]
+#heuristic a. [2,factor]
+\end{lstlisting}
+the heuristic score for atom \code{a} is multiplied by \code{2}.
 
 \subsubsection{Monitoring \code{domain} choices}
 
 The \code{Domain} heuristic extends \clasp\ and \clingo's search statistics produced with command line option \code{--stats}.
-After `\code{Domain:}', it prints how many decisions where made on atoms appearing inside \code{\_heuristic} atoms.
+After `\code{Domain:}', it prints how many decisions where made on atoms appearing inside \code{\#heuristic} directives.
 %
-For instance, the statistics obtained in Example \ref{example:dynamic} read as follows.
+For instance, the statistics obtained in Example \ref{example:dynamic} read as follows:
 \begin{lstlisting}[numbers=none]
 ...
-Models      : 1+
-Time        : 0.000s (Solving: 0.00s ...)
-CPU Time    : 0.000s
-Choices     : 2      (Domain: 2)
-Conflicts   : 0
-Restarts    : 0
+Models       : 1+
+Calls        : 1
+Time         : 0.003s (Solving: 0.00s ...)
+CPU Time     : 0.000s
+
+Choices      : 2        (Domain: 2)
+Conflicts    : 0        
+Restarts     : 0
 ...
 \end{lstlisting}
 The line about \code{Choices} tells us that two decisions were made 
-and that both where made on atoms contained in \code{\_heuristic} atoms.
+and that both where made on atoms contained in \code{\#heuristic} directives.
 
 %\begin{example}
 \subsubsection{Heuristics for Blocks World Planning}
@@ -285,30 +317,31 @@ In this encoding, once all the values for predicate \code{move/3} are given,
 the values of \code{moved/2} and \code{holds/2} are determined and may be propagated by the solver.
 This suggests that deciding only on \code{move/3} may be a good strategy.
 We can do that with the \code{Domain} heuristic 
-adding the following heuristic rule:
-
+adding the following heuristic directive:
+%
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),level,1) :- block(B),location(L),time(T).
+#heuristic move(B,L,T) : block(B),location(L),time(T). [1,level]
 \end{lstlisting}
 Given that the level of \code{move/3} is higher,  the solver 
 decides first on atoms of that predicate,
 and the values of the other predicates are propagated.
 
-We may prefer to soften the heuristic modification to simply bias the search  towards the \code{move/3} predicate,
+We may prefer to soften the heuristic modification to simply 
+bias the search  towards the \code{move/3} predicate,
 without establishing a strict preference towards it.  
-For that, we can use, for example, the rule
+For that, we can use, for example, the directive
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),init,  2) :- block(B),location(L),time(T).
+#heuristic move(B,L,T) : block(B),location(L),time(T). [2, init]
 \end{lstlisting} 
 or
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),factor,2) :- block(B),location(L),time(T).
+#heuristic move(B,L,T) : block(B),location(L),time(T). [2,factor]
 \end{lstlisting}
-or the combination of both.  
-The first rule adds \code{2} to the initial score of \code{move/3} atoms,
+or the combination of both.
+The first directive adds \code{2} to the initial score of \code{move/3} atoms,
 while the second multiplies the heuristic score of \code{move/3} by \code{2}.
 
 Whenever we decide on making a \code{move/3} atom true,  
@@ -318,19 +351,19 @@ So, deciding on true \code{move/3} atoms may be a good idea.
 For that, we can either use the \code{true} modifier to express a strict preference
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),true,1) :- block(B),location(L),time(T).
+#heuristic move(B,L,T) : block(B),location(L),time(T). [1,true]
 \end{lstlisting}
 or just bias the search with \code{init} and \code{sign}
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),init,2) :- block(B),location(L),time(T).
-_heuristic(move(B,L,T),sign,1) :- block(B),location(L),time(T).
+#heuristic move(B,L,T) : block(B),location(L),time(T). [2,init]
+#heuristic move(B,L,T) : block(B),location(L),time(T). [1,sign]
 \end{lstlisting}
 or with \code{factor} and \code{sign}
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),factor,2) :- block(B),location(L),time(T).
-_heuristic(move(B,L,T),sign,  1) :- block(B),location(L),time(T).
+#heuristic move(B,L,T) : block(B),location(L),time(T). [2,factor]
+#heuristic move(B,L,T) : block(B),location(L),time(T). [1,sign]
 \end{lstlisting}
 
 So far, we have given the same heuristic values to all \code{move/3} atoms,
@@ -340,49 +373,49 @@ so that the solver performs a forward search.
 This can be represented with the following rule:
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),true,lasttime-T+1) :- 
-                             block(B), location(L), time(T).
+#heuristic move(B,L,T) : block(B), location(L), time(T). 
+                        [lasttime-T+1,true]
 \end{lstlisting}
 For \code{lasttime=3},
 the rule ranks \code{move/3} atoms at time \code{1} at level \code{3},
 those at time \code{2} at level \code{2}, and 
 those at time \code{3} at level \code{1},
-while always assigning a positive \code{sign}.  
+while always assigning a positive \code{sign}.
 In this manner, 
 the solver decides first on setting a \code{move/3} atom at time \code{1} to true, 
 then one at time \code{2}, and so on.
 
 Another strategy is to perform a backwards search on \code{move/3} from the last to the
 first time instant, directed by the goals. 
-For this purpose, we can use the following dynamic heuristic rule: 
+For this purpose, we can use the following dynamic heuristic directive: 
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(move(B,L,T),true,T) :- holds(on(B,L),T).
+#heuristic move(B,L,T) : holds(on(B,L),T). [true,T]
 \end{lstlisting}
-As before, the rule can be softened using \code{sign} with \code{init} or \code{factor}.
+As before, the directive can be softened using \code{sign} with \code{init} or \code{factor}.
 At the start of the search, the goal's \code{holds/2} atoms are true at the last time step.
 With this rule, the solver decides on a \code{move/3} atom that makes one of them true.
 Then, some \code{holds/2} atoms are propagated to the previous time step,
 and the process is repeated until reaching the first time instant.
 
 We can also choose to promote atoms of the \code{holds/2} predicate.  
-For example, this can be achieved with any of the  following rules.
+For example, this can be achieved with any of the following directives.
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(holds(on(B,L),T),level,1)  :- 
-                            block(B),location(L),time(T).
-_heuristic(holds(on(B,L),T),init,2)   :- 
-                            block(B),location(L),time(T).
-_heuristic(holds(on(B,L),T),factor,3) :- 
-                            block(B),location(L),time(T).
+#heuristic holds(on(B,L),T) : block(B),location(L),time(T).
+                             [1,level]
+#heuristic holds(on(B,L),T) : block(B),location(L),time(T).
+                             [2,init]
+#heuristic holds(on(B,L),T) : block(B),location(L),time(T).
+                             [3,factor]
 \end{lstlisting}
 
-Another interesting alternative is the following heuristic rule,  
+Another interesting alternative is the following heuristic directive,  
 that proved to be very useful in practice (see \cite{gekaotroscwa13a}):
 %\begin{lstlisting}[numbers=none]
 \begin{lstlisting}[basicstyle=\small\ttfamily,numbers=none]
-_heuristic(holds(on(B,L),T-1),true,lasttime-T+1) :- 
-                                        holds(on(B,L),T). 
+#heuristic holds(on(B,L),T-1) : holds(on(B,L),T). 
+                               [lasttime-T+1,true] 
 \end{lstlisting}
 The idea is to make the goal's \code{holds/2} atoms persist backwards, 
 one by one, from the last time step to the first one.
@@ -441,7 +474,7 @@ On the other hand, they allow us to directly refer to structural components of t
 and do not require any additional grounding.
 %
 When both methods are combined,
-the atoms modified by the \texttt{\_heuristic} predicate are not affected by the command line heuristics.
+the atoms modified by the \texttt{\#heuristic} directive are not affected by the command line heuristics.
 
 \subsection{Computing Subset Minimal Answer Sets with Heuristics}
 
@@ -455,8 +488,10 @@ Consider the following program:
 1 {a(1..3)}.  a(2) :- a(3).  a(3) :- a(2).  {b(1)}.  
 #show a/1.
 \end{lstlisting}
-Both the command line option `\texttt{--dom-mod=5,16}' as well as the addition of the heuristic fact
-`\lstinline{_heuristic(a(1..3),false,1).}'
+Both the command line option `\texttt{--dom-mod=5,16}' as well as the addition of the heuristic directive
+\begin{lstlisting}[numbers=none]
+#heuristic a(1..3). [1,false]
+\end{lstlisting}
 guarantee that the first answer set produced is subset minimal with respect to the atoms of predicate \texttt{a/1}.
 Moreover, both allow for enumerating all subset minimal solutions in conjunction with option \texttt{--enum-mod=domRec}.
 In our example, we obtain the answer sets

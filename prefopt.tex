@@ -236,7 +236,7 @@ and prints it followed by the line `\lstinline{OPTIMUM FOUND *}'.
 Then, it continues searching, finds $X_3$ and the process continues. 
 
 Finally,
-we can project optimal answer sets on the atoms in preference statements 
+we can project optimal answer sets on the formulas of the preference statements 
 by \asprin's option \lstinline{--project}.
 \marginlabel{%
   To inspect the output, invoke:\\
@@ -1178,7 +1178,7 @@ atoms of predicates \code{preference/2}, \code{preference/5},
 \code{holds/1}, \code{holds'/1} and \code{optimize/1}
 may not appear in the heads of rules.%
 % TODO
-% Mention also edge directives (when they appear in the guide)
+% Mention also edge directives, and that #project is forbidden (when they appear in the guide)
 \item
 heuristic directives (see Section \ref{sec:heuristic}) for predicate \code{holds'/1} are not allowed, 
 and for \code{holds/1} they are only allowed if the body consists of domain predicates or built-ins.

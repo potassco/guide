@@ -84,7 +84,7 @@
   \indexspace
 
   \item negation, \hyperindexformat{\seealso{literal}}{19}
-    \subitem classical, \hyperpage{22}
+    \subitem classical, \hyperpage{21}
     \subitem default, \hyperpage{19}
     \subitem double, \hyperpage{23}
 
@@ -94,7 +94,7 @@
     \subitem maximize, \code{\#maximize}, \hyperpage{37}
     \subitem minimize, \code{\#minimize}, \hyperpage{37}
     \subitem optimization directive, \hyperpage{90}
-    \subitem preference program, \hyperpage{98}
+    \subitem preference program, \hyperpage{99}
     \subitem preference specification, \hyperpage{90}
       \subsubitem preference element, \hyperpage{90}
       \subsubitem preference statement, \hyperpage{90}
@@ -106,15 +106,17 @@
 
   \item pooling, \code{;}, \hyperpage{28}
   \item preference type, \hyperpage{93}
-    \subitem \code{and}, \hyperpage{96}
+    \subitem \code{and}, \hyperpage{98}
     \subitem \code{aso}, \hyperpage{94}
     \subitem \code{less(cardinality)}, \hyperpage{94}
     \subitem \code{less(weight)}, \hyperpage{94}
-    \subitem \code{lexico}, \hyperpage{96}
+    \subitem \code{lexico}, \hyperpage{98}
+    \subitem \code{maxmin}, \hyperpage{94}
+    \subitem \code{minmax}, \hyperpage{94}
     \subitem \code{more(cardinality)}, \hyperpage{94}
     \subitem \code{more(weight)}, \hyperpage{94}
-    \subitem \code{neg}, \hyperpage{96}
-    \subitem \code{pareto}, \hyperpage{96}
+    \subitem \code{neg}, \hyperpage{98}
+    \subitem \code{pareto}, \hyperpage{98}
     \subitem \code{poset}, \hyperpage{94}
     \subitem \code{subset}, \hyperpage{94}
     \subitem \code{superset}, \hyperpage{94}
@@ -138,7 +140,7 @@
     \subitem interval, \hyperpage{27}
     \subitem maximize, \code{\#maximize}, \hyperpage{38}
     \subitem minimize, \code{\#minimize}, \hyperpage{38}
-    \subitem preference statement, \hyperpage{91}
+    \subitem preference statement, \hyperpage{92}
     \subitem show, \code{\#show}, \hyperpage{44}
     \subitem weak constraint, \hyperpage{38}
 

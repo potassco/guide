@@ -6,18 +6,33 @@ and will be included in one of the forthcoming editions of this guide.
 Information on meta-programming can be obtained at the following references.
 
 \begin{itemize}
-\item \gringo~4 ships with the small tool \reify\ to reify logic programs in lparse format and some examples
-  \begin{itemize}
-    \item \url{https://sourceforge.net/p/potassco/code/HEAD/tree/trunk/gringo/examples/reify/}
-  \end{itemize}
-\item see below for information on meta-programming with \gringo~3
+\item Meta-programming relying on reified logic programs was introduced with \gringo~3;
+  details can be found at:
   \begin{itemize}
   \item \cite{gekasc11b}
   \item \url{http://www.cs.uni-potsdam.de/wv/metasp}
   \end{itemize}
+
+\item \gringo~4 ships with the small tool \reify\ to reify logic programs in lparse format and some examples
+  \begin{itemize}
+    \item \url{http://sourceforge.net/p/potassco/code/HEAD/tree/trunk/gringo/examples/reify/}
+  \end{itemize}
+
+\item \gringo~5 uses a dedicated output format for reification, viz.\
+  \lstinline{--output=reify}
+  to output logic programs as sets of facts
+
+  Also, \gringo~5 features options
+  \lstinline{--reify-sccs}
+  to add strongly connected components to reified output
+  and
+  \lstinline{--reify-steps}
+  to add step numbers to reified output.
+% ??? --rewrite-minimize    : Rewrite minimize constraints into rules
+\com{T2R: reify tool?}
 \end{itemize}
 
-\lstinputlisting{examples/meta.lp}
+% \lstinputlisting{examples/meta.lp}
 
 %%% Local Variables: 
 %%% mode: latex

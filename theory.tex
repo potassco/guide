@@ -6,10 +6,120 @@ and will be included in one of the forthcoming editions of this guide.
 Information on theory solving with \clingo\ can be obtained at the following references.
 
 \begin{itemize}
-\item \cite{kascwa17a}
+\item \cite{gekakaosscwa16a,kascwa17a}
 \item \code{/examples/clingo/} in \gringo/\clingo\ distribution
 \item API reference \clingo{} series 5: \url{http://potassco.org/clingo}
 \end{itemize}
+
+\subsection{ASP and Difference Constraints}
+\label{sec:difference:constraints}
+
+\begin{itemize}
+\item \cite{jakaosscscwa17a}
+\item \url{http://github.org/potassco/clingoDL}
+\item deals with integer and real variables
+\end{itemize}
+
+\subsection{ASP and Linear Constraints}
+\label{sec:linear:constraints}
+
+\begin{itemize}
+\item \cite{jakaosscscwa17a}
+\item \url{http://github.org/potassco/clingoLP}
+\item deals with integer and real variables
+\item relies on \cplex{} and \lpsolve{}, respectively
+\end{itemize}
+
+
+\subsection{ASP and Constraint Programming}\label{sec:constraint}
+
+\subsubsection{\ASPm{CP} with \clingcon}
+\label{sec:clingcon}
+
+\begin{itemize}
+\item \url{http://potassco.org/clingcon}
+\item \cite{bakaossc16a} (\clingcon~3)
+\end{itemize}
+
+\subsubsection{Solving CSPs with \aspartame}
+\label{sec:aspartame}
+
+This section is not yet ready for publishing
+and will be included in one of the forthcoming editions of this guide.
+
+Information on constraint programming with \aspartame\ can be obtained at the following references.
+
+\begin{itemize}
+\item \url{http://potassco.org/labs}
+\item \url{http://www.cs.uni-potsdam.de/aspartame}
+\item \cite{bageinscsotawe13a} describes \aspartame\ and how it allows for solving finite linear CSPs in ASP
+\end{itemize}
+
+\subsubsection{\ASPm{CP} with \gringo}
+
+Grounder \gringo\ features some \textcolor{red}{experimental} means for expressing finite linear constraint satisfaction problems within ASP's modeling language.
+The linear constraints are compiled into normal rules following the order encoding \cite{tatakiba09a,bageinscsotawe13a}.
+Hence, off-the-shelf ASP solvers like \clasp\ can be used to solve such problems.
+
+CSP constraints in gringo are build over \emph{constraint terms}, which have form
+\[\code{$c_1$~\$*~\$$v_1$~\$+~$\cdots$~\$+~$c_n$~\$*~\$$v_n$}\]
+where $n>0$, and each $c_i$ (integer factor) and $v_i$ (name of a constraint variable) are terms.
+If a factor is one, then the `\code{$c_i$ \$*}' part can be omitted.
+Similarly, it is possible to just add a factor in which case the `\code{\$* $v_i$}' part can be omitted.
+
+\emph{Linear constraints} in \gringo\ are syntactically similar to built-in comparison predicates (cf.\ Section~\ref{subsec:gringo:comp})
+but relation symbols have to be preceded with a \code{\$} symbol
+\[\code{$t_0$~\$$\prec_1$~$\cdots$~\$$\prec_{n}$~$t_n$}\]
+where $n>0$, each $\prec_i$ is a comparison predicate, and each $t_i$ is a constraint term.
+
+In addition, there is the global \emph{disjoint constraint}
+\[\code{\#disjoint~\{~$\boldsymbol{t}_1$:$c_1$:$\boldsymbol{L}_1$;$\dots$;$\boldsymbol{t}_n$:$c_n$:$\boldsymbol{L}_n$~\}}\]
+where $n\geq 0$, $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$ are given as in Section~\ref{subsec:gringo:aggregate},
+and each $c_i$ is a constraint term.
+%
+The idea is that sets of values labeled with the same term(s) must be disjoint.
+
+\begin{example}\label{ex:csp:queens1}
+\marginlabel{To compute both answer sets, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/queensC.lp}{queensC.lp} \textbackslash\\
+         \mbox{~} -c n=30}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo~\attach{examples/queensC.lp}{queensC.lp} \textbackslash\\
+        \mbox{~} -c n=30 | clasp 0}
+}
+For illustration,
+consider the following encoding of the $n$-queens puzzle:
+\lstinputlisting{examples/queensC.lp}
+
+The first line fixes the domain of the integer variables
+\code{\$queen(1)} to \code{\$queen(n)}.
+Line~3 forbids queens on the same columns and the last two lines address queens on the same diagonals.
+\end{example}
+
+\begin{example}
+The next encoding uses the global \code{\#disjoint} constraint:
+%
+\marginlabel{To compute both answer sets, invoke:\\
+  \code{\mbox{~}clingo \attach{examples/queensCa.lp}{queensCa.lp} \textbackslash\\
+         \mbox{~} -c n=300}\\
+  or alternatively:\\
+  \code{\mbox{~}gringo~\attach{examples/queensCa.lp}{queensCa.lp} \textbackslash\\
+        \mbox{~} -c n=300 | clasp 0}
+}
+%
+\lstinputlisting{examples/queensCa.lp}
+\end{example}
+
+\begin{note}
+The \textcolor{red}{current} implementation of constraints in \gringo\ requires 
+that all constraint variables appearing in a program must have finite domains inferable from the grounded program.
+Hence, rules like in Line~1 of Example~\ref{ex:csp:queens1} fixing the domain of a constraint variable have to be added for each constraint variable.
+\end{note}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "guide"
+%%% End: 
 
 %%% Local Variables:
 %%% mode: latex

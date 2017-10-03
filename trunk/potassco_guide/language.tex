@@ -1423,7 +1423,7 @@ This restriction does not exist anymore in \gringo\ and \clingo~4.
 Optimization statements extend the basic question of
 whether a set of atoms is an answer set to
 whether it is an optimal answer set.
-To support this reasoning mode, \gringo\ and \clingo\ adopt \dlv's weak constraints~\cite{bflnrp00}.
+To support this reasoning mode, \gringo\ and \clingo\ adopt \dlv's weak constraints~\cite{bflnrp00a}.
 The form of weak constraints is similar to integrity constraints (cf.~Section \ref{subsec:gringo:normal})
 being associated with a term tuple:
 \[
@@ -1540,7 +1540,9 @@ but give some examples showing the capabilities of this integration.
 In the following, we show code snippets for both scripting languages.
 Note that our precompiled binaries ship with Lua support and can be used to run the Lua examples.
 To enable Python support, \gringo\ and \clingo\ have to be compiled from source (cf.\ Section~\ref{sec:install}).
-A complete reference for the Python scripting API is available at: \url{http://potassco.sourceforge.net/gringo.html}
+A complete reference for the Python scripting API is available at: 
+\url{http://potassco.sourceforge.net/gringo.html} for Version~4.5.4
+(and at \url{http://potassco.org/clingo} for series~5).
 \begin{example}\label{ex:gcd}
 The first example shows how to add a simple arithmetic function:
 \\[-8pt] % is there a better way to do this?
@@ -1998,7 +2000,8 @@ works with either of the following directory layouts:
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
-Solver \clasp~\cite{gekanesc07b} (or `\clingo\code{ --mode=clasp}') accepts logic programs in \smodels\ format~\cite{lparseManual},
+Solver \clasp~\cite{gekanesc07b} (or `\clingo\code{ --mode=clasp}') accepts logic programs in \smodels\ format~\cite{lparseManual}
+(and since version~3.3 additionally in \aspif{} format~\cite{kascwa17a}),
 SAT and MaxSAT instances in DIMACS-cnf\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}}
 and DIMACS-wcnf\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}} format,
 and PB problems in OPB/WBO\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}} format.

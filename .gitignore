@@ -12,5 +12,7 @@
 *.out
 *.pdf
 *.rai
+*.swp
 *.synctex.gz
+*.tex.latexmain
 *.toc

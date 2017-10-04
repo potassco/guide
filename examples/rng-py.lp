@@ -1,13 +1,13 @@
 #script (python)
 
 def rng(a, b):
-  return range(a, b+1)
+  na = a.number
+  nb = b.number
 
 
 
 
+  return range(na, na+1)
 
 
 #end.
-
-

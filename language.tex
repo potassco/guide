@@ -1552,9 +1552,12 @@ The first example shows how to add a simple arithmetic function:
 \begin{minipage}[t]{0.5\textwidth}
 \lstinputlisting[language=GringoPython]{examples/gcd-py.lp}
 \end{minipage}\\
-In Line~3, we add a function that calculates the greatest common divisor of two numbers.
-Integers from a logic program are directly mapped to their Lua and Python equivalents
-and can be returned from the function.
+In Line~6, we add a function that calculates the greatest common divisor of two numbers.
+Integers from a logic program are returned as objects of type \code{Symbol}%
+\footnote{Strictly speaking there are no classes in Lua, the Userdata type together with a metatable is used to emulate classes.}
+- a variant type capturing ground terms.
+The numeric value can be accessed using the \code{number} property in both Lua and Python.
+To construct a numeric term, the \code{Number} constructor is used.
 The \code{gcd} function can then be used in a logic program:%
 \marginlabel{%
 To inspect the unique answer set of the program, invoke:\\
@@ -1613,24 +1616,22 @@ instances from external sources, like for example a database or some text file n
 \end{example}
 
 As we have seen in the previous example,
-numbers are mapped to their Lua and Python equivalents.
-The same holds for quoted strings.
-To capture constants and functions,
-there are the \code{Id} and \code{Fun} classes, respectively, in both Python and Lua.%
-\footnote{Strictly speaking there are no classes in Lua, the Userdata type together with a metatable is used to emulate classes.}
-Both objects have a function \code{name()} to access the string representation of the constant or the name of the function term, respectively.
-A \code{Fun} object has an additional function \code{args()} returning the table or list of arguments, respectively, in Lua and Python.
-Moreover,
-tuples are mapped to Python's tuple data structure and to \code{Fun} objects
-that have an empty name in Lua.
+the \code{number} property is used to get the numeric representation of a term from object of type \code{Symbol}.
+In fact all terms are captured by the \code{Symbol} class.
+Similarly to numeric terms, the \code{string} property is used to get the representation of quoted strings.
+For constants and functions,
+there is the property \code{name} to access the string representation of the constant or the name of the function term.
+Furthermore,
+the arguments of a function term can be accessed using the \code{arguments} property.
+Note that constants as well as tuples are considered as special cases of function terms.
+The former have an empty argument list and the latter an empty name.
 Finally, the terms \code{\#sup} and \code{\#inf} are mapped to the constants \code{Sup} and \code{Inf}.
+Both are subclasses of class \code{Symbol} too.
+Unlike other termes both are captured by unique objects.
 
 To construct terms from within the scripting language,
-the \code{Id} and \code{Fun} classes have a constructor to create objects (in Lua it is a global function).
-The \code{Id(name)} constructor simply takes the string representation of a constant as argument,
-and the \code{Fun(name,args)} constructor additionally takes a sequence or table of terms representing the arguments of a function.
-Furthermore,
-the global function \code{Tuple(args)} is a shortcut for \code{Fun("",args)} to create an object representing a tuple in Lua.
+the global functions \code{Function(name, arguments)}, \code{Number(number)}, and \code{String(string)} are used.
+All of them (and their advanced usage) are fully documented in the Python API documentation.
 
 \begin{example}
 This example shows how to inspect and create terms:
@@ -1642,12 +1643,9 @@ This example shows how to inspect and create terms:
 \begin{minipage}[t]{0.5\textwidth}
 \lstinputlisting[language=GringoPython]{examples/term-py.lp}
 \end{minipage}\\
-In Line~5, we add a function~\code{g}
+In Line~6, we add a function~\code{g}
 that  takes a constant and a tuple as arguments
 and returns a function term with the name of the constant and the tuple as arguments.
-Note the different handling of tuples in Lua and Python.
-Whereas in Lua tuples are represented using \code{Fun} objects,
-in Python the tuple can directly be passed to the \code{Fun} constructor.
 The \code{g} function can then be used in a logic program:%
 \marginlabel{%
 To inspect the unique answer set of the program, invoke:\\
@@ -1667,44 +1665,6 @@ new terms
 that cannot be constructed by means of plain ASP
 can be created during grounding.
 Another interesting application might be string concatenation.
-\end{example}
-
-The last function of interest here is the \code{cmp(a,b)} function,
-which compares two terms \code{a} and \code{b}
-like \gringo's built-in comparison predicates (cf. Section \ref{subsec:gringo:comp}) would do.
-It returns a negative integer if \code{a < b}, zero if \code{a = b}, and a positive integer if \code{a > b}.
-\begin{example}
-This example shows how to implement the \code{max} function:
-\\[-8pt] % is there a better way to do this?
-\begin{minipage}[t]{0.5\textwidth}
-\lstinputlisting[language=GringoLua]{examples/cmp-lua.lp}
-\end{minipage}
-\begin{minipage}[t]{0.5\textwidth}
-\lstinputlisting[language=GringoPython]{examples/cmp-py.lp}
-\end{minipage}\\
-In Line~5, we add a function~\code{max}
-that  takes two terms as arguments
-and returns the maximum of both.
-We are using the \code{cmp} function to compare terms here.
-Note that the \code{>} relation cannot be applied directly 
-because objects can be of different types,
-e.g., integers and strings.
-The \code{max} function can then be used in a logic program:%
-\marginlabel{%
-To inspect the unique answer set of the program, invoke:\\
-\code{%
-\mbox{~}gringo --text \textbackslash\newline\mbox{~}\attach{examples/cmp.lp}{cmp.lp} \attach{examples/cmp-lua.lp}{cmp-lua.lp}}\\
-or:\\
-\code{%
-\mbox{~}gringo --text \textbackslash\newline\mbox{~}\attach{examples/cmp.lp}{cmp.lp} \attach{examples/cmp-py.lp}{cmp-py.lp}}\\
-Calls to \clingo\ are similar.
-}
-%
-\lstinputlisting{examples/cmp.lp}
-%
-The function is called in Line~3 and the result stored in predicate \code{max}/$3$.
-A respective ground fact exhibits that the constant~\code{a} is greater than
-the integer~\code{3}.
 \end{example}
 
 \begin{note}~

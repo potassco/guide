@@ -1,10 +1,11 @@
 #script (python)
 
-from gringo import Fun
+import clingo
+F = clingo.Function
 
 def g(c, f):
-  n = c.name()
-  r = Fun(n, f)
+  n = c.name
+  r = F(n, f.arguments)
   return r
 
 

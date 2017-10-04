@@ -1,10 +1,16 @@
 #script (lua)
 
+clingo = require("clingo")
+N = clingo.Number
+
 function gcd(a, b)
-  if a == 0 then
+  if a.number == 0 then
     return b
-  else 
-    return gcd(b % a, a)
+  else
+    na = a.number
+    nb = b.number
+    nc = nb % na
+    return gcd(N(nc), a)
   end
 end
 

@@ -16,3 +16,4 @@
 *.synctex.gz
 *.tex.latexmain
 *.toc
+auto/

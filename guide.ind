@@ -74,7 +74,7 @@
   \indexspace
 
   \item meta-statement, \hyperpage{42}
-    \subitem comment, \hyperpage{42}
+    \subitem comment, \hyperpage{43}
     \subitem const, \code{\#const}, \hyperpage{44}
     \subitem external, \code{\#external}, \hyperpage{44}
     \subitem \gobblecomma, \hyperindexformat{\see{optimization}}{38}
@@ -133,7 +133,7 @@
   \indexspace
 
   \item safety, \hyperpage{21}
-    \subitem aggregate, \hyperpage{34}
+    \subitem aggregate, \hyperpage{35}
     \subitem arithmetic function, \hyperpage{25}
     \subitem comparison predicate, \hyperpage{27}
     \subitem external, \code{\#external}, \hyperpage{45}

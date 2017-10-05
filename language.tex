@@ -976,8 +976,9 @@ The form of an \emph{aggregate atom} occurring in a rule body is as follows:
 %
 \[\code{$s_1$~$\prec_1$~$\alpha$~\{~$\boldsymbol{t}_1$:$\boldsymbol{L}_1$;$\dots$;$\boldsymbol{t}_n$:$\boldsymbol{L}_n$ \}~$\prec_2$~$s_2$}\]
 %
-Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$, forming \emph{aggregate elements}, are non-empty tuples of terms and literals\comment{RK: it is not correct that the both must be non-empty tuples; also it is not mentioned that the colon can be omitted if L is empty and t is non-empty}
+Here, all $\boldsymbol{t}_i$ and $\boldsymbol{L}_i$, forming \emph{aggregate elements}, are tuples of terms and literals
 (as introduced in Section~\ref{subsec:gringo:terms}), respectively.
+If a literal tuple is empty and the corresponding term tuple is non-empty, then the colon can be omitted.
 $\alpha$ is the name of some function that is to be applied to the term tuples $\boldsymbol{t}_i$
 that remain after evaluating the conditions expressed by $\boldsymbol{L}_i$.
 %

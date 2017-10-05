@@ -13,12 +13,9 @@ Information on meta-programming can be obtained at the following references.
   \item \url{http://www.cs.uni-potsdam.de/wv/metasp}
   \end{itemize}
 
-\item \gringo~4 ships with the small tool \reify\ to reify logic programs in lparse format and some examples
-  \begin{itemize}
-    \item \url{http://sourceforge.net/p/potassco/code/HEAD/tree/trunk/gringo/examples/reify/}
-  \end{itemize}
+\item \gringo{} ships with a small tool called \reify\ to reify logic programs in \aspif{} format~\cite{kascwa17a}.
 
-\item \gringo~5 uses a dedicated output format for reification, viz.\
+  Moreover, it offers a dedicated output format for reification, viz.\
   \lstinline{--output=reify}
   to output logic programs as sets of facts
 
@@ -29,7 +26,8 @@ Information on meta-programming can be obtained at the following references.
   \lstinline{--reify-steps}
   to add step numbers to reified output.
 % ??? --rewrite-minimize    : Rewrite minimize constraints into rules
-\com{T2R: reify tool?}
+
+  An advantage of using the \reify{} tool is that it can be combined with \clasp's pre-processor.
 \end{itemize}
 
 % \lstinputlisting{examples/meta.lp}

@@ -6,56 +6,50 @@ and will be included in one of the forthcoming editions of this guide.
 Information on theory solving with \clingo\ can be obtained at the following references.
 
 \begin{itemize}
-\item \cite{gekakaosscwa16a,kascwa17a}
-\item \code{/examples/clingo/} in \gringo/\clingo\ distribution
-\item API reference \clingo{} series 5: \url{http://potassco.org/clingo}
+\item Literature: \cite{gekakaosscwa16a,kascwa17a}
+\item Examples: \code{/examples/clingo/} in \gringo/\clingo\ distribution
+\item API reference: \url{http://potassco.org/clingo}
 \end{itemize}
 
 \subsection{ASP and Difference Constraints}
 \label{sec:difference:constraints}
 
 \begin{itemize}
-\item \cite{jakaosscscwa17a}
-\item \url{http://github.org/potassco/clingoDL}
-\item deals with integer and real variables
+\item Literature: \cite{jakaosscscwa17a}
+\item URL: \url{http://github.org/potassco/clingoDL}
+\item Description: \clingoM{DL} deals with integer and real variables
 \end{itemize}
 
 \subsection{ASP and Linear Constraints}
 \label{sec:linear:constraints}
 
 \begin{itemize}
-\item \cite{jakaosscscwa17a}
-\item \url{http://github.org/potassco/clingoLP}
-\item deals with integer and real variables
-\item relies on \cplex{} and \lpsolve{}, respectively
+\item Literature: \cite{jakaosscscwa17a}
+\item URL: \url{http://github.org/potassco/clingoLP}
+\item Description: \clingoM{LP} 
+  \begin{itemize}
+  \item deals with integer and real variables
+  \item relies on \cplex{} and \lpsolve{}, respectively
+  \end{itemize}
 \end{itemize}
 
 
 \subsection{ASP and Constraint Programming}\label{sec:constraint}
 
-\subsubsection{ASP[CP] with \clingcon}
+\subsubsection{ASP and Constraint Programming with \clingcon}
 \label{sec:clingcon}
 
 \begin{itemize}
-\item \url{http://potassco.org/clingcon}
-\item \cite{bakaossc16a} (\clingcon~3)
+\item URL: \url{http://potassco.org/clingcon}
+\item Literature: \cite{bakaossc16a}
+\item Description: \clingoM{LP} 
+  \begin{itemize}
+  \item deals with integer variables
+  \item uses propagators for lazy constraint propagation (based on the order-encoding) 
+  \end{itemize}
 \end{itemize}
 
-\subsubsection{Solving CSPs with \aspartame}
-\label{sec:aspartame}
-
-This section is not yet ready for publishing
-and will be included in one of the forthcoming editions of this guide.
-
-Information on constraint programming with \aspartame\ can be obtained at the following references.
-
-\begin{itemize}
-\item \url{http://potassco.org/labs}
-\item \url{http://www.cs.uni-potsdam.de/aspartame}
-\item \cite{bageinscsotawe13a} describes \aspartame\ and how it allows for solving finite linear CSPs in ASP
-\end{itemize}
-
-\subsubsection{ASP[CP] with \gringo}
+\subsubsection{ASP and Constraint Programming with \gringo}
 
 Grounder \gringo\ features some \textcolor{red}{experimental} means for expressing finite linear constraint satisfaction problems within ASP's modeling language.
 The linear constraints are compiled into normal rules following the order encoding \cite{tatakiba09a,bageinscsotawe13a}.
@@ -116,10 +110,23 @@ that all constraint variables appearing in a program must have finite domains in
 Hence, rules like in Line~1 of Example~\ref{ex:csp:queens1} fixing the domain of a constraint variable have to be added for each constraint variable.
 \end{note}
 
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "guide"
-%%% End: 
+\subsubsection{Solving CSPs with \aspartame}
+\label{sec:aspartame}
+
+This section is not yet ready for publishing
+and will be included in one of the forthcoming editions of this guide.
+
+Information on constraint programming with \aspartame\ can be obtained at the following references.
+
+\begin{itemize}
+\item URL
+\begin{itemize}
+\item \url{http://potassco.org/labs}
+\item \url{http://www.cs.uni-potsdam.de/aspartame}
+\end{itemize}
+\item Literature: \cite{bageinscsotawe13a}
+\item Description: \aspartame\ solves finite linear CSPs (in XCSP and \sugar{} format) in ASP
+\end{itemize}
 
 %%% Local Variables:
 %%% mode: latex

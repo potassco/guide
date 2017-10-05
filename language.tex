@@ -1541,8 +1541,10 @@ In the following, we show code snippets for both scripting languages.
 Note that our precompiled binaries ship with Lua support and can be used to run the Lua examples.
 To enable Python support, \gringo\ and \clingo\ have to be compiled from source (cf.\ Section~\ref{sec:install}).
 A complete reference for the Python scripting API is available at: 
-\url{http://potassco.sourceforge.net/gringo.html} for Version~4.5.4
-(and at \url{http://potassco.org/clingo} for series~5).
+\footnote{The API of \clingo{} series~4 is described at \url{http://potassco.sourceforge.net/gringo.html}.}
+\begin{center}
+\url{http://potassco.org/clingo}
+\end{center}
 \begin{example}\label{ex:gcd}
 The first example shows how to add a simple arithmetic function:
 \\[-8pt] % is there a better way to do this?
@@ -1555,7 +1557,7 @@ The first example shows how to add a simple arithmetic function:
 In Line~6, we add a function that calculates the greatest common divisor of two numbers.
 Integers from a logic program are returned as objects of type \code{Symbol}%
 \footnote{Strictly speaking there are no classes in Lua, the Userdata type together with a metatable is used to emulate classes.}
-- a variant type capturing ground terms.
+--- a variant type capturing ground terms.
 The numeric value can be accessed using the \code{number} property in both Lua and Python.
 To construct a numeric term, the \code{Number} constructor is used.
 The \code{gcd} function can then be used in a logic program:%
@@ -1616,8 +1618,8 @@ instances from external sources, like for example a database or some text file n
 \end{example}
 
 As we have seen in the previous example,
-the \code{number} property is used to get the numeric representation of a term from object of type \code{Symbol}.
-In fact all terms are captured by the \code{Symbol} class.
+the \code{number} property is used to get the numeric representation of a term from objects of type \code{Symbol}.
+In fact, all terms are captured by the \code{Symbol} class.
 Similarly to numeric terms, the \code{string} property is used to get the representation of quoted strings.
 For constants and functions,
 there is the property \code{name} to access the string representation of the constant or the name of the function term.
@@ -1626,8 +1628,8 @@ the arguments of a function term can be accessed using the \code{arguments} prop
 Note that constants as well as tuples are considered as special cases of function terms.
 The former have an empty argument list and the latter an empty name.
 Finally, the terms \code{\#sup} and \code{\#inf} are mapped to the constants \code{Sup} and \code{Inf}.
-Both are subclasses of class \code{Symbol} too.
-Unlike other termes both are captured by unique objects.
+Both are subclasses of class \code{Symbol}, too.
+Unlike other terms both are captured by unique objects.
 
 To construct terms from within the scripting language,
 the global functions \code{Function(name, arguments)}, \code{Number(number)}, and \code{String(string)} are used.
@@ -1814,7 +1816,7 @@ the part following the~`\code{:}' is a condition.
 The condition is instantiated to obtain a set of external atoms.
 Note that the condition is discarded after grounding,
 hence, it is a good idea to use only domain predicates or built-ins after the colon.%
-\footnote{Non-domain predicates are supported too
+\footnote{Non-domain predicates are supported, too,
 because in some situations it might be inconvenient to specify domain predicates.}
 
 \begin{example}
@@ -1864,7 +1866,7 @@ Rules that are not subject to any such directive are included in the \code{base}
 The default behavior of \gringo\ is to ground (and solve in the case of \clingo)
 the \code{base}/$0$ part.
 Using the scripting API (cf.\ Section~\ref{sec:multi}),
-we can ground other parts than \code{base}/$0$ too.
+we can ground other parts than \code{base}/$0$, too.
 Occurrences of constants that are parameters of a part are replaced with ground terms when instantiating the program part.
 
 \begin{example}
@@ -1960,8 +1962,8 @@ works with either of the following directory layouts:
 
 \subsection{Input Language of \clasp}\label{subsec:lang:clasp}
 
-Solver \clasp~\cite{gekanesc07b} (or `\clingo\code{ --mode=clasp}') accepts logic programs in \smodels\ format~\cite{lparseManual}
-(and since version~3.2 additionally in \aspif{} format~\cite{kascwa17a}),
+Solver \clasp~\cite{gekanesc07b} (or `\clingo\code{ --mode=clasp}') accepts logic programs in 
+\aspif{} format~\cite{kascwa17a} and \smodels\ format~\cite{lparseManual} (for backward compatibility),
 SAT and MaxSAT instances in DIMACS-cnf\footnote{\url{http://www.satcompetition.org/2009/format-benchmarks2009.html}}
 and DIMACS-wcnf\footnote{\url{http://www.maxsat.udl.cat/12/requirements/index.html}} format,
 and PB problems in OPB/WBO\footnote{\url{http://www.cril.univ-artois.fr/PB12/format.pdf}} format.

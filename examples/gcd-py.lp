@@ -9,7 +9,7 @@ def gcd(a, b):
   else:
     na = a.number
     nb = b.number
-    nc = N(nb % na)
+    nc = nb % na
     return gcd(N(nc), a)
 
 

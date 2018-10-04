@@ -241,15 +241,16 @@ the first answer set would also contain atom \code{c}.
 \end{example}
 
 \begin{note}
-Whenever we do not explicitly state a priority,
-the assigned priority is the absolute value of the modifiers' value.
-For example, 
+If the priority is omitted then it defaults to $0$,
+as with the priorities of weak constraints
+(Section~\ref{subsec:gringo:optimize}).
+For example,
 with these directives
 \begin{lstlisting}[numbers=none]
-#heuristic c. [-10,level]
-#heuristic c. [  5,level]
+#heuristic c. [ 10,level]
+#heuristic c. [5@2,level]
 \end{lstlisting}
-the level of \code{c} is \code{-10} because $|\code{-10}|>|\code{5}|$.
+the level of \code{c} is \code{5} because $\code{2}>\code{0}$.
 \end{note}
 
 \subsubsection{Heuristic modifiers \code{init} and \code{factor}}

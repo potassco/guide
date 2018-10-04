@@ -1,6 +1,6 @@
-#preference(p1,subset){            a(X) : dom(X) }.
-#preference(p3,less(cardinality)){ b(X) : dom(X) }.
-#preference(p7,neg){               **p1          }.
-#preference(p8,and){               **p1;    **p3 }.
-#preference(p9,pareto){            **p1;    **p3 }.
-#preference(p10,lexico){        1::**p1; 2::**p3 }.
+#preference(p7,cp){
+  a(X) >> not a(X)             : dom(X);
+  b(X) >> not b(X) ||     a(X) : dom(X);
+  not b(X) >> b(X) || not a(X) : dom(X)
+}.
+#optimize(p7).

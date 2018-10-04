@@ -31,7 +31,7 @@ While \asprin\ comes with a library of predefined preference types
 it is readily extensible by new customized preference types.
 For a formal description of \asprin, please consult~\cite{brderosc15a}.
 
-The following description conforms with \asprin~3.0, which uses \clingo~5.%1.1.
+The following description conforms with \asprin~3.1, which uses \clingo~5.%1.1.
 
 \subsubsection{Computing optimal answer sets}
 
@@ -111,12 +111,12 @@ The computation can then be performed by the following command:
 %\marginlabel{\clingo, \asprin\ and the related files \code{asprin.parser}, \code{asprin.py} and \code{asprin.lib}
 %             ought to be located in some directory
 %             in the system path.}%
-\marginlabel{\clingo\ Python module must be importable via the environment variable \code{PYTHONPATH}, 
-             and the related file \code{asprin} 
-             ought to be located in some directory in the system path.
-             The file \code{asprin\_lib.lp} is first looked up in the current directory.
-             If it is not found there, then it is looked up in the root directory of the distribution, 
-             i.e., in the directory of the main file \code{asprin.py}.}%
+%\marginlabel{\clingo\ Python module must be importable via the environment variable \code{PYTHONPATH}, 
+%             and the related file \code{asprin} 
+%             ought to be located in some directory in the system path.
+%             The file \code{asprin\_lib.lp} is first looked up in the current directory.
+%             If it is not found there, then it is looked up in the root directory of the distribution, 
+%             i.e., in the directory of the main file \code{asprin.py}.}%
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference1.lp}{preference1.lp}% 
 \end{lstlisting}
@@ -425,23 +425,23 @@ the purpose of such a specification is to define the optimal answer sets of an u
 %
 \begin{note}\label{asprin:noopt}
 When grounding results in no optimization directive, 
-\asprin\ prints a warning and computes (possibly non optimal) stable models of the base program.
+\asprin\ prints a warning and computes (possibly non optimal) answer sets of the base program.
 %
-Additionally, \asprin\ allows \clingo\ minimize and maximize statements 
-(cf. Section \ref{subsec:gringo:optimize}) instead of a preference specification.
-%
-In this case, using \asprin's library, the system computes optimal stable models
-following the semantics of \clingo.%
-\footnote{%
-The minimize and maximize statements 
-are translated into preference statements of type \code{clingo\_minimize}.
-wihch is implemented in \asprin's library according to the semantics of \clingo.
-%
-Hence, using the library, the system computes \clingo\ optimal stable models.
-%
-However, it is possible to provide a different implementation of the type \code{clingo\_minimize} 
-(see Section \ref{asprin:implement}), 
-thereby providing new semantics to minimize and maximize statements.}
+%Additionally, \asprin\ allows \clingo\ minimize and maximize statements 
+%(cf. Section \ref{subsec:gringo:optimize}) instead of a preference specification.
+%%
+%In this case, using \asprin's library, the system computes optimal stable models
+%following the semantics of \clingo.%
+%\footnote{%
+%The minimize and maximize statements 
+%are translated into preference statements of type \code{clingo\_minimize}.
+%wihch is implemented in \asprin's library according to the semantics of \clingo.
+%%
+%Hence, using the library, the system computes \clingo\ optimal stable models.
+%%
+%However, it is possible to provide a different implementation of the type \code{clingo\_minimize} 
+%(see Section \ref{asprin:implement}), 
+%thereby providing new semantics to minimize and maximize statements.}
 \end{note}
 
 \begin{example}\label{asprin:example3}
@@ -548,14 +548,16 @@ the statement would not be admissible any more.
 \index{preference type!\code{maxmin}}
 \index{preference type!\code{aso}}
 \index{preference type!\code{poset}}
+\index{preference type!\code{cp}}
 \asprin's preference library implements the following basic preference types:
 \begin{itemize}
 	\item  \code{subset} and \code{superset}   
 	\item  \code{less(cardinality)} and \code{more(cardinality)}   
 	\item  \code{less(weight)} and \code{more(weight)}   
 	\item  \code{minmax} and \code{maxmin}   
-	\item  \code{aso}   (Answer Set Optimization, \cite{brnitr03a})   
-	\item  \code{poset} (Qualitative Preferences, \cite{rogima10a})  
+	\item  \code{aso}   (Answer Set Optimization, \cite{brnitr03a})
+	\item  \code{poset} (Qualitative Preferences, \cite{rogima10a})
+	\item  \code{cp} (CP nets, \cite{bobrdohopo04a})
 \end{itemize}
 
 We have already given the definition of \code{subset}. 
@@ -767,7 +769,7 @@ or
 where $F$ and $F'$ are Boolean formulas.
 %
 To give a glimpse of the formal underpinnings,
-consider a set $E$ of such ground preference statements.
+consider a set $E$ of such ground preference elements.
 The set $S_E$ consists of all Boolean formulas appearing in $E$
 and the partial order $>_E$ is the transitive closure of the order 
 specified by the preference elements of the second type. 
@@ -792,6 +794,79 @@ preferring \code{a/1} over \code{b/1}.
 With the base program in Example~\ref{asprin:example1}, 
 we obtain three optimal answer sets $X_1$, $X_2$ and $X_3$.  
 \end{example} %
+
+\label{asprin:cp}
+The preference type \code{cp} implements CP-nets (\cite{bobrdohopo04a}) by means of 
+preference elements of the following form:
+\[ L_1 \ \code{>>} \ L_2 \code{ || } \boldsymbol{L}\]
+where $\boldsymbol{L}$ is a set of literals,
+and $L_1$ and $L_2$ are contrary literals,
+i.e., for some atom $A$, either $L_1$ is $A$ and $L_2$ is $\code{not}~A$, or vice versa.
+
+The semantics of CP-nets rely on the notion of \emph{improving flips}.
+%
+Consider a set $E$ of ground preference elements,
+and two sets of atoms $X$ and $Y$.
+%
+There is an improving flip from $X$ to $Y$ if there is some preference element in $E$ such that
+all literals in $\boldsymbol{L}$ are satisfied by $X$ and $Y$, and
+either $L_1$ is $A$ and $Y$ is $X\cup\{A\}$, or
+$L_1$ is $\code{not}~A$ and $Y$ is $X\setminus\{A\}$.
+%
+Then, $W \succ Z$ holds if there is a sequence of improving flips from $Z$ to $W$.
+%
+A preference statement is said to be consistent if there is no set of atoms $X$
+such that $X \succ X$.
+% 
+\asprin\ assumes that the input \code{cp} preference statements are always consistent.
+
+\begin{example}
+%
+\marginlabel{%
+ To inspect the output, invoke:\\
+  \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~~~}\textbackslash \
+  \mbox{~~~}\attach{examples/preference7.lp}{preference7.lp}\mbox{~~~}\textbackslash \
+  \mbox{~~~}--meta=simple}}
+%
+The following preference statement expresses a preference for atoms of predicate \code{a/1} being true,
+and atoms of predicate \code{b/1} having the same value as the corresponding ones of \code{a/1}:
+%
+\lstinputlisting[numbers=none]{examples/preference7.lp}
+%
+With the base program in Example~\ref{asprin:example1},
+we obtain two optimal answer sets $X_2$ and $X_3$.
+%
+$X_1$ is not optimal because $X_2$ is better than it.
+\end{example} %
+
+\begin{note}
+For CP-nets whose structure corresponds to a set of trees,
+we can use options \code{--const-nb cp\_tree=1 --meta=no}, 
+and optionally \code{--approximation=weak} or \code{--approximation=heuristic}.
+%
+For CP-nets with acyclic structure,
+we can use options \code{--approximation=weak} or \code{--approximation=heuristic}, 
+that should be combined with \code{--meta=combine} when computing more than one optimal models.
+%
+Options \code{--meta=simple} or \code{--meta=combine} can always be used for any CP net. 
+Their performance can be improved providing the diameter $n$%
+\footnote{The diameter of a CP net is the longest loop-free sequence of improving flips
+between any two sets of atoms.}
+of the CP net whenever it is known,
+using $\code{--const-nb cp\_nontree\_diameter=}n$.
+%
+In general, one of the previous options has to be issued,
+otherwise \code{asprin} will generate an error.
+%
+The reason for this is that the preference programs for \code{cp} contain some choice rules,
+and this requires a dedicated treatment by the system (see also Remark~\ref{asprin:note:meta}).
+%
+As a rule of thumb,
+we recommend to use the most specific options for the CP net at hand.
+\end{note}
+
+% TODO: Fix later programs
+% TODO: Fix later remark
 
 \index{preference type!\code{neg}}
 \index{preference type!\code{and}}
@@ -840,17 +915,17 @@ X \succ Y \text{ iff } \bigvee_{\code{w::**s}\in E}\!((X\!\succ_\code{s} \!Y)\!\
 \begin{example}\label{asprin:composite}
 Consider the following preference specification, where \code{p1} and \code{p3} are defined as before:
 %
-\lstinputlisting[numbers=none]{examples/preference7.lp}
+\lstinputlisting[numbers=none]{examples/preference8.lp}
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}asprin \attach{examples/base.lp}{base.lp} \mbox{~~}\textbackslash \
-  \mbox{~~~}\attach{examples/preference7.lp}{preference7.lp}\mbox{~}\textbackslash\
-  \mbox{~~~}\attach{examples/optimize_p7.lp}{optimize\_p7.lp}\mbox{~}0}}
+  \mbox{~~~}\attach{examples/preference8.lp}{preference8.lp}\mbox{~}\textbackslash\
+  \mbox{~~~}\attach{examples/optimize_p8.lp}{optimize\_p8.lp}\mbox{~}0}}
 %
-Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p7)}, 
+Along with the base program of Example \ref{asprin:example1} and adding the fact \code{\#optimize(p8)}, 
 \asprin\ produces answer sets $X_2$ and $X_3$. 
-If instead we optimize over \code{p8} or \code{p9}, we obtain the three answer sets $X_1$, $X_2$ and $X_3$, 
-while optimizing on \code{p10} we get only $X_2$.
+If instead we optimize over \code{p9} or \code{p10}, we obtain the three answer sets $X_1$, $X_2$ and $X_3$, 
+while optimizing on \code{p11} we get only $X_2$.
 \end{example}
 
 \subsubsection{Implementing preference types}\label{asprin:implement}
@@ -1097,14 +1172,14 @@ The program uses predicates \code{better/1} and \code{bettereq/1},
 representing the relations $\succ$ and $\succeq$, respectively. 
 %of the preference statements named within a \code{pareto} preference statement.
 They must be defined by the implementations of the preference types of the named preference statements.
-To illustrate this, recall the preference statements \code{p1}, \code{p3} and \code{p8} of Example \ref{asprin:composite}, 
-that we put together in the file \code{preference8.lp} along with an optimization directive for \code{p9}:
+To illustrate this, recall the preference statements \code{p1}, \code{p3} and \code{p10} of Example \ref{asprin:composite}, 
+that we put together in the file \code{preference9.lp} along with an optimization directive for \code{p10}:
 %
-\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/preference8.lp}
+\lstinputlisting[basicstyle=\small\ttfamily,numbers=none,firstline=1,lastline=4]{examples/preference9.lp}
 %
 %let's combine via \code{pareto} the previous preference statements \code{p1} and \code{p3} 
 %of type \code{subset} and \code{less(cardinality)}, respectively.
-Given that \code{p9} refers to \code{p1} and \code{p3}, which are of type \code{subset} and \code{less(cardinality)}, 
+Given that \code{p10} refers to \code{p1} and \code{p3}, which are of type \code{subset} and \code{less(cardinality)}, 
 the implementations of these preference types must define \code{better/1} and \code{bettereq/1}.
 For \code{subset}, we already have the definition of \code{better/1} from Example \ref{asprin:subset_imp}, 
 so we just have to add to the program \code{preference(subset)} the following rule:
@@ -1122,17 +1197,17 @@ with the following command:
   \code{\mbox{~}asprin \
   \mbox{~~}--no-asprin-lib\mbox{~~~~} \
   \mbox{~~}\attach{examples/base.lp}{base.lp} \mbox{~~~~}\ %\textbackslash \
-  \mbox{~~}\attach{examples/preference8.lp}{preference8.lp}\mbox{~~~~}\ %\textbackslash \ 
+  \mbox{~~}\attach{examples/preference9.lp}{preference9.lp}\mbox{~~~~}\ %\textbackslash \ 
   \mbox{~~}\attach{examples/basic.lp}{basic.lp}\mbox{~~~~~~~~~~}\ %\textbackslash \ 
   \mbox{~~}\attach{examples/subset.lp}{subset.lp}\mbox{~~~~~~~~~}\ %\textbackslash \ 
   \mbox{~~}\attach{examples/less-cardinality.lp}{less-cardinality.lp}\
   \mbox{~~}\attach{examples/pareto.lp}{pareto.lp} 0}}
 \begin{lstlisting}[numbers=none,escapechar=\%]
 asprin --no-asprin-lib                         \
-       %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference8.lp}{preference8.lp}%  %\attach{examples/basic.lp}{basic.lp}%        \
+       %\attach{examples/base.lp}{base.lp}% %\attach{examples/preference9.lp}{preference9.lp}%  %\attach{examples/basic.lp}{basic.lp}%        \
        %\attach{examples/subset.lp}{subset.lp}% %\attach{examples/less-cardinality.lp}{less-cardinality.lp}% %\attach{examples/pareto.lp}{pareto.lp}% 0
 \end{lstlisting}
-As in Example \ref{asprin:composite} (optimizing \code{p9}), we obtain $X_1$, $X_2$ and $X_3$.
+As in Example \ref{asprin:composite} (optimizing \code{p10}), we obtain $X_1$, $X_2$ and $X_3$.
 \end{example}
 
 \begin{note}
@@ -1186,7 +1261,7 @@ and for \code{holds/1} they are only allowed if the body consists of domain pred
 \end{note}
 
 \begin{note}
-Command line option 
+Command line option
 \code{--const} (cf.\ Section~\ref{subsec:opt:gringo}) 
 and
 constant statements (cf.\ Page~\pageref{subset:gringo:meta:const})
@@ -1195,12 +1270,25 @@ affect only the base program.
 %
 Similarly, 
 constant statements appearing in preference programs affect only preference programs.
+%
+Moreover, \asprin\ provides the command line option \code{--const-nb},
+that works like \code{--const} but only affects preference programs.
 \end{note}
 
-\begin{note}
-When using \asprin\ to compute many optimal answer sets the syntax of preference programs
-is limited to that of stratified logic programs~\cite{apblwa87a}.
-This excludes preference programs with disjunctions, choices, or aggregates in rule heads.
+\begin{note}\label{asprin:note:meta}
+When using \asprin\ to compute many optimal answer sets,
+the preference program may not contain disjunctions in rule heads,
+and if the preference program contains choice rules or aggregates in the head,
+then some \code{--meta} option should be issued.
+%
+In particular, options \code{--meta=simple} and \code{--meta=combine} can always be used, 
+while \code{--meta=no} should only be used when it is known that the choice rules 
+and the aggregates in the head will disappear after grounding. 
+%i.e., because their bodies are made false by some constant declaration, or domain literal or built-in.
+%
+For example, options \code{--meta=no --const-nb cp\_tree=1} can be used with tree-like \code{cp} nets
+(cf.\ Page~\pageref{asprin:cp}) because setting \code{cp\_tree} to \code{1}
+the choice rules in the \code{cp} preference program disappear during grounding.
 \end{note}
 
 Recall from the previous section that we define a set of admissible preference elements for each preference type.

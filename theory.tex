@@ -15,10 +15,21 @@ Information on theory solving with \clingo\ can be obtained at the following ref
 \label{sec:difference:constraints}
 
 \begin{itemize}
-\item Literature: \cite{jakaosscscwa17a}
-\item URL: \url{http://github.org/potassco/clingoDL}
-\item Description: \clingoM{DL} deals with integer and real variables
+\item The system \clingoM{DL} provides a seemless way to integrate a susbset of the theory of linear constraints, namely Quantifier-Free Integer Difference Logic (QF-IDL), into ASP
+\item It deals with constraints of the form $x-y\leq k$, where $x$ and $y$ are integer variables and $k$ is an integer constant
+\item Despite its restriction, QF-IDL can be used to naturally encode timing related problems, e.g., scheduling or timetabling, and provides the additional advantage of being solvable in polynomial time
+\item Syntactically, a difference constraint $x-y\leq k$ is represented by a difference constraint atom of the form 
+ $$
+    \mathtt{\&diff\text{ }\{x-y\}\text{ }<=\text{ }k}
+ $$
+\item Here, \texttt{x} and \texttt{y} may be terms as described in Section~\ref{subsec:lang:gringo}, but are internally interpreted as integer variable names,
+      and $k$ is an integer 
+\item Difference constraint atoms may occur in bodies as well as in heads of rules.
+\item For a more formal introduction of \clingoM{DL}, please see \cite{jakaosscscwa17a}
+\item The following explanations are conform with \clingoM{DL}~1.0.0 which is available here: \url{http://github.org/potassco/clingoDL}
 \end{itemize}
+
+\subsubsection{Modeling and solving with \clingoM{DL}}
 
 \subsection{ASP and Linear Constraints}
 \label{sec:linear:constraints}

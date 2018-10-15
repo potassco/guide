@@ -1,15 +1,15 @@
 \begin{theindex}
 
   \item aggregate, \hyperpage{30}
-    \subitem average, \code{\#avg}, \hyperpage{111}
+    \subitem average, \code{\#avg}, \hyperpage{112}
     \subitem body, \hyperpage{31}
     \subitem condition, \hyperpage{28}
     \subitem count, \code{\#count}, \hyperpage{31}
-    \subitem even, \code{\#even}, \hyperpage{111}
+    \subitem even, \code{\#even}, \hyperpage{112}
     \subitem head, \hyperpage{32}
     \subitem maximum, \code{\#max}, \hyperpage{31}
     \subitem minimum, \code{\#min}, \hyperpage{31}
-    \subitem odd, \code{\#odd}, \hyperpage{111}
+    \subitem odd, \code{\#odd}, \hyperpage{112}
     \subitem sum plus, \code{\#sum+}, \hyperpage{31}
     \subitem sum, \code{\#sum}, \hyperpage{31}
   \item arithmetic function, \hyperpage{24}
@@ -94,7 +94,7 @@
     \subitem maximize, \code{\#maximize}, \hyperpage{37}
     \subitem minimize, \code{\#minimize}, \hyperpage{37}
     \subitem optimization directive, \hyperpage{89}
-    \subitem preference program, \hyperpage{98}
+    \subitem preference program, \hyperpage{99}
     \subitem preference specification, \hyperpage{89}
       \subsubitem preference element, \hyperpage{89}
       \subsubitem preference statement, \hyperpage{89}
@@ -106,17 +106,18 @@
 
   \item pooling, \code{;}, \hyperpage{28}
   \item preference type, \hyperpage{92}
-    \subitem \code{and}, \hyperpage{97}
+    \subitem \code{and}, \hyperpage{98}
     \subitem \code{aso}, \hyperpage{93}
+    \subitem \code{cp}, \hyperpage{93}
     \subitem \code{less(cardinality)}, \hyperpage{93}
     \subitem \code{less(weight)}, \hyperpage{93}
-    \subitem \code{lexico}, \hyperpage{97}
+    \subitem \code{lexico}, \hyperpage{98}
     \subitem \code{maxmin}, \hyperpage{93}
     \subitem \code{minmax}, \hyperpage{93}
     \subitem \code{more(cardinality)}, \hyperpage{93}
     \subitem \code{more(weight)}, \hyperpage{93}
-    \subitem \code{neg}, \hyperpage{97}
-    \subitem \code{pareto}, \hyperpage{97}
+    \subitem \code{neg}, \hyperpage{98}
+    \subitem \code{pareto}, \hyperpage{98}
     \subitem \code{poset}, \hyperpage{93}
     \subitem \code{subset}, \hyperpage{93}
     \subitem \code{superset}, \hyperpage{93}

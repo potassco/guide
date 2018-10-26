@@ -17,7 +17,7 @@ Information on theory solving with \clingo\ can be obtained at the following ref
 The system \clingoM{DL} provides a seamless way to integrate a subset of the theory of linear constraints, namely Quantifier-Free Integer Difference Logic (QF-IDL), into ASP.
 It deals with constraints of the form $x-y\leq k$, where $x$ and $y$ are integer variables and $k$ is an integer constant.
 Despite its restriction, QF-IDL can be used to naturally encode timing related problems, e.g., scheduling or timetabling, and provides the additional advantage of being solvable in polynomial time.
-Syntactically, a difference constraint $x-y\leq k$ is represented by a difference constraint atom of the form.
+Syntactically, a difference constraint $x-y\leq k$ is represented by a difference constraint atom of the form:
  $$
     \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$}
  $$
@@ -43,7 +43,7 @@ Conversely, if the body does not hold, no constraints are posed to the QF-IDL th
          \lstinputlisting{examples/dl.lp}
 The program contains one propositional variable \code{a} and two integer variables called \code{x} and \code{y}.
 The truth value of \code{a} can be freely chosen (Line~1),
-and whenever \code{a} holds, the linear equation $\code{x}-\code{y}\leq -3$ must also hold.
+and whenever \code{a} holds, the linear equation $\code{x}-\code{y}\leq -3$ must also hold (Line~2).
 
 Calling the system with the example produces following output:
 \marginlabel{%
@@ -69,11 +69,12 @@ There are two answer sets, one is the empty answer set and one contains \code{a}
 A symbol \code{dl($x$,"$v$")} denotes that variable $x$ is assigned value $v$.
 This means that in the second answer set a valid assignment for \code{x} and \code{y} was found,
 0 and 3, respectively, such that $\code{x}-\code{y}\leq -3$ is satisfied.
-There are two things of note in the results
+
+There are two things of note in the results.
 First, no assignment is given for \code{x} and \code{y} in the first answer set since there are no difference constraints to satisfy,
 hence values may be arbitrary.
 Second, only one valid assignment for \code{x} and \code{y} is shown in the second answer set 
-while in principle there are infinitely many valid assignments for $\code{x}-\code{y}\leq -3$.
+while in principle there are infinitely many valid assignments satisfying $\code{x}-\code{y}\leq -3$.
 The assignment that is given by \clingoM{DL} is a so-called \emph{As-Soon-As-Possible (ASAP) assignment}.
 Such assignments have the minimal sum of absolute values assigned to the variables,
 or, in other words, values are as close to 0 as possible while still fulfilling all difference constraints.
@@ -96,12 +97,12 @@ where the ASAP assignment represents the earliest time point at which tasks may 
 \centering
 {\def\svgwidth{\linewidth}
 \input{figures/dl-sol}}
-\caption{Flow shop: solutions for all possible permutations with the total execution length in the top right corner and optimal solutions with a blue background\label{fig:fs:sol}}
+\caption{Flow shop: solutions for all possible permutations\label{fig:fs:sol}}
 \end{figure}
 % --------------------------------------------------------------------------------
 %
-To see a more involved example, we consider the flow shop problem,
-dealing with a set of tasks $T$ that have to be consecutively executed on $m$ machines.
+For a more involved example, we consider the flow shop problem.
+The flow shop problem creates a schedule for a set of tasks $T$ that have to be consecutively executed on $m$ machines.
 %
 Each task has to be processed on each machine from $1$ to $m$. 
 Different parts of one task are completed on each machine resulting in the completion of the task after execution on all machines is finished.
@@ -110,7 +111,7 @@ The duration of different tasks on the same machine may vary.
 A task can only be executed on one machine at a time and
 a machine must not be occupied by more than one task at a time.
 %
-An (optimal) solution to the problem is a permutation of tasks so that all tasks are finished as early as possible.
+A solution to the problem is a permutation of the tasks and starting times for all tasks on all machines so that no conflicts occur.
 
 Figure~\ref{fig:fs:ins} depicts a possible instance for the flow shop problem.
 The three tasks \code{a}, \code{b}, and \code{c} have to be scheduled on two machines.
@@ -195,13 +196,15 @@ In the following, we will consider the two main parameter that may change \cling
  \code{--rdl}& \text{ : variables and constants of the difference constraints have real values} 
 \end{align*}
 
+\paragraph{Strict and non-strict semantics}
+
 First, let us consider the \emph{strict semantics} option.
 In the default configuration, this option is omitted and \clingoM{DL} works with a \emph{non-strict semantics}.
-This option changes the logical connection of the truth value of the difference constraint atom and the difference constraint it represents.
+This option changes the logical connection of the difference constraint atom to the difference constraint it represents.
 The connections are as follows:
 \begin{align*}
- \text{non-strict :}&\code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$} \rightarrow x-y\leq k\\
- \text{strict :}&\code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$} \leftrightarrow x-y\leq k
+ \text{non-strict :}\quad&\code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$} \quad\Rightarrow\quad x-y\leq k\\
+ \text{strict :}\quad&\code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$}\quad \Leftrightarrow \quad x-y\leq k
 \end{align*}
 
 Here, the arrows represent logical implication and equivalence, respectively.
@@ -210,7 +213,7 @@ if a difference constraint atom holds, the difference constraint has to hold as 
 while no constraint has to be considered by the QF-IDL theory if the respective difference constraint atom is false.
 In contrast, strict semantics enforces the negation of the difference constraint to be satisfied if the difference constraint atom is false.
 For instance, using the strict semantics, if the difference constraint atom $\code{\&diff\text{ }\{x-y\}\text{ }<=\text{ }-3}$ is false,
-the difference constraint $y-x\leq 2$ has to hold, which is the negation of $\code{x}-\code{y} \leq -3$.
+the difference constraint $\code{y}-\code{x}\leq 2$ has to hold, which is the negation of $\code{x}-\code{y} \leq -3$.
 
 \begin{example}\label{ex:dl:strict}
 We revisit Example~\ref{ex:dl:simple} with strict semantics:
@@ -259,16 +262,16 @@ Calls        : 1
 ...
 \end{lstlisting}
 
-Only the answer set with \code{a} remains and the assignment of \code{y} changed to 4 
+Only the answer set with \code{a} remains and the assignment of \code{y} changes to 4 
 since both $\code{x}-\code{y}\leq -3$ and $\code{x}-\code{y}\leq -4$ have to be fulfilled.
 If \code{a} is false, difference constraints $\code{x}-\code{y}\leq -4$ and $\code{y}-\code{x}\leq 2$ would have to be satisfied,
 the first due to the fact in Line~2 and the second due to strict semantics and $\code{\&diff\text{ }\{x-y\}\text{ }<=\text{ }-3}$ being false.
-Since there does not exist a valid assignment fulfilling those two constraints, it cannot belong to an answer set.
+Since there does not exist a valid assignment fulfilling those two constraints, there cannot be an answer set with \code{a} being false.
 
 \end{example}
 
 Let us now consider the usefulness of strict and non-strict semantics in different scenarios.
-As a rule of thump, using difference constraint atoms in the head of rules fits the non-strict semantics 
+As a rule of thumb, using difference constraint atoms in the head of rules fits the non-strict semantics 
 while usage in the body the strict one.
 
 \begin{example}\label{ex:dl:se}
@@ -297,10 +300,10 @@ Calls        : 1
 
 This constitutes the expected result 
 where the only possible answer set contains \code{a} since $\code{x}-\code{y}\leq-4$
-has to be satisfied which implies that $\code{x}-\code{y}\leq-3$ is also satisfied,
+has to be satisfied, which implies that $\code{x}-\code{y}\leq-3$ is also satisfied,
 which in turn derives \code{a}.
 
-However, switching to non-strict semantics produces the following result:
+However, switching to non-strict semantics produces a different result:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo-dl \textbackslash\\ 
@@ -322,8 +325,105 @@ Calls        : 1
 ...
 \end{lstlisting}
 
+Now, there are two answer sets instead of one. 
+While both assignments fulfill $\code{x}-\code{y}\leq-4$ since it is a fact,
+\code{a} is only derived in the second answer set.
+Whenever a difference constraint atom exclusively appears in bodies of rules it is called \emph{external}.
+This is the case for the difference constraint atom $\code{\&diff\text{ }\{x-y\}\text{ }<=\text{ }-3}$.
+The truth value of an external difference constraint atom is determined by the QF-IDL theory and does not have to be derived by any rule.
+In other words, every external difference constraint atom creates an implicit choice rule.
+If $\code{\&diff\text{ }\{x-y\}\text{ }<=\text{ }-3}$ is chosen to be false, 
+its negation $\code{y}-\code{x}\leq 2$ does not have to be satisfied in the non-strict case.
+Therefore, it does not contradict $\code{x}-\code{y}\leq -4$ which always has to be satisfied in this example.
+
 \end{example}
 
+\begin{example}
+Similarly, executing Example~\ref{ex:dl:fs} with strict semantics leads to undesired results.
+In this case, the program is unsatisfiable.
+Consider tasks \code{a} and \code{b} and the ground rules that sequentialize them:
+\begin{lstlisting}[numbers=none]
+&diff {(a,1)-(b,1)} <= -3 :- seq((a,1),(b,1),3).
+&diff {(b,1)-(a,1)} <= -1 :- seq((b,1),(a,1),1).
+&diff {(a,2)-(b,2)} <= -4 :- seq((a,2),(b,2),4).
+&diff {(b,2)-(a,2)} <= -6 :- seq((b,2),(a,2),6).
+\end{lstlisting}
+Note that among the first two and last two rule bodies exactly one of them has to be true, respectively,
+one signifying \code{a} is executed before \code{b} and the other vice versa.
+This means that for both pairs of rules, one head difference constraint atom is true and the other is false.
+If \code{a} is before \code{b} and strict semantics is enabled, 
+the first two rules lead to a conflict because difference constraints $\code{(a,1)}-\code{(b,1)}\leq -3$ and $\code{(b,1)}-\code{(a,1)}\leq 0$ constitute a contradiction.
+Similarly, \code{b} before \code{a} is impossible due to the last two rules
+requiring $\code{(b,2)}-\code{(a,2)}\leq -6$ and $\code{(a,2)}-\code{(b,2)}\leq 3$ to be satisfied simultaneously.
+Therefore, the whole program is unsatisfiable.
+\end{example}
+
+The previous examples, illustrate that either \emph{non-strict semantics with difference constraint atoms in the head} or
+\emph{non-strict semantics with difference constraint atoms in the body} is best practice when working with \clingoM{DL}.
+Note that this only applies to non-fact difference constraint atoms since facts behave the same way under either semantics.
+In practice, non-strict semantics has a performance advantage.
+Using it, one only has to monitor difference constraints represented by difference constraint atoms occurring in the logic program.
+Strict semantics, on the other hand, has to consider twice the constraints internally, the original constraint and its negation.
+
+Note that it is possible to translate one semantics into the other.
+For example, using non-strict semantics with rules of the form 
+  \begin{align*}
+    \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$ :- $L_1$,$\dots$,$L_n$.}
+  \end{align*}
+can be translated to integrity constraints with strict semantics
+  \begin{align*}
+    \code{:- not \&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$, $L_1$,$\dots$,$L_n$.}
+  \end{align*}
+achieving the same behavior.
+Similarly, rules in strict semantics that derive information using difference constraint atoms in the body
+  \begin{align*}
+    \code{$H$ :- \&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$, $L_1$,$\dots$,$L_n$.}
+  \end{align*}
+can be modeled using non-strict semantics by introducing auxiliary variables:
+  \begin{align*}
+    \code{\{aux\}.}\\
+    \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$ :- aux.}\\
+    \code{$H$ :- aux, $L_1$,$\dots$,$L_n$.}
+  \end{align*}
+Those are not general translations but rather guiding examples on how either semantics of choice might be used to achieve the same results.
+The latter translation shows the advantage of strict semantics for modeling with difference constraints in rule bodies to derive information.
+Only one intuitive rule is needed, whereas a choice and an auxiliary atom has to be introduced in the non-strict setting.
+In our experience, the performance advantage using non-strict semantics outweighs the modeling inconvenience.
+
+\paragraph{Quantifier-free Real Difference Logic (QF-RDL)}
+
+Whenever option \code{--rdl} is enabled, the domain of variables and constants are real numbers.
+In detail, for a difference constraint atom
+ $$
+    \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$}
+ $$
+ $x$ and $y$ are now real variables and $k$ is a string representation of the real constant.
+For example, $\code{x}-\code{y}\leq -3.25$ would be modeled by the difference constraint atom
+ $$
+    \code{\&diff\text{ }\{x-y\}\text{ }<=\text{ }"-3.25"}
+ $$
+Note that \clingoM{DL} currently does not support \code{--rdl} and \code{--strict} simultaneously,
+because the exact negation of a real difference constraint cannot be automatically calculated.
+
+\subsubsection{Modeling with difference constraints}
+
+\clingoM{DL} requires the user to be familiar with the capabilities and limitations of modeling using difference constraints.
+While it is, for example, not possible to express inequalities with more then three variables or variables with coefficients unequal one,
+a lot of common linear constraints can be easily expressed.
+The following table shows general rules with commonly used linear constraints and their \clingoM{DL} counterpart.
+Here, we consider linear constraints over integers.
+
+\begin{center}
+\begin{tabular}{l|l}
+\textbf{Rule with linear constraint} & \clingoM{DL}\\\hline
+\code{$x\leq k$ $\leftarrow$ $L_1$,$\dots$,$L_n$} & \code{\&diff\text{ }\{$x$-0\}\text{ }<=\text{ }$k$ :- $L_1$,$\dots$,$L_n$.}\\
+\code{$x<k$ $\leftarrow$ $L_1$,$\dots$,$L_n$}     & \code{\&diff\text{ }\{$x$-0\}\text{ }<=\text{ }V :- V=$k$-1,$L_1$,$\dots$,$L_n$.}\\
+\code{$x\geq k$ $\leftarrow$ $L_1$,$\dots$,$L_n$} & \code{\&diff\text{ }\{0-$x$\}\text{ }<=\text{ }$-k$ :- $L_1$,$\dots$,$L_n$.}\\
+\code{$x>k$ $\leftarrow$ $L_1$,$\dots$,$L_n$}     & \code{\&diff\text{ }\{$x$-0\}\text{ }<=\text{ }V :- V=$k$-1,$L_1$,$\dots$,$L_n$.}\\
+\code{$x\leq y+k$ $\leftarrow$ $L_1$,$\dots$,$L_n$}   & \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$ :- $L_1$,$\dots$,$L_n$.}\\
+\code{$x\geq y+k$ $\leftarrow$ $L_1$,$\dots$,$L_n$}   & \code{\&diff\text{ }\{$y$-$x$\}\text{ }<=\text{ }$-k$ :- $L_1$,$\dots$,$L_n$.}
+\end{tabular}
+\end{center}
 
 
 \subsection{ASP and Linear Constraints}

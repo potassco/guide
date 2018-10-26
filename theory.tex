@@ -18,9 +18,9 @@ The system \clingoM{DL} provides a seamless way to integrate a subset of the the
 It deals with constraints of the form $x-y\leq k$, where $x$ and $y$ are integer variables and $k$ is an integer constant.
 Despite its restriction, QF-IDL can be used to naturally encode timing related problems, e.g., scheduling or timetabling, and provides the additional advantage of being solvable in polynomial time.
 Syntactically, a difference constraint $x-y\leq k$ is represented by a difference constraint atom of the form:
- $$
+ \[
     \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$}
- $$
+ \]
 Here, $x$ and $y$ may be terms as described in Section~\ref{subsec:lang:gringo}, but are internally interpreted as integer variable names,
 and $k$ is an integer.
 Difference constraint atoms may occur in bodies as well as in heads of rules.
@@ -28,7 +28,7 @@ For a more formal introduction of \clingoM{DL}, please see \cite{jakaosscscwa17a
 The following explanations are conform with \clingoM{DL}~1.0.0 which is available here: \url{http://github.org/potassco/clingoDL}.
 
 
-\subsubsection{Modeling and solving with \clingoM{DL}}
+\subsubsection{Modeling and Solving with \clingoM{DL}}
 
 The most common usage of \clingoM{DL} in its default configuration are rules of the form:
   \begin{align*}
@@ -40,7 +40,7 @@ the linear equation represented by the head has to be satisfied as well.
 Conversely, if the body does not hold, no constraints are posed to the QF-IDL theory.
 \begin{example}\label{ex:dl:simple}
          See the following simple example:
-         \lstinputlisting{examples/dl.lp}
+         \lstinputlisting{examples/dl1.lp}
 The program contains one propositional variable \code{a} and two integer variables called \code{x} and \code{y}.
 The truth value of \code{a} can be freely chosen (Line~1),
 and whenever \code{a} holds, the linear equation $\code{x}-\code{y}\leq -3$ must also hold (Line~2).
@@ -49,7 +49,7 @@ Calling the system with the example produces following output:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo-dl \textbackslash\\ 
-        \mbox{~~~}\attach{examples/dl.lp}{dl.lp}   0}\\
+        \mbox{~~~}\attach{examples/dl1.lp}{dl1.lp}   0}\\
 }
 \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
@@ -120,9 +120,9 @@ Lighter shades of the same color are for the first and darker ones for the secon
 For example, task \code{a} needs to be processed for~$3$ time units on the first and~$4$ time units on the second machine.
 
 % --------------------------------------------------------------------------------
-\lstinputlisting[float=ht,mathescape=true,escapeinside={\#(}{\#)},basicstyle={\ttfamily\small},label={prg:fs:ins}]{examples/fsI.lp}
+\lstinputlisting[float=ht,mathescape=true,escapeinside={\#(}{\#)},basicstyle={\ttfamily\small},label={prg:fs:ins}]{examples/shop.lp}
 % --------------------------------------------------------------------------------
-\lstinputlisting[float=ht,literate={\%\%}{}{0},mathescape=true,escapeinside={\#(}{\#)},basicstyle={\ttfamily\small},label={prg:fs:enc}]{examples/fsE.lp}
+\lstinputlisting[float=ht,literate={\%\%}{}{0},mathescape=true,escapeinside={\#(}{\#)},basicstyle={\ttfamily\small},label={prg:fs:enc}]{examples/flow.lp}
 % --------------------------------------------------------------------------------
 %
 Next we encode this problem using difference constraints.
@@ -155,8 +155,8 @@ corresponding to the solutions in Figure~\ref{fig:fs:sol}.%
 One for each possible permutation of tasks:
 \marginlabel{%
   To inspect the output, invoke:\\
-  \code{\mbox{~}clingo-dl \attach{examples/fsE.lp}{fsE.lp} \textbackslash\\  
-        \mbox{~~~}\attach{examples/fsI.lp}{fsI.lp.} 0}\\
+  \code{\mbox{~}clingo-dl \attach{examples/flow.lp}{flow.lp} \textbackslash\\  
+        \mbox{~~~}\attach{examples/shop.lp}{shop.lp.} 0}\\
 }
  \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
@@ -188,7 +188,7 @@ Calls        : 1
 \end{lstlisting}
 \end{example}
 
-\subsubsection{Advanced options of \clingoM{DL}}
+\subsubsection{Advanced Options of \clingoM{DL}}
 
 In the following, we will consider the two main parameter that may change \clingoM{DL}'s behavior:
 \begin{align*}
@@ -196,7 +196,7 @@ In the following, we will consider the two main parameter that may change \cling
  \code{--rdl}& \text{ : variables and constants of the difference constraints have real values} 
 \end{align*}
 
-\paragraph{Strict and non-strict semantics}
+\paragraph{Strict and Non-strict Semantics}
 
 First, let us consider the \emph{strict semantics} option.
 In the default configuration, this option is omitted and \clingoM{DL} works with a \emph{non-strict semantics}.
@@ -220,7 +220,7 @@ We revisit Example~\ref{ex:dl:simple} with strict semantics:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo-dl \textbackslash\\ 
-        \mbox{~~~}\attach{examples/dl.lp}{dl.lp} 0 \textbackslash\\
+        \mbox{~~~}\attach{examples/dl1.lp}{dl1.lp} 0 \textbackslash\\
         \mbox{~~~}--strict}
 }
 \begin{lstlisting}[numbers=none]
@@ -241,12 +241,12 @@ As we can see, the answer set without \code{a} shows an assignment for \code{x} 
 0 for both of them, since the difference constraint $\code{x}-\code{y}\leq2$ has to be satisfied.
 
 Now, we extend the example slightly by adding the fact that difference constraint $\code{x}-\code{y}\leq -4$ has to be satisfied:
-\lstinputlisting{examples/dlS.lp}
+\lstinputlisting{examples/dl2.lp}
 Running this example with strict semantics results in the following output:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo-dl \textbackslash\\ 
-        \mbox{~~~}\attach{examples/dlS.lp}{dlS.lp} 0 \textbackslash\\
+        \mbox{~~~}\attach{examples/dl2.lp}{dl2.lp} 0 \textbackslash\\
         \mbox{~~~}--strict}
 }
 \begin{lstlisting}[numbers=none]
@@ -276,12 +276,12 @@ while usage in the body the strict one.
 
 \begin{example}\label{ex:dl:se}
 See following example:
-\lstinputlisting{examples/dlSE.lp}
+\lstinputlisting{examples/dl3.lp}
 Running this example with strict semantics results in the following output:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo-dl \textbackslash\\ 
-        \mbox{~~~}\attach{examples/dlSE.lp}{dlSE.lp} 0 \textbackslash\\
+        \mbox{~~~}\attach{examples/dl3.lp}{dl3.lp} 0 \textbackslash\\
         \mbox{~~~}--strict}
 }
 
@@ -307,7 +307,7 @@ However, switching to non-strict semantics produces a different result:
 \marginlabel{%
   To inspect the output, invoke:\\
   \code{\mbox{~}clingo-dl \textbackslash\\ 
-        \mbox{~~~}\attach{examples/dlSE.lp}{dlSE.lp} 0}
+        \mbox{~~~}\attach{examples/dl3.lp}{dl3.lp} 0}
 }
 
 \begin{lstlisting}[numbers=none]
@@ -339,6 +339,12 @@ Therefore, it does not contradict $\code{x}-\code{y}\leq -4$ which always has to
 \end{example}
 
 \begin{example}
+\marginlabel{%
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo-dl \attach{examples/flow.lp}{flow.lp} \textbackslash\\  
+        \mbox{~~~}\attach{examples/shop.lp}{shop.lp.} 0\\
+        \mbox{~~~}--strict}
+}
 Similarly, executing Example~\ref{ex:dl:fs} with strict semantics leads to undesired results.
 In this case, the program is unsatisfiable.
 Consider tasks \code{a} and \code{b} and the ground rules that sequentialize them:
@@ -394,18 +400,18 @@ In our experience, the performance advantage using non-strict semantics outweigh
 
 Whenever option \code{--rdl} is enabled, the domain of variables and constants are real numbers.
 In detail, for a difference constraint atom
- $$
+ \[
     \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$}
- $$
+ \]
  $x$ and $y$ are now real variables and $k$ is a string representation of the real constant.
 For example, $\code{x}-\code{y}\leq -3.25$ would be modeled by the difference constraint atom
- $$
+ \[
     \code{\&diff\text{ }\{x-y\}\text{ }<=\text{ }"-3.25"}
- $$
+ \]
 Note that \clingoM{DL} currently does not support \code{--rdl} and \code{--strict} simultaneously,
 because the exact negation of a real difference constraint cannot be automatically calculated.
 
-\subsubsection{Modeling with difference constraints}
+\subsubsection{Modeling with Difference Constraints}
 
 \clingoM{DL} requires the user to be familiar with the capabilities and limitations of modeling using difference constraints.
 While it is, for example, not possible to express inequalities with more then three variables or variables with coefficients unequal one,

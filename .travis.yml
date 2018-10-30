@@ -1,0 +1,14 @@
+sudo: false
+os: linux
+addons:
+  apt:
+    packages:
+      - texlive-latex-extra
+      - texlive-latex-recommended
+      - texlive-fonts-extra
+      - latex-xcolor
+      - pgf
+      - texlive-full
+
+script:
+  - pdflatex -interaction nonstopmode guide.tex

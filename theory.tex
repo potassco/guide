@@ -53,7 +53,7 @@ Calling the system with the example produces following output:
 }
 \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
-Reading from dl.lp
+Reading from dl1.lp
 Solving...
 Answer: 1
 
@@ -160,7 +160,7 @@ One for each possible permutation of tasks:
 }
  \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
-Reading from fsE.lp ...
+Reading from flow.lp ...
 Solving...
 Answer: 1
 dl((a,1),"1")  dl((a,2),"7") dl((b,1),"0") dl((b,2),"1") 
@@ -225,7 +225,7 @@ We revisit Example~\ref{ex:dl:simple} with strict semantics:
 }
 \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
-Reading from dl.lp
+Reading from dl1.lp
 Solving...
 Answer: 1
 dl(x,"0") dl(y,"0")
@@ -251,7 +251,7 @@ Running this example with strict semantics results in the following output:
 }
 \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
-Reading from dlS.lp
+Reading from dl2.lp
 Solving...
 Answer: 1
 dl(x,"0") dl(y,"4") a
@@ -287,7 +287,7 @@ Running this example with strict semantics results in the following output:
 
 \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
-Reading from examples/dlSE.lp
+Reading from examples/dl3.lp
 Solving...
 Answer: 1
 dl(x,"0") dl(y,"4") a
@@ -312,7 +312,7 @@ However, switching to non-strict semantics produces a different result:
 
 \begin{lstlisting}[numbers=none]
 clingo-dl version 1.0.0
-Reading from examples/dlSE.lp
+Reading from examples/dl3.lp
 Solving...
 Answer: 1
 dl(x,"0") dl(y,"4")

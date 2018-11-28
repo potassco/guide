@@ -37,6 +37,22 @@ please consult the support pages at~\cite{potassco}
 or use the Potassco mailing list:
 \href{mailto:potassco-users@lists.sourceforge.net}{\texttt{potassco-users@lists.sourceforge.net}}.
 
+For easily installing potassco software, including up-to-date Python-enabled \clingo\ versions,
+we recommand using the \conda~\cite{conda} package management system.
+\begin{enumerate}
+\item
+Install either the light-weight \miniconda\ or the slightly larger \anaconda\ distribution.
+The latter just ships additional packages by default, like a graphical frontend to the package manager.
+Simply follow the installation instructions on \url{https://conda.io/docs/user-guide/install/index.html} to install either of them.
+\item
+Then follow \conda's getting started guide on \url{https://conda.io/docs/user-guide/getting-started.html} to learn how to create environments and manage packages.
+\item
+At this point, \clingo\ can be installed from the potassco channel.
+Assuming you are using the command-line interface, this can be done by executing
+\code{conda install -c potassco clingo}.
+Check \url{https://anaconda.org/potassco} for more packages.
+\end{enumerate}
+
 An alternative way to install the tools is to use a package manager.
 Currently, packages and ports are available for Debian, Ubuntu, Arch Linux (AUR), and for MacOS X (via Homebrew or MacPorts).
 Note that packages installed this way are not always up to date;

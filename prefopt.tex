@@ -24,7 +24,7 @@ can be obtained at the following references.
 \end{itemize}
 
 \subsection{Preference Handling with \asprin}\label{sec:asprin}
-\asprin\ provides a general framework for optimizing qualitative and quantitative preferences in ASP.
+The system \asprin\ provides a general framework for optimizing qualitative and quantitative preferences in ASP.
 It allows for computing optimal answer sets of logic programs with preferences.
 While \asprin\ comes with a library of predefined preference types 
 (\code{subset}, \code{pareto}, etc.),
@@ -44,7 +44,7 @@ However, as with minimize statements,
 such a specification is not part of the program
 but rather a meta statement referring to its answer sets.
 Hence, preference specifications are directives and thus preceded by \#.
-For clarity, we also refer to the underlying program as the \emph{base program}
+For clarity, we refer to the underlying program as the \emph{base program}
 (also in view of distinguishing it from the \emph{preference program},
 implementing the preference specification; see below).
 
@@ -264,11 +264,11 @@ This yields only the three optimal answer sets not containing \code{c(1)}.
 \subsubsection{Input language of \asprin}
 \index{optimization!preference specification}%
 \index{optimization!preference specification!preference statement}%
-\index{optimization!preference specification!weighted formula}%
+\index{optimization!preference specification!weighted formula}% 
 \index{optimization!preference specification!preference element}%
 \index{optimization!optimization directive}%
 
-\asprin's input language extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
+The input language of \asprin extends the one described in Section~\ref{sec:language} by constructs for expressing qualitative and quantitative preferences.
 
 A \emph{weighted formula} is of the form
 \[\boldsymbol{t}\code{::}F\]
@@ -306,16 +306,16 @@ We may drop the curly braces if $m=1$.
 A \emph{preference element} is of the form
 %\[\boldsymbol{B}_1\; \gg \,\dots\, \gg \;\boldsymbol{B}_m\code{ || }\boldsymbol{B}\code{ : }\!\!\!\! B\]
 \[\boldsymbol{F}_1\; >> \,\dots\, >> \;\boldsymbol{F}_m\code{ || }\boldsymbol{F}\code{ : }\!\!\!\! B\]
-where each $\boldsymbol{F}_r$ and $\boldsymbol{F}$ is a set of weighted bodies, 
+where each $\boldsymbol{F}_r$ and $\boldsymbol{F}$ is a set of weighted formulas, 
 and $B$ is a rule body where all literals belong to domain predicates
 (see Page~\pageref{pg:domain}) or built-ins.
 %
 We may drop `\code{>>}' if $m=1$, 
 and `\code{||$\, \boldsymbol{F}$}' and `\code{:$\,B$}' whenever $\boldsymbol{F}$ and/or $B$ are empty, respectively.
 %
-Intuitively, $r$ gives the rank of the respective set of weighted bodies.
+Intuitively, $r$ gives the rank of the respective set of weighted formulas.
 This can be made subject to condition $\boldsymbol{F}$ by using the conditional `\code{||}'.
-Preference elements provide a (possible) structure to a set of weighted bodies
+Preference elements provide a (possible) structure to a set of weighted formulas
 by giving a means of conditionalization and a symbolic way of defining pre-orders (in addition to using weights).
 %
 %Hence
@@ -521,7 +521,7 @@ And when applied to the preference elements of \code{p1} in Example \ref{asprin:
 
 The full generality of preference elements is not always needed.
 %
-For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
+For example for \code{subset}, we are only interested in preference elements that are Boolean formulas.
 For this reason, we specify for each preference type its \emph{domain}, 
 i.e., the ground preference elements for which the preference type is well defined.
 Hence, the domain of \code{subset} consists of Boolean formulas.
@@ -549,7 +549,7 @@ the statement would not be admissible any more.
 \index{preference type!\code{aso}}
 \index{preference type!\code{poset}}
 \index{preference type!\code{cp}}
-\asprin's preference library implements the following basic preference types:
+The preference library of \asprin implements the following basic preference types:
 \begin{itemize}
 	\item  \code{subset} and \code{superset}   
 	\item  \code{less(cardinality)} and \code{more(cardinality)}   
@@ -573,12 +573,12 @@ X \succ Y \text{ iff } \{e\in E\mid X\models e\}\supset\{e\in E\mid Y\models e\}
 \item
 \code{less(cardinality)} maps $E$ to the preference relation
 \[
-X \succ Y \text{ iff } \{e\in E\mid X\models e\}<\{e\in E\mid Y\models e\}
+X \succ Y \text{ iff } \left|\{e\in E\mid X\models e\}\right|<\left|\{e\in E\mid Y\models e\}\right|
 \]
 \item
 \code{more(cardinality)} maps $E$ to the preference relation
 \[
-X \succ Y \text{ iff } \{e\in E\mid X\models e\}>\{e\in E\mid Y\models e\}
+X \succ Y \text{ iff } \left|\{e\in E\mid X\models e\}\right|>\left|\{e\in E\mid Y\models e\}\right|
 \]
 \end{itemize}
 An example of preference type \code{superset} is given in Line~5 of Example~\ref{asprin:example3}.
@@ -708,7 +708,7 @@ minimizing the maximum number of atoms of the predicates \code{a/1} and \code{b/
 %this is preferred to the conjunction of \code{a(X)} being false and \code{b(X)} being true.  
 Together with the base program in Example~\ref{asprin:example1}, this yields optimal answer sets $X_2$ and $X_3$.
 %
-Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain also $X_1$.
+Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain $X_1$ as the optimal answer set.
 \end{example} %
 
 
@@ -722,7 +722,7 @@ The semantics of \code{aso} is based on satisfaction degrees.
 In a nutshell,
 the satisfaction degree of an \code{aso} rule $r$ in an answer set $X$, 
 written $v_X(r)$, is 
-$1$ if $X$ does not satisfy the body $B$, % $X \not\models b$ for some $b\in B$, %\cap\mathcal{A}$ or  if $X \models b$ for some $\naf{b}\in B$, 
+$1$ if $X$ does not satisfy the body $F$, % $X \not\models b$ for some $b\in B$, %\cap\mathcal{A}$ or  if $X \models b$ for some $\naf{b}\in B$, 
 or  if $X$ does not satisfy any $F_i$, 
 and it is $\min\{k \mid X \models F_k, 1\leq k\leq n\}$ otherwise.
 Then, a set of \code{aso} rules $E$ is mapped to the preference relation defined as follows:
@@ -763,9 +763,9 @@ and the strict partial order $>$ on $S$ gives their relative importance.
 %
 The \asprin\ implementation of \code{poset} extends the original approach by allowing preferences over Boolean formulas.
 The domain of \code{poset} consists of the sets $E$ of ground preference elements of the form
-\[F\code{.}\]
+\[F\]
 or 
-\[F \, \code{>>} \, F'\code{.}\]
+\[F \, \code{>>} \, F'\]
 where $F$ and $F'$ are Boolean formulas.
 %
 To give a glimpse of the formal underpinnings,
@@ -1114,7 +1114,7 @@ The preference type \code{subset} can be implemented as follows
 Consider that we want to compare two answer sets $X$ and $Y$
 for which we have the corresponding \code{holds/1} and \code{holds'/1} facts. 
 %The true atoms in $H$ are represented by facts of predicate \code{holds/1},  and the true atoms in $H'$ are represented by facts of predicate \code{holds'/1}. 
-Intuitively, \code{better(s)} is true if $X$ better than $Y$ with respect to a preference statement \code{s} 
+Intuitively, \code{better(s)} is true if $X$ is better than $Y$ with respect to a preference statement \code{s} 
 of type \code{subset}. 
 More formally, 
 \code{better(s)} is true if there is one formula \code{A} appearing in \code{s} that is false in $X$ and true in $Y$, 
@@ -1157,9 +1157,9 @@ then \asprin\ also functions correctly.
 Otherwise, the behavior of \asprin\ is undefined.
 \end{note}
 
-For implementing composite preference types 
+For implementing composite preference types,
 we also define predicate \code{better/1},
-but in this case the implementation relies on predicates 
+but in this case, the implementation relies on predicates 
 that must be defined by other preference types.
 %namely, by those preference types related via naming atoms.
 
@@ -1288,7 +1288,7 @@ and the aggregates in the head will disappear after grounding.
 %
 For example, options \code{--meta=no --const-nb cp\_tree=1} can be used with tree-like \code{cp} nets
 (cf.\ Page~\pageref{asprin:cp}) because setting \code{cp\_tree} to \code{1}
-the choice rules in the \code{cp} preference program disappear during grounding.
+causes the choice rules in the \code{cp} preference program to disappear during grounding.
 \end{note}
 
 Recall from the previous section that we define a set of admissible preference elements for each preference type.

@@ -34,8 +34,8 @@ The most common usage of \clingoM{DL} in its default configuration are rules of 
   \begin{align*}
     \code{\&diff\text{ }\{$x$-$y$\}\text{ }<=\text{ }$k$ :- $L_1$,$\dots$,$L_n$.}
   \end{align*}
-Here, $L_i$ for $1\leq i \leq n$ are literals as described in \ref{subsec:gringo:normal}.
-Intuitively, it means that whenever the body of such a rule holds, 
+Here, $L_i$ are literals as described in \ref{subsec:gringo:normal} for $1\leq i \leq n$.
+Intuitively, such rules express that whenever the body of the rule holds, 
 the linear inequation represented by the head has to be satisfied as well.
 Conversely, if the body does not hold, no constraints are posed to the QF-IDL theory.
 \begin{example}\label{ex:dl:simple}
@@ -125,7 +125,7 @@ For example, task \code{a} needs to be processed for~$3$ time units on the first
 \lstinputlisting[float=ht,literate={\%\%}{}{0},mathescape=true,escapeinside={\#(}{\#)},basicstyle={\ttfamily\small},label={prg:fs:enc},caption={Flow shop encoding}]{examples/flow.lp}
 % --------------------------------------------------------------------------------
 %
-Next we encode this problem using difference constraints.
+Next, we encode this problem using difference constraints.
 We give in Listing~\ref{prg:fs:ins} a straightforward encoding of the instance in Figure~\ref{fig:fs:ins}.
 Listing~\ref{prg:fs:enc} depicts the encoding of the flow shop problem.
 Following the generate, define, and test methodology of ASP,
@@ -365,8 +365,8 @@ This constitutes a conflict with the first two difference constraints and theref
 Other possible permutations encounter similar conflicts, ultimately leading to the program being unsatisfiable under strict semantics.
 \end{example}
 
-The previous examples, illustrate that either \emph{non-strict semantics with difference constraint atoms in the head} or
-\emph{non-strict semantics with difference constraint atoms in the body} is best practice when working with \clingoM{DL}.
+The previous examples illustrate that either \emph{non-strict semantics with difference constraint atoms in the head} or
+\emph{strict semantics with difference constraint atoms in the body} is best practice when working with \clingoM{DL}.
 Note that this only applies to non-fact difference constraint atoms since facts behave the same way under either semantics.
 In practice, non-strict semantics has a performance advantage.
 Using it, one only has to monitor difference constraints represented by difference constraint atoms occurring in the logic program.
@@ -414,8 +414,8 @@ because the exact negation of a real difference constraint cannot be automatical
 
 \subsubsection{Modeling with Difference Constraints}
 
-\clingoM{DL} requires the user to be familiar with the capabilities and limitations of modeling using difference constraints.
-While it is, for example, not possible to express inequalities with more then three variables or variables with coefficients unequal one,
+Our system \clingoM{DL} requires the user to be familiar with the capabilities and limitations of modeling using difference constraints.
+While it is, for example, not possible to express inequalities with more then two variables or variables with coefficients unequal one,
 a lot of common linear constraints can be easily expressed.
 The following table shows rules with commonly used linear constraints in the head and their \clingoM{DL} counterpart.
 Here, we consider linear constraints over integers and non-strict semantics.

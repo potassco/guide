@@ -521,7 +521,7 @@ And when applied to the preference elements of \code{p1} in Example \ref{asprin:
 
 The full generality of preference elements is not always needed.
 %
-For example for \code{subset}, we are only interested in preference elements that are Boolean formulas.
+For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
 For this reason, we specify for each preference type its \emph{domain}, 
 i.e., the ground preference elements for which the preference type is well defined.
 Hence, the domain of \code{subset} consists of Boolean formulas.
@@ -708,7 +708,7 @@ minimizing the maximum number of atoms of the predicates \code{a/1} and \code{b/
 %this is preferred to the conjunction of \code{a(X)} being false and \code{b(X)} being true.  
 Together with the base program in Example~\ref{asprin:example1}, this yields optimal answer sets $X_2$ and $X_3$.
 %
-Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain $X_1$ as the optimal answer set.
+Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain $X_1$, $X_2$ and $X_3$.
 \end{example} %
 
 
@@ -1157,9 +1157,9 @@ then \asprin\ also functions correctly.
 Otherwise, the behavior of \asprin\ is undefined.
 \end{note}
 
-For implementing composite preference types,
+For implementing composite preference types
 we also define predicate \code{better/1},
-but in this case, the implementation relies on predicates 
+but in this case the implementation relies on predicates 
 that must be defined by other preference types.
 %namely, by those preference types related via naming atoms.
 

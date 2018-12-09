@@ -521,7 +521,7 @@ And when applied to the preference elements of \code{p1} in Example \ref{asprin:
 
 The full generality of preference elements is not always needed.
 %
-For example for \code{subset}, we are only interested in preference elements that are Boolean formulas.
+For example, for \code{subset} we are only interested in preference elements that are Boolean formulas.
 For this reason, we specify for each preference type its \emph{domain}, 
 i.e., the ground preference elements for which the preference type is well defined.
 Hence, the domain of \code{subset} consists of Boolean formulas.
@@ -708,7 +708,7 @@ minimizing the maximum number of atoms of the predicates \code{a/1} and \code{b/
 %this is preferred to the conjunction of \code{a(X)} being false and \code{b(X)} being true.  
 Together with the base program in Example~\ref{asprin:example1}, this yields optimal answer sets $X_2$ and $X_3$.
 %
-Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain $X_1$ as the optimal answer set.
+Using \code{maxmin} (simply adding \code{-c minmax=maxmin} to the command line) we obtain $X_1$, $X_2$ and $X_3$.
 \end{example} %
 
 
@@ -806,19 +806,25 @@ i.e., for some atom $A$, either $L_1$ is $A$ and $L_2$ is $\code{not}~A$, or vic
 The semantics of CP-nets rely on the notion of \emph{improving flips}.
 %
 Consider a set $E$ of ground preference elements,
-and two sets of atoms $X$ and $Y$.
+and let $\boldsymbol{S}$ be the set of atoms that appear in $E$.
 %
-There is an improving flip from $X$ to $Y$ if there is some preference element in $E$ such that
-all literals in $\boldsymbol{L}$ are satisfied by $X$ and $Y$, and
-either $L_1$ is $A$ and $Y$ is $X\cup\{A\}$, or
-$L_1$ is $\code{not}~A$ and $Y$ is $X\setminus\{A\}$.
+For sets of atoms $S_1, S_2 \subseteq \boldsymbol{S}$,
+there is an improving flip from $S_1$ to $S_2$
+if there is some preference element in $E$ such that
+all literals in $\boldsymbol{L}$ are satisfied by $S_1$ and $S_2$, and
+either $L_1$ is $A$ and $S_2$ is $S_1\cup\{A\}$, or
+$L_1$ is $\code{not}~A$ and $S_2$ is $S_1\setminus\{A\}$.
 %
-Then, $W \succ Z$ holds if there is a sequence of improving flips from $Z$ to $W$.
+Then, $X \succ Y$ holds if there is a sequence of improving flips
+from $Y \cap \boldsymbol{S}$ to $X \cap \boldsymbol{S}$.
 %
-A preference statement is said to be consistent if there is no set of atoms $X$
-such that $X \succ X$.
-% 
-\asprin\ assumes that the input \code{cp} preference statements are always consistent.
+Note that the \emph{ceteris-paribus} assumption of CP-nets
+only applies to the atoms in $\boldsymbol{S}$,
+while the value of the other atoms in $X$ and $Y$ may vary.
+%
+A preference statement is said to be consistent
+if there is no set of atoms $X$ such that $X \succ X$,
+and \asprin\ assumes that the input \code{cp} preference statements are always consistent.
 
 \begin{example}
 %
@@ -1157,9 +1163,9 @@ then \asprin\ also functions correctly.
 Otherwise, the behavior of \asprin\ is undefined.
 \end{note}
 
-For implementing composite preference types,
+For implementing composite preference types
 we also define predicate \code{better/1},
-but in this case, the implementation relies on predicates 
+but in this case the implementation relies on predicates 
 that must be defined by other preference types.
 %namely, by those preference types related via naming atoms.
 

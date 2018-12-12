@@ -188,7 +188,7 @@ Calls        : 1
 \end{lstlisting}
 \end{example}
 
-\subsubsection{Advanced Options of \clingoM{DL}}
+\subsubsection{Advanced Options of \clingoM{DL}}\label{sec:dl:advanced}
 
 In the following, we will consider the two main parameter that may change \clingoM{DL}'s behavior:
 \begin{align*}
@@ -436,15 +436,231 @@ Here, we consider linear constraints over integers and non-strict semantics.
 \subsection{ASP and Linear Constraints}
 \label{sec:linear:constraints}
 
-\begin{itemize}
-\item Literature: \cite{jakaosscscwa17a}
-\item URL: \url{http://github.com/potassco/clingoLP}
-\item Description: \clingoM{LP} 
-  \begin{itemize}
-  \item deals with integer and real variables
-  \item relies on \cplex{} and \lpsolve{}, respectively
-  \end{itemize}
-\end{itemize}
+Similar to \clingoM{DL}, the system \clingoM{LP} integrates the theory of linear constraints into ASP.
+%
+This theory deals with constraints of the form $w_1x_1+\dots+w_nx_n\leq k$, 
+where $k$ is a real-valued constant and $x_i$ and $w_i$ are real-valued variables and coefficients, respectively, for $1\leq i\leq n$. 
+%
+The syntactic representative of a linear constraint is a linear constraint atom of the form: 
+\[
+\code{\&sum\text{ }\{$w_1$*$x_1$:$\boldsymbol{L}_1$;\text{ }\dots;\text{ }$w_n$*$x_n$:$\boldsymbol{L}_n$\}\text{ }<=\text{ }$k$} 
+\]
+%
+Here, $w_i$, $k$ and $x_i$ are terms as described in Section~\ref{subsec:lang:gringo} for $1\leq i\leq n$. 
+%
+In particular, $w_i$ and $k$ are strings of the form \code{"$n.m$"} with $n\in\mathbb{Z}$ and $m\in\mathbb{N}$ representing a real number.
+%
+If $m=0$ then we may drop the quotes and just write $n$.
+%
+Terms $x_i$ are internally interpreted as variable names. 
+%
+$\boldsymbol{L}_i$ are tuples of literals and correspond to conditions as introduced in Section~\ref{subsec:gringo:terms} for $1\leq i\leq n$.
+%
+An element of a linear constraint atom belongs to the corresponding sum if its condition holds.
+%
+We may drop a condition if it is a tautology. 
+%
+Note that \clingoM{LP} supports further relations, viz. \code{>=}, \code{<}, \code{>}, \code{=} and \code{!=}.
+%
+Linear constraint atoms may occur in heads and bodies of rules. 
+%
+A formal introduction of \clingoM{LP} is given in \cite{jakaosscscwa17a}. 
+%
+The following description is conform with the \clingoM{LP} system available at \url{http:github.com/potassco/clingoLP}.
+
+In practice, it is often useful to declare the domain of variables when modeling a problem.
+%
+To describe the domain of a variable 
+one could use two linear constraint atoms as follows:  
+\begin{align*}
+&\code{\&sum\text{ }\{$x$\}\text{ }>=\text{ }$l$}\\
+&\code{\&sum\text{ }\{$x$\}\text{ }<=\text{ }$u$}
+\end{align*}
+where $l$ and $u$ represent reals and $x$ is a variable name. 
+%
+Alternatively we are allowed to specify the domain of a variable by using the shorthand  
+\[
+\code{\&dom\text{ }\{$l$\dots$u$\}\text{ }=\text{ }$x$}
+\]
+
+While there are often infinitely many solutions for a consistent set of linear constraints, 
+one is often interested in optimal solutions. 
+%
+In \clingoM{LP} an objective function minimizing a set of weighted variables is given by   
+\[
+ \code{\&minimize\text{ }\{$w_1$*$x_1$:$\boldsymbol{L}_1$;\text{ }\dots;\text{ }$w_n$*$x_n$:$\boldsymbol{L}_n$\}}
+\]
+where $w_i$ are reals, $x_i$ are variable names and $\boldsymbol{L}_i$ are conditions for $1 \leq i\leq n$. 
+%
+Analogously, maximize statements are given by using \code{maximize} instead of \code{minimize}. 
+%
+Given an answer set containing a consistent set of linear constraint atoms, 
+the objective function selects an optimal real-valued variable assignment among all valid assignments. 
+%
+This does not mean that another answer set is going to be excluded due to worse a optimal value. 
+%
+If there are several optimization statements, then they are accumulated by adding their elements. 
+%
+Note that domain declarations and optimization statements of \clingoM{LP} are allowed in heads only. 
+
+
+\subsubsection{Modeling and Solving with \clingoM{LP}}
+
+In the following, we give some examples to illustrate modeling and solving with \clingoM{LP}.
+
+\begin{example}\label{ex:lp:dl}
+Let us consider the following program: 
+\lstinputlisting{examples/lp1.lp}
+%
+Note that this program is analogously to the one of Example~\ref{ex:dl:simple}, but using real-valued constant \code{"4.2"}. 
+%
+Calling the system with the example produces following output:
+\marginlabel{
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo clingoLP.py \textbackslash\\ 
+        \mbox{~~~}\attach{examples/lp1.lp}{lp1.lp}   0}\\
+}
+\begin{lstlisting}[numbers=none]
+...
+LP Solver output
+None
+
+Answer: 1
+
+
+LP Solver output
+(0.0, {'y': 4.2, 'x': 0.0})
+
+LP solver calls: 1   Time cplex :  0.000322
+
+Answer: 2
+a
+SATISFIABLE
+...
+\end{lstlisting}
+There are two answer sets, one with the empty answer set and one containing \code{a}. 
+%
+Since \code{a} was set to false in the first answer set, 
+there was no linear constraint to be solved by the underlying linear programming (lp-)solver (here \cplex), 
+which is indicated by \code{None} below \code{LP Solver output}. 
+%
+The second answer set contains \code{a} only and the lp-solver returns a pair of the optimization value \code{0.0} and assignments $\code{x}\mapsto0$ and $\code{y}\mapsto4.2$. 
+%
+If we do not specify an optimization function, then the corresponding value amounts to 0.
+%
+The line \code{LP solver calls: 1   Time cplex :  0.000322} gives the number of calls of the lp-solver and its needed total time in seconds. 
+%
+Note that the assignments of real-valued variables \code{x} and \code{y} represent just one possible solution 
+and the particular assignment depends on the underlying algorithms of the used lp-solver. 
+%
+For instance, lp-solver \cplex{} always tries to find a solution as close as possible to zero if there is no objective function given. 
+\end{example}
+
+\begin{example}\label{ex:lp:extended}
+Let us consider the following program that uses the features of conditions, domains and objective functions:
+\lstinputlisting{examples/lp2.lp}
+The program contains again a choice on \code{a} (Line~1). 
+%
+The linear constraint of Line 2 is of form $\code{x}-\code{y}\leq-3$ if \code{a} is false 
+and of form $\code{x}-\code{y}+42\code{z}\leq-3$ otherwise. 
+%
+The domain of variables \code{x}, \code{y} and \code{z} is set to the interval $[0,42]\subset\mathbb{R}$ by lines 3-5. 
+%
+Line 6 specifies that we are interested in assignments of the real-valued variables so that $\code{y}+2\code{z}$ becomes maximal. 
+%
+Running the example produces following output:
+\marginlabel{
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo clingoLP.py \textbackslash\\ 
+        \mbox{~~~}\attach{examples/lp2.lp}{lp2.lp}   0}\\
+}
+\begin{lstlisting}[numbers=none]
+...
+LP Solver output
+(126.0, {'y': 42.0, 'x': 0.0, 'z': 42.0})
+
+LP solver calls: 1   Time cplex :  0.000336
+
+Answer: 1
+
+
+LP Solver output
+(43.857142857142854, {'y': 42.0, 'x': 0.0, 'z': 0.9})
+
+LP solver calls: 2   Time cplex :  0.000514
+
+Answer: 2
+a
+SATISFIABLE
+...
+\end{lstlisting}
+Again we obtain two answer sets, namely $\{\}$ and $\{\code{a}\}$. 
+%
+In the first answer set variables \code{y} and \code{z} are assigned to the maximal domain value, due to the objective function. 
+%
+Variable \code{x} is set to 0 to satisfy $\code{x}-\code{y}\leq-3$. 
+%
+In the second answer set, we have $\code{x}\mapsto0$, $\code{y}\mapsto42$ and $\code{z}\mapsto0.9$ to satisfy $\code{x}-\code{y}+42\code{z}\leq-3$ and 
+obtain the optimal value $43.857142857142854$. 
+%
+\marginlabel{
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingo clingoLP.py \textbackslash\\ 
+        \mbox{~~~}\attach{examples/lp2.lp}{lp2.lp}  \textbackslash\\ 
+        \mbox{~~~}-c accuracy=3  0}\\
+}
+To print the assignment with three digits after the decimal dot run the same program with the additional parameter \code{-c accuracy=3}.
+%
+This leads to the output: 
+\begin{lstlisting}[numbers=none]
+...
+LP Solver output
+(43.857142857142854, {'y': 42.0, 'x': 0.0, 'z': 0.929})
+
+LP solver calls: 2   Time cplex :  0.000514
+
+
+Answer: 2
+a
+SATISFIABLE
+...
+\end{lstlisting}
+%Note that during solving the lp-solver may round values to be able to continue. 
+\end{example}
+
+
+\subsubsection{Advanced Options of \clingoM{LP}}
+
+Similar to \clingoM{DL}, we consider in the following some main parameter of \clingoM{LP}: 
+
+\begin{align*}
+ &\code{-c nstrict=0} && \text{ : enables strict or non-strict semantics (default \code{nstrict=1})}\\
+ &\code{-c solver=lps}&& \text{ : sets lp-solver \lpsolve{} or \cplex{} (default \code{solver=cplx})}\\
+ &\code{-c ilp=1}     && \text{ : restricts variables to integer domains (default \code{ilp=0})}  
+\end{align*}
+
+\paragraph{Strict and Non-strict Semantics}
+Per default \clingoM{LP} uses non-strict semantics, which can be switched to strict semantics. 
+%
+As in Section~\ref{sec:dl:advanced}, the logical connection of a linear constraint atom and the linear constraint it represents is given by:
+\begin{align*}
+ \text{non-strict :}\quad&\code{\&sum\text{ }\{$w_1$*$x_1$;\text{ }\dots;\text{ }$w_n$*$x_n$\}\text{ }<=\text{ }$k$} \quad\Rightarrow\quad w_1x_1+\dots+w_nx_n\leq k\\
+ \text{strict :}\quad&\code{\&sum\text{ }\{$w_1$*$x_1$;\text{ }\dots;\text{ }$w_n$*$x_n$\}\text{ }<=\text{ }$k$} \quad \Leftrightarrow \quad w_1x+\dots+w_nx_n\leq k
+\end{align*}
+We recommend to use linear constraint atoms in the head together with non-strict semantics and in the body with strict semantics, 
+to avoid unexpected behaviors as explained in the context of difference constraint atoms. 
+
+\paragraph{lp-solver} 
+Note that \clingoM{LP} provides two different underlying lp-solvers, namely \lpsolve{} and \cplex{}. 
+%
+Both lp-solvers need to be installed to run \clingoM{LP}. 
+
+\paragraph{Integer Linear Programming} 
+If one is interested in solving linear constraints containing variables over integer domains, 
+then this can be easily done by adding \code{-c ilp=1}. 
+%
+This does only work if the underlying lp-solver supports this option. 
+
 
 
 \subsection{ASP and Constraint Programming}\label{sec:constraint}

@@ -7,7 +7,7 @@ def rng(a, b):
 
 
 
-  return range(na, na+1)
+  return range(na, nb+1)
 
 
 #end.

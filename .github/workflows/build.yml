@@ -1,0 +1,22 @@
+name: CI
+on:
+  - push
+  - pull_request
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone
+      uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Compile
+      run: |
+        docker run -v $(pwd):/mnt -w '/mnt' listx/texlive:2018 make
+    - name: Upload
+      uses: actions/upload-artifact@master
+      with:
+        name: guide
+        path: |
+          guide.pdf
+          examples/

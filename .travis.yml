@@ -13,3 +13,7 @@ addons:
 
 script:
   - pdflatex -interaction nonstopmode guide.tex
+  - bibtex guide
+  - pdflatex -interaction nonstopmode guide.tex
+  - pdflatex -interaction nonstopmode guide.tex
+  - zip -r examples.zip examples/

@@ -464,9 +464,9 @@ Note that \clingoM{LP} supports further relations, viz. \code{>=}, \code{<}, \co
 %
 Linear constraint atoms may occur in heads and bodies of rules. 
 %
-A formal introduction of \clingoM{LP} is given in \cite{jakaosscscwa17a}. 
+A formal introduction of \clingoM{LP} is given in \cite{jakaosscscwa17a}.
 %
-The following description is conform with the \clingoM{LP} system available at \url{http:github.com/potassco/clingoLP}.
+The following description is conform with the \clingoM{LP} system available at \url{https://github.com/potassco/clingoLP}.
 
 In practice, it is often useful to declare the domain of variables when modeling a problem.
 %
@@ -512,29 +512,26 @@ In the following, we give some examples to illustrate modeling and solving with 
 Let us consider the following program: 
 \lstinputlisting{examples/lp1.lp}
 %
-Note that this program is analogously to the one of Example~\ref{ex:dl:simple}, but using real-valued constant \code{"4.2"}. 
+Note that this program is analogously to the one of Example~\ref{ex:dl:simple}, but using real-valued constant \code{"4.2"}.
 %
 Calling the system with the example produces following output:
 \marginlabel{
   To inspect the output, invoke:\\
-  \code{\mbox{~}clingo clingoLP.py \textbackslash\\ 
-        \mbox{~~~}\attach{examples/lp1.lp}{lp1.lp}   0}\\
+  \code{\mbox{~}clingoLP \attach{examples/lp1.lp}{lp1.lp} 0 \textbackslash \\
+        --show-lp-solution} \\
 }
 \begin{lstlisting}[numbers=none]
 ...
-LP Solver output
-None
-
 Answer: 1
 
-
-LP Solver output
-(0.0, {'y': 4.2, 'x': 0.0})
-
-LP solver calls: 1   Time cplex :  0.000322
+LP solution: None
 
 Answer: 2
 a
+LP solution: optimum=0.0
+y=4.2 x=0.0
+LP solver calls: 1   Time cplex :  0.000322
+
 SATISFIABLE
 ...
 \end{lstlisting}
@@ -542,7 +539,7 @@ There are two answer sets, one with the empty answer set and one containing \cod
 %
 Since \code{a} was set to false in the first answer set, 
 there was no linear constraint to be solved by the underlying linear programming (lp-)solver (here \cplex), 
-which is indicated by \code{None} below \code{LP Solver output}. 
+which is indicated by \code{LP Solution: None}. 
 %
 The second answer set contains \code{a} only and the lp-solver returns a pair of the optimization value \code{0.0} and assignments $\code{x}\mapsto0$ and $\code{y}\mapsto4.2$. 
 %
@@ -571,26 +568,23 @@ Line 6 specifies that we are interested in assignments of the real-valued variab
 Running the example produces following output:
 \marginlabel{
   To inspect the output, invoke:\\
-  \code{\mbox{~}clingo clingoLP.py \textbackslash\\ 
-        \mbox{~~~}\attach{examples/lp2.lp}{lp2.lp}   0}\\
+  \code{\mbox{~}clingoLP \attach{examples/lp2.lp}{lp2.lp}   0 \textbackslash\\ 
+    --show-lp-solution}\\
 }
 \begin{lstlisting}[numbers=none]
 ...
-LP Solver output
-(126.0, {'y': 42.0, 'x': 0.0, 'z': 42.0})
-
-LP solver calls: 1   Time cplex :  0.000336
-
 Answer: 1
 
-
-LP Solver output
-(43.857142857142854, {'y': 42.0, 'x': 0.0, 'z': 0.9})
-
-LP solver calls: 2   Time cplex :  0.000514
+LP solution: optimum=126.00000000000001
+z=42.0 y=42.0 x=0.0
+LP solver calls: 1   Time lp_solve :  6.329099999996535e-05
 
 Answer: 2
 a
+LP solution: optimum=43.85714285714286
+z=0.9 y=42.0 x=0.0
+LP solver calls: 2   Time lp_solve :  0.00010352799999996387
+
 SATISFIABLE
 ...
 \end{lstlisting}
@@ -605,23 +599,21 @@ obtain the optimal value $43.857142857142854$.
 %
 \marginlabel{
   To inspect the output, invoke:\\
-  \code{\mbox{~}clingo clingoLP.py \textbackslash\\ 
-        \mbox{~~~}\attach{examples/lp2.lp}{lp2.lp}  \textbackslash\\ 
-        \mbox{~~~}-c accuracy=3  0}\\
+  \code{\mbox{~}clingoLP \attach{examples/lp2.lp}{lp2.lp} 0 \textbackslash\\ 
+        --show-lp-solution \textbackslash\\ 
+        \mbox{~~~}--accuracy=3} \\
 }
-To print the assignment with three digits after the decimal dot run the same program with the additional parameter \code{-c accuracy=3}.
+To print the assignment with three digits after the decimal dot run the same program with the additional parameter \code{--accuracy=3}.
 %
 This leads to the output: 
 \begin{lstlisting}[numbers=none]
 ...
-LP Solver output
-(43.857142857142854, {'y': 42.0, 'x': 0.0, 'z': 0.929})
-
-LP solver calls: 2   Time cplex :  0.000514
-
-
 Answer: 2
 a
+LP solution: optimum=43.85714285714286
+z=0.929 x=0.0 y=42.0
+LP solver calls: 2   Time lp_solve :  0.00012673600000001617
+
 SATISFIABLE
 ...
 \end{lstlisting}
@@ -634,9 +626,9 @@ SATISFIABLE
 Similar to \clingoM{DL}, we consider in the following some main parameter of \clingoM{LP}: 
 
 \begin{align*}
- &\code{-c nstrict=0} && \text{ : enables strict or non-strict semantics (default \code{nstrict=1})}\\
- &\code{-c solver=lps}&& \text{ : sets lp-solver \lpsolve{} or \cplex{} (default \code{solver=cplx})}\\
- &\code{-c ilp=1}     && \text{ : restricts variables to integer domains (default \code{ilp=0})}  
+ &\code{--strict} && \text{ : enables strict semantics (default is non-strict)}\\
+ &\code{--lp-solver=cplx}&& \text{ : sets lp-solver \lpsolve{} or \cplex{} (default \code{lp-solver=lps})}\\
+ &\code{--ilp}     && \text{ : restricts variables to integer domains (default \code{ilp=0})}  
 \end{align*}
 
 \paragraph{Strict and Non-strict Semantics}
@@ -657,7 +649,7 @@ Both lp-solvers need to be installed to run \clingoM{LP}.
 
 \paragraph{Integer Linear Programming} 
 If one is interested in solving linear constraints containing variables over integer domains, 
-then this can be easily done by adding \code{-c ilp=1}. 
+then this can be easily done by adding \code{--ilp}. 
 %
 This does only work if the underlying lp-solver supports this option. 
 

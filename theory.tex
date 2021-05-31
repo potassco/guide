@@ -660,15 +660,210 @@ This does only work if the underlying lp-solver supports this option.
 \subsubsection{ASP and Constraint Programming with \clingcon}
 \label{sec:clingcon}
 
-\begin{itemize}
-\item URL: \url{http://potassco.org/clingcon}
-\item Literature: \cite{bakaossc16a}
-\item Description: \clingoM{LP} 
-  \begin{itemize}
-  \item deals with integer variables
-  \item uses propagators for lazy constraint propagation (based on the order-encoding) 
-  \end{itemize}
-\end{itemize}
+The \clingcon{} system provides a way to integrate constraints over integer variables, into ASP.
+Its main focus is on linear constraints, but other constraints such as $distinct$ and $disjoint$ are also supported.
+It uses lazy constraint propagation and utilizes lazy variable creation based on the order-encoding to be able to handle huge domains explicitly.
+A formal introduction of \clingcon{} is given in \cite{bakaossc16a}.
+%
+The following description is conform with the $\clingcon\ 5.5.0$ system available at \url{https://github.com/potassco/clingcon}.
+%
+The following constraints are support by \clingcon.
+
+\paragraph{Domain Constraints} have the form
+\code{\&dom\text{ }\{$v_1$;\dots;$v_n$\}\text{ }=\text{ }$x$} where $v_i$ is either a constant expression%
+\footnote{A term that can be evaluated to an integer during grounding.}
+or of the form $l$..$u$ where $l$ and $u$ are constant expressions defining the lower and upper bound of a range, for $1\leq i\leq n$.
+This construct constrains the domain of integer variable $x$ to the union of the given values and ranges.
+E.g.~\code{\&dom\text{ }\{$1$..$3$;$5$;$7$..$9$\}\text{ }=\text{ }$x$} constrains $x$ to be in domain $\{1,2,3,5,7,8,9\}$.
+Domain constraints are only allowed to occur in the head of rules.
+
+\paragraph{Linear Constraints} have the form
+\code{\&sum\text{ }\{$e_1$;\text{ }\dots;\text{ }$e_{n-1}$\}\text{ }$\rhd$\text{ }$e_n$}
+where $e_i$ is an expressions, for $1\leq i\leq n$, 
+and $\rhd \in \{\code{<=},\code{<},\code{>=},\code{>},\code{=},\code{!=}\}$.
+An expressions $e_i$ can be any linear constraint of the form $w_1$*$x_1$ $\circ$ \text{ }\dots $\circ$ \text{ }$w_m$*$x_m$
+with $\circ \in \{\code{+}, \code{-}\}$.
+The weight $w_j$ is a constant expression that can be omitted if it is equal to $1$.
+The term $x_j$ represents a variable, and can be omitted to express a constant in the linear expression.
+If the values of the variables $x_j$ satisfy the constraint $e_1+\dots+e_{n-1} \rhd e_{n}$,
+for $1\leq j\leq m$, the constraint must be true, and false otherwise.
+Linear constraints can occur anywhere in a rule.
+E.g.~\code{\&sum\text{ }\{a-3*b;x+y\}\text{ }=\text{ }2*z+3*w} is a constraint according to the definition.
+
+\paragraph{Distinct constraints} have the form
+\code{\&distinct\text{ }\{$e_1$;\text{ }\dots;\text{ }$e_n$\}} and constrain the values of all expressions
+$e_i$ to be distinct, for $1\leq i\leq n$.
+Distinct constraints are only allowed to occur as facts in the logic program.
+E.g.~\code{\&distinct\text{ }\{a;3*b;a-b\}} ensures that \code{a}, \code{3*b}, and \code{a-b} all evaluate to different values.
+
+\paragraph{Disjoint constraints} have the form
+\comment{I actually do not have an idea ;)}
+
+\paragraph{Optimization constraints} have either the form
+\code{\&minimize\text{ }\{$e_1$;\text{ }\dots;\text{ }$e_n$\}} or
+\code{\&maximize\text{ }\{$e_1$;\text{ }\dots;\text{ }$e_n$\}}
+and minimize/maximize the values of all expressions $e_i$,
+for $1\leq i\leq n$.
+Optimize constraints are only allowed to occur as facts in the logic program.
+\begin{example}\label{ex:lp:csp1}
+Consider the following optimize constraint:
+\lstinputlisting{examples/csp1.lp}
+Calling the system with the example produces following output:
+\marginlabel{
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingcon \attach{examples/csp1.lp}{csp1.lp}} \\
+}
+\begin{lstlisting}[numbers=none]
+...
+Answer: 9
+
+Assignment:
+a=-3 b=2
+Cost: -11
+Answer: 10
+
+Assignment:
+a=-3 b=3
+Cost: -12
+SATISFIABLE
+...
+\end{lstlisting}
+\clingcon{} successively produces better answers with respect to the optimize statement.
+The last answer produced is the optimal solution to the problem.
+\end{example}
+It is not recommended to mix Boolean and CSP optimization statements, as the results are implementation defined.
+
+\subsubsection{Modeling and Solving with \clingcon}
+In practice, it is often useful to declare the domain of variables when modeling a problem.
+%
+To describe the domain of a variable 
+one could use two linear constraint atoms as follows:  
+\begin{align*}
+&\code{\&sum\text{ }\{$x$\}\text{ }>=\text{ }$l$}\\
+&\code{\&sum\text{ }\{$x$\}\text{ }<=\text{ }$u$}
+\end{align*}
+where $l$ and $u$ represent reals and $x$ is a variable name. 
+%
+Alternatively we are allowed to specify the domain of a variable by using the shorthand  
+\[
+\code{\&dom\text{ }\{$l$..$u$\}\text{ }=\text{ }$x$}
+\]
+
+The solutions produced by the system will include each valid assignment to each integer variable that is
+used in a ground constraint.
+Variables that occur in a constraint (independent of its truth value in the answer set) that are not
+restricted by any constraints are automatically restricted by the system to the range $maxint..minint$.
+These values can be configured using the options of the \clingcon{} system.
+
+Note that truth value of a constraint is determined from outside the logic program.
+This means that constraints that only occur in the body of a rule also become true,
+if the values of its variables satisfy the constraint.
+
+\begin{example}\label{ex:lp:csp2}
+Let us consider the following program: 
+\lstinputlisting{examples/csp2.lp}
+Calling the system with the example produces following output:
+\marginlabel{
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingcon \attach{examples/csp2.lp}{csp2.lp} 0} \\
+}
+\begin{lstlisting}[numbers=none]
+...
+Answer: 1
+
+Assignment:
+x=0 y=0
+Answer: 2
+
+Assignment:
+x=0 y=1
+Answer: 3
+
+Assignment:
+x=1 y=0
+Answer: 4
+
+Assignment:
+x=1 y=1
+Answer: 5
+a
+Assignment:
+x=0 y=1
+SATISFIABLE
+...
+\end{lstlisting}
+There are four answer sets where \code{a} is false.
+Therefore, all combinations of values from the domains of the variables \code{x} and \code{y} are possible.
+The fifth answer contains \code{a},
+and the only possible assignment to the integer variables is \code{x=0} and \code{y=1},
+as they are constrained by the constraint \code{\&sum\text{ }\{x; -1*y\}\text{ }<\text{ }0}.
+%
+Since \code{a} was set to false in the first answer set, 
+there was no linear constraint to be solved by the underlying constraint solver, 
+still an enumeration of all variables occuring in the ground program is done. 
+%
+\end{example}
+
+\begin{example}\label{ex:lp:csp3}
+Now consider an example with a constraint in the body of a rule: 
+\lstinputlisting{examples/csp3.lp}
+Calling the system with the example produces the following output:
+\marginlabel{
+  To inspect the output, invoke:\\
+  \code{\mbox{~}clingcon \attach{examples/csp3.lp}{csp3.lp} 0} \\
+}
+\begin{lstlisting}[numbers=none]
+...
+Answer: 1
+
+Assignment:
+x=0 y=0
+Answer: 2
+
+Assignment:
+x=1 y=0
+Answer: 3
+
+Assignment:
+x=1 y=1
+Answer: 4
+a
+Assignment:
+x=0 y=1
+SATISFIABLE
+...
+\end{lstlisting}
+There are again 4 possible combinations for the assignment of the integer variables \code{x} and \code{y}.
+The first three answers do not satisfy the constraint \code{\&sum\text{ }\{x; -1*y\}\text{ }<\text{ }0}, and therefore \code{a} is not contained in the answer set.
+Given the valuation in the fourth answer,
+the constraint is actually satisfied, directly deriving \code{a}.
+\end{example}
+
+\subsubsection{Advanced Options of \clingcon}\label{sec:clingcon:advanced}
+
+This is an incomplete list of options to configure \clingcon.
+We restricted ourselves to options that drastically influence the search behaviour.
+
+\paragraph{\texttt{--translate-clauses=<n>[,<m>]}} enables translation of linear constraints prior to solving.
+Setting \texttt{n} restricts the preprocessor to only translate constraints that can be translated using at most \texttt{n} clauses.
+The additional parameter \texttt{m} stops translation to clauses once \texttt{m} clauses have been created.
+
+\paragraph{\texttt{--[no-]literals-only}} ensures that only order literals are created during translation but no clauses are added.
+
+\paragraph{\texttt{--translate-pb=<n>}} enables translation of linear constraints to pseudo Boolean constraints, if less than \texttt{n} order literals are needed per constraint.
+\comment{I changed this option, open PR}
+
+\paragraph{\texttt{--translate-distinct=<n>}} forces the translation of $distinct$ constraint to pseudo Boolean constraints, if less than \texttt{n} pseudo Boolean constraints are needed per $distinct$ constraint.
+
+\paragraph{\texttt{--translate-opt=<n>}} enables the translation of the \code{\&minimize}/\code{\&maximize} constraints to clasp internal optimization constraints, if less than \texttt{n} literals are needed for the translation.
+Translating optimization statements can be advantageous in combination with \clingo's option \texttt{--opt-strategy=usc} to allow for different optimization strategies.
+
+\paragraph{\texttt{--[no-]add-order-clauses}} adds all binary order clauses needed for the integer variables before solving.
+
+\paragraph{\texttt{--sign-value=<arg>}} influences the strategy which values are assigned first to an integer variable. While \texttt{+}/\texttt{-} tend to assign larger/smaller numbers,
+and integer \texttt{n} can be used to steer variable assignment to this value.
+
+\paragraph{\texttt{--min-int=<l>}} and \texttt{--max-int=<u>} sets the default domain of integer variables to $l..u$ if no specific domain is given in the program.
 
 \subsubsection{ASP and Constraint Programming with \gringo}
 

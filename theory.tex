@@ -697,7 +697,13 @@ Distinct constraints are only allowed to occur as facts in the logic program.
 E.g.~\code{\&distinct\text{ }\{a;3*b;a-b\}} ensures that \code{a}, \code{3*b}, and \code{a-b} all evaluate to different values.
 
 \paragraph{Disjoint constraints} have the form
-\comment{I actually do not have an idea ;)}
+\code{\&disjoint\text{ }\{$v_1$@$d_1$;\text{ }\dots;\text{ }$v_n$@$d_1$\}} and constrain the values of all variables
+$v_i$ and its integer durations $d_i$ to be disjoint, for $1\leq i\leq n$.
+This constraint is equivalent to the conjunction of the expressions $(v_i+d_i < v_j) \lor (v_j+d_j < v_i)$ for all $1\leq i \leq j \leq n$.
+Distinct constraints are only allowed to occur as facts in the logic program.
+The following example encodes a flow shop problem using the distinct constraint.
+\lstinputlisting{examples/csp4.lp}
+
 
 \paragraph{Optimization constraints} have either the form
 \code{\&minimize\text{ }\{$e_1$;\text{ }\dots;\text{ }$e_n$\}} or

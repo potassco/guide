@@ -1596,7 +1596,8 @@ This example shows how to return multiple values from a function:
 \end{minipage}\\
 In Line~3, we add a function that emulates an interval.
 Instead of just returning one number,
-this function returns a table of numbers in Lua and a list of numbers in Python, respectively.
+this function returns a table of numbers in Lua and yields number symbols in Python, respectively.
+Actually, in Python any form of iterable over symbols can be used.
 The \code{rng} function can then be used in a logic program:%
 \marginlabel{%
 To inspect the unique answer set of the program, invoke:\\
